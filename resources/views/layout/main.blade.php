@@ -16,6 +16,9 @@
 
     <!-- Favicon -->
 
+    {{-- bootstrap --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -92,9 +95,9 @@
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('admin.tkr') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
-                                        <div data-i18n="Without menu">TKR</div>
+                                <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
+                                    <a href="/data-siswa" class="menu-link">
+                                        <div data-i18n="Without menu">TKR (Data Siswa)</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('admin.tkj') ? 'active' : '' }}">
@@ -149,7 +152,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="menu-item">
+                        <li class="menu-item {{ Request::routeIs('data.iduka') ? 'active' : '' }}">
                             <a href="/data-iduka" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Iduka</div>
