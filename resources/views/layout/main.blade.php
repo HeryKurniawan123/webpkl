@@ -142,17 +142,17 @@
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('admin.gtkKependidikan') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item">
+                                    <a href="#" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        <li class="menu-item {{ Request::routeIs('kesejahteraan.index') ? 'active' : '' }}">
-                            <a href="" class="menu-link">
+                        <li class="menu-item">
+                            <a href="/data-iduka" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Kesejahteraan</div>
+                                <div data-i18n="Basic">Data Iduka</div>
                             </a>
                         </li>
 

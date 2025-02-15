@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HakAksesController;
+use App\Http\Controllers\IdukaController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,6 +27,15 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/pembmbingpkl', [HakAksesController::class, 'ppkl'])->name('ppkl');
     Route::get('/orangtua', [HakAksesController::class, 'orangtua'])->name('orangtua');
     Route::get('/pembimbingsekolah', [HakAksesController::class, 'psekolah'])->name('psekolah');
+
+    // Iduka
+    Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
+    Route::get('/data-iduka-detail', [IdukaController::class, 'show'])->name('detail.iduka');
 });
+
+// Route::middleware(['auth', 'HakAkses:hubin'])->group(function(){
+//     Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
+//     Route::get('/data-iduka-detail', [IdukaController::class, 'show'])->name('detail.iduka');
+// });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
