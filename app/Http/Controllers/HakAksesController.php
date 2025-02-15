@@ -8,31 +8,31 @@ use Illuminate\Support\Facades\Auth;
 class HakAksesController extends Controller
 {
     function hubin(){
-        return view('hubin.index');
+        return view('dashboard');
     }
     function siswa(){
-        return view('siswa.index');
+        return view('dashboard');
     }
     function iduka(){
-        return view('iduka.index');
+        return view('dashboard');
     }
     function kaprog(){
-        return view('kaprog.index');
+        return view('dashboard');
     }
     function persuratan(){
-        return view('persuratan.index');
+        return view('dashboard');
     }
     function guru(){
-        return view('guru.index');
+        return view('dashboard');
     }
     function ppkl(){
-        return view('ppkl.index');
+        return view('dashboard');
     }
     function orangtua(){
-        return view('orangtua.index');
+        return view('dashboard');
     }
     function psekolah(){
-        return view('psekolah.index');
+        return view('dashboard');
     }
     public function index(){
         return view('login');
@@ -53,31 +53,31 @@ class HakAksesController extends Controller
     
             if(Auth::attempt($infoLogin)){
                 if(Auth::user()->role == 'hubin'){
-                    return redirect()->route( 'hubin' );
+                    return redirect()->route( 'hubin.dashboard' );
                 }
                 elseif(Auth::user()->role == 'siswa'){
-                    return redirect()->route( 'siswa' );
+                    return redirect()->route( 'siswa.dashboard' );
                 }
                 elseif(Auth::user()->role == 'kaprog'){
-                    return redirect()->route( 'kaprog' );
+                    return redirect()->route( 'kaprog.dashboard' );
                 }
                 elseif(Auth::user()->role == 'guru'){
-                    return redirect()->route( 'guru' );
+                    return redirect()->route( 'guru.dashboard' );
                 }
                 elseif(Auth::user()->role == 'ppkl'){
-                    return redirect()->route( 'ppkl' );
+                    return redirect()->route( 'ppkl.dashboard' );
                 }
                 elseif(Auth::user()->role == 'psekolah'){
-                    return redirect()->route( 'psekolah' );
+                    return redirect()->route( 'psekolah.dashboard' );
                 }
                 elseif(Auth::user()->role == 'iduka'){
-                    return redirect()->route( 'iduka' );
+                    return redirect()->route( 'iduka.dashboard' );
                 }
                 elseif(Auth::user()->role == 'orangtua'){
-                    return redirect()->route( 'orangtua' );
+                    return redirect()->route( 'orangtua.dashboard' );
                 }
                 elseif(Auth::user()->role == 'persuratan'){
-                    return redirect()->route( 'persuratan' );
+                    return redirect()->route( 'persuratan.dashboard' );
                 }
             }
             else {

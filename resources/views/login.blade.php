@@ -24,7 +24,7 @@
         <form action="" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="nip" class="form-label">NIP</label>
+                <label for="nip" class="form-label">Username</label>
                 <input type="text" value="{{ old('nip') }}" name="nip" class="form-control">
             </div>
             <div class="mb-3">

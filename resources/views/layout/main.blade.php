@@ -77,7 +77,16 @@
                     <!-- Dashboard -->
                     
                         <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                            <a href="" class="menu-link">
+                            <a href="@if(auth()->user()->role == 'guru') /dashboard/guru 
+                                @elseif(auth()->user()->role == 'siswa') /dashboard/siswa 
+                                @elseif(auth()->user()->role == 'hubin') /dashboard/hubin 
+                                @elseif(auth()->user()->role == 'kaprog') /dashboard/kaprog 
+                                @elseif(auth()->user()->role == 'ppkl') /dashboard/ppkl 
+                                @elseif(auth()->user()->role == 'psekolah') /dashboard/psekolah 
+                                @elseif(auth()->user()->role == 'iduka') /dashboard/iduka 
+                                @elseif(auth()->user()->role == 'orangtua') /dashboard/orangtua 
+                                @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan 
+                                @endif" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                                 <div data-i18n="Analytics">Dashboard</div>
                             </a>

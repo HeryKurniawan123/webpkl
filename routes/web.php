@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\IdukaController;
+use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,28 +20,32 @@ Route::get('/home', function(){
 });
 
 Route::middleware(['auth'])->group(function(){
-    Route::get('/hubin', [HakAksesController::class, 'hubin'])->name('hubin');
-    Route::get('/siswa', [HakAksesController::class, 'siswa'])->name('siswa');
-    Route::get('/kaprog', [HakAksesController::class, 'kaprog'])->name('kaprog');
-    Route::get('/iduka', [HakAksesController::class, 'iduka'])->name('iduka');
-    Route::get('/guru', [HakAksesController::class, 'guru'])->name('guru');
-    Route::get('/persuratan', [HakAksesController::class, 'persuratan'])->name('persuratan');
-    Route::get('/pembmbingpkl', [HakAksesController::class, 'ppkl'])->name('ppkl');
-    Route::get('/orangtua', [HakAksesController::class, 'orangtua'])->name('orangtua');
-    Route::get('/pembimbingsekolah', [HakAksesController::class, 'psekolah'])->name('psekolah');
+    Route::get('/dashboard/hubin', [HakAksesController::class, 'hubin'])->name('hubin.dashboard');
+    Route::get('/dashboard/siswa', [HakAksesController::class, 'siswa'])->name('siswa.dashboard');
+    Route::get('/dashboard/kaprog', [HakAksesController::class, 'kaprog'])->name('kaprog.dashboard');
+    Route::get('/dashboard/iduka', [HakAksesController::class, 'iduka'])->name('iduka.dashboard');
+    Route::get('/dashboard/guru', [HakAksesController::class, 'guru'])->name('guru.dashboard');
+    Route::get('/dashboard/persuratan', [HakAksesController::class, 'persuratan'])->name('persuratan.dashboard');
+    Route::get('/dashboard/pembmbingpkl', [HakAksesController::class, 'ppkl'])->name('ppkl.dashboard');
+    Route::get('/dashboard/orangtua', [HakAksesController::class, 'orangtua'])->name('orangtua.dashboard');
+    Route::get('/dashboard/pembimbingsekolah', [HakAksesController::class, 'psekolah'])->name('psekolah.dashboard');
 
-    // Iduka
+    // IDUKA
     Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
     Route::get('/data-iduka-detail', [IdukaController::class, 'show'])->name('detail.iduka');
 
-    // siswa
-    Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+    // SISWA
     Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
+    Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+
+    //ORTU
+    Route::get('/data-ortu-create',[OrtuController::class])->name('ortu.create');
 });
 
-// Route::middleware(['auth', 'HakAkses:hubin'])->group(function(){
-//     Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
-//     Route::get('/data-iduka-detail', [IdukaController::class, 'show'])->name('detail.iduka');
+// // HAK AKSES : HUBIN
+// Route::middleware(['auth', 'hakakses:hubin'])->group(function(){
+
+
 // });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
