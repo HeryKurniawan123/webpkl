@@ -19,6 +19,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'nip',
+        'kelas',
         'email',
         'password',
         'role',
@@ -43,4 +45,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function dataPribadi()
+    {
+        return $this->hasOne(DataPribadi::class, 'user_id');
+    }
+
+    public function siswa()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    
 }

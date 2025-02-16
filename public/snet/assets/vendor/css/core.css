@@ -6228,7 +6228,7 @@ a.invert-bg-dark:hover, a.invert-bg-dark:focus {
   letter-spacing: 1px;
 }
 .table:not(.table-dark) th {
-  color: #ffffff;
+  color: #000000;
 }
 
 .table-border-bottom-0 tr:last-child td,

@@ -167,6 +167,12 @@
                                 <div data-i18n="Basic">Data Iduka</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">
+                            <a href="{{ route('siswa.data_pribadi.create') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data siswa</div>
+                            </a>
+                        </li>
 
 
 

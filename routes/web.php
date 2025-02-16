@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\HakAksesController;
-use App\Http\Controllers\IdukaController;
-use App\Http\Controllers\OrtuController;
-use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrtuController;
+use App\Http\Controllers\IdukaController;
+use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\HakAksesController;
+use App\Http\Controllers\DataPribadiController;
 
 
 Route::get('/', function () {
@@ -19,9 +20,38 @@ Route::get('/home', function(){
     return redirect('/logout');
 });
 
-Route::middleware(['auth'])->group(function(){
-    Route::get('/dashboard/hubin', [HakAksesController::class, 'hubin'])->name('hubin.dashboard');
+// Siswa biodata
+Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/dashboard/siswa', [HakAksesController::class, 'siswa'])->name('siswa.dashboard');
+
+    Route::get('/siswa/data-pribadi', [DataPribadiController::class, 'create'])->name('siswa.data_pribadi.create');
+    Route::post('/siswa/data-pribadi', [DataPribadiController::class, 'store'])->name('siswa.data_pribadi.store');
+});
+
+Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
+    Route::get('/dashboard/hubin', [HakAksesController::class, 'hubin'])->name('hubin.dashboard');
+
+    // SISWA
+    Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
+    Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+
+    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
+    Route::get('/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
+    Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
+    Route::get('/siswa/{id}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
+    Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+    Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+    Route::post('/import-siswa', [SiswaController::class, 'importExcel'])->name('siswa.import');
+    Route::put('/siswa/data_pribadi/{id}', [DataPribadiController::class, 'update'])->name('siswa.data_pribadi.update');
+
+
+    
+    Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
+});
+
+Route::middleware(['auth'])->group(function(){
+   
+    
     Route::get('/dashboard/kaprog', [HakAksesController::class, 'kaprog'])->name('kaprog.dashboard');
     Route::get('/dashboard/iduka', [HakAksesController::class, 'iduka'])->name('iduka.dashboard');
     Route::get('/dashboard/guru', [HakAksesController::class, 'guru'])->name('guru.dashboard');
@@ -34,9 +64,7 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
     Route::get('/data-iduka-detail', [IdukaController::class, 'show'])->name('detail.iduka');
 
-    // SISWA
-    Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
-    Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+   
 
     //ORTU
     Route::get('/data-ortu-create',[OrtuController::class])->name('ortu.create');

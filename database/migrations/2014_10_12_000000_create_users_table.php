@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('nip')->unique();
+            $table->string('nip')->unique()->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->string('kelas')->nullable();
             $table->string('password');
             $table->enum('role',['hubin', 'siswa', 'kaprog', 'guru', 'iduka', 'persuratan', 'ppkl', 'orangtua' ,'psekolah'])->default('siswa');
             $table->rememberToken();
