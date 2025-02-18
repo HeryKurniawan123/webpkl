@@ -109,33 +109,33 @@
                                         <div data-i18n="Without menu">TKR (Data Siswa)</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('admin.tkj') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                    <a href="/data-kelas" class="menu-link">
                                         <div data-i18n="Without menu">TKJ</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('admin.pemantauan') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                    <a href="/data-kelas" class="menu-link">
                                         <div data-i18n="Without menu">RPL</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('admin.dpib') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                    <a href="/data-kelas" class="menu-link">
                                         <div data-i18n="Without menu">DPIB</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('admin.akl') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                    <a href="/data-kelas" class="menu-link">
                                         <div data-i18n="Without menu">AKL</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('admin.mp') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                    <a href="/data-kelas" class="menu-link">
                                         <div data-i18n="Without menu">MP</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('admin.sk') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                    <a href="/data-kelas" class="menu-link">
                                         <div data-i18n="Without menu">SK</div>
                                     </a>
                                 </li>
@@ -170,10 +170,27 @@
                         <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('siswa.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data Pribadi Siswa</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
+                            <a href="{{ route('data.siswa') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data siswa</div>
                             </a>
                         </li>
-
+                        <li class="menu-item {{ Request::routeIs('proker.index') ? 'active' : '' }}">
+                            <a href="{{ route('proker.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Program Kerja</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('konke.index') ? 'active' : '' }}">
+                            <a href="{{ route('konke.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Konsentrasi Keahlian</div>
+                            </a>
+                        </li>
 
 
                         <li class="menu-header small text-uppercase">
@@ -328,6 +345,10 @@
 
         <!-- Place this tag in your head or just before your close body tag. -->
         <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+        {{-- sweetAlert2 --}}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 
 </html>

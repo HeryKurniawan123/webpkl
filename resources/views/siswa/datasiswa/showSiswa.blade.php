@@ -7,7 +7,34 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Data Siswa</title>
+        <title>Data Siswa Kelas XII RPL 2</title>
+        <style>
+            .btn-back {
+                background-color: #7e7dfb;
+                color: white;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+            }
+
+            .btn-back:hover {
+                background-color: #7e7dfb;
+                color: white;
+                transform: translateY(-3px);
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); 
+            }
+
+            .btn-back:active {
+                color: white;
+                background-color: #6b6bfa !important; 
+                transform: translateY( 3px); 
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+            }
+        </style>
     </head>
 
     <body>
@@ -16,7 +43,14 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="row">
                         <div class="col-md-12 mt-3">
-                            <div class="d-flex justify-content-end align-items-center mb-2">
+                            <h3>Data Siswa Kelas XII RPL 2</h3>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <form action="#" class="d-flex" style="width: 100%; max-width: 500px;">
+                                    <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Kerja" style="flex: 1; min-width: 250px;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-search"></i> 
+                                    </button>
+                                </form>
                                 <div class="dropdown ms-2">
                                     <button class="btn btn-back dropdown-toggle mb-2"
                                         style="background-color: #7e7dfb; color: white;" type="button"
@@ -49,9 +83,6 @@
                                         </li>
                                     </ul>
                                 </div>
-
-
-
                             </div>
                             <div class="card">
                                 <div class="card-body">
@@ -67,22 +98,21 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($siswa as $index => $s)
                                                 <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $s->name }}</td>
-                                                    <td>{{ $s->nip }}</td>
-                                                    <td>{{ $s->kelas }}</td>
+                                                    <td>1.</td>
+                                                    <td>auliaa</td>
+                                                    <td>123123</td>
+                                                    <td>XIII RPL 5</td>
                                                     <td></td>
                                                     <td>
                                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#editSiswaModal{{ $s->id }}">
+                                                            data-bs-target="#editSiswaModal">
                                                             <i class="bi bi-pen"></i>
                                                         </button>
-                                                        <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm">
+                                                        <a href="" class="btn btn-info btn-sm">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
-                                                        <form action="{{ route('siswa.destroy', $s->id) }}" method="POST"
+                                                        <form action="" method="POST"
                                                             style="display:inline;">
                                                             @csrf
                                                             @method('DELETE')
@@ -91,7 +121,7 @@
                                                         </form>
                                                     </td>
                                                 </tr>
-                                                <div class="modal fade" id="editSiswaModal{{ $s->id }}"
+                                                <div class="modal fade" id="editSiswaModal"
                                                     tabindex="-1" aria-labelledby="editSiswaModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
@@ -100,7 +130,7 @@
                                                                 <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal"></button>
                                                             </div>
-                                                            <form action="{{ route('siswa.update', $s->id) }}"
+                                                            <form action=""
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('PUT')
@@ -108,25 +138,25 @@
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Nama Siswa</label>
                                                                         <input type="text" class="form-control"
-                                                                            name="name" value="{{ $s->name }}"
+                                                                            name="name" value=""
                                                                             required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">NIS</label>
                                                                         <input type="text" class="form-control"
-                                                                            name="nip" value="{{ $s->nip }}"
+                                                                            name="nip" value=""
                                                                             required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Kelas</label>
                                                                         <input type="text" class="form-control"
-                                                                            name="kelas" value="{{ $s->kelas }}"
+                                                                            name="kelas" value=""
                                                                             required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Email</label>
                                                                         <input type="text" class="form-control"
-                                                                            name="email" value="{{ $s->email }}"
+                                                                            name="email" value=""
                                                                             required>
                                                                     </div>
                                                                     <div class="mb-3">
@@ -147,9 +177,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endforeach
                                         </tbody>
                                     </table>
+                                    <div class="d-flex justify-content mt-3 mb-2">
+                                        <a href="{{ route('kelas.index')}}" class="btn btn-primary shadow-sm">
+                                            Kembali
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

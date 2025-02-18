@@ -9,7 +9,7 @@
             <div class="mb-3">
                 <label for="" class="form-label">Nama Ayah</label>
                 <input type="text" class="form-control" id="" name="" placeholder="Masukkan Nama Ayah" required>
-            </div>
+          </div>
             <div class="mb-3">
                 <label for="" class="form-label">Nama Ibu</label>
                 <input type="text" class="form-control" id="" name="" placeholder="Masukkan Nama Ibu" required>

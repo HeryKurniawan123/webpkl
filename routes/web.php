@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\IdukaController;
 use App\Http\Controllers\SiswaController;
@@ -43,10 +44,17 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
     Route::post('/import-siswa', [SiswaController::class, 'importExcel'])->name('siswa.import');
     Route::put('/siswa/data_pribadi/{id}', [DataPribadiController::class, 'update'])->name('siswa.data_pribadi.update');
-
-
-    
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
+    Route::get('/data-siswa-kelas', [SiswaController::class, 'showSiswa'])->name('siswa.kelas');
+
+    //PROKER
+    Route::get('/program-kerja', [DataController::class, 'proker'])->name('proker.index');
+
+    //KONKE
+    Route::get('/konsentrasi-keahlian', [DataController::class, 'konke'])->name('konke.index');
+
+    //KELAS
+    Route::get('/data-kelas', [DataController::class, 'kelas'])->name('kelas.index');
 });
 
 Route::middleware(['auth'])->group(function(){
