@@ -2,11 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataController;
+
 use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\IdukaController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
+use App\Http\Controllers\HubinController;
 
 
 Route::get('/', function () {
@@ -36,6 +38,13 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
     Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
 
+
+    Route::get('/review-pengajuan', [HubinController::class, 'index'])->name('review.pengajuan');
+    Route::get('/detail-pengajuan', [HubinController::class, 'show'])->name('detail.pengajuan');
+    Route::get('/history/diterima', [HubinController::class, 'diterima'])->name('history.diterima');
+    Route::get('/history/ditolak', [HubinController::class, 'ditolak'])->name('history.ditolak');
+
+
     Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::get('/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
     Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
@@ -44,6 +53,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
     Route::post('/import-siswa', [SiswaController::class, 'importExcel'])->name('siswa.import');
     Route::put('/siswa/data_pribadi/{id}', [DataPribadiController::class, 'update'])->name('siswa.data_pribadi.update');
+
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
     Route::get('/data-siswa-kelas', [SiswaController::class, 'showSiswa'])->name('siswa.kelas');
 
@@ -55,6 +65,11 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //KELAS
     Route::get('/data-kelas', [DataController::class, 'kelas'])->name('kelas.index');
+
+
+    
+    Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
+
 });
 
 Route::middleware(['auth'])->group(function(){

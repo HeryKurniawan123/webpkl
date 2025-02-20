@@ -1,3 +1,7 @@
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 @extends('layout.main')
 @section('content')
     <!DOCTYPE html>
@@ -594,3 +598,7 @@
     </html>
 
 @endsection
+<<<<<<< Updated upstream
+=======
+>>>>>>> d8a7063ef89c04c0ad4d5dfddec6961f7982e58c
+>>>>>>> Stashed changes

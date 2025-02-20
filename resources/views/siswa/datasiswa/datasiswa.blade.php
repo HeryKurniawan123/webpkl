@@ -8,6 +8,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Data Siswa</title>
+
+        <style>
+
+        </style>
+
     </head>
 
     <body>
@@ -55,7 +60,11 @@
                             </div>
                             <div class="card">
                                 <div class="card-body">
+<<<<<<< Updated upstream
                                     <table class="table table-hover">
+=======
+                                    <table class="table table-bordered">
+>>>>>>> Stashed changes
                                         <thead>
                                             <tr>
                                                 <th >No</th>
@@ -194,7 +203,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+<<<<<<< Updated upstream
                         <button type="submit" class="btn btn-primary">Simpan Data</button>
+=======
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+>>>>>>> Stashed changes
                     </div>
                 </form>
             </div>

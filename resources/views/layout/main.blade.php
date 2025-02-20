@@ -136,6 +136,33 @@
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
                                     <a href="/data-kelas" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('admin.tkj') ? 'active' : '' }}">
+                                    <a href="" class="menu-link">
+                                        <div data-i18n="Without menu">TKJ</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Request::routeIs('admin.pemantauan') ? 'active' : '' }}">
+                                    <a href="" class="menu-link">
+                                        <div data-i18n="Without menu">RPL</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Request::routeIs('admin.dpib') ? 'active' : '' }}">
+                                    <a href="" class="menu-link">
+                                        <div data-i18n="Without menu">DPIB</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Request::routeIs('admin.akl') ? 'active' : '' }}">
+                                    <a href="" class="menu-link">
+                                        <div data-i18n="Without menu">AKL</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Request::routeIs('admin.mp') ? 'active' : '' }}">
+                                    <a href="" class="menu-link">
+                                        <div data-i18n="Without menu">MP</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item {{ Request::routeIs('admin.sk') ? 'active' : '' }}">
+                                    <a href="" class="menu-link">
                                         <div data-i18n="Without menu">SK</div>
                                     </a>
                                 </li>
@@ -191,8 +218,12 @@
                                 <div data-i18n="Basic">Konsentrasi Keahlian</div>
                             </a>
                         </li>
-
-
+                        <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
+                            <a href="{{ route('review.pengajuan') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Review Pengajuan</div>
+                            </a>
+                        </li>
                         <li class="menu-header small text-uppercase">
                             <span class="menu-header-text">Pusat Control</span>
                         </li>
@@ -348,6 +379,7 @@
 
         {{-- sweetAlert2 --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 </body>
 
