@@ -150,8 +150,8 @@
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('admin.pemantauanGtk') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('guru.index') ? 'active' : '' }}">
+                                    <a href="/data-guru" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>

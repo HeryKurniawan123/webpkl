@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataController;
 
 use App\Http\Controllers\OrtuController;
+use App\Http\Controllers\GuruController;
 use App\Http\Controllers\HubinController;
 use App\Http\Controllers\IdukaController;
 use App\Http\Controllers\KelasController;
@@ -86,6 +87,10 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/kelas/{kelas}', [KelasController::class, 'destroy'])->name('kelas.destroy');
 
     Route::get('/siswa/{id}/kelas', [KelasController::class, 'showSiswa'])->name('siswa.kelas');
+
+    //GURU
+    Route::get('/data-guru', [GuruController::class, 'dataguru'])->name('guru.index');
+    Route::get('/data-guru/detail', [GuruController::class, 'detailGuru'])->name('guru.detail');
 
 
 
