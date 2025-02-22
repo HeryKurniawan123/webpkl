@@ -94,8 +94,8 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/create', [GuruController::class, 'create'])->name('guru.create');
     Route::post('/store', [GuruController::class, 'store'])->name('guru.store');
     Route::get('/data-guru/{guru}/edit', [GuruController::class, 'edit'])->name('guru.edit');
-Route::put('/data-guru/{guru}/update', [GuruController::class, 'update'])->name('guru.update');
-Route::delete('/data-guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
+    Route::put('/data-guru/{guru}/update', [GuruController::class, 'update'])->name('guru.update');
+    Route::delete('/data-guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
 
 
 

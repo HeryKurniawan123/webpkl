@@ -19,7 +19,7 @@ class Konke extends Model
 
     public function gurus()
 {
-    return $this->hasMany(Guru::class, 'konkes_id');
+    return $this->hasMany(Guru::class, 'konkes_id', 'id');
 }
 
 

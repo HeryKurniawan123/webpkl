@@ -26,6 +26,6 @@ class Guru extends Model
     ];
     public function konke()
     {
-        return $this->belongsTo(Konke::class, 'konkes_id'); // Menyambung ke kolom 'konkes_id'
+        return $this->belongsTo(Konke::class, 'konkes_id', 'id');
     }
 }

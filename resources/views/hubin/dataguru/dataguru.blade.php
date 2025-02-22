@@ -19,6 +19,15 @@
                             </button>
                             
                         </div>
+                        @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif  
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -43,7 +52,13 @@
                                             data-bs-target="#editGuruModal{{ $guru->id }}">
                                             <i class="bi bi-pen"></i>
                                         </button>
-                                       
+                                        <form action="{{ route('guru.destroy', $guru->id) }}" method="POST" class="delete-btn d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
 
@@ -55,9 +70,9 @@
                                                 <h1 class="modal-title fs-5" id="editGuruModalLabel{{ $guru->id }}">Form Edit Data Guru</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
-                                            <form action="#" method="POST">
+                                            <form action="{{ route('guru.update', $guru->id) }}" method="POST">
                                                 @csrf
-                                                @method('PUT')
+                                                @method('PUT')                                            
                                                 <div class="modal-body">
                                                     <div class="mb-3">
                                                         <label class="form-label">Nama Guru</label>
