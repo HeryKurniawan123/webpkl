@@ -18,6 +18,7 @@
     <body>
         <div class="container-fluid">
             <div class="content-wrapper">
+                
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="row">
                         <div class="col-md-12 mt-3">
@@ -54,12 +55,18 @@
                                         </li>
                                     </ul>
                                 </div>
-
-
-
                             </div>
                             <div class="card">
                                 <div class="card-body">
+                                    @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    @endif
 
                                     <table class="table table-hover">
 
@@ -211,54 +218,76 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Nama Siswa</label>
-                            <input type="text" class="form-control" name="name" placeholder="Masukkan Nama Siswa"
-                                required>
+                            <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="Masukkan Nama Siswa" required>
+                            @error('name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
+                
                         <div class="mb-3">
                             <label class="form-label">NIS</label>
-                            <input type="text" class="form-control" name="nip" placeholder="Masukkan NISN"
-                                required>
+                            <input type="text" class="form-control" name="nip" value="{{ old('nip') }}" placeholder="Masukkan NISN" required>
+                            @error('nip')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
+                
                         <div class="mb-3">
-                            <label class="form-label">kelas</label>
+                            <label class="form-label">Kelas</label>
                             <select class="form-control" name="kelas_id" required>
                                 <option value="">Pilih Kelas</option>
                                 @foreach ($kelas as $kls)
-                                    <option value="{{ $kls->id }}">{{ $kls->kelas }} {{ $kls->name_kelas }}
+                                    <option value="{{ $kls->id }}" {{ old('kelas_id') == $kls->id ? 'selected' : '' }}>
+                                        {{ $kls->kelas }} {{ $kls->name_kelas }}
                                     </option>
                                 @endforeach
                             </select>
+                            @error('kelas_id')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
+                
                         <div class="mb-3">
                             <label class="form-label">Konsentrasi Keahlian</label>
                             <select class="form-control" name="konke_id" required>
                                 <option value="">Pilih Konsentrasi Keahlian</option>
                                 @foreach ($konke as $k)
-                                    <option value="{{ $k->id }}">{{ $k->name_konke }}</option>
+                                    <option value="{{ $k->id }}" {{ old('konke_id') == $k->id ? 'selected' : '' }}>
+                                        {{ $k->name_konke }}
+                                    </option>
                                 @endforeach
                             </select>
+                            @error('konke_id')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
+                
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="text" class="form-control" name="email" placeholder="Masukkan Email"
-                                required>
+                            <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Masukkan Email" required>
+                            @error('email')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
+                
                         <div class="mb-3">
                             <label class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" placeholder="Masukkan Password"
-                                required>
+                            <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
+                            @error('password')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
+                
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-
                         <button type="submit" class="btn btn-primary">Simpan</button>
-
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    
 
 
     @include('siswa.datasiswa.createSiswa')

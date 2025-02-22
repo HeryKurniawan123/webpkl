@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Konke extends Model
 {
     use HasFactory;
+    protected $table = 'konkes';
 
     protected $fillable = ['name_konke', 'proker_id'];
 
@@ -16,6 +17,10 @@ class Konke extends Model
         return $this->belongsTo(Proker::class);
     }
 
-    
+    public function gurus()
+{
+    return $this->hasMany(Guru::class, 'konkes_id');
+}
+
 
 }
