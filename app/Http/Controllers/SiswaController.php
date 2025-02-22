@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Kelas;
+use App\Models\Konke;
 use App\Imports\SiswaImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,9 +15,13 @@ class SiswaController extends Controller
 {
     public function index()
     {
-        $siswa = User::where('role', 'siswa')->get();
+        $siswa = User::where('role', 'siswa')
+                ->with(['kelas', 'konke'])
+                ->get();
+        $konke = Konke::all();
+        $kelas = Kelas::all();
 
-        return view('siswa.datasiswa.datasiswa', compact('siswa'));
+        return view('siswa.datasiswa.datasiswa', compact('siswa', 'kelas', 'konke'  ));
     }
 
     public function showSiswa() {
@@ -41,7 +47,8 @@ class SiswaController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'nip' => 'required|unique:users,nip',
-            'kelas' => 'required|string|max:255',
+            'kelas_id' =>  'required|exists:kelas,id',
+            'konke_id' => 'required|exists:konkes,id',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6'
         ]);
@@ -49,12 +56,13 @@ class SiswaController extends Controller
         User::create([
             'name' => $request->name,
             'nip' => $request->nip,
-            'kelas' => $request->kelas,
+            'kelas_id' => $request->kelas_id,
+            'konke_id' => $request->konke_id,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'siswa'
         ]);
-        return redirect()->route('siswa.index')->with('success', 'Siswa berhasil ditambahkan.');
+        return redirect(url()->previous())->with('success', 'Siswa berhasil ditambahkan.');
     }
 
 
@@ -66,7 +74,8 @@ class SiswaController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'nip' => "required|unique:users,nip,$id",
-            'kelas' => 'required|string|max:255',
+           'kelas_id' =>  'required|exists:kelas,id',
+            'konke_id' => 'required|exists:konkes,id',
             'email' => "required|email|unique:users,email,$id",
             'password' => 'nullable|min:6',
         ]);
@@ -76,7 +85,8 @@ class SiswaController extends Controller
         $siswa->update([
             'name' => $request->name,
             'nip' => $request->nip,
-            'kelas' => $request->kelas,
+            'kelas_id' => $request->kelas_id,
+            'konke_id' => $request->konke_id,
             'email' => $request->email,
             'password' => $request->password ? Hash::make($request->password) : $siswa->password,
         ]);
@@ -91,7 +101,7 @@ class SiswaController extends Controller
         $siswa = User::findOrFail($id);
         $siswa->delete();
 
-        return redirect()->route('siswa.index')->with('success', 'Siswa berhasil dihapus.');
+        return redirect(url()->previous())->with('success', 'Siswa berhasil dihapus.');
     }
 
     public function importExcel(Request $request)
@@ -108,9 +118,9 @@ class SiswaController extends Controller
     public function dataPribadi()
     {
         $siswa = User::where('role', 'siswa')
-            ->with('dataPribadi') 
+            ->with(['dataPribadi', 'kelas', 'konke']) 
             ->get();
 
-        return view('admin.datasiswa.detailSiswa', compact('siswa'));
+        return view('admin.datasiswa.detailSiswa', compact('siswa', 'kelas', 'konke'));
     }
 }

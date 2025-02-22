@@ -1,7 +1,3 @@
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 @extends('layout.main')
 @section('content')
     <!DOCTYPE html>

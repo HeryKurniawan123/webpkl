@@ -4,11 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataController;
 
 use App\Http\Controllers\OrtuController;
+use App\Http\Controllers\HubinController;
 use App\Http\Controllers\IdukaController;
+use App\Http\Controllers\KelasController;
+use App\Http\Controllers\KonkeController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
-use App\Http\Controllers\HubinController;
 
 
 Route::get('/', function () {
@@ -59,12 +62,31 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //PROKER
     Route::get('/program-kerja', [DataController::class, 'proker'])->name('proker.index');
+    
+    Route::get('/proker', [ProkerController::class, 'index'])->name('proker.index');
+    Route::post('/proker', [ProkerController::class, 'store'])->name('proker.store');
+    Route::put('/proker/{proker}', [ProkerController::class, 'update'])->name('proker.update');
+    Route::delete('/proker/{proker}', [ProkerController::class, 'destroy'])->name('proker.destroy');
 
     //KONKE
     Route::get('/konsentrasi-keahlian', [DataController::class, 'konke'])->name('konke.index');
 
+    Route::get('/konke', [KonkeController::class, 'index'])->name('konke.index');
+    Route::post('/konke', [KonkeController::class, 'store'])->name('konke.store');
+    Route::put('/konke/{konke}', [KonkeController::class, 'update'])->name('konke.update');
+    Route::delete('/konke/{konke}', [KonkeController::class, 'destroy'])->name('konke.destroy');
+
     //KELAS
     Route::get('/data-kelas', [DataController::class, 'kelas'])->name('kelas.index');
+    
+    Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
+    Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
+    
+    Route::put('/kelas/{kelas}', [KelasController::class, 'update'])->name('kelas.update');
+    Route::delete('/kelas/{kelas}', [KelasController::class, 'destroy'])->name('kelas.destroy');
+
+    Route::get('/siswa/{id}/kelas', [KelasController::class, 'showSiswa'])->name('siswa.kelas');
+
 
 
     

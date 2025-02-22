@@ -25,14 +25,14 @@
                 background-color: #7e7dfb;
                 color: white;
                 transform: translateY(-3px);
-                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); 
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
             }
 
             .btn-back:active {
                 color: white;
-                background-color: #6b6bfa !important; 
-                transform: translateY( 3px); 
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+                background-color: #6b6bfa !important;
+                transform: translateY(3px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
         </style>
     </head>
@@ -86,97 +86,110 @@
                             </div>
                             <div class="card">
                                 <div class="card-body">
-                                    <table class="table table-hover">
+                                    <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th >No</th>
+                                                <th>No</th>
                                                 <th>Nama</th>
                                                 <th>NIS</th>
                                                 <th>Kelas</th>
+                                                <th>Konsentrasi Keahlian</th>
                                                 <th>Status</th>
-                                                <th >Aksi</th>
+                                                <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @foreach ($siswa as $index => $s)
                                                 <tr>
-                                                    <td>1.</td>
-                                                    <td>auliaa</td>
-                                                    <td>123123</td>
-                                                    <td>XIII RPL 5</td>
+                                                    <td>{{ $index + 1 }}</td>
+                                                    <td>{{ $s->name }}</td>
+                                                    <td>{{ $s->nip }}</td>
+                                                    <td>{{ optional($s->kelas)->name_kelas ?? '-' }}</td>
+                                                    <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
                                                     <td></td>
                                                     <td>
                                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#editSiswaModal">
+                                                            data-bs-target="#editSiswaModal{{ $s->id }}">
                                                             <i class="bi bi-pen"></i>
                                                         </button>
-                                                        <a href="" class="btn btn-info btn-sm">
+                                                        <a href="{{ route('siswa.detail', $s->id) }}"
+                                                            class="btn btn-info btn-sm">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
-                                                        <form action="" method="POST"
-                                                            style="display:inline;">
+                                                        <form action="{{ route('siswa.destroy', $s->id) }}"
+                                                            method="POST" style="display:inline;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm"
-                                                                onclick="return confirm('Yakin ingin menghapus siswa ini?')">  <i class="bi bi-trash3"></i></button>
+                                                                onclick="return confirm('Yakin ingin menghapus siswa ini?')">
+                                                                <i class="bi bi-trash3"></i></button>
                                                         </form>
                                                     </td>
                                                 </tr>
-                                                <div class="modal fade" id="editSiswaModal"
-                                                    tabindex="-1" aria-labelledby="editSiswaModalLabel" aria-hidden="true">
+        
+                                                <!-- Modal Edit Siswa untuk setiap siswa -->
+                                                <div class="modal fade" id="editSiswaModal{{ $s->id }}" tabindex="-1" aria-labelledby="editSiswaModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title">Edit Data Siswa</h5>
-                                                                <button type="button" class="btn-close"
-                                                                    data-bs-dismiss="modal"></button>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                             </div>
-                                                            <form action=""
-                                                                method="POST">
+                                                            <form action="{{ route('siswa.update', $s->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('PUT')
                                                                 <div class="modal-body">
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Nama Siswa</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="name" value=""
+                                                                        <input type="text" class="form-control" name="name" value="{{ $s->name }}"
                                                                             required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">NIS</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="nip" value=""
+                                                                        <input type="text" class="form-control" name="nip" value="{{ $s->nip }}"
                                                                             required>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Kelas</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="kelas" value=""
-                                                                            required>
+                                                                        <select class="form-control" name="kelas_id" required>
+                                                                            <option value="">Pilih Kelas</option>
+                                                                            @foreach ($kelas as $kls)
+                                                                                <option value="{{ $kls->id }}" {{ $s->kelas_id == $kls->id ? 'selected' : '' }}>
+                                                                                    {{ $kls->kelas }} {{ $kls->name_kelas }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="mb-3">
+                                                                        <label class="form-label"> Konsentrasi Keahlian</label>
+                                                                        <select class="form-control" name="konke_id" required>
+                                                                            <option value="">Pilih Konsentrasi Keahlian</option>
+                                                                            @foreach ($konke as $k)
+                                                                                <option value="{{ $k->id }}" {{ $s->konke_id == $k->id ? 'selected' : '' }}>
+                                                                                    {{ $k->name_konke }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Email</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="email" value=""
+                                                                        <input type="text" class="form-control" name="email" value="{{ $s->email }}"
                                                                             required>
                                                                     </div>
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">Password Baru
-                                                                            (Opsional)
-                                                                        </label>
-                                                                        <input type="password" class="form-control"
-                                                                            name="password">
+                                                                        <label class="form-label">Password Baru (Opsional)</label>
+                                                                        <input type="password" class="form-control" name="password">
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary"
-                                                                        data-bs-dismiss="modal">Batal</button>
-                                                                    <button type="submit" class="btn btn-primary">Simpan
-                                                                        Perubahan</button>
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                                                                 </div>
                                                             </form>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                     <div class="d-flex justify-content mt-3 mb-2">
@@ -191,11 +204,10 @@
                 </div>
             </div>
         </div>
-        </div>
-        </div>
     </body>
     {{-- create datasiswa --}}
-    <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel" aria-hidden="true">
+    <div class="modal fade" id="tambahSiswaModal" tabindex="-1" aria-labelledby="tambahSiswaModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -207,34 +219,54 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Nama Siswa</label>
-                            <input type="text" class="form-control" name="name" placeholder="Masukkan Nama Siswa" required>
+                            <input type="text" class="form-control" name="name" placeholder="Masukkan Nama Siswa"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">NIS</label>
-                            <input type="text" class="form-control" name="nip" placeholder="Masukkan NISN" required>
+                            <input type="text" class="form-control" name="nip" placeholder="Masukkan NISN"
+                                required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Kelas</label>
-                            <input type="text" class="form-control" name="kelas" placeholder="Masukkan Kelas" required>
+                            <label class="form-label">kelas</label>
+                            <select class="form-control" name="kelas_id" required>
+                                <option value="">Pilih Kelas</option>
+                                @foreach ($kelas as $kls)
+                                    <option value="{{ $kls->id }}">{{ $kls->kelas }} {{ $kls->name_kelas }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Konsentrasi Keahlian</label>
+                            <select class="form-control" name="konke_id" required>
+                                <option value="">Pilih Konsentrasi Keahlian</option>
+                                @foreach ($konke as $k)
+                                    <option value="{{ $k->id }}">{{ $k->name_konke }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="text" class="form-control" name="email" placeholder="Masukkan Email" required>
+                            <input type="text" class="form-control" name="email" placeholder="Masukkan Email"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" placeholder="Masukkan Password"  required>
+                            <input type="password" class="form-control" name="password" placeholder="Masukkan Password"
+                                required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan Data</button>
+
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
 
     @include('siswa.datasiswa.createSiswa')
     @include('siswa.datasiswa.editSiswa')

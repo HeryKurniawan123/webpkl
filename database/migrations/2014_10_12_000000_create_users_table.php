@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('nip')->unique()->nullable();
             $table->string('email')->unique()->nullable();
-            $table->string('kelas')->nullable();
+            $table->foreignId('kelas_id')->constrained('kelas')->onDelete('cascade');
+            $table->foreignId('konke_id')->constrained('konkes')->onDelete('cascade');
             $table->string('password');
             $table->enum('role',['hubin', 'siswa', 'kaprog', 'guru', 'iduka', 'persuratan', 'ppkl', 'orangtua' ,'psekolah'])->default('siswa');
             $table->rememberToken();

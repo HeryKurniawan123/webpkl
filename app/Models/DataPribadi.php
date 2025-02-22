@@ -13,13 +13,28 @@ class DataPribadi extends Model
         'user_id',
         'name',
         'nip',
-        'konsentrasi_keahlian',
-        'kelas',
+        'konke_id',
+        'kelas_id',
+        'alamat_siswa',
+        'no_hp',
+        'jk',
+        'agama',
+        'tempat_lhr',
+        'tgl_lahir',
         'email',
+
         'name_ayh',
+        'nik_ayh',
+        'tempat_lhr_ayh',
+        'tgl_lahir_ayh',
+        'pekerjaan_ayh',
+
         'name_ibu',
-        'nik',
-        'alamat',
+        'nik_ibu',
+        'tempat_lhr_ibu',
+        'tgl_lahir_ibu',
+        'pekerjaan_ibu',
+
         'email_ortu',
         'no_tlp',
     ];
@@ -32,5 +47,15 @@ class DataPribadi extends Model
     public function siswa()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function konke()
+    {
+        return $this->belongsTo(Konke::class, 'konke_id'); // Perbaiki relasi
+    }
+
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 }

@@ -119,7 +119,7 @@
                                 <div class="card-body">
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="dataPribadi" role="tabpanel">
-                                            <h4>Data Pribadi</h4>
+                                            <h3>Data Pribadi</h3>
 
                                             <table class="table table-striped">
                                                 <tr>
@@ -133,22 +133,54 @@
                                                     <td>{{ $siswa->nip }}</td>
                                                 </tr>
                                                 <tr>
+                                                    <td>Kelas</td>
+                                                    <td>:</td>
+                                                    <td>{{ optional($siswa->kelas)->name_kelas ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
                                                     <td>Konsentrasi Keahlian</td>
                                                     <td>:</td>
-                                                    <td>{{ optional($siswa->dataPribadi)->konsentrasi_keahlian ?? '-' }}
+                                                    <td>{{ optional($siswa->konke)->name_konke ?? '-' }}
                                                     </td>
                                                 </tr>
 
                                                 <tr>
-                                                    <td>Kelas</td>
+                                                    <td>Alamat</td>
                                                     <td>:</td>
-                                                    <td>{{ $siswa->kelas }}</td>
+                                                    <td>{{ optional($siswa->dataPribadi)->alamat_siswa }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>No Tlp Siswa</td>
+                                                    <td>:</td>
+                                                    <td>{{optional($siswa->dataPribadi)->no_hp }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jenis Kelamin</td>
+                                                    <td>:</td>
+                                                    <td>{{ optional($siswa->dataPribadi)->jk }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Agama</td>
+                                                    <td>:</td>
+                                                    <td>{{ optional($siswa->dataPribadi)->agama }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tempat Lahir</td>
+                                                    <td>:</td>
+                                                    <td>{{ optional($siswa->dataPribadi)->tempat_lhr }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tanggal Lahir</td>
+                                                    <td>:</td>
+                                                    <td>{{ optional($siswa->dataPribadi)->tgl_lahir }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Email</td>
                                                     <td>:</td>
                                                     <td>{{ $siswa->email }}</td>
                                                 </tr>
+
+                            
                                                 <tr>
                                                     <td>Password</td>
                                                     <td>:</td>
@@ -159,7 +191,8 @@
                                         </div>
 
                                         <div class="tab-pane fade" id="dataOrangTua" role="tabpanel">
-                                            <h5>Data Orang Tua</h5>
+                                            <h3>Data Orang Tua</h3>
+                                            <h5>Data Ayah</h5>
                                             @if ($siswa->dataPribadi)
                                                 <table class="table table-striped">
                                                     <tr>
@@ -168,6 +201,30 @@
                                                         <td>{{ $siswa->dataPribadi->name_ayh ?? '-' }}</td>
                                                     </tr>
                                                     <tr>
+                                                        <td>NIK</td>
+                                                        <td>:</td>
+                                                        <td>{{ $siswa->dataPribadi->nik_ayh ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tempat Lahir</td>
+                                                        <td>:</td>
+                                                        <td>{{ $siswa->dataPribadi->tempat_lhr_ayh ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tanggal Lahir</td>
+                                                        <td>:</td>
+                                                        <td>{{ $siswa->dataPribadi->tgl_lahir_ayh ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Pekerjaan</td>
+                                                        <td>:</td>
+                                                        <td>{{ $siswa->dataPribadi->pekerjaan_ayh ?? '-' }}</td>
+                                                    </tr>
+                                                </table>
+                                                <table class="table table-striped"><br>
+                                                    <h5>Data Ibu</h5>
+
+                                                    <tr>
                                                         <td>Nama Ibu</td>
                                                         <td>:</td>
                                                         <td>{{ $siswa->dataPribadi->name_ibu ?? '-' }}</td>
@@ -175,13 +232,26 @@
                                                     <tr>
                                                         <td>NIK</td>
                                                         <td>:</td>
-                                                        <td>{{ $siswa->dataPribadi->nik ?? '-' }}</td>
+                                                        <td>{{ $siswa->dataPribadi->nik_ibu ?? '-' }}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Alamat</td>
+                                                        <td>Tempat Lahir</td>
                                                         <td>:</td>
-                                                        <td>{{ $siswa->dataPribadi->alamat ?? '-' }}</td>
+                                                        <td>{{ $siswa->dataPribadi->tempat_lhr_ibu ?? '-' }}</td>
                                                     </tr>
+                                                    <tr>
+                                                        <td>Tanggal Lahir</td>
+                                                        <td>:</td>
+                                                        <td>{{ $siswa->dataPribadi->tgl_lahir_ibu ?? '-' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Pekerjaan</td>
+                                                        <td>:</td>
+                                                        <td>{{ $siswa->dataPribadi->pekerjaan_ibu ?? '-' }}</td>
+                                                    </tr>
+                                                </table>
+                                                <table class="table table-striped"><br>
+                                                    <h5>Kontak Orang Tua</h5>
                                                     <tr>
                                                         <td>Email </td>
                                                         <td>:</td>

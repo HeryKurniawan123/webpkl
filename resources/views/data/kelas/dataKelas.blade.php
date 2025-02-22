@@ -46,143 +46,176 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="content-wrapper">
-            <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <form action="#" class="d-flex" style="width: 100%; max-width: 500px;">
-                            <input type="text" name="search" class="form-control me-2" placeholder="Cari Kelas" style="flex: 1; min-width: 250px;">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-search"></i> 
-                            </button>
-                        </form>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahKelasModal">
-                            Tambah Data
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="row"><br><br><br>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <form action="{{ route('kelas.index') }}" class="d-flex" style="width: 100%; max-width: 500px;">
+                        <input type="text" name="search" class="form-control me-2" placeholder="Cari Kelas" style="flex: 1; min-width: 250px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i>
                         </button>
-                    </div>
+                    </form>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahKelasModal">
+                        Tambah Data
+                    </button>
+                </div>
+                
+                @foreach ($kelas as $item)
                     <div class="col-md-4">
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div class="mb-0" style="font-size: 18px">XII RPL 2</div>
+                                    <div class="mb-0" style="font-size: 18px">{{ $item->kelas }} {{ $item->name_kelas }} </div>
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    <a href="{{ route('siswa.kelas') }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    <a href="{{ route('siswa.kelas', ['id' => $item->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+
                                     <div class="dropdown ms-2">
-                                        <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            ⋮
-                                        </button>
+                                        <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋮</button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                 {{-- <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus iduka ini?');">
+                                                <form action="{{ route('kelas.destroy', $item->id) }}" method="POST" class="delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">Hapus</button>
-                                                </form> --}}
-                                                <button type="submit" class="dropdown-item text-danger delete-btn">Hapus</button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item text-warning" data-bs-toggle="modal"
+                                                            data-bs-target="#editKelasModal{{ $item->id }}">
+                                                            Edit
+                                                        </button>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
-                        </div> 
-                    </div>   
-                </div>
-                    {{-- create proker --}}
-                    <div class="modal fade" id="tambahKelasModal" tabindex="-1" aria-labelledby="tambahKelasModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1 class="modal-title fs-5" id="tambahKelasModalLabel">Form Tambah Kelas</h1>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="program_kerja" class="form-label">Kelas</label>
-                                    <select class="form-control" id="program_kerja" name="program_kerja" required>
-                                        <option value="">Pilih Kelas</option> <!--ngambil proker_id-->
-                                        <option value="">XI</option>
-                                        <option value="">XII</option>
-                                        {{-- @foreach($programKerja as $program)
-                                            <option value="{{ $program->id }}">{{ $program->nama }}</option>
-                                        @endforeach --}}
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="program_kerja" class="form-label">Konsentrasi Keahlian</label>
-                                    <select class="form-control" id="program_kerja" name="program_kerja" required>
-                                        <option value="">Pilih Konsentrasi Keahlian</option> <!--ngambil proker_id-->
-                                        <option value="">Rekayasa Perangkat Lunak</option>
-                                        {{-- @foreach($programKerja as $program)
-                                            <option value="{{ $program->id }}">{{ $program->nama }}</option>
-                                        @endforeach --}}
-                                    </select>
-                                </div> 
-                                <div class="mb-3">
-                                    <label for="" class="form-label">Kelas</label>
-                                    <input type="text" class="form-control" id="" name="" placeholder="Masukkan Program Kerja" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                              <button type="button" class="btn btn-primary">Simpan Data</button>
-                            </div>
-                          </div>
                         </div>
                     </div>
-
-                    {{-- edit proker --}}
-                    <div class="modal fade" id="editProker" tabindex="-1" aria-labelledby="editProkerLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1 class="modal-title fs-5" id="editProkerLabel">Form Edit Program Kerja</h1>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="" class="form-label">Program Kerja</label>
-                                    <input type="text" class="form-control" id="" name="" placeholder="Masukkan Program Kerja" required>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                              <button type="button" class="btn btn-primary">Simpan Perubahan</button>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.querySelectorAll('.delete-btn').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); 
+<!-- Modal Tambah Kelas -->
+<div class="modal fade" id="tambahKelasModal" tabindex="-1" aria-labelledby="tambahKelasModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tambahKelasModalLabel">Form Tambah Kelas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('kelas.store') }}" method="POST">
+                @csrf
+                
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Kelas</label>
+                        <select class="form-control" name="kelas" required>
+                            <option value="">Pilih Kelas</option>
+                            <option value="X">X</option>
+                            <option value="XI">XI</option>
+                            <option value="XII">XII</option>
+                        </select>
+                    </div>
+                      <div class="mb-3">
+                        <label class="form-label">Konsentrasi Keahlian</label>
+                        <select class="form-control" name="konke_id" required>
+                            <option value="">Pilih Konsentrasi Keahlian</option>
+                            @foreach($konke as $k)
+                                <option value="{{ $k->id }}">{{ $k->name_konke }}</option>
+                            @endforeach
+                        </select>
+                    </div>        
+                    <div class="mb-3">
+                        <label for="nama_kelas" class="form-label">Nama Kelas</label>
+                        <input type="text" class="form-control" id="name_kelas" name="name_kelas" placeholder="Masukkan Nama Kelas" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
+<div class="modal fade" id="editKelasModal{{ $item->id }}" tabindex="-1" aria-labelledby="editKelasModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editKelasModalLabel">Form Tambah Kelas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('kelas.update', $item->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Kelas</label>
+                        <select class="form-control" name="kelas" required>
+                            <option value="">Pilih Kelas</option>
+                            <option value="X" {{ $item->kelas == 'X' ? 'selected' : '' }}>X</option>
+                            <option value="XI" {{ $item->kelas == 'XI' ? 'selected' : '' }}>XI</option>
+                            <option value="XII" {{ $item->kelas == 'XII' ? 'selected' : '' }}>XII</option>
+                        </select>
+                    </div>
+                    
+                      <div class="mb-3">
+                        <label class="form-label">Konsentrasi Keahlian</label>
+                        <select class="form-control" name="konke_id" required>
+                            <option value="">Pilih Konsentrasi Keahlian</option>
+                            @foreach($konke as $k)
+                            <option value="{{ $k->id }}" {{ $item->konke_id == $k->id ? 'selected' : '' }}>
+                                {{ $k->konke }} {{ $k->name_konke }}
+                            </option>
+                            @endforeach
+                           
+                        </select>
+                    </div>        
+                    <div class="mb-3">
+                        <label for="nama_kelas" class="form-label">Nama Kelas</label>
+                        <input type="text" class="form-control" id="name_kelas" name="name_kelas" value="{{ $item->name_kelas }}" placeholder="Masukkan Nama Kelas" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.delete-btn').forEach(form => {
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); 
+
+        Swal.fire({
+        title: "Apakah kamu yakin?",
+        text: "Data ini tidak bisa dikembalikan!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!"
+        }).then((result) => {
+        if (result.isConfirmed) {
             Swal.fire({
-            title: "Apakah kamu yakin?",
-            text: "Data ini tidak bisa dikembalikan!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Ya, Hapus!"
-            }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                title: "Berhasil dihapus!",
-                text: "Data telah dihapus.",
-                icon: "success"
-                });
-            }
+            title: "Berhasil dihapus!",
+            text: "Data telah dihapus.",
+            icon: "success"
             });
+        }
         });
     });
-    </script>
+});
+</script>
 </body>
 </html>
 @endsection

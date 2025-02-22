@@ -110,59 +110,33 @@
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="/data-kelas" class="menu-link">
+                                    <a href="{{ route('kelas.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">TKJ</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="/data-kelas" class="menu-link">
+                                    <a href="{{ route('kelas.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">RPL</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="/data-kelas" class="menu-link">
+                                    <a href="{{ route('kelas.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">DPIB</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="/data-kelas" class="menu-link">
+                                    <a href="{{ route('kelas.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">AKL</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="/data-kelas" class="menu-link">
+                                    <a href="{{ route('kelas.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">MP</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="/data-kelas" class="menu-link">
-                                <li class="menu-item {{ Request::routeIs('admin.tkj') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
-                                        <div data-i18n="Without menu">TKJ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('admin.pemantauan') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
-                                        <div data-i18n="Without menu">RPL</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('admin.dpib') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
-                                        <div data-i18n="Without menu">DPIB</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('admin.akl') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
-                                        <div data-i18n="Without menu">AKL</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('admin.mp') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
-                                        <div data-i18n="Without menu">MP</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('admin.sk') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                    <a href="{{ route('kelas.index') }}" class="menu-link">
+                        
                                         <div data-i18n="Without menu">SK</div>
                                     </a>
                                 </li>

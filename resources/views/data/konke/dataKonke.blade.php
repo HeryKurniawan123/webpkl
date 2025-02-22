@@ -1,22 +1,15 @@
 @extends('layout.main')
+
 @section('content')
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Konsentrasi Keahlian</title>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="content-wrapper">
-            <div class="container-xxl fluid flex-grow-1 container-p-y">
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="row">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <form action="#" class="d-flex" style="width: 100%; max-width: 500px;">
-                                <input type="text" name="search" class="form-control me-2" placeholder="Cari Konsentrasi Keahlian" style="flex: 1; min-width: 250px;">
+                            <form action="{{ route('konke.index') }}" method="GET" class="d-flex" style="width: 100%; max-width: 500px;">
+                                <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Kerja" style="flex: 1; min-width: 250px;">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-search"></i> 
                                 </button>
@@ -28,131 +21,128 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <td>No</td>
-                                    <td>Konsentrasi Keahlian</td>
-                                    <td>Program Kerja</td>
-                                    <td>Aksi</td>
+                                    <th>No</th>
+                                    <th>Konsentrasi keahlian</th>
+                                    <th>Program Kerja</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($konke as $index => $k)
                                 <tr>
-                                    <td>No</td>
-                                    <td>Konsentrasi Keahlian</td>
-                                    <td>Program Kerja</td>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $k->name_konke }}</td>
+                                    <td>{{ $k->proker->name }}</td>
                                     <td>
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editKonkeModal">
+                                            data-bs-target="#editKonkeModal{{ $k->id }}">
                                             <i class="bi bi-pen"></i>
                                         </button>
-                                        {{-- <a href="#" class="btn btn-info btn-sm">
-                                            <i class="bi bi-eye"></i>
-                                        </a> --}}
-                                        <form action="#" style="display:inline;" class="delete-btn">
+                                        <form action="{{ route('konke.destroy', $k->id) }}" method="POST" class="delete-btn d-inline">
+                                            @csrf
+                                            @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm">
                                                 <i class="bi bi-trash3"></i>
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
-                
-                {{-- create konke --}}
-                <div class="modal fade" id="tambahKonkeModal" tabindex="-1" aria-labelledby="tambahKonkeModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="tambahKonkeModalLabel">Form Tambah Konsentrasi Keahlian</h1>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="" class="form-label">Konsentrasi Keahlian</label>
-                                <input type="text" class="form-control" id="" name="" placeholder="Masukkan Konsentrasi Keahlian" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="program_kerja" class="form-label">Program Kerja</label>
-                                <select class="form-control" id="program_kerja" name="program_kerja" required>
-                                    <option value="">Pilih Program Kerja</option> <!--mengambil proker_id-->
-                                    <option value="">Teknik</option>
-                                    {{-- @foreach($programKerja as $program)
-                                        <option value="{{ $program->id }}">{{ $program->nama }}</option>
-                                    @endforeach --}}
-                                </select>
-                            </div>                            
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                          <button type="button" class="btn btn-primary">Simpan Data</button>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-                
-                {{-- create konke --}}
-                <div class="modal fade" id="editKonkeModal" tabindex="-1" aria-labelledby="editKonkeModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="editKonkeModalLabel">Form Edit Konsentrasi Keahlian</h1>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="" class="form-label">Konsentrasi Keahlian</label>
-                                <input type="text" class="form-control" id="" name="" placeholder="Masukkan Konsentrasi Keahlian" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="program_kerja" class="form-label">Program Kerja</label>
-                                <select class="form-control" id="program_kerja" name="program_kerja" required>
-                                    <option value="">Pilih Program Kerja</option> <!--mengambil proker_id-->
-                                    <option value="">Teknik</option>
-                                    {{-- @foreach($programKerja as $program)
-                                        <option value="{{ $program->id }}">{{ $program->nama }}</option>
-                                    @endforeach --}}
-                                </select>
-                            </div>                            
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                          <button type="button" class="btn btn-primary">Simpan Perubahan</button>
-                        </div>
-                      </div>
-                    </div>
-                </div>
+
+{{-- Modal Tambah Data --}}
+<div class="modal fade" id="tambahKonkeModal" tabindex="-1" aria-labelledby="tambahKonkeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Tambah Konsentrasi Keahlian</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <form action="{{ route('konke.store') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Konsentrasi Keahlian</label>
+                        <input type="text" class="form-control" name="name_konke" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Program Kerja</label>
+                        <select class="form-control" name="proker_id" required>
+                            <option value="">Pilih Program Kerja</option>
+                            @foreach($proker as $p)
+                                <option value="{{ $p->id }}">{{ $p->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>                            
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+{{-- Modal Edit Data --}}
+@foreach ($konke as $k)
+<div class="modal fade" id="editKonkeModal{{ $k->id }}" tabindex="-1" aria-labelledby="editKonkeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Edit Konsentrasi Keahlian</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('konke.update', $k->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Konsentrasi Keahlian</label>
+                        <input type="text" class="form-control" name="name_konke" value="{{ $k->name_konke }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Program Kerja</label>
+                        <select class="form-control" name="proker_id" required>
+                            <option value="">Pilih Program Kerja</option>
+                            @foreach($proker as $p)
+                                <option value="{{ $p->id }}" {{ $k->proker_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>                            
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        document.querySelectorAll('.delete-btn').forEach(form => {
+<script>
+    document.querySelectorAll('.delete-btn').forEach(form => {
         form.addEventListener('submit', function(event) {
             event.preventDefault(); 
-
+    
             Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+                title: "Apakah kamu yakin?",
+                text: "Data ini tidak bisa dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, Hapus!"
             }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                icon: "success"
-                });
-            }
+                if (result.isConfirmed) {
+                    form.submit();
+                }
             });
         });
     });
     </script>
-</body>
-</html>
-    
 @endsection
+

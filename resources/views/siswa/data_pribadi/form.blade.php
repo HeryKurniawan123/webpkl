@@ -36,47 +36,127 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Konsentrasi Keahlian</label>
-                        <input type="text" name="konsentrasi_keahlian" class="form-control"
-                            value="{{ old('konsentrasi_keahlian', $dataPribadi->konsentrasi_keahlian ?? '') }}"
-                            required>
+                        <label class="form-label">Kelas</label>
+                        <select class="form-control" name="kelas_id" required>
+                            <option value="">Pilih Kelas</option>
+                            @foreach($kelas as $kls)
+                                <option value="{{ $kls->id }}" 
+                                    {{ $siswa->kelas_id == $kls->id ? 'selected' : '' }}>
+                                    {{ $kls->kelas }} {{ $kls->name_kelas }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>     
+                    <div class="mb-3">
+                        <label class="form-label"> Konsentrasi Keahlian</label>
+                        <select class="form-control" name="konke_id" required>
+                            <option value="">Pilih Konsentrasi Keahlian</option>
+                            @foreach($konke as $k)
+                                <option value="{{ $k->id }}" 
+                                    {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
+                                    {{ $k->name_konke }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>     
+                    <div class="mb-3">
+                        <label class="form-label">Alamat</label>
+                        <textarea name="alamat_siswa" class="form-control" required>{{ old('alamat_siswa', $dataPribadi->alamat_siswa ?? '') }}</textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Kelas</label>
-                        <input type="text" name="kelas" class="form-control"
-                            value="{{ old('kelas', $siswa->kelas ?? '') }}" required>
+                        <label class="form-label">No Tlp Siswa</label>
+                        <input type="text" name="no_hp" class="form-control"
+                        value="{{ old('no_hp', $siswa->no_hp ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jenis Kelamin</label>
+                        <select class="form-control" name="jk" required>
+                            <option value="">Pilih Jenis Kelamin</option>
+                            <option value="laki_laki">Laki-laki</option>
+                            <option value="perempuan">Perempuan</option>
+                           
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Agama</label>
+                        <input type="text" name="agama" class="form-control"
+                        value="{{ old('agama', $siswa->agama ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tempat Lahir</label>
+                        <input type="text" name="tempat_lhr" class="form-control"
+                        value="{{ old('tempat_lhr', $siswa->tempat_lhr ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal Lahir</label>
+                        <input type="date" name="tgl_lahir" class="form-control"
+                        value="{{ old('tgl_lahir', $siswa->tgl_lahir ?? '') }}" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="email" name="email" class="form-control"
                             value="{{ old('email', $siswa->email ?? '') }}" required>
-                    </div>
-
+                    </div><br>
+                    {{-- ayah --}}
+                    <h1 class="h3 mb-2 text-gray-800">Data Orang Tua</h1><br>
+                    <h3 class="h5 mb-2 text-gray-800 " style="color: #696cff;">Data Ayah</h3>
                     <div class="mb-3">
                         <label class="form-label">Nama Ayah</label>
                         <input type="text" name="name_ayh" class="form-control"
                             value="{{ old('name_ayh', $dataPribadi->name_ayh ?? '') }}" required>
                     </div>
-
+                    <div class="mb-3">
+                        <label class="form-label">NIK Ayah</label>
+                        <input type="text" name="nik_ayh" class="form-control"
+                            value="{{ old('nik_ayh', $dataPribadi->nik_ayh ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tempat Lahir Ayah</label>
+                        <input type="text" name="tempat_lhr_ayh" class="form-control"
+                            value="{{ old('tempat_lhr_ayh', $dataPribadi->tempat_lhr_ayh ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal Lahir Ayah</label>
+                        <input type="date" name="tgl_lahir_ayh" class="form-control"
+                            value="{{ old('tgl_lahir_ayh', $dataPribadi->tgl_lahir_ayh ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pekerjaan Ayah</label>
+                        <input type="text" name="pekerjaan_ayh" class="form-control"
+                            value="{{ old('pekerjaan_ayh', $dataPribadi->pekerjaan_ayh ?? '') }}" required>
+                    </div><br>
+                    {{-- ibu --}}
+                    <h3 class="h5 mb-2 text-gray-800 " style="color: #696cff;">Data Ibu</h3>
                     <div class="mb-3">
                         <label class="form-label">Nama Ibu</label>
                         <input type="text" name="name_ibu" class="form-control"
                             value="{{ old('name_ibu', $dataPribadi->name_ibu ?? '') }}" required>
                     </div>
-
                     <div class="mb-3">
-                        <label class="form-label">NIK</label>
-                        <input type="text" name="nik" class="form-control"
-                            value="{{ old('nik', $dataPribadi->nik ?? '') }}" required>
+                        <label class="form-label">NIK Ibu</label>
+                        <input type="text" name="nik_ibu" class="form-control"
+                            value="{{ old('nik_ibu', $dataPribadi->nik_ibu ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tempat Lahir Ibu</label>
+                        <input type="text" name="tempat_lhr_ibu" class="form-control"
+                            value="{{ old('tempat_lhr_ibu', $dataPribadi->tempat_lhr_ibu ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal Lahir Ibu</label>
+                        <input type="date" name="tgl_lahir_ibu" class="form-control"
+                            value="{{ old('tgl_lahir_ibu', $dataPribadi->tgl_lahir_ibu ?? '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pekerjaan Ibu</label>
+                        <input type="text" name="pekerjaan_ibu" class="form-control"
+                            value="{{ old('pekerjaan_ibu', $dataPribadi->pekerjaan_ibu ?? '') }}" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea name="alamat" class="form-control" required>{{ old('alamat', $dataPribadi->alamat ?? '') }}</textarea>
-                    </div>
-
+                   
+                    {{-- info ortu --}} 
                     <div class="mb-3">
                         <label class="form-label">Email Orang Tua</label>
                         <input type="email" name="email_ortu" class="form-control"
