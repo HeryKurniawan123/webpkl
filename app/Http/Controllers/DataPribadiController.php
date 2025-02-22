@@ -50,9 +50,17 @@ class DataPribadiController extends Controller
             'tempat_lhr_ibu' => 'required|string',
             'tanggal_lahir_ibu' => 'nullable|date',
             'pekerjaan_ibu' => 'nullable|string',
-
+            'password' => 'required|string|min:6',
             'email_ortu' => 'required|email|unique:data_pribadis,email_ortu,' . ($dataPribadi->id ?? 'null') . ',id',
             'no_tlp' => 'required|string|max:15|unique:data_pribadis,no_tlp,' . ($dataPribadi->id ?? 'null') . ',id',
+        ]);
+
+         // Simpan ke tabel users
+         User::create([
+            'name' => $request->name_ibu, // Masuk ke kolom name di users
+            'nip' => $request->nik_ibu, // Masuk ke kolom nip di users
+            'password' => Hash::make($request->password), // Hashing password
+            'role' => 'orangtua', // Set default role sebagai 'iduka'
         ]);
 
         $data = array_merge(

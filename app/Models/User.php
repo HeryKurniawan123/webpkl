@@ -27,6 +27,11 @@ class User extends Authenticatable
         'role',
     ];
 
+    public function iduka()
+    {
+        return $this->belongsTo(Iduka::class, 'nip', 'email');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

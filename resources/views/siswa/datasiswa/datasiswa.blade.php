@@ -140,7 +140,7 @@
                                                                                     <option value="{{ $kls->id }}"
                                                                                         {{ $s->kelas_id == $kls->id ? 'selected' : '' }}>
                                                                                         {{ $kls->kelas }}
-                                                                                        {{ $kls->name_kelas }}
+                                                                                        {{ $kls->name_kelas }}  
                                                                                     </option>
                                                                                 @endforeach
                                                                             </select>

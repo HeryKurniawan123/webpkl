@@ -17,12 +17,12 @@ use App\Http\Controllers\DataPribadiController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::middleware(['guest'])->group(function(){
+Route::middleware(['guest'])->group(function () {
     Route::get('/login', [HakAksesController::class, 'index'])->name('login');
     Route::post('/login', [HakAksesController::class, 'login']);
 });
 
-Route::get('/home', function(){
+Route::get('/home', function () {
     return redirect('/logout');
 });
 
@@ -62,7 +62,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //PROKER
     Route::get('/program-kerja', [DataController::class, 'proker'])->name('proker.index');
-    
+
     Route::get('/proker', [ProkerController::class, 'index'])->name('proker.index');
     Route::post('/proker', [ProkerController::class, 'store'])->name('proker.store');
     Route::put('/proker/{proker}', [ProkerController::class, 'update'])->name('proker.update');
@@ -78,10 +78,10 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //KELAS
     Route::get('/data-kelas', [DataController::class, 'kelas'])->name('kelas.index');
-    
+
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
     Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
-    
+
     Route::put('/kelas/{kelas}', [KelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{kelas}', [KelasController::class, 'destroy'])->name('kelas.destroy');
 
@@ -89,14 +89,13 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
 
 
-    
-    Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
 
+    Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
 });
 
-Route::middleware(['auth'])->group(function(){
-   
-    
+Route::middleware(['auth'])->group(function () {
+
+
     Route::get('/dashboard/kaprog', [HakAksesController::class, 'kaprog'])->name('kaprog.dashboard');
     Route::get('/dashboard/iduka', [HakAksesController::class, 'iduka'])->name('iduka.dashboard');
     Route::get('/dashboard/guru', [HakAksesController::class, 'guru'])->name('guru.dashboard');
@@ -107,12 +106,16 @@ Route::middleware(['auth'])->group(function(){
 
     // IDUKA
     Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
-    Route::get('/data-iduka-detail', [IdukaController::class, 'show'])->name('detail.iduka');
+    Route::get('/iduka/{id}', [IdukaController::class, 'show'])->name('detail.iduka');
+    Route::post('/iduka/store', [IdukaController::class, 'store'])->name('iduka.store');
+    Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
+    Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
 
-   
+
+
 
     //ORTU
-    Route::get('/data-ortu-create',[OrtuController::class])->name('ortu.create');
+    Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');
 });
 
 // // HAK AKSES : HUBIN

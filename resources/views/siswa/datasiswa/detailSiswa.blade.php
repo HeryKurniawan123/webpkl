@@ -16,7 +16,7 @@
             .nav-tabs .nav-link {
                 background-color: white;
                 color: white;
-                border: 1px solid #white;
+                border: 1px solid white;
 
             }
 
@@ -184,7 +184,7 @@
                                                 <tr>
                                                     <td>Password</td>
                                                     <td>:</td>
-                                                    <td>******</td>
+                                                    <td>**</td>
                                                 </tr>
 
                                             </table>
@@ -308,12 +308,38 @@
                         <div class="mb-3">
                             <label class="form-label">Konsentrasi Keahlian</label>
                             <input type="text" class="form-control" name="konsentrasi_keahlian"
-                                value="{{ optional($siswa->dataPribadi)->konsentrasi_keahlian }}" >
+                                value="{{ optional($siswa->konke)->name_konke }}" >
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Kelas</label>
-                            <input type="text" class="form-control" name="kelas" value="{{ $siswa->kelas }}" required>
+                            <input type="text" class="form-control" name="kelas"   value="{{ optional($siswa->kelas)->name_kelas }}" required>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Alamat</label>
+                            <input type="text" class="form-control" name="alamat" value="{{ optional($siswa->dataPribadi)->alamat_siswa }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">No Tlp Siswa</label>
+                            <input type="text" class="form-control" name="no_hp" value="{{ optional($siswa->dataPribadi)->no_hp }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jenis Kelamin</label>
+                            <input type="text" class="form-control" name="jk" value="{{ optional($siswa->dataPribadi)->jk }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Agama</label>
+                            <input type="text" class="form-control" name="agama" value="{{ optional($siswa->dataPribadi)->agama }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tampat Lahir</label>
+                            <input type="text" class="form-control" name="tempat_lhr" value="{{ optional($siswa->dataPribadi)->tempat_lhr }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal lahir</label>
+                            <input type="date" class="form-control" name="tgl_lahir" value="{{ optional($siswa->dataPribadi)->tgl_lahir }}" required>
+                        </div>
+
+
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="text" class="form-control" name="email" value="{{ $siswa->email }}" required>
@@ -359,20 +385,54 @@
                             value="{{ optional($siswa->dataPribadi)->name_ayh }}" required>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">NIK Ayah</label>
+                        <input type="text" class="form-control" name="nik_ayh"
+                            value="{{ optional($siswa->dataPribadi)->nik_ayh }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tempat Lahir Ayah</label>
+                        <input type="text" class="form-control" name="tempat_lhr_ayh"
+                            value="{{ optional($siswa->dataPribadi)->tempat_lhr_ayh }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal Lahir Ayah</label>
+                        <input type="text" class="form-control" name="tgl_lahir_ayh"
+                            value="{{ optional($siswa->dataPribadi)->tgl_lahir_ayh }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pekerjaan Ayah</label>
+                        <input type="text" class="form-control" name="pekerjaan_ayh"
+                            value="{{ optional($siswa->dataPribadi)->pekerjaan_ayh }}" required>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label">Nama Ibu</label>
                         <input type="text" class="form-control" name="name_ibu"
                             value="{{ optional($siswa->dataPribadi)->name_ibu }}" required>
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label">NIK</label>
-                        <input type="text" class="form-control" name="nik"
-                            value="{{ optional($siswa->dataPribadi)->nik }}" required>
+                        <label class="form-label">NIK Ibu</label>
+                        <input type="text" class="form-control" name="nik_ibu"
+                            value="{{ optional($siswa->dataPribadi)->nik_ibu }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Alamat</label>
-                        <input type="text" class="form-control" name="alamat"
-                            value="{{ optional($siswa->dataPribadi)->alamat }}" required>
+                        <label class="form-label">Tempat Lahir Ibu</label>
+                        <input type="text" class="form-control" name="tempat_lhr_ibu"
+                            value="{{ optional($siswa->dataPribadi)->tempat_lhr_ibu }}" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tanggal Lahir Ibu</label>
+                        <input type="text" class="form-control" name="tgl_lahir_ibu"
+                            value="{{ optional($siswa->dataPribadi)->tgl_lahir_ibu }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pekerjaan Ibu</label>
+                        <input type="text" class="form-control" name="pekerjaan_ibu"
+                            value="{{ optional($siswa->dataPribadi)->pekerjaan_ibu }}" required>
+                    </div>
+                   
+                  
                     <div class="mb-3">
                         <label class="form-label">Email</label>
                         <input type="text" class="form-control" name="email_ortu"

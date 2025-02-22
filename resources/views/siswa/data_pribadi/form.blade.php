@@ -168,6 +168,10 @@
                         <input type="text" name="no_tlp" class="form-control"
                             value="{{ old('no_tlp', $dataPribadi->no_tlp ?? '') }}" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
+                    </div>
 
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
