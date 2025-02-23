@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TenagaKependidikanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataController;
 
@@ -41,8 +42,6 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     // SISWA
     Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
     Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
-
-
     Route::get('/review-pengajuan', [HubinController::class, 'index'])->name('review.pengajuan');
     Route::get('/detail-pengajuan', [HubinController::class, 'show'])->name('detail.pengajuan');
     Route::get('/history/diterima', [HubinController::class, 'diterima'])->name('history.diterima');
@@ -57,13 +56,11 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
     Route::post('/import-siswa', [SiswaController::class, 'importExcel'])->name('siswa.import');
     Route::put('/siswa/data_pribadi/{id}', [DataPribadiController::class, 'update'])->name('siswa.data_pribadi.update');
-
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
     Route::get('/data-siswa-kelas', [SiswaController::class, 'showSiswa'])->name('siswa.kelas');
 
     //PROKER
     Route::get('/program-kerja', [DataController::class, 'proker'])->name('proker.index');
-
     Route::get('/proker', [ProkerController::class, 'index'])->name('proker.index');
     Route::post('/proker', [ProkerController::class, 'store'])->name('proker.store');
     Route::put('/proker/{proker}', [ProkerController::class, 'update'])->name('proker.update');
@@ -71,7 +68,6 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //KONKE
     Route::get('/konsentrasi-keahlian', [DataController::class, 'konke'])->name('konke.index');
-
     Route::get('/konke', [KonkeController::class, 'index'])->name('konke.index');
     Route::post('/konke', [KonkeController::class, 'store'])->name('konke.store');
     Route::put('/konke/{konke}', [KonkeController::class, 'update'])->name('konke.update');
@@ -79,13 +75,10 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //KELAS
     Route::get('/data-kelas', [DataController::class, 'kelas'])->name('kelas.index');
-
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
     Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
-
     Route::put('/kelas/{kelas}', [KelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{kelas}', [KelasController::class, 'destroy'])->name('kelas.destroy');
-
     Route::get('/siswa/{id}/kelas', [KelasController::class, 'showSiswa'])->name('siswa.kelas');
 
     //GURU
@@ -96,6 +89,9 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/data-guru/{guru}/edit', [GuruController::class, 'edit'])->name('guru.edit');
     Route::put('/data-guru/{guru}/update', [GuruController::class, 'update'])->name('guru.update');
     Route::delete('/data-guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
+
+    //TK 
+    Route::get('/data-tenaga-kependidikan', [TenagaKependidikanController::class, 'tenagaKependidikan'])->name('tk.index');
 
 
 

@@ -8,7 +8,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <form action="{{ route('proker.index') }}" method="GET" class="d-flex" style="width: 100%; max-width: 500px;">
-                                <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Kerja" style="flex: 1; min-width: 250px;">
+                                <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Keahlian" style="flex: 1; min-width: 250px;">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-search"></i> 
                                 </button>
@@ -30,7 +30,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Program Kerja</th>
+                                    <th>Program Keahlian</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -59,7 +59,7 @@
                                     <div class="modal-dialog">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h1 class="modal-title fs-5" id="editProkerModalLabel{{ $item->id }}">Form Edit Program Kerja</h1>
+                                          <h1 class="modal-title fs-5" id="editProkerModalLabel{{ $item->id }}">Form Edit Program Keahlian</h1>
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <form action="{{ route('proker.update', $item->id) }}" method="POST">
@@ -67,7 +67,7 @@
                                             @method('PUT')
                                             <div class="modal-body">
                                                 <div class="mb-3">
-                                                    <label class="form-label">Program Kerja</label>
+                                                    <label class="form-label">Program Keahlian</label>
                                                     <input type="text" class="form-control" name="name" value="{{ $item->name }}" required>
                                                 </div>
                                             </div>
@@ -90,15 +90,15 @@
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h1 class="modal-title fs-5" id="tambahProkerModalLabel">Form Tambah Program Kerja</h1>
+                          <h1 class="modal-title fs-5" id="tambahProkerModalLabel">Form Tambah Program Keahlian</h1>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form action="{{ route('proker.store') }}" method="POST">
                             @csrf
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label class="form-label">Program Kerja</label>
-                                    <input type="text" class="form-control" name="name" placeholder="Masukkan Program Kerja" required>
+                                    <label class="form-label">Program Keahlian</label>
+                                    <input type="text" class="form-control" name="name" placeholder="Masukkan Program Keahlian" required>
                                 </div>
                             </div>
                             <div class="modal-footer">

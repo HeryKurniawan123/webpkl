@@ -183,7 +183,7 @@
                         <li class="menu-item {{ Request::routeIs('proker.index') ? 'active' : '' }}">
                             <a href="{{ route('proker.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Program Kerja</div>
+                                <div data-i18n="Basic">Program Keahlian</div>
                             </a>
                         </li>
                         <li class="menu-item {{ Request::routeIs('konke.index') ? 'active' : '' }}">
@@ -196,6 +196,12 @@
                             <a href="{{ route('review.pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('tk.index') ? 'active' : '' }}">
+                            <a href="{{ route('tk.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data Tenaga Kependidikan</div>
                             </a>
                         </li>
                         <li class="menu-header small text-uppercase">

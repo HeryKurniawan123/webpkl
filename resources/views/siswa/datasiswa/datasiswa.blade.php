@@ -22,7 +22,13 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="row">
                         <div class="col-md-12 mt-3">
-                            <div class="d-flex justify-content-end align-items-center mb-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <form action="" method="GET" class="d-flex" style="width: 100%; max-width: 500px;">
+                                    <input type="text" name="search" class="form-control me-2" placeholder="Cari Siswa..." style="flex: 1; min-width: 250px;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-search"></i> 
+                                    </button>
+                                </form>
                                 <div class="dropdown ms-2">
                                     <button class="btn btn-back dropdown-toggle mb-2"
                                         style="background-color: #7e7dfb; color: white;" type="button"
@@ -58,6 +64,7 @@
                             </div>
                             <div class="card">
                                 <div class="card-body">
+<<<<<<< Updated upstream
                                     @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -68,9 +75,9 @@
                                     </div>
                                     @endif
 
+=======
+>>>>>>> Stashed changes
                                     <table class="table table-hover">
-
-                                        <table class="table table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th>No</th>

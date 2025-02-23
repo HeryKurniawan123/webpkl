@@ -8,12 +8,12 @@
       <div class="modal-body">
         <table class="table table-hover">
         <tr>
-            <td>Nama Guru</td>
+            <td><i class="bi bi-person-vcard-fill"></i>Nama Guru</td>
             <td>:</td>
             <td>aaaa</td>
         </tr>
         <tr>
-            <td>NIK</td>
+            <td><i class="bi bi-person-badge"></i>NIK</td>
             <td>:</td>
             <td>aaaa</td>
         </tr>
