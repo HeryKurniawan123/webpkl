@@ -155,8 +155,8 @@
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
                                 </li>
-                                <li class="menu-item">
-                                    <a href="#" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('tk.index') ? 'active' : '' }}">
+                                    <a href="{{route('tk.index')}}" class="menu-link">
                                         <div data-i18n="Without menu">Tenaga Kependidikan</div>
                                     </a>
                                 </li>
@@ -196,12 +196,6 @@
                             <a href="{{ route('review.pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('tk.index') ? 'active' : '' }}">
-                            <a href="{{ route('tk.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data Tenaga Kependidikan</div>
                             </a>
                         </li>
                         <li class="menu-header small text-uppercase">
