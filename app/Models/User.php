@@ -28,9 +28,17 @@ class User extends Authenticatable
     ];
 
     public function iduka()
-    {
-        return $this->belongsTo(Iduka::class, 'nip', 'email');
-    }
+{
+    return $this->hasOne(Iduka::class, 'user_id', 'id');
+}
+
+
+    public function kependik()
+{
+    return $this->hasOne(Kependik::class, 'email', 'email');
+}
+
+
 
     /**
      * The attributes that should be hidden for serialization.

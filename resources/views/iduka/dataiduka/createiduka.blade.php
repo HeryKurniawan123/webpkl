@@ -53,28 +53,28 @@
                         <div class="row">
                             <div class="col-md-6">
                                 @php
-                                    $kerjasamaOptions = ['Sinkronisasi', 'Guru Tamu', 'Magang / Pelatihan', 'PKL', 'Sertifikasi'];
+                                $kerjasamaOptions = ['Sinkronisasi', 'Guru Tamu', 'Magang / Pelatihan', 'PKL', 'Sertifikasi'];
                                 @endphp
                                 @foreach($kerjasamaOptions as $option)
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="kerjasama" value="{{ $option }}" required>
-                                        <label class="form-check-label">{{ $option }}</label>
-                                    </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="kerjasama" value="{{ $option }}" required>
+                                    <label class="form-check-label">{{ $option }}</label>
+                                </div>
                                 @endforeach
                             </div>
                             <div class="col-md-6">
                                 @php
-                                    $kerjasamaOptions2 = ['Tefa', 'Serapan', 'Beasiswa', 'PBL', 'Lainnya'];
+                                $kerjasamaOptions2 = ['Tefa', 'Serapan', 'Beasiswa', 'PBL', 'Lainnya'];
                                 @endphp
                                 @foreach($kerjasamaOptions2 as $option)
-                                    <div class="form-check">
-                                        <input class="form-check-input kerjasama-radio" type="radio" name="kerjasama" value="{{ $option }}">
-                                        <label class="form-check-label">{{ $option }}</label>
-                                    </div>
+                                <div class="form-check">
+                                    <input class="form-check-input kerjasama-radio" type="radio" name="kerjasama" value="{{ $option }}">
+                                    <label class="form-check-label">{{ $option }}</label>
+                                </div>
                                 @endforeach
                             </div>
                         </div>
-                    </div> 
+                    </div>
                     <div class="mb-3" id="kerjasama-lainnya" style="display: none;">
                         <label class="form-label">Kerjasama (Lainnya)</label>
                         <input type="text" class="form-control" name="kerjasama_lainnya" placeholder="Masukkan Jenis Kerjasama">
@@ -83,6 +83,16 @@
                         <label class="form-label">Jumlah Kuota PKL</label>
                         <input type="number" class="form-control" name="kuota_pkl" placeholder="Masukkan Kuota PKL" required>
                     </div>
+                    <div class="mb-3">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="rekomendasi" name="rekomendasi" value="1">
+        <label class="form-check-label" for="rekomendasi">
+            Saya merekomendasikan IDUKA ini
+        </label>
+    </div>
+</div>
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -94,12 +104,12 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         let kerjasamaRadios = document.querySelectorAll(".kerjasama-radio");
         let lainnyaInput = document.getElementById("kerjasama-lainnya");
 
         kerjasamaRadios.forEach(radio => {
-            radio.addEventListener("change", function () {
+            radio.addEventListener("change", function() {
                 if (this.value === "Lainnya") {
                     lainnyaInput.style.display = "block";
                 } else {

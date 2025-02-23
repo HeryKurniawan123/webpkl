@@ -96,6 +96,15 @@
                             <label for="jumlah_kuota_pkl" class="form-label">Jumlah Kuota PKL</label>
                             <input type="number" class="form-control" name="kuota_pkl" value="{{ $iduka->kuota_pkl }}" required>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Rekomendasi</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="rekomendasi" value="1" id="rekomendasiCheckbox"
+                                    {{ $iduka->rekomendasi == 1 ? 'checked' : '' }}>
+                                <label class="form-check-label" for="rekomendasiCheckbox">IDUKA ini direkomendasikan</label>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="modal-footer">

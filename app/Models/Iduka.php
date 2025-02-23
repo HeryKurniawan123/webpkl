@@ -10,6 +10,7 @@ class Iduka extends Model
     use HasFactory;
     protected $fillable = [
         'nama',
+        'user_id',
         'nama_pimpinan',
         'nip_pimpinan',
         'jabatan',
@@ -22,10 +23,12 @@ class Iduka extends Model
         'kerjasama',
         'kerjasama_lainnya',
         'kuota_pkl',
+        'rekomendasi',
     ];
 
-      public function user()
-      {
-          return $this->hasOne(User::class, 'nip', 'email');
-      }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    
 }

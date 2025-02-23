@@ -39,12 +39,21 @@ class IdukaController extends Controller
             'kerjasama' => 'required|string',
             'kerjasama_lainnya' => 'nullable|required_if:kerjasama,Lainnya|string|max:255',
             'kuota_pkl' => 'required|integer|min:1',
+            'rekomendasi' => 'nullable|boolean',
         ]);
 
         DB::transaction(function () use ($request) {
-            // Simpan ke tabel idukas
-            $kerjasama = $request->kerjasama === 'Lainnya' ? $request->kerjasama_lainnya : $request->kerjasama;
-            $iduka = Iduka::create([
+            // Simpan ke tabel users terlebih dahulu
+            $user = User::create([
+                'name' => $request->nama,
+                'nip' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => 'iduka',
+            ]);
+        
+            // Simpan ke tabel idukas dengan user_id dari User yang baru dibuat
+            Iduka::create([
+                'user_id' => $user->id, //  Sekarang $user sudah ada
                 'nama' => $request->nama,
                 'nama_pimpinan' => $request->nama_pimpinan,
                 'nip_pimpinan' => $request->nip_pimpinan,
@@ -55,18 +64,13 @@ class IdukaController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'bidang_industri' => $request->bidang_industri,
-                'kerjasama' => $request->kerjasama,
+                'kerjasama' => $request->kerjasama === 'Lainnya' ? $request->kerjasama_lainnya : $request->kerjasama,
+                'kerjasama_lainnya' => $request->kerjasama_lainnya,
                 'kuota_pkl' => $request->kuota_pkl,
-            ]);
-
-            // Simpan ke tabel users
-            User::create([
-                'name' => $request->nama, // Masuk ke kolom name di users
-                'nip' => $request->email, // Masuk ke kolom nip di users
-                'password' => Hash::make($request->password), // Hashing password
-                'role' => 'iduka', // Set default role sebagai 'iduka'
+                'rekomendasi' => $request->rekomendasi ?? 0,
             ]);
         });
+        
 
 
 
@@ -93,23 +97,37 @@ class IdukaController extends Controller
 
         $iduka = Iduka::findOrFail($id);
         $kerjasama = $request->kerjasama === 'Lainnya' ? $request->kerjasama_lainnya : $request->kerjasama;
+        $rekomendasi = $request->has('rekomendasi') ? 1 : 0;
 
+        DB::transaction(function () use ($request, $iduka) {
+            if ($iduka->user) {
+                $iduka->user->update([
+                    'name' => $request->nama,
+                    'nip' => $request->email,
+                    'password' => $request->password ? Hash::make($request->password) : $iduka->user->password,
+                    'role' => 'iduka',
+                ]);
+            }
+        
+            $iduka->update([
+                'nama' => $request->nama,
+                'nama_pimpinan' => $request->nama_pimpinan,
+                'nip_pimpinan' => $request->nip_pimpinan,
+                'jabatan' => $request->jabatan,
+                'alamat' => $request->alamat,
+                'kode_pos' => $request->kode_pos,
+                'telepon' => $request->telepon,
+                'email' => $request->email,
+                'password' => $request->password ? Hash::make($request->password) : $iduka->password,
+                'bidang_industri' => $request->bidang_industri,
+                'kerjasama' => $request->kerjasama,
+                'kuota_pkl' => $request->kuota_pkl,
+                'rekomendasi' => $request->rekomendasi ?? 0,
+            ]);
+        });
+        
 
-        // Update data
-        $iduka->update([
-            'nama' => $request->nama,
-            'nama_pimpinan' => $request->nama_pimpinan,
-            'nip_pimpinan' => $request->nip_pimpinan,
-            'jabatan' => $request->jabatan,
-            'alamat' => $request->alamat,
-            'kode_pos' => $request->kode_pos,
-            'telepon' => $request->telepon,
-            'email' => $request->email,
-            'password' => $request->password ? bcrypt($request->password) : $iduka->password,
-            'bidang_industri' => $request->bidang_industri,
-            'kerjasama' => $request->kerjasama,
-            'kuota_pkl' => $request->kuota_pkl,
-        ]);
+        
 
         return redirect()->route('data.iduka')->with('success', 'Data IDUKA berhasil diperbarui!');
     }
@@ -118,12 +136,12 @@ class IdukaController extends Controller
         $iduka = Iduka::findOrFail($id);
 
         DB::transaction(function () use ($iduka) {
-            // Hapus user terkait di tabel users
-            User::where('nip', $iduka->email)->delete();
-
-            // Hapus data iduka dari database
+            if ($iduka->user) {
+                $iduka->user->delete(); // Hapus user yang terkait langsung
+            }
             $iduka->delete();
         });
+        
 
         return redirect()->route('data.iduka')->with('success', 'Data Iduka berhasil dihapus.');
     }

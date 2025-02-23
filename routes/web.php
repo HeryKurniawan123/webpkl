@@ -92,6 +92,13 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //TK 
     Route::get('/data-tenaga-kependidikan', [TenagaKependidikanController::class, 'tenagaKependidikan'])->name('tk.index');
+    Route::get('/kependik/create', [TenagaKependidikanController::class, 'create'])->name('kependik.create');
+    Route::post('/kependik/store', [TenagaKependidikanController::class, 'store'])->name('kependik.store');
+    Route::get('/kependik/{id}/edit', [TenagaKependidikanController::class, 'edit'])->name('kependik.edit');
+    Route::put('/kependik/{id}', [TenagaKependidikanController::class, 'update'])->name('kependik.update');
+    Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
+
+
 
 
 
