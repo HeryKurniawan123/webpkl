@@ -145,9 +145,12 @@
                                 </tr>
 
                             </table>
-                            <div class="d-flex justify-content mt-3 mb-2">
+                            <div class="col-lg-12 d-flex justify-content-between mt-4">
                                 <a href="{{ route('data.iduka')}}" class="btn btn-back shadow-sm">
                                     Kembali
+                                </a>
+                                <a href="#" class="btn btn-primary shadow-sm">
+                                    Ajukan
                                 </a>
                             </div>
                         </div>

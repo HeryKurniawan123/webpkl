@@ -64,7 +64,6 @@
                             </div>
                             <div class="card">
                                 <div class="card-body">
-<<<<<<< Updated upstream
                                     @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -74,9 +73,6 @@
                                         </ul>
                                     </div>
                                     @endif
-
-=======
->>>>>>> Stashed changes
                                     <table class="table table-hover">
                                             <thead>
                                                 <tr>

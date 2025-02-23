@@ -34,6 +34,10 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
     Route::get('/siswa/data-pribadi', [DataPribadiController::class, 'create'])->name('siswa.data_pribadi.create');
     Route::post('/siswa/data-pribadi', [DataPribadiController::class, 'store'])->name('siswa.data_pribadi.store');
+
+    //USULAN
+    Route::get('/form-usulan', [DataController::class, 'dataUsulan'])->name('usulan.index');
+
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -97,8 +101,6 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/kependik/{id}/edit', [TenagaKependidikanController::class, 'edit'])->name('kependik.edit');
     Route::put('/kependik/{id}', [TenagaKependidikanController::class, 'update'])->name('kependik.update');
     Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
-
-
 
 
 

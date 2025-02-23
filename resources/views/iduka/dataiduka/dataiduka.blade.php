@@ -70,11 +70,12 @@
                                 <option value="all">Semua</option>
                                 <option value="rekomendasi">Rekomendasi</option>
                                 <option value="ajuan">Ajuan</option>
-                            </select>
-
+                            </select>       
+                            @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
                                 Tambah Iduka
                             </button>
+                            @endif
                         </div>
                     </div>
 

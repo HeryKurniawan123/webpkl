@@ -17,4 +17,8 @@ class DataController extends Controller
     public function kelas() {
         return view('data.kelas.dataKelas');
     }
+
+    public function dataUsulan(){
+        return view('data.usulan.formUsulan');
+    }
 }
