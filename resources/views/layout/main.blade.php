@@ -193,6 +193,12 @@
                             </a>
                         </li>
                         <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
+                            <a href="{{ route('pengajuan') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Surat Pengajuan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
                             <a href="{{ route('review.pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>

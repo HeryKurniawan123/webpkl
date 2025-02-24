@@ -14,7 +14,7 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
-
+use App\Http\Controllers\PersuratanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -107,6 +107,16 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
 });
+
+Route::middleware(['auth', 'hakakses:persuratan'])->group(function() {
+    Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
+    Route::get('/detail-Surat-Pengajuan', [PersuratanController::class, 'show'])->name('detail.suratpengajuan');
+
+    Route::post('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
+
+    
+});
+
 
 Route::middleware(['auth'])->group(function () {
 
