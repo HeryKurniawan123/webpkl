@@ -96,6 +96,7 @@
                         </li>
 
                         <!-- Layouts -->
+                        @if(in_array(auth()->user()->role, ['hubin', 'guru', 'ppkl', 'psekolah', 'orangtua', 'iduka', 'persuratan', 'siswa']))
                         <li
                             class="menu-item {{ Request::routeIs('admin.tkr', 'admin.tkj', 'admin.pemantauan', 'admin.dpib', 'admin.akl', 'admin.mp', 'admin.sk') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -105,8 +106,8 @@
 
                             <ul class="menu-sub">
                                 <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                                    <a href="/data-siswa" class="menu-link">
-                                        <div data-i18n="Without menu">TKR (Data Siswa)</div>
+                                    <a href="{{ route('kelas.index') }}" class="menu-link">
+                                        <div data-i18n="Without menu">TKR</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
@@ -168,6 +169,12 @@
                                 <div data-i18n="Basic">Data Iduka</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('iduka.pribadi') ? 'active' : '' }}">
+                            <a href="{{ route('iduka.pribadi') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data Pribadi Iduka</div>
+                            </a>
+                        </li>
                         <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('siswa.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -204,6 +211,15 @@
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
                         </li>
+                        @endif
+                        @if(auth()->user()->role == 'kaprog')
+                        <li class="menu-item {{ Request::routeIs('review.usulan') ? 'active' : '' }}">
+                            <a href="{{ route('review.usulan') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Review Usulan</div>
+                            </a>
+                        </li>
+                        @endif
                         <li class="menu-header small text-uppercase">
                             <span class="menu-header-text">Pusat Control</span>
                         </li>

@@ -131,6 +131,8 @@ class IdukaController extends Controller
 
         return redirect()->route('data.iduka')->with('success', 'Data IDUKA berhasil diperbarui!');
     }
+
+
     public function destroy($id)
     {
         $iduka = Iduka::findOrFail($id);

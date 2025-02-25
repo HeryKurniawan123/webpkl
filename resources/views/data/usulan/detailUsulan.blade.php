@@ -194,7 +194,7 @@
                         Kembali
                     </a>
                     <a href="{{ route('siswa.usulan.pdf') }}" class="btn btn-danger">
-                        <i class="bi bi-filetype-pdf"></i>
+                        Export PDF <i class="bi bi-filetype-pdf"></i>
                     </a>
                 </div>
             </div>

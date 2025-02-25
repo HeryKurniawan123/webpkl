@@ -8,6 +8,7 @@ use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\HubinController;
 use App\Http\Controllers\IdukaController;
+use App\Http\Controllers\KaprogController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KonkeController;
 use App\Http\Controllers\SiswaController;
@@ -38,7 +39,7 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
     //USULAN
     Route::get('/form-usulan', [DataController::class, 'dataUsulan'])->name('usulan.index');
-    Route::get('/surat-usulan/detail', [DataController::class, 'detailUsulan'])->name('detail.usulan');
+    Route::get('/data-usulan/detail', [DataController::class, 'detailUsulan'])->name('detail.usulan');
     Route::get('/surat-usulan', [DataController::class, 'suratUsulanPDF'])->name('surat.usulan');
     Route::get('/surat-usulan/PDF', [PdfController::class, 'usulanPdf'])->name('usulan.pdf');
     Route::get('/siswa-usulan/PDF', [PdfController::class, 'siswaUsulanPdf'])->name('siswa.usulan.pdf');
@@ -120,6 +121,14 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function() {
 
     Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
 
+    
+});
+
+Route::middleware(['auth', 'hakakses:kaprog'])->group(function() {
+    Route::get('/review-usulan', [KaprogController::class, 'reviewUsulan'])->name('review.usulan');
+    Route::get('/detail-pengajuan', [KaprogController::class, 'show'])->name('detail.pengajuan');
+    Route::get('/history/diterima', [KaprogController::class, 'diterima'])->name('history.diterima');
+    Route::get('/history/ditolak', [KaprogController::class, 'ditolak'])->name('history.ditolak');
     
 });
 
