@@ -9,6 +9,7 @@ class DataPribadi extends Model
 {
     use HasFactory;
 
+    protected $table = 'data_pribadis';
     protected $fillable = [
         'user_id',
         'name',
@@ -49,7 +50,7 @@ class DataPribadi extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function konke()
+    public function konkes()
     {
         return $this->belongsTo(Konke::class, 'konke_id'); // Perbaiki relasi
     }

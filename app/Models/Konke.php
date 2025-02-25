@@ -21,6 +21,9 @@ class Konke extends Model
 {
     return $this->hasMany(Guru::class, 'konkes_id', 'id');
 }
-
+public function dataPribadis()
+{
+    return $this->hasMany(DataPribadi::class, 'konke_id');
+}
 
 }

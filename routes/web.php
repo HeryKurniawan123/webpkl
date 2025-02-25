@@ -17,6 +17,7 @@ use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PersuratanController;
+use App\Http\Controllers\UsulanIdukaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,12 +40,17 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
     //USULAN
     Route::get('/form-usulan', [DataController::class, 'dataUsulan'])->name('usulan.index');
-    Route::get('/data-usulan/detail', [DataController::class, 'detailUsulan'])->name('detail.usulan');
+
+    Route::get('/usulan', [UsulanIdukaController::class, 'index'])->name('usulan.index');
+    Route::post('/usulan', [UsulanIdukaController::class, 'store'])->name('usulan.store');
+    Route::get('/usulan/cetak/{id}', [UsulanIdukaController::class, 'cetakSurat'])->name('usulan.cetakSurat');
+
+    Route::get('/surat-usulan/detail', [DataController::class, 'detailUsulan'])->name('detail.usulan');
+
     Route::get('/surat-usulan', [DataController::class, 'suratUsulanPDF'])->name('surat.usulan');
     Route::get('/surat-usulan/PDF', [PdfController::class, 'usulanPdf'])->name('usulan.pdf');
     Route::get('/siswa-usulan/PDF', [PdfController::class, 'siswaUsulanPdf'])->name('siswa.usulan.pdf');
     Route::get('/surat-pengajuan/detail', [DataController::class, 'detailPengajuan'])->name('detail.pengajuan');
-
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -110,26 +116,31 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
 
 
+    Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
+    Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
+    Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
+
 
 
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
 });
 
-Route::middleware(['auth', 'hakakses:persuratan'])->group(function() {
+Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/detail-Surat-Pengajuan', [PersuratanController::class, 'show'])->name('detail.suratpengajuan');
 
     Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
-
-    
 });
 
-Route::middleware(['auth', 'hakakses:kaprog'])->group(function() {
+Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/review-usulan', [KaprogController::class, 'reviewUsulan'])->name('review.usulan');
-    Route::get('/detail-pengajuan', [KaprogController::class, 'show'])->name('detail.pengajuan');
-    Route::get('/history/diterima', [KaprogController::class, 'diterima'])->name('history.diterima');
-    Route::get('/history/ditolak', [KaprogController::class, 'ditolak'])->name('history.ditolak');
-    
+    Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
+    Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
+    Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
+
+    Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
+    Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
+
 });
 
 

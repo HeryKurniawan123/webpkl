@@ -170,7 +170,7 @@
                             </a>
                         </li>
                         <li class="menu-item {{ Request::routeIs('iduka.pribadi') ? 'active' : '' }}">
-                            <a href="{{ route('iduka.pribadi') }}" class="menu-link">
+                            <a href="#" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Iduka</div>
                             </a>

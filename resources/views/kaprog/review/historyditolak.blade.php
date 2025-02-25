@@ -1,8 +1,8 @@
 @extends('layout.main')
 
 @section('content')
-<style>
-    .btn-back {
+    <style>
+        .btn-back {
                 background-color: #7e7dfb;
                 color: white;
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -21,12 +21,13 @@
                 box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); 
             }
 
-            .btn-back:active, .btn-reset:active {
+            .btn-back:active, .btn-reset:hover {
                 color: white;
                 background-color: #6b6bfa !important; 
                 transform: translateY( 3px); 
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
             }
+
             .btn-reset {
                 background-color: #7e7dfb;
                 color: white;
@@ -39,7 +40,7 @@
                 cursor: pointer;
                 transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
             }
-</style>
+    </style>
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -63,20 +64,32 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Data History Ditolak -->
+                                    <!-- Data History Diterima -->
+                                    @foreach($usulanDitolak as $index => $usulan)
                                     <tr>
-                                        <td>1</td>
-                                        <td>Mark Johnson</td>
-                                        <td>XI RPL 2</td>
-                                        <td>Desa Kawali</td>
-                                        <td>19-02-2025</td>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $usulan->user->name }}</td>
+                                        <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                        <td>{{ $usulan->nama }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
                                         <td><span class="badge bg-danger">Ditolak</span></td>
                                         <td>
-                                            {{-- <a href="#" class="btn btn-info btn-sm">Detail</a> --}}
-                                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
-                                            </button>
+                                            <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                            
                                         </td>
                                     </tr>
+                                    @endforeach
+                                    @if($usulanDitolak->isEmpty())
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
+                                    </tr>
+                                    @endif
                                     <!-- Add more rows here -->
                                 </tbody>
                             </table>

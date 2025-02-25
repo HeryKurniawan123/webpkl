@@ -65,19 +65,31 @@
                                 </thead>
                                 <tbody>
                                     <!-- Data History Diterima -->
+                                    @foreach($usulanDiterima as $index => $usulan)
                                     <tr>
-                                        <td>1</td>
-                                        <td>John Doe</td>
-                                        <td>XII RPL 1</td>
-                                        <td>PT Inovindo</td>
-                                        <td>20-02-2025</td>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $usulan->user->name }}</td>
+                                        <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                        <td>{{ $usulan->nama }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
                                         <td><span class="badge bg-success">Diterima</span></td>
                                         <td>
-                                            {{-- <a href="#" class="btn btn-info btn-sm">Detail</a> --}}
-                                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i>
-                                            </button>
+                                            <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                            
                                         </td>
                                     </tr>
+                                    @endforeach
+                                    @if($usulanDiterima->isEmpty())
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
+                                    </tr>
+                                    @endif
                                     <!-- Add more rows here -->
                                 </tbody>
                             </table>

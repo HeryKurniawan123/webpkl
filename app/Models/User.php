@@ -20,7 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'nip',
-       'kelas_id',
+        'kelas_id',
         'konke_id',
         'email',
         'password',
@@ -28,14 +28,22 @@ class User extends Authenticatable
     ];
 
     public function iduka()
-{
-    return $this->hasOne(Iduka::class, 'user_id', 'id');
-}
+    {
+        return $this->hasOne(Iduka::class, 'user_id', 'id');
+    }
 
 
     public function kependik()
+    {
+        return $this->hasOne(Kependik::class, 'email', 'email');
+    }
+    public function gurus()
+    {
+        return $this->hasMany(Guru::class);
+    }
+    public function konkes()
 {
-    return $this->hasOne(Kependik::class, 'email', 'email');
+    return $this->hasOne(Konke::class, 'id', 'konkes_id');
 }
 
 
@@ -79,5 +87,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
-    
 }
