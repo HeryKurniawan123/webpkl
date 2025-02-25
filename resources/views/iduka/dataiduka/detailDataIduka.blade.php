@@ -149,9 +149,11 @@
                                 <a href="{{ route('data.iduka')}}" class="btn btn-back shadow-sm">
                                     Kembali
                                 </a>
+                                @if(auth()->user()->role == 'siswa')
                                 <a href="#" class="btn btn-primary shadow-sm">
                                     Ajukan
                                 </a>
+                                @endif
                             </div>
                         </div>
                     </div>
