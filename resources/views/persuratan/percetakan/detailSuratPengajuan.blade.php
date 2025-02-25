@@ -191,7 +191,7 @@
                                     </div>
 
                                     <div class="button-group">
-                                        <button type="button" class="btn btn-action btn-reject"><i class="bi bi-file-earmark-pdf"></i></button>
+                                        <a href="{{ route('download.pdf') }}" type="button" class="btn btn-action btn-reject"><i class="bi bi-file-earmark-pdf"></i></a>
                                     </div>
                                 </div>
                             </div>

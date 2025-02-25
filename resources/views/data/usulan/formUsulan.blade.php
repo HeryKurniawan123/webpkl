@@ -82,9 +82,11 @@
                                 <label class="form-label">Kerjasama (Lainnya)</label>
                                 <input type="text" class="form-control" name="kerjasama_lainnya" placeholder="Masukkan Jenis Kerjasama">
                             </div>
-                            <div class="">
+                            <div class="d-flex justify-content-end gap-2">
                                 <button type="submit" class="btn btn-primary">Kirim</button>
+                                <a href="{{ route('siswa.dashboard') }}" class="btn btn-secondary">Kembali</a>
                             </div>
+
                         </form>
                     </div>
                 </div>

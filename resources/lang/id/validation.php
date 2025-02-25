@@ -11,7 +11,7 @@ return [
         'string' => ':attribute maksimal :max karakter.',
     ],
     'attributes' => [
-        'name'      => request()->is('proker*') ? 'Program Kerja' : 'Nama Siswa',
+        'name'      => request()->is('proker*') ? 'Program Keahlian' : 'Nama Siswa',
         'nip'       => 'NIS',
         'email'     => 'Email',
         'password'  => 'Password',

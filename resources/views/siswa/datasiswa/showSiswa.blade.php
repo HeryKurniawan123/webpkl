@@ -46,7 +46,7 @@
                             <h3>Data Siswa Kelas XII RPL 2</h3>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <form action="#" class="d-flex" style="width: 100%; max-width: 500px;">
-                                    <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Kerja" style="flex: 1; min-width: 250px;">
+                                    <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Keahlian" style="flex: 1; min-width: 250px;">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-search"></i> 
                                     </button>

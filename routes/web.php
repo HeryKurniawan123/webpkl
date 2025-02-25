@@ -14,6 +14,7 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PersuratanController;
 
 Route::get('/', function () {
@@ -37,6 +38,11 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
     //USULAN
     Route::get('/form-usulan', [DataController::class, 'dataUsulan'])->name('usulan.index');
+    Route::get('/surat-usulan/detail', [DataController::class, 'detailUsulan'])->name('detail.usulan');
+    Route::get('/surat-usulan', [DataController::class, 'suratUsulanPDF'])->name('surat.usulan');
+    Route::get('/surat-usulan/PDF', [PdfController::class, 'usulanPdf'])->name('usulan.pdf');
+    Route::get('/siswa-usulan/PDF', [PdfController::class, 'siswaUsulanPdf'])->name('siswa.usulan.pdf');
+    Route::get('/surat-pengajuan/detail', [DataController::class, 'detailPengajuan'])->name('detail.pengajuan');
 
 });
 
@@ -112,7 +118,7 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function() {
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/detail-Surat-Pengajuan', [PersuratanController::class, 'show'])->name('detail.suratpengajuan');
 
-    Route::post('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
+    Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
 
     
 });

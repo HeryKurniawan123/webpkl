@@ -9,7 +9,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <form action="{{ route('konke.index') }}" method="GET" class="d-flex" style="width: 100%; max-width: 500px;">
-                                <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Kerja" style="flex: 1; min-width: 250px;">
+                                <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Keahlian" style="flex: 1; min-width: 250px;">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-search"></i> 
                                 </button>
@@ -23,7 +23,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Konsentrasi keahlian</th>
-                                    <th>Program Kerja</th>
+                                    <th>Program Keahlian</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -69,9 +69,9 @@
                         <input type="text" class="form-control" name="name_konke" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Program Kerja</label>
+                        <label class="form-label">Program Keahlian</label>
                         <select class="form-control" name="proker_id" required>
-                            <option value="">Pilih Program Kerja</option>
+                            <option value="">Pilih Program Keahlian</option>
                             @foreach($proker as $p)
                                 <option value="{{ $p->id }}">{{ $p->name }}</option>
                             @endforeach
@@ -104,9 +104,9 @@
                         <input type="text" class="form-control" name="name_konke" value="{{ $k->name_konke }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Program Kerja</label>
+                        <label class="form-label">Program Keahlian</label>
                         <select class="form-control" name="proker_id" required>
-                            <option value="">Pilih Program Kerja</option>
+                            <option value="">Pilih Program Keahlian</option>
                             @foreach($proker as $p)
                                 <option value="{{ $p->id }}" {{ $k->proker_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
                             @endforeach

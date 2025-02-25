@@ -4,7 +4,7 @@
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
-                    <div class="col-lg-12 mb-4 order-0">
+                    <div class="col-lg-12 mb-3 order-0">
                         <div class="card">
                             <div class="d-flex align-items-end row">
                                 <div class="col-sm-7">
@@ -41,11 +41,11 @@
                 @if(auth()->user()->role == 'siswa')
                     <div class="row mt-3">
                         <div class="col-lg-12 d-flex justify-content-end mb-4">
-                            <div class="btn-group">
+                            <div class="btn-group me-auto">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                     Buat Pengajuan
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
+                                <ul class="dropdown-menu dropdown-menu-right">
                                     <li>
                                       <a href="{{ route('usulan.index') }}" type="button" class="dropdown-item">
                                         Buat Usulan
@@ -96,15 +96,14 @@
                                   {{-- <span class="badge bg-danger">Diterima</span> --}}
                                 </td>
                                 <td>
-                                  <a href="#"
+                                  <a href="{{ route('detail.usulan')}}"
                                   class="btn btn-info btn-sm">
                                   <i class="bi bi-eye"></i>
                                 </a>
                                 {{-- muncul button pdf jika usulan diterima --}}
-                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#editSiswaModal">
-                                    <i class="bi bi-filetype-pdf"></i>
-                                </button>
+                                <a href="{{ route('usulan.pdf') }}" type="button" class="btn btn-danger btn-sm">                                    
+                                  <i class="bi bi-filetype-pdf"></i>
+                                </a>
                               </td>
                               </tr>
                             </tbody>
@@ -145,15 +144,10 @@
                                   {{-- <span class="badge bg-danger">Diterima</span> --}}
                                 </td>
                                 <td>
-                                  <a href="#"
+                                  <a href="/surat-pengajuan/detail"
                                   class="btn btn-info btn-sm">
                                   <i class="bi bi-eye"></i>
                                 </a>
-                                {{-- muncul button pdf jika usulan diterima --}}
-                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#editSiswaModal">
-                                    <i class="bi bi-filetype-pdf"></i>
-                                </button>
                               </td>
                               </tr>
                             </tbody>

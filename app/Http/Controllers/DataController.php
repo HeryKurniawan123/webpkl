@@ -21,4 +21,16 @@ class DataController extends Controller
     public function dataUsulan(){
         return view('data.usulan.formUsulan');
     }
+
+    public function detailUsulan() {
+        return view('data.usulan.detailUsulan');
+    }
+
+    public function suratUsulanPDF(){
+        return view('data.usulan.suratUsulanPDF');
+    }
+
+    public function detailPengajuan() {
+        return view('data.usulan.detailPengajuan');
+    }
 }
