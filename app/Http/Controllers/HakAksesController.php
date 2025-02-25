@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +12,9 @@ class HakAksesController extends Controller
         return view('dashboard');
     }
     function siswa(){
-        return view('dashboard');
+        $user = auth()->user();
+        $usulanSiswa = UsulanIduka::where('user_id', $user->id)->get();
+        return view('dashboard', compact('usulanSiswa'));
     }
     function iduka(){
         return view('dashboard');

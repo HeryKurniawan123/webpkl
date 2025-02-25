@@ -2,35 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataPribadi;
+use App\Models\UsulanIduka;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DataController extends Controller
 {
-    public function proker() {
+    public function proker()
+    {
         return view('data.proker.dataproker');
     }
 
-    public function konke() {
+    public function konke()
+    {
         return view('data.konke.dataKonke');
     }
 
-    public function kelas() {
+    public function kelas()
+    {
         return view('data.kelas.dataKelas');
     }
 
-    public function dataUsulan(){
+    public function dataUsulan()
+    {
         return view('data.usulan.formUsulan');
     }
 
-    public function detailUsulan() {
-        return view('data.usulan.detailUsulan');
+    public function detailUsulan()
+    {
+        $user = auth()->user();
+
+        $usulanIduka = UsulanIduka::where('user_id', $user->id)->latest()->first();
+        $dataPribadi = DataPribadi::with(['kelas', 'konkes'])->where('user_id', $user->id)->first();
+        return view('data.usulan.detailUsulan', compact('dataPribadi', 'usulanIduka'));
     }
 
-    public function suratUsulanPDF(){
-        return view('data.usulan.suratUsulanPDF');
+
+    public function usulanPdf()
+{
+    $user = Auth::user();
+    $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
+    $usulanIduka = UsulanIduka::where('user_id', $user->id)->latest()->first();
+
+    // Debug: Cek apakah data tersedia sebelum diproses
+    if (!$dataPribadi) {
+        return "Data pribadi tidak ditemukan!";
     }
 
-    public function detailPengajuan() {
+    if (!$usulanIduka) {
+        return "Usulan IDUKA tidak ditemukan!";
+    }
+
+    $pdf = Pdf::loadView('data.usulan.suratUsulanPDF', compact('dataPribadi', 'usulanIduka'));
+    return $pdf->download('surat_usulan_iduka_baru.pdf');
+}
+
+
+    public function detailPengajuan()
+    {
         return view('data.usulan.detailPengajuan');
     }
 }

@@ -9,7 +9,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <form action="#" method="POST">
+                        <form action="{{ route('usulan.store') }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Nama Iduka</label>
@@ -42,10 +42,6 @@
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
                                 <input type="email" class="form-control" name="email" placeholder="Masukkan Email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Bidang Industri</label>
@@ -82,11 +78,14 @@
                                 <label class="form-label">Kerjasama (Lainnya)</label>
                                 <input type="text" class="form-control" name="kerjasama_lainnya" placeholder="Masukkan Jenis Kerjasama">
                             </div>
+
+                            <!-- Field status default 'proses' -->
+                            <input type="hidden" name="status" value="proses">
+
                             <div class="d-flex justify-content-end gap-2">
                                 <button type="submit" class="btn btn-primary">Kirim</button>
                                 <a href="{{ route('siswa.dashboard') }}" class="btn btn-secondary">Kembali</a>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -94,4 +93,23 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let radios = document.querySelectorAll('.kerjasama-radio');
+        let lainnyaInput = document.getElementById('kerjasama-lainnya');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value === "Lainnya") {
+                    lainnyaInput.style.display = "block";
+                } else {
+                    lainnyaInput.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
 @endsection

@@ -3,6 +3,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,6 +63,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="content-wrapper">
@@ -76,53 +78,54 @@
                                 <tr>
                                     <td>Nama Siswa</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $dataPribadi->name ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>NIS</td>
                                     <td>:</td>
-                                    <td>222310275</td>
+                                    <td>{{ $dataPribadi->nip ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Konsentrasi Keahlian</td>
                                     <td>:</td>
-                                    <td>RPL</td>
+                                    <td>{{ $dataPribadi->konkes->name_konke ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Kelas</td>
                                     <td>:</td>
-                                    <td>1111</td>
+                                    <td>{{ $dataPribadi->kelas->name_kelas ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Alamat Siswa</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $dataPribadi->alamat_siswa ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>No HP</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $dataPribadi->no_hp ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Jenis Kelamin</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $dataPribadi->jk ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Agama</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $dataPribadi->agama ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Tempat, Tanggal Lahir</td>
                                     <td>:</td>
-                                    <td>Kawali, 25 Februari 2025</td>
+                                    <td>{{ $dataPribadi->tempat_lhr ?? '-' }}, {{ $dataPribadi->tgl_lahir ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Email</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $dataPribadi->email ?? '-' }}</td>
                                 </tr>
+
                             </table>
                         </div>
                     </div>
@@ -138,53 +141,54 @@
                                 <tr>
                                     <td>Nama IDUKA</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $usulanIduka->nama ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Nama Pimpinan</td>
                                     <td>:</td>
-                                    <td>222310275</td>
+                                    <td>{{ $usulanIduka->nama_pimpinan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>NIP/NIP Pimpinan</td>
                                     <td>:</td>
-                                    <td>RPL</td>
+                                    <td>{{ $usulanIduka->nip_pimpinan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Jabatan</td>
                                     <td>:</td>
-                                    <td>1111</td>
+                                    <td>{{ $usulanIduka->jabatan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Alamat Lengkap IDUKA</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $usulanIduka->alamat ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Kode Pos</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $usulanIduka->kode_pos ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>No Telepon Kantor/Perusahaan</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $usulanIduka->telepon ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Email</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $usulanIduka->email ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Bidang Industri</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $usulanIduka->bidang_industri ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Kerja Sama</td>
                                     <td>:</td>
-                                    <td>malvaa</td>
+                                    <td>{{ $usulanIduka->kerjasama ?? '-' }}</td>
                                 </tr>
+
                             </table>
                         </div>
                     </div>
@@ -193,13 +197,20 @@
                     <a href="{{ route('siswa.dashboard') }}" class="btn btn-primary me-2">
                         Kembali
                     </a>
+
                     <a href="{{ route('siswa.usulan.pdf') }}" class="btn btn-danger">
                         Export PDF <i class="bi bi-filetype-pdf"></i>
                     </a>
+
+                    <!-- <a href="{{ route('siswa.usulan.pdf') }}" class="btn btn-danger">
+                        <i class="bi bi-filetype-pdf"></i>
+                    </a> -->
+
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>
 @endsection

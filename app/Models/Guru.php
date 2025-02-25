@@ -20,6 +20,7 @@ class Guru extends Model
         'no_hp',
         'password',
         'konkes_id',
+        'user_id',
     ];
     protected $hidden = [
         'password',
@@ -27,5 +28,9 @@ class Guru extends Model
     public function konke()
     {
         return $this->belongsTo(Konke::class, 'konkes_id', 'id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
