@@ -53,114 +53,109 @@
 
     <h3>Detail Data Siswa</h3>
     <table class="table">
-        <tr>
+    <tr>
             <td>Nama Siswa</td>
             <td>:</td>
-            <td>Malvaa</td>
+            <td>{{ $dataPribadi->name ?? '-' }}</td>
         </tr>
         <tr>
             <td>NIS</td>
             <td>:</td>
-            <td>222310275</td>
+            <td>{{ $dataPribadi->nip ?? '-' }}</td>
         </tr>
         <tr>
             <td>Konsentrasi Keahlian</td>
             <td>:</td>
-            <td>RPL</td>
+            <td>{{ $dataPribadi->konkes->name_konke ?? '-' }}</td>
         </tr>
         <tr>
             <td>Kelas</td>
             <td>:</td>
-            <td>11</td>
+            <td>{{ $dataPribadi->kelas->name_kelas ?? '-' }}</td>
         </tr>
         <tr>
             <td>Alamat</td>
             <td>:</td>
-            <td>Jl. Contoh No. 123</td>
+            <td>{{ $dataPribadi->alamat_siswa ?? '-' }}</td>
         </tr>
         <tr>
             <td>No HP</td>
             <td>:</td>
-            <td>08123456789</td>
+            <td>{{ $dataPribadi->no_hp ?? '-' }}</td>
         </tr>
         <tr>
             <td>Jenis Kelamin</td>
             <td>:</td>
-            <td>08123456789</td>
+            <td>{{ $dataPribadi->jk ?? '-' }}</td>
         </tr>
         <tr>
             <td>Agama</td>
             <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td>Agama</td>
-            <td>:</td>
-            <td>08123456789</td>
+            <td>{{ $dataPribadi->agama ?? '-' }}</td>
         </tr>
         <tr>
             <td>Tempat, Tanggal Lahir</td>
             <td>:</td>
-            <td>08123456789</td>
+            <td>{{ $dataPribadi->tempat_lhr ?? '-' }}, {{ $dataPribadi->tgl_lahir ?? '-' }}</td>
         </tr>
         <tr>
             <td>Email</td>
             <td>:</td>
-            <td>08123456789</td>
+            <td>{{ $dataPribadi->email ?? '-' }}</td>
         </tr>
     </table>
 
     <h3>Detail Data Iduka Baru</h3>
     <table class="table">
-        <tr>
+    <tr>
             <td>Nama IDUKA</td>
             <td>:</td>
-            <td>PT Contoh Jaya</td>
+            <td>{{ $usulanIduka->nama ?? '-' }}</td>
         </tr>
         <tr>
             <td>Nama Pimpinan</td>
             <td>:</td>
-            <td>Budi Santoso</td>
+            <td>{{ $usulanIduka->nama_pimpinan ?? '-' }}</td>
         </tr>
         <tr>
             <td>NIP/NIP Pimpinan</td>
             <td>:</td>
-            <td>123456789</td>
+            <td>{{ $usulanIduka->nip_pimpinan ?? '-' }}</td>
         </tr>
         <tr>
             <td>Jabatan</td>
             <td>:</td>
-            <td>Direktur</td>
+            <td>{{ $usulanIduka->jabatan ?? '-' }}</td>
         </tr>
         <tr>
             <td>Alamat Lengkap</td>
             <td>:</td>
-            <td>Jl. Industri No. 45</td>
+            <td>{{ $usulanIduka->alamat ?? '-' }}</td>
         </tr>
         <tr>
             <td>Kode Pos</td>
             <td>:</td>
-            <td>54321</td>
+            <td>{{ $usulanIduka->kode_pos ?? '-' }}</td>
         </tr>
         <tr>
             <td>No Telepon</td>
             <td>:</td>
-            <td>54321</td>
+            <td>{{ $usulanIduka->telepon ?? '-' }}</td>
         </tr>
         <tr>
             <td>Email</td>
             <td>:</td>
-            <td>54321</td>
+            <td>{{ $usulanIduka->email ?? '-' }}</td>
         </tr>
         <tr>
             <td>Bidang Industri</td>
             <td>:</td>
-            <td>54321</td>
+            <td>{{ $usulanIduka->bidang_industri ?? '-' }}</td>
         </tr>
         <tr>
             <td>Kerja Sama</td>
             <td>:</td>
-            <td>54321</td>
+            <td>{{ $usulanIduka->kerjasama ?? '-' }}</td>
         </tr>
     </table>
 

@@ -140,18 +140,24 @@
         <tr>
             <td class="signature">Mengetahui,<br>Orang Tua/Wali<br>
                 <div class="space"></div>
-                (...........................................)
+                {{ $dataPribadi->name_ayh ?? '-' }}
             </td>
             <td class="signature">Yang Mengajukan,<br>Siswa<br>
                 <div class="space"></div>
-                (...........................................)
+                {{ $dataPribadi->name ?? '-' }}
             </td>
         </tr>
         <tr>
             <td colspan="2" class="signature">Disetujui,<br>Kaprog<br>
                 <div class="space"></div>
+                @if(isset($kaprog))
+                <strong>{{ $kaprog->nama }}</strong><br>
+                NIP: {{ $kaprog->nip ?? '-' }}
+                @else
                 (...........................................)<br>
                 NIP: .........................................
+                @endif
+                
             </td>
         </tr>
     </table>
