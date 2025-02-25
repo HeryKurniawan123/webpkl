@@ -68,17 +68,25 @@
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
+                    <div class="d-flex justify-content-end mt-0 mb-2">
+                        <button type="button" class="btn btn-danger gap-2 me-2" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
+                            <i class="bi bi-filetype-pdf"></i>
+                        </button>
+                        <button type="button" class="btn btn-back shadow-sm" data-bs-toggle="modal" data-bs-target="#editDataPribadiIdukaModal">
+                            Edit Data
+                        </button>
+                    </div>
                     <div class="card-header" style="background-color: #7e7dfb">
                         <h5 style="color: white;">DATA PRIBADI IDUKA - nama iduka</h5>
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="d-flex justify-content-end mt-0 mb-2">
+                            {{-- <div class="d-flex justify-content-end mt-0 mb-2">
                                 <button type="button" class="btn btn-danger gap-2 me-2" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
                                     <i class="bi bi-filetype-pdf"></i>
                                 </button>
 
-                            </div>
+                            </div> --}}
                             <table class="table table-striped">
                                 <tr>
                                     <td><i class="bi bi-building"></i> Nama IDUKA</td>
@@ -126,32 +134,69 @@
                                     <td>:</td>
                                     <td>..</td>
                                 </tr>
-                                <tr>
-                                    <td>Data Pimpinan</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-building"></i> Nama Pimpinan</td>
-                                    <td>:</td>
-                                    <td>..</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-building"></i> NIP/NIK Pimpinan</td>
-                                    <td>:</td>
-                                    <td>..</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-building"></i> Jabatan</td>
-                                    <td>:</td>
-                                    <td>..</td>
-                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="row mt-4">
+                    <div class="card-header" style="background-color: #7e7dfb">
+                        <h5 style="color: white;">DATA PIMPINAN IDUKA - nama iduka</h5>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <tr>
+                                    <td><i class="bi bi-person"></i> Nama Pimpinan</td>
+                                    <td>:</td>
+                                    <td>..</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-person-vcard"></i> NIP/NIK Pimpinan</td>
+                                    <td>:</td>
+                                    <td>..</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-briefcase"></i> Jabatan</td>
+                                    <td>:</td>
+                                    <td>..</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-telephone"></i> No HP / Telepon</td>
+                                    <td>:</td>
+                                    <td>..</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="card-header" style="background-color: #7e7dfb">
+                        <h5 style="color: white;">DATA PEMBIMBING IDUKA - nama iduka</h5>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <tr>
+                                    <td><i class="bi bi-person"></i> Nama Pembimbing</td>
+                                    <td>:</td>
+                                    <td>..</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-person-vcard"></i> NIP/NIK Pembimbing</td>
+                                    <td>:</td>
+                                    <td>..</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-telephone"></i> No HP / Telepon</td>
+                                    <td>:</td>
+                                    <td>..</td>
+                                </tr>
                             </table>
                             {{-- <div class="col-lg-12 d-flex justify-content-between mt-4">
-                                <a href="{{ route('data.iduka')}}" class="btn btn-back shadow-sm">
+                                <a href="{{ route('iduka.dashboard')}}" class="btn btn-back shadow-sm">
                                     Kembali
-                                </a>
-                                <a href="#" class="btn btn-primary shadow-sm">
-                                    Ajukan
                                 </a>
                             </div> --}}
                         </div>
@@ -160,8 +205,7 @@
             </div>
         </div>
     </div>
-
-    @include('iduka.dataiduka.editiduka')
+    @include('iduka.data_pribadi_iduka.editPribadiIduka')
 </body>
 
 </html>

@@ -14,7 +14,13 @@ class IdukaController extends Controller
     {
         $idukas = Iduka::all();
         return view('iduka.dataiduka.dataiduka', compact('idukas'));
-        // return view('iduka.dataiduka.index', compact('idukas'));
+    }
+
+    public function dataPribadiIduka(){
+        return view('iduka.data_pribadi_iduka.dataPribadiIduka');
+    }
+    public function editDataPribadiIduka(){
+        return view('iduka.data_pribadi_iduka.editPribadiIduka');
     }
 
     public function show($id)

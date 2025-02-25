@@ -150,6 +150,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/iduka/store', [IdukaController::class, 'store'])->name('iduka.store');
     Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
+    Route::get('/data-pribadi/iduka', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.pribadi');
+    Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');
 
 
 

@@ -96,7 +96,7 @@
                         </li>
 
                         <!-- Layouts -->
-                        @if(in_array(auth()->user()->role, ['hubin', 'guru', 'ppkl', 'psekolah', 'orangtua', 'iduka', 'persuratan', 'siswa']))
+                        @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
                         <li
                             class="menu-item {{ Request::routeIs('admin.tkr', 'admin.tkj', 'admin.pemantauan', 'admin.dpib', 'admin.akl', 'admin.mp', 'admin.sk') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -105,6 +105,11 @@
                             </a>
 
                             <ul class="menu-sub">
+                                <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
+                                    <a href="{{ route('data.siswa') }}" class="menu-link">
+                                        <div data-i18n="Without menu">Data Siswa</div>
+                                    </a>
+                                </li>
                                 <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
                                     <a href="{{ route('kelas.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">TKR</div>
@@ -169,24 +174,24 @@
                                 <div data-i18n="Basic">Data Iduka</div>
                             </a>
                         </li>
+                        @endif
+                        @if(auth()->user()->role == 'iduka')
                         <li class="menu-item {{ Request::routeIs('iduka.pribadi') ? 'active' : '' }}">
                             <a href="{{ route('iduka.pribadi') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Iduka</div>
                             </a>
                         </li>
+                        @endif
+                        @if(auth()->user()->role == 'siswa')
                         <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('siswa.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Siswa</div>
                             </a>
                         </li>
-                        <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                            <a href="{{ route('data.siswa') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data siswa</div>
-                            </a>
-                        </li>
+                        @endif
+                        @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
                         <li class="menu-item {{ Request::routeIs('proker.index') ? 'active' : '' }}">
                             <a href="{{ route('proker.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -199,12 +204,16 @@
                                 <div data-i18n="Basic">Konsentrasi Keahlian</div>
                             </a>
                         </li>
+                        @endif
+                        @if(auth()->user()->role == 'persuratan')
                         <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
                             <a href="{{ route('pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Surat Pengajuan</div>
+                                <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
                         </li>
+                        @endif
+                        @if(in_array(auth()->user()->role, ['hubin', 'guru', 'kaprog', 'iduka']))
                         <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
                             <a href="{{ route('review.pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
