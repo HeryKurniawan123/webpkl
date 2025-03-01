@@ -130,6 +130,11 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::get('/detail-Surat-Pengajuan', [PersuratanController::class, 'show'])->name('detail.suratpengajuan');
 
     Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
+
+    Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
+    Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
+    Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
+
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
@@ -168,8 +173,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/iduka/store', [IdukaController::class, 'store'])->name('iduka.store');
     Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
+
     Route::get('/data-pribadi/iduka', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.pribadi');
     Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');
+
 
 
 

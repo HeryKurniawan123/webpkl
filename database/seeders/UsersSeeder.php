@@ -49,7 +49,7 @@ class UsersSeeder extends Seeder
                 'password'=>bcrypt('12345678')
             ],
             [
-                'name'=>'Pembimbing sekolah',
+                 'name'=>'Pembimbing sekolah',
                 'nip'=>'1234567895',
                 'role'=>'psekolah ',
                 'password'=>bcrypt('12345678')

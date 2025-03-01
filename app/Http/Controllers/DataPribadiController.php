@@ -149,5 +149,4 @@ class DataPribadiController extends Controller
 
     return redirect(url()->previous())->with('success', 'Data siswa berhasil diperbarui.');
 }
-
-} 
+}

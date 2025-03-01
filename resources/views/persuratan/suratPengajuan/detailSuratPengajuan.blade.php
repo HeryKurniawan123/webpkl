@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Surat Pengajuan PKL</title>
+        <title>Detail Pengajuan PKL</title>
         <style>
             .table td {
                 vertical-align: middle; 
@@ -96,92 +96,94 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="row">
                         <div class="card-header" style="background-color: #7e7dfb">
-                            <h5 style="color: white;">Review Pengajuan PKL</h5>
+                            <h5 style="color: white;">Data IDUKA</h5>
                         </div>
                         <div class="card">
                             <div class="card-body">
-                                <h5>Data Siswa</h5>
-                                <table class="table table-striped">
-                                    <tr>
-                                        <td>Nama Siswa</td>
-                                        <td>:</td>
-                                        <td>Contoh Nama</td>
-                                    </tr>
-                                    <tr>
-                                        <td>NIS</td>
-                                        <td>:</td>
-                                        <td>222310280</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Kelas</td>
-                                        <td>:</td>
-                                        <td>XII RPL 1</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Konsentrasi Keahlian</td>
-                                        <td>:</td>
-                                        <td>Rekayasa Perangkat Lunak</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jenis Kelamin</td>
-                                        <td>:</td>
-                                        <td>Perempuan</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Alamat</td>
-                                        <td>:</td>
-                                        <td>Rekayasa Perangkat Lunak</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tempat Lahir</td>
-                                        <td>:</td>
-                                        <td>Bandung</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tanggal Lahir</td>
-                                        <td>:</td>
-                                        <td>02 Januari 2009</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Email</td>
-                                        <td>:</td>
-                                        <td>contoh@email.com</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Nomor Telepon</td>
-                                        <td>:</td>
-                                        <td>081234567890</td>
-                                    </tr>
-                                </table>
-
-                                <h5 class="mt-4">Data IDUKA yang Diajukan</h5>
+                                <h5>Data IDUKA</h5>
                                 <table class="table table-striped">
                                     <tr>
                                         <td>Nama IDUKA</td>
                                         <td>:</td>
-                                        <td>Contoh IDUKA</td>
+                                        <td>Contoh Nama</td>
                                     </tr>
                                     <tr>
                                         <td>Alamat Lengkap</td>
                                         <td>:</td>
-                                        <td>Jl. Contoh No. 123</td>
+                                        <td>Perempuan</td>
                                     </tr>
                                     <tr>
                                         <td>Bidang Industri</td>
                                         <td>:</td>
-                                        <td>Teknologi Informasi</td>
+                                        <td>081234567890</td>
                                     </tr>
+                                    <tr>
+                                        <td>Nomor Telpon Perusahaan</td>
+                                        <td>:</td>
+                                        <td>Bandung</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kode Pos</td>
+                                        <td>:</td>
+                                        <td>Rekayasa Perangkat Lunak</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email</td>
+                                        <td>:</td>
+                                        <td>02 Januari 2009</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kerjasama</td>
+                                        <td>:</td>
+                                        <td>Contoh IDUKA</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jumlah Kuota PKL</td>
+                                        <td>:</td>
+                                        <td>Jl. Contoh No. 123</td>
+                                    </tr>
+                                </table>
+                                    <h5 class="mt-4">Data Pimpinan</h5>
+                                    <table class="table table-striped">
                                     <tr>
                                         <td>Nama Pimpinan</td>
                                         <td>:</td>
-                                        <td>Teknologi Informasi</td>
+                                        <td>222310280</td>
                                     </tr>
                                     <tr>
-                                        <td>Kontak</td>
+                                        <td>NIP/NIK Pimpinan</td>
                                         <td>:</td>
-                                        <td>082345678901</td>
+                                        <td>XII RPL 1</td>
                                     </tr>
-                                </table>
+                                    <tr>
+                                        <td>Jabatan</td>
+                                        <td>:</td>
+                                        <td>Rekayasa Perangkat Lunak</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nomor Telpon Pimpinan</td>
+                                        <td>:</td>
+                                        <td>Bandung</td>
+                                    </tr>
+                                    </table>
+                                    <h5 class="mt-4">Data Pembimbing</h5>
+                                    <table class="table table-striped">
+                                    <tr>
+                                        <td>Nama Pembimbing</td>
+                                        <td>:</td>
+                                        <td>222310280</td>
+                                    </tr>
+                                    <tr>
+                                        <td>NIP/NIK Pembimbing</td>
+                                        <td>:</td>
+                                        <td>XII RPL 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nomor Telpon Pembimbing</td>
+                                        <td>:</td>
+                                        <td>Bandung</td>
+                                    </tr>
+                                    </table>
 
                                 <div class="d-flex justify-content-between mt-3 mb-2">
                                     <div class="d-flex justify-content-start">
@@ -190,9 +192,9 @@
                                         </a>
                                     </div>
 
-                                    <div class="button-group">
-                                        <a href="{{ route('download.pdf') }}" type="button" class="btn btn-action btn-reject"><i class="bi bi-file-earmark-pdf"></i></a>
-                                    </div>
+                                    <a href="{{ route('download.pdf') }}" class="btn btn-danger">
+                                        <i class="bi bi-filetype-pdf"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

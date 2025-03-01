@@ -52,7 +52,7 @@
         <div class="container-fluid">
             <div class="content-wrapper">
                 <div class="container-xxl flex-grow-1 container-p-y">
-                    <form id="pdfForm" method="POST" action="{{ route('download.pdf') }}">
+                    <form id="pdfForm" method="GET" action="{{ route('download.pdf') }}">
                         @csrf
                         <div class="row">
                             <div class="col-md-12 mt-3">
@@ -68,6 +68,9 @@
                                             <option value="ak">AK</option>
                                             <option value="sp">SP</option>
                                         </select>
+                                        <select class="form-select w-auto" id="filterKelas" disabled>
+                                        <option value="all">Pilih Kelas</option>
+                                    </select>
                                     </div>
                                     <div class="button-group">
                                         <button id="toggleSelectButton" type="button" class="btn btn-secondary">Pilih Data</button>
@@ -121,6 +124,34 @@
             const selectAllWrapper = document.getElementById('selectAllWrapper');
             const selectAll = document.getElementById('selectAll');
 
+            const jurusanKelas = {
+                tkj: ["XI TKJ 1", "XI TKJ 2", "XI TKJ 3"],
+                tkr: ["XI TKR 1", "XI TKR 2"],
+                pplg: ["XI PPLG 1", "XI PPLG 2"],
+                dpib: ["XI DPIB 1"],
+                mplb: ["XI MPLB 1", "XI MPLB 2"],
+                ak: ["XI AK 1"],
+                sp: ["XI SP 1"]
+            };
+
+            document.getElementById("filterIduka").addEventListener("change", function () {
+                const selectedJurusan = this.value;
+                const kelasSelect = document.getElementById("filterKelas");
+                kelasSelect.innerHTML = '<option value="all">Pilih Kelas</option>';
+                
+                if (selectedJurusan !== "all" && jurusanKelas[selectedJurusan]) {
+                    jurusanKelas[selectedJurusan].forEach(kelas => {
+                        let option = document.createElement("option");
+                        option.value = kelas.toLowerCase().replace(/\s+/g, "-");
+                        option.textContent = kelas;
+                        kelasSelect.appendChild(option);
+                    });
+                    kelasSelect.disabled = false;
+                } else {
+                    kelasSelect.disabled = true;
+                }
+            });
+            
             toggleButton.addEventListener('click', () => {
                 const isVisible = checkboxes[0].style.display !== 'none';
                 checkboxes.forEach(cb => cb.style.display = isVisible ? 'none' : 'block');

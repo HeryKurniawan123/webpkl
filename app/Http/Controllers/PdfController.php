@@ -45,5 +45,4 @@ class PdfController extends Controller
         
         return $pdf->download('siswa_usulan_iduka.pdf');
     }
-    
 }

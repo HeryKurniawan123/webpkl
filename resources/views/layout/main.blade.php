@@ -204,6 +204,13 @@
                         </li>
                         @endif
                         @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
+                        <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
+                            <a href="{{ route('data.siswa') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data siswa</div>
+                            </a>
+                        </li>
+
                         <li class="menu-item {{ Request::routeIs('proker.index') ? 'active' : '' }}">
                             <a href="{{ route('proker.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -216,9 +223,16 @@
                                 <div data-i18n="Basic">Konsentrasi Keahlian</div>
                             </a>
                         </li>
+
                         @endif
                         @if(auth()->user()->role == 'persuratan')
-                        <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                            <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data Pribadi Persuratan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('pengajuan') ? 'active' : '' }}">
                             <a href="{{ route('pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
