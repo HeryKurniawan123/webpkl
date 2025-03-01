@@ -48,6 +48,12 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file. -->
     <script src="{{ asset('snet/assets/js/config.js') }}"></script>
+
+    <style>
+        .sidebar, .navbar {
+            background-color: #ffffff !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -177,9 +183,15 @@
                         @endif
                         @if(auth()->user()->role == 'iduka')
                         <li class="menu-item {{ Request::routeIs('iduka.pribadi') ? 'active' : '' }}">
-                            <a href="#" class="menu-link">
+                            <a href="{{ route('iduka.pribadi')}}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Iduka</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::routeIs('tp.iduka') ? 'active' : '' }}">
+                            <a href="{{ route('tp.iduka')}}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">TP</div>
                             </a>
                         </li>
                         @endif
@@ -222,6 +234,12 @@
                         </li>
                         @endif
                         @if(auth()->user()->role == 'kaprog')
+                        <li class="menu-item {{ Request::routeIs('tambah.tp') ? 'active' : '' }}">
+                            <a href="{{ route('tambah.tp')}}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Tujuan Pembelajaran</div>
+                            </a>
+                        </li>
                         <li class="menu-item {{ Request::routeIs('review.usulan') ? 'active' : '' }}">
                             <a href="{{ route('review.usulan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -336,7 +354,7 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="/logout">
+                                        <a class="dropdown-item logout-btn" href="/logout">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>
                                         </a>
@@ -358,6 +376,34 @@
         </div>
         <!-- / Layout wrapper -->
 
+
+        <script>
+                document.querySelectorAll('.logout-btn').forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault();
+
+                        Swal.fire({
+                            title: "Apakah kamu yakin?",
+                            text: "Data ini tidak bisa dikembalikan!",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Ya, Logout!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = this.href; // Arahkan ke URL logout
+                            }
+                        });
+                    });
+                });
+
+                // setTimeout(() => {
+                //     document.querySelector('.sidebar').style.backgroundColor = '#ffff';
+                //     document.querySelector('.navbar').style.backgroundColor = '#ffff';
+                // }, 500);
+
+        </script>
 
 
         <!-- Core JS -->

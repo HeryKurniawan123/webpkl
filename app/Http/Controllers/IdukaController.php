@@ -138,6 +138,10 @@ class IdukaController extends Controller
         return redirect()->route('data.iduka')->with('success', 'Data IDUKA berhasil diperbarui!');
     }
 
+    public function TpIduka() {
+        return view('iduka.tp.tp');
+    }
+
 
     public function destroy($id)
     {

@@ -132,6 +132,10 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
 });
 
+Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
+    Route::get('/tambah-tp/iduka', [IdukaController::class, 'TpIduka'])->name('tp.iduka');
+});
+
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/review-usulan', [KaprogController::class, 'reviewUsulan'])->name('review.usulan');
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
@@ -140,6 +144,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
+
+    //TP
+    Route::get('/tambah-tp', [KaprogController::class, 'CpTp'])->name('tambah.tp');
 
 });
 

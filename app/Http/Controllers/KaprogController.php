@@ -77,37 +77,41 @@ class KaprogController extends Controller
     }
 
     public function historyDiterima()
-{
-    $user = Auth::user();
-    $kaprog = DB::table('gurus')->where('user_id', $user->id)->first();
+    {
+        $user = Auth::user();
+        $kaprog = DB::table('gurus')->where('user_id', $user->id)->first();
 
-    if (!$kaprog) {
-        return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
+        if (!$kaprog) {
+            return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
+        }
+
+        $usulanDiterima = UsulanIduka::with(['user.dataPribadi.kelas'])
+            ->where('status', 'diterima')
+            ->where('konke_id', $kaprog->konkes_id) // Filter sesuai Kaprog yang login
+            ->get();
+
+        return view('kaprog.review.historyditerima', compact('usulanDiterima'));
     }
 
-    $usulanDiterima = UsulanIduka::with(['user.dataPribadi.kelas'])
-        ->where('status', 'diterima')
-        ->where('konke_id', $kaprog->konkes_id) // Filter sesuai Kaprog yang login
-        ->get();
+    public function historyDitolak()
+    {
+        $user = Auth::user();
+        $kaprog = DB::table('gurus')->where('user_id', $user->id)->first();
 
-    return view('kaprog.review.historyditerima', compact('usulanDiterima'));
-}
+        if (!$kaprog) {
+            return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
+        }
 
-public function historyDitolak()
-{
-    $user = Auth::user();
-    $kaprog = DB::table('gurus')->where('user_id', $user->id)->first();
+        $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
+            ->where('status', 'ditolak')
+            ->where('konke_id', $kaprog->konkes_id) // Filter sesuai Kaprog yang login
+            ->get();
 
-    if (!$kaprog) {
-        return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
+        return view('kaprog.review.historyditolak', compact('usulanDitolak'));
     }
 
-    $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
-        ->where('status', 'ditolak')
-        ->where('konke_id', $kaprog->konkes_id) // Filter sesuai Kaprog yang login
-        ->get();
-
-    return view('kaprog.review.historyditolak', compact('usulanDitolak'));
-}
+    public function CpTp() {
+        return view('kaprog.tp.tp');
+    }
 
 }
