@@ -146,9 +146,17 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
+    
+    Route::get('/review-pengajuan', [KaprogController::class, 'reviewPengajuan'])->name('review.pengajuan');
+    Route::get('/detail-pengajuan', [KaprogController::class, 'showPengajuan'])->name('pengajuan.detail');
+    Route::put('/usulan-diterima', [KaprogController::class, 'pengajuanDiterima'])->name('pengajuan.diterima');
+    Route::put('/usulan-ditolak', [KaprogController::class, 'pengajuanDitolak'])->name('pengajuan.ditolak');
 
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
+    
+    Route::get('/history-pengajuan/diterima', [KaprogController::class, 'historyPengajuanDiterima'])->name('review.pengajuanditerima');
+    Route::get('/history-pengajuan/ditolak', [KaprogController::class, 'historyPengajuanDitolak'])->name('review.pengajuanditolak');
 
     //TP
     Route::get('/tambah-tp', [KaprogController::class, 'CpTp'])->name('tambah.tp');
