@@ -82,9 +82,40 @@
                                 </button>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="addTpFieldEdit()">
+                        <button type="button" class="btn btn-sm btn-primary mt-2" onclick="addTpFieldEdit()">
                             <i class="bi bi-plus-lg"></i> Tambah TP
                         </button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-primary">Simpan Data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        {{-- tambahTP --}}
+        <div class="modal fade" id="editTpModal" tabindex="-1" aria-labelledby="editTpModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="editTpModalLabel">Form Edit Tujuan Pembelajaran</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Capaian Pembelajaran</label>
+                            <input type="text" class="form-control" name="nama_cp" placeholder="Nama Capaian Pembelajaran" required>
+                        </div>
+                        <div id="tpFieldsEdit">
+                            <label class="form-label">Nama Tujuan Pembelajaran</label>
+                            <div class="input-group mb-2">
+                                <input type="text" name="nama_tp[]" class="form-control" placeholder="Nama Tujuan Pembelajaran">
+                                <button type="button" class="btn btn-secondary" onclick="removeTpField(this)">
+                                    -
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -112,8 +143,8 @@
         newField.classList.add("input-group", "mb-2");
         newField.innerHTML = `
             <input type="text" name="nama_tp[]" class="form-control" placeholder="Nama Tujuan Pembelajaran">
-            <button type="button" class="btn btn-danger" onclick="removeTpField(this)">
-                <i class="bi bi-trash"></i>
+            <button type="button" class="btn btn-secondary" onclick="removeTpField(this)">
+                -
             </button>
         `;
         tpFields.appendChild(newField);
