@@ -25,6 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'iduka_id',
     ];
 
     public function iduka()

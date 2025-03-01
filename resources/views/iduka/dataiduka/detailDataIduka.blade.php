@@ -150,10 +150,12 @@
                                     Kembali
                                 </a>
                                 @if(auth()->user()->role == 'siswa')
-                                <a href="#" class="btn btn-primary shadow-sm">
-                                    Ajukan
-                                </a>
+                                <form action="{{ route('pengajuan.ajukan', $iduka->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary shadow-sm">Ajukan PKL</button>
+                                </form>
                                 @endif
+
                             </div>
                         </div>
                     </div>

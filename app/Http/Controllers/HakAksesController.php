@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PengajuanPkl;
 use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,8 @@ class HakAksesController extends Controller
     function siswa(){
         $user = auth()->user();
         $usulanSiswa = UsulanIduka::where('user_id', $user->id)->get();
-        return view('dashboard', compact('usulanSiswa'));
+        $pengajuanSiswa = PengajuanPkl::where('siswa_id', $user->id)->with('iduka')->get();
+        return view('dashboard', compact('usulanSiswa', 'pengajuanSiswa'));
     }
     function iduka(){
         return view('dashboard');

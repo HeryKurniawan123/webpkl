@@ -115,20 +115,6 @@ class KaprogController extends Controller
     }
 
 
-    public function reviewPengajuan()  {
-        return view('kaprog.reviewPengajuan.reviewpengajuan');
-    }
-
-    public function showPengajuan()  {
-        return view('kaprog.reviewPengajuan.detailpengajuan');
-    }
-
-    public function historyPengajuanDiterima()  {
-        return view('kaprog.reviewPengajuan.historyditerima');
-    }
-    
-    public function historyPengajuanDitolak()  {
-        return view('kaprog.reviewPengajuan.historyditolak');
-    }
+   
 
 }

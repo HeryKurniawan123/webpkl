@@ -16,6 +16,7 @@ use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\PengajuanPklController;
 use App\Http\Controllers\PersuratanController;
 use App\Http\Controllers\UsulanIdukaController;
 
@@ -139,6 +140,7 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/tambah-tp/iduka', [IdukaController::class, 'TpIduka'])->name('tp.iduka');
+    
 });
 
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
@@ -147,17 +149,12 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
     
-    Route::get('/review-pengajuan', [KaprogController::class, 'reviewPengajuan'])->name('review.pengajuan');
-    Route::get('/detail-pengajuan', [KaprogController::class, 'showPengajuan'])->name('pengajuan.detail');
-    Route::put('/usulan-diterima', [KaprogController::class, 'pengajuanDiterima'])->name('pengajuan.diterima');
-    Route::put('/usulan-ditolak', [KaprogController::class, 'pengajuanDitolak'])->name('pengajuan.ditolak');
+    
 
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
     
-    Route::get('/history-pengajuan/diterima', [KaprogController::class, 'historyPengajuanDiterima'])->name('review.pengajuanditerima');
-    Route::get('/history-pengajuan/ditolak', [KaprogController::class, 'historyPengajuanDitolak'])->name('review.pengajuanditolak');
-
+    
     //TP
     Route::get('/tambah-tp', [KaprogController::class, 'CpTp'])->name('tambah.tp');
 
@@ -182,12 +179,22 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
 
+    Route::post('/pengajuan/{iduka}', [PengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');
+    Route::get('/pengajuan', [PengajuanPklController::class, 'index'])->name('pengajuan.index');
+
+   
+    Route::get('/review-pengajuan', [PengajuanPklController::class, 'reviewPengajuan'])->name('review.pengajuan');
+    Route::get('/detail-pengajuan/{id}', [PengajuanPklController::class, 'showPengajuan'])->name('pengajuan.detail');
+    Route::patch('/pengajuan/{id}/terima', [PengajuanPklController::class, 'terima'])->name('pengajuan.terima');
+    Route::patch('/pengajuan/{id}/tolak', [PengajuanPklController::class, 'tolak'])->name('pengajuan.tolak');
+    
+    Route::get('/review/pengajuan/diterima', [PengajuanPklController::class, 'reviewPengajuanDiterima'])->name('review.pengajuanditerima');
+    Route::get('/review/pengajuan/ditolak', [PengajuanPklController::class, 'reviewPengajuanDitolak'])->name('review.pengajuanditolak');
+
+    
+
     Route::get('/data-pribadi/iduka', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.pribadi');
     Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');
-
-
-
-
 
     //ORTU
     Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');

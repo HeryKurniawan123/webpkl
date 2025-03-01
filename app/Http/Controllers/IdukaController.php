@@ -157,4 +157,5 @@ class IdukaController extends Controller
 
         return redirect()->route('data.iduka')->with('success', 'Data Iduka berhasil dihapus.');
     }
+
 }
