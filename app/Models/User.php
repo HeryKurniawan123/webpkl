@@ -34,6 +34,7 @@ class User extends Authenticatable
         return $this->hasOne(Guru::class, 'user_id');
     }
 
+
     // Relasi ke tabel konkes (Many to One)
     public function konke()
     {
@@ -64,8 +65,16 @@ class User extends Authenticatable
         return $this->hasOne(DataPribadi::class, 'user_id');
     }
 
+    
+    public function siswa()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
-
+    public function pembimbing()
+    {
+        return $this->hasOne(Pembimbing::class, 'user_id');
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

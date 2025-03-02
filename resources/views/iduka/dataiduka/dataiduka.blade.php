@@ -80,30 +80,30 @@
                     </div>
 
                     <div class="col-md-12 mt-3">
-                        @if ($idukas->isEmpty())
+                        @if ($iduka->isEmpty())
                         <div class="alert alert-warning">
                             Belum ada data Iduka yang tersedia.
                         </div>
                         @else
-                        @foreach ($idukas as $iduka)
+                        @foreach ($iduka as $i)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div class="mb-0" style="font-size: 18px">{{ $iduka->nama }}</div>
-                                    <div class="">{{ $iduka->alamat }}</div>
-                                    @if ($iduka->rekomendasi == 1)
+                                    <div class="mb-0" style="font-size: 18px">{{ $i->nama }}</div>
+                                    <div class="">{{ $i->alamat }}</div>
+                                    @if ($i->rekomendasi == 1)
                                     <div class="text-success mt-1"><strong>Rekomendasi:</strong> IDUKA ini direkomendasikan</div>
                                     @endif
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    <a href="{{ route('detail.iduka', $iduka->id) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    <a href="{{ route('detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill">Detail</a>
                                     <div class="dropdown ms-2">
                                         <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             ⋮
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <form action="{{ route('iduka.destroy', $iduka->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus iduka ini?');">
+                                                <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus iduka ini?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">Hapus</button>

@@ -27,6 +27,11 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="no_hp_pimpinan" class="form-label">Nomor Telepon Pimpinan</label>
+                        <input type="text" class="form-control" name="no_hp_pimpinan" value="{{ $iduka->no_hp_pimpinan ?? '-' }}" required>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="jabatan" class="form-label">Jabatan</label>
                         <input type="text" class="form-control" name="jabatan" value="{{ $iduka->jabatan }}" required>
                     </div>

@@ -21,6 +21,11 @@
                         <input type="text" class="form-control" name="nip_pimpinan" placeholder="Masukkan Nip/Nik Pimpinan" required>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">Nomor Telepon Pimpinan</label>
+                        <input type="text" class="form-control" name="no_hp_pimpinan" placeholder="Masukkan Nomor Telepon Pimpinan" required>
+                    </div>
+                    
+                    <div class="mb-3">
                         <label class="form-label">Jabatan</label>
                         <input type="text" class="form-control" name="jabatan" placeholder="Masukkan Jabatan" required>
                     </div>

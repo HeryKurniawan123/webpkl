@@ -194,6 +194,12 @@
                                 <div data-i18n="Basic">TP</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
+                            <a href="{{ route('iduka.pembimbing.create')}}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Pembimbing</div>
+                            </a>
+                        </li>
                         @endif
                         @if(auth()->user()->role == 'siswa')
                         <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">

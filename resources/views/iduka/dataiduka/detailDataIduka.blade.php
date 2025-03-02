@@ -98,6 +98,11 @@
                                     <td>{{ $iduka->nip_pimpinan ?? '-'}}</td>
                                 </tr>
                                 <tr>
+                                    <td><i class="bi bi-building"></i> Nomor Telepon Pimpinan</td>
+                                    <td>:</td>
+                                    <td>{{ $iduka->no_hp_pimpinan ?? '-'}}</td>
+                                </tr>
+                                <tr>
                                     <td><i class="bi bi-building"></i> Jabatan</td>
                                     <td>:</td>
                                     <td>{{ $iduka->jabatan?? '-' }}</td>
