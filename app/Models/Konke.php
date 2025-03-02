@@ -18,12 +18,16 @@ class Konke extends Model
     }
 
     public function gurus()
-{
-    return $this->hasMany(Guru::class, 'konkes_id', 'id');
-}
-public function dataPribadis()
-{
-    return $this->hasMany(DataPribadi::class, 'konke_id');
-}
+    {
+        return $this->hasMany(Guru::class, 'konkes_id', 'id');
+    }
+    public function dataPribadis()
+    {
+        return $this->hasMany(DataPribadi::class, 'konke_id');
+    }
+    public function cp()
+    {
+        return $this->hasMany(Cp::class);
+    }
 
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Iduka;
 use App\Models\UsulanIduka;
+use App\Models\Cp;
+use App\Models\Atp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -110,9 +112,7 @@ class KaprogController extends Controller
         return view('kaprog.review.historyditolak', compact('usulanDitolak'));
     }
 
-    public function CpTp() {
-        return view('kaprog.tp.tp');
-    }
+    
 
 
    

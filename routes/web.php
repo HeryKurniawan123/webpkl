@@ -1,24 +1,25 @@
 <?php
 
-use App\Http\Controllers\TenagaKependidikanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DataController;
 
-use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\OrtuController;
+use App\Http\Controllers\CpAtpController;
 use App\Http\Controllers\HubinController;
 use App\Http\Controllers\IdukaController;
-use App\Http\Controllers\KaprogController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KonkeController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\KaprogController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
-use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PengajuanPklController;
 use App\Http\Controllers\PersuratanController;
 use App\Http\Controllers\UsulanIdukaController;
+use App\Http\Controllers\TenagaKependidikanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -156,8 +157,11 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     
     
     //TP
-    Route::get('/tambah-tp', [KaprogController::class, 'CpTp'])->name('tambah.tp');
-
+    Route::get('/cp', [CpAtpController::class, 'cp'])->name('cp.index');
+    Route::post('/cp', [CpAtpController::class, 'store'])->name('cp.store');
+    Route::get('/cp/{id}', [CpAtpController::class, 'show'])->name('cp.show');
+    Route::put('/cp/{id}', [CpAtpController::class, 'update'])->name('cp.update');
+    Route::delete('/cp/{id}', [CpAtpController::class, 'destroy'])->name('cp.destroy');
 });
 
 

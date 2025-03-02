@@ -25,12 +25,27 @@ class Guru extends Model
     protected $hidden = [
         'password',
     ];
-    public function konke()
+    // Relasi ke Proker (Many to One)
+    public function proker()
     {
-        return $this->belongsTo(Konke::class, 'konkes_id', 'id');
+        return $this->belongsTo(Proker::class);
     }
-    public function user()
+
+    // Relasi ke Guru (One to Many)
+    public function gurus()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->hasMany(Guru::class, 'konkes_id');
+    }
+
+    // Relasi ke CP (One to Many)
+    public function cp()
+    {
+        return $this->hasMany(Cp::class, 'konkes_id');
+    }
+
+    // Relasi ke Data Pribadi (One to Many)
+    public function dataPribadis()
+    {
+        return $this->hasMany(DataPribadi::class, 'konkes_id');
     }
 }

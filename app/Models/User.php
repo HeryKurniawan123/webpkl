@@ -28,24 +28,41 @@ class User extends Authenticatable
         'iduka_id',
     ];
 
-    public function iduka()
+    // Relasi ke tabel gurus (One to One)
+    public function guru()
     {
-        return $this->hasOne(Iduka::class, 'user_id', 'id');
+        return $this->hasOne(Guru::class, 'user_id');
     }
 
+    // Relasi ke tabel konkes (Many to One)
+    public function konke()
+    {
+        return $this->belongsTo(Konke::class, 'konkes_id');
+    }
 
+    // Relasi ke Kelas (Many to One)
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    // Relasi ke Iduka (One to One)
+    public function iduka()
+    {
+        return $this->hasOne(Iduka::class, 'user_id');
+    }
+
+    // Relasi ke Kependik (One to One, by email)
     public function kependik()
     {
         return $this->hasOne(Kependik::class, 'email', 'email');
     }
-    public function gurus()
+
+    // Relasi ke Data Pribadi (One to One)
+    public function dataPribadi()
     {
-        return $this->hasMany(Guru::class);
+        return $this->hasOne(DataPribadi::class, 'user_id');
     }
-    public function konkes()
-{
-    return $this->hasOne(Konke::class, 'id', 'konkes_id');
-}
 
 
 
@@ -68,24 +85,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    public function dataPribadi()
-    {
-        return $this->hasOne(DataPribadi::class, 'user_id');
-    }
-
-    public function siswa()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function konke()
-    {
-        return $this->belongsTo(Konke::class, 'konke_id'); // Perbaiki relasi
-    }
-
-    public function kelas()
-    {
-        return $this->belongsTo(Kelas::class, 'kelas_id');
-    }
 }

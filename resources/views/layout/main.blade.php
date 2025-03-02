@@ -248,8 +248,8 @@
                         </li>
                         @endif
                         @if(auth()->user()->role == 'kaprog')
-                        <li class="menu-item {{ Request::routeIs('tambah.tp') ? 'active' : '' }}">
-                            <a href="{{ route('tambah.tp')}}" class="menu-link">
+                        <li class="menu-item {{ Request::routeIs('cp.index') ? 'active' : '' }}">
+                            <a href="{{ route('cp.index')}}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Tujuan Pembelajaran</div>
                             </a>
