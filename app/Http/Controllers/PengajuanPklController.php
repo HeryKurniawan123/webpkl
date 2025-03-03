@@ -67,6 +67,7 @@ class PengajuanPklController extends Controller
             ->where('iduka_id', $iduka_id)
             ->where('status', 'proses')
             ->get();
+            
     
         return view('pengajuan.review', compact('pengajuans'));
     }

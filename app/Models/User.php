@@ -38,7 +38,7 @@ class User extends Authenticatable
     // Relasi ke tabel konkes (Many to One)
     public function konke()
     {
-        return $this->belongsTo(Konke::class, 'konkes_id');
+        return $this->belongsTo(Konke::class, 'konke_id');
     }
 
     // Relasi ke Kelas (Many to One)

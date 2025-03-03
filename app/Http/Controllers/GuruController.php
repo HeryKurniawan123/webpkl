@@ -13,9 +13,10 @@ class GuruController extends Controller
 {
     public function dataguru()
     {
-        $gurus = Guru::with('konke')->paginate(10); // Pastikan relasi "konke" sudah benar
+        $user = User::where('role', 'guru')->with('konke')->get();
+        $guru = Guru::all(); // Pastikan relasi "konke" sudah benar
         $konkes = Konke::all(); // Ambil data konsentrasi keahlian
-        return view('hubin.dataguru.dataguru', compact('gurus', 'konkes')); 
+        return view('hubin.dataguru.dataguru', compact('guru', 'konkes')); 
     }
 
     public function create()
@@ -33,7 +34,8 @@ class GuruController extends Controller
         'nip' => 'required|string|max:20|unique:users,nip',
         'email' => 'required|email|max:255|unique:gurus,email|unique:users,email',
         'password' => 'required|min:8',
-        'konkes_id' => 'required|exists:konkes,id',
+       'konkes_id' => 'nullable|exists:konkes,id', // Opsional
+        'role' => 'required|in:guru,kaprog,hubin,psekolah', // Validasi role
     ]);
 
     DB::transaction(function () use ($request) {
@@ -58,7 +60,7 @@ class GuruController extends Controller
             'email' => $request->email,
             'nip' => $request->nip,
             'password' => Hash::make($request->password),
-            'role' => 'guru',
+            'role' => $request->role, 
         ]);
     });
 
@@ -83,7 +85,7 @@ class GuruController extends Controller
         'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
         'alamat' => 'required|string',
         'no_hp' => 'required|string',
-        'konkes_id' => 'required|exists:konkes,id',
+        'konkes_id' => 'nullable|exists:konkes,id', // Opsional
     ]);
 
     DB::transaction(function () use ($request, $guru) {

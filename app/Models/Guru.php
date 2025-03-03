@@ -9,7 +9,7 @@ class Guru extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name',
+        'nama',
         'nik',
         'nip',
         'email',
@@ -28,7 +28,7 @@ class Guru extends Model
     // Relasi ke Proker (Many to One)
     public function proker()
     {
-        return $this->belongsTo(Proker::class);
+        return $this->belongsTo(Proker::class, 'konkes_id', 'id');
     }
 
     // Relasi ke Guru (One to Many)
@@ -47,5 +47,13 @@ class Guru extends Model
     public function dataPribadis()
     {
         return $this->hasMany(DataPribadi::class, 'konkes_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function konke()
+    {
+        return $this->belongsTo(Konke::class, 'konkes_id', 'id');
     }
 }

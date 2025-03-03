@@ -16,6 +16,10 @@ class Konke extends Model
     {
         return $this->belongsTo(Proker::class);
     }
+    public function konke()
+    {
+        return $this->belongsTo(Konke::class);
+    }
 
     public function gurus()
     {
