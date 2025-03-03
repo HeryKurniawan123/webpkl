@@ -188,6 +188,12 @@
                                 <div data-i18n="Basic">Data Pribadi Iduka</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('data.institusi') ? 'active' : '' }}">
+                            <a href="{{ route('data.institusi')}}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data Institusi / Perusahaan</div>
+                            </a>
+                        </li>
                         <li class="menu-item {{ Request::routeIs('tp.iduka') ? 'active' : '' }}">
                             <a href="{{ route('tp.iduka')}}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>

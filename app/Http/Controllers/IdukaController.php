@@ -235,6 +235,10 @@ class IdukaController extends Controller
         return view('iduka.tp.tp');
     }
 
+    public function dataInstitusi(){
+        return view('iduka.data_pribadi_iduka.dataInstitusi');
+    }
+
 
     public function destroy($id)
     {

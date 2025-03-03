@@ -71,4 +71,8 @@ class UsulanIdukaController extends Controller
         $usulan->update(['status' => 'ditolak']);
         return redirect()->back()->with('error', 'Usulan ditolak.');
     }
+
+    public function lihatPDF() {
+        return view('data.usulan.suratUsulanPDF');
+    }
 }
