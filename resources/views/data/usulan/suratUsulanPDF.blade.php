@@ -21,18 +21,48 @@
         p {
             text-align: center;
         }
-
-        .header {
+        .kop-surat {
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        .header h3 {
-            margin-bottom: 5px;
+        .kop-surat img {
+            position: absolute;
+            left: 40px;
+            height: 100px;
+            margin-left: 20px;
         }
 
-        .header p {
+        .teks {
+            margin-left: 120px;
+        }
+
+        .kop-surat h3, .kop-surat h4, .kop-surat p {
+            margin: 0;
+            text-align: center;
+        }
+
+        .kop-surat h3 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .kop-surat h4 {
+            font-size: 16px;
+        }
+
+        .kop-surat p {
+            font-size: 14px;
+        }
+
+        hr {
+            border: 1px solid black;
             margin-top: 5px;
+        }
+
+
+        h3, h4, p {
+            margin: 0;
+            padding: 0;
         }
 
         table {
@@ -42,16 +72,11 @@
             margin-top: 20px;
         }
 
-        table,
-        th,
-        td {
-            border: none;
-        }
-
         th,
         td {
             padding: 10px;
             text-align: left;
+            vertical-align: top;
         }
 
         td:first-child {
@@ -59,15 +84,41 @@
         }
 
         td:nth-child(2) {
-            width: 20px;
+            width: 5px;
         }
 
         .signature {
             text-align: center;
             margin-top: 50px;
+            word-wrap: break-word;
         }
 
         .space {
+            height: 80px;
+            display: block;
+        }
+
+        .sign-table {
+            width: 100%;
+            margin-top: 30px;
+            border: none;
+        }
+
+        .sign-table td {
+            text-align: center;
+            vertical-align: top;
+            width: 50%;
+        }
+
+        .sign-table td strong {
+            display: block;
+            max-width: 200px;
+            margin: 0 auto;
+            word-wrap: break-word;
+        }
+
+        .sign-table td .space {
+            display: block;
             height: 80px;
         }
     </style>
@@ -75,22 +126,21 @@
 
 <body>
 
-    <div class="header">
-        <h3>PEMERINTAH DAERAH PROVINSI JAWA BARAT
-            <br>DINAS PENDIDIKAN
-            <br>CABANG DINAS PENDIDIKAN WILAYAH XIII
-            <br>SMK NEGERI 1 KAWALI
-        </h3>
-        <p>Jalan Talagasari No.35 Tlp. (0265) 791727 E-Mail:
-            <br>smkn1kawali@gmail.com<br>
-            Kawali – Kabupaten Ciamis 46253
-        </p>
+    <div class="kop-surat">
+        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/jawabarat.png'))) }}" alt="Logo Jawa Barat" />
+        <div class="teks">
+            <h3>PEMERINTAH DAERAH PROVINSI JAWA BARAT</h3>
+            <h3>DINAS PENDIDIKAN</h3>
+            <h3>CABANG DINAS PENDIDIKAN WILAYAH XIII</h3>
+            <h3>SMK NEGERI 1 KAWALI</h3>
+            <p>Jalan Talagasari No.35 Tlp. (0265) 791727 E-Mail : smkn1kawali@gmail.com</p>
+            <p>Kawali – Kabupaten Ciamis 46253</p>
+        </div>
         <hr>
+        <h5><u>SURAT PENGAJUAN MENCARI TEMPAT PKL TP 2025/2026</u></h5>
     </div>
-
-    <h4 style="font-weight: normal; text-align: center;">SURAT PENGAJUAN MENCARI TEMPAT PKL TP 2025/2026</h4>
-
-    <table style="border: none;">
+              
+    <table>
         <tr>
             <td>Nama</td>
             <td>:</td>
@@ -115,7 +165,7 @@
 
     <p style="text-align: justify;">Mengajukan tempat Praktik Kerja Lapangan (PKL) Tahun pelajaran 2025/2026, di :</p>
 
-    <table style="border: none;">
+    <table>
         <tr>
             <td>Nama Institusi/Perusahaan</td>
             <td>:</td>
@@ -132,35 +182,35 @@
             <td>{{ $usulanIduka->bidang_industri ?? '-' }}</td>
         </tr>
     </table>
-    <p>Demikian ajuan ini, untuk dipergunakan sebagaimana mestinya.</p>
+    <p style="text-align: justify;">Demikian ajuan ini, untuk dipergunakan sebagaimana mestinya.</p>
+    <br>
+    <p style="text-align: right; margin-right: 75px;">Kawali, .............2025</p>
 
-    <p style="text-align: right">Kawali, .............2025</p>
-
-    <table style="margin-top: 30px; border: none;">
+    <table class="sign-table">
         <tr>
-            <td class="signature">Mengetahui,<br>Orang Tua/Wali<br>
+            <td>Mengetahui,<br>Orang Tua/Wali<br>
                 <div class="space"></div>
-                {{ $dataPribadi->name_ayh ?? '-' }}
+                <strong>{{ $dataPribadi->name_ayh ?? '-' }}</strong>
             </td>
-            <td class="signature">Yang Mengajukan,<br>Siswa<br>
+            <td>Yang Mengajukan,<br>Siswa<br>
                 <div class="space"></div>
-                {{ $dataPribadi->name ?? '-' }}
+                <strong>{{ $dataPribadi->name ?? '-' }}</strong>
             </td>
         </tr>
         <tr>
-            <td colspan="2" class="signature">Disetujui,<br>Kaprog<br>
+            <td colspan="2">Disetujui,<br>Kaprog<br>
                 <div class="space"></div>
                 @if(isset($kaprog))
                 <strong>{{ $kaprog->nama }}</strong><br>
                 NIP: {{ $kaprog->nip ?? '-' }}
                 @else
-                (...........................................)<br>
+                <strong>(...........................................)</strong><br>
                 NIP: .........................................
                 @endif
-                
             </td>
         </tr>
     </table>
+
 </body>
 
 </html>

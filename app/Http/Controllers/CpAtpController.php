@@ -139,7 +139,7 @@ class CpAtpController extends Controller
     public function getCpAtp($konkes_id)
     {
         $cps = Cp::where('konkes_id', $konkes_id)
-            ->with('atps') // Pastikan relasi 'atps' ada di model
+            ->with('atp') // Pastikan relasi 'atps' ada di model
             ->get();
     
         return response()->json($cps);

@@ -64,23 +64,27 @@
     </div>
 
     <!-- Modal Tambah -->
-    <div class="modal fade" id="tambahTpModal" tabindex="-1" aria-labelledby="tambahTpModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5">Tambah Tujuan Pembelajaran Iduka</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+<!-- Modal Tambah -->
+<div class="modal fade" id="tambahTpModal" tabindex="-1" aria-labelledby="tambahTpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Tambah Tujuan Pembelajaran Iduka</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('iduka_atp.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="iduka_id" id="iduka_id"> <!-- Hidden ID Iduka -->
+                
                 <div class="modal-body">
                     <div class="d-flex justify-content-center mb-3">
                         @foreach($konkes as $konke)
-                        <button class="btn btn-primary m-1 jurusan-btn" data-konkes-id="{{ $konke->id }}">
+                        <button type="button" class="btn btn-primary m-1 jurusan-btn" data-konkes-id="{{ $konke->id }}">
                             {{ $konke->name_konke }}
                         </button>
                         @endforeach
-
-
                     </div>
+
                     <div id="cpTpContainer">
                         <label class="d-flex justify-content-end me-2">Check All<input type="checkbox" id="checkAllTambah"></label>
                         <table class="table">
@@ -96,13 +100,18 @@
                         </table>
                     </div>
                 </div>
+                
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Simpan Data</button>
+                    <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+</div>
+
+
+
 
     <!-- Modal Edit -->
     <div class="modal fade" id="editTpModal" tabindex="-1" aria-labelledby="editTpModalLabel" aria-hidden="true">
@@ -150,9 +159,13 @@
         });
 
         document.querySelectorAll(".jurusan-btn").forEach(button => {
-            button.addEventListener("click", function() {
-                const konkes_id = this.getAttribute("data-konkes-id"); // Ambil ID Konke dari button
+            button.addEventListener("click", function(event) {
+                event.preventDefault(); // Mencegah modal tertutup otomatis
+
+                const konkes_id = this.getAttribute("data-konkes-id");
+                document.getElementById("iduka_id").value = konkes_id; // Set ID Iduka ke hidden input
                 const tpTambahBody = document.getElementById("tp-tambah-body");
+                
                 tpTambahBody.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
 
                 fetch(`/get-cp-atp/${konkes_id}`)
@@ -164,7 +177,7 @@
                             let cpRow = `<tr><td><b>${cp.cp}</b></td><td></td></tr>`;
                             tpTambahBody.innerHTML += cpRow;
 
-                            cp.atps.forEach((atp, index) => {
+                            cp.atp.forEach((atp, index) => {
                                 tpTambahBody.innerHTML += `
                                     <tr>
                                         <td style='padding-left: 20px;'>${index + 1}. ${atp.atp}</td>

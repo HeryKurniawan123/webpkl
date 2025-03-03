@@ -140,6 +140,29 @@
 </div>
 
 <script>
+    // Menambahkan CP dan ATP secara dinamis di modal tambah
+let cpIndex = 0;
+
+function addCpField() {
+    cpIndex++;
+    let cpContainer = document.getElementById("cpContainer");
+    let newCpField = document.createElement("div");
+    newCpField.classList.add("mb-3", "border", "p-3", "rounded");
+    newCpField.innerHTML = `
+        <label class="form-label">CP ke-${cpIndex}</label>
+        <input type="text" class="form-control mb-2" name="cp[]" placeholder="Masukkan CP" required>
+        <div id="tpFields-${cpIndex}">
+            <label class="form-label">Tujuan Pembelajaran (ATP)</label>
+            <div class="input-group mb-2">
+                <input type="text" name="atp[${cpIndex}][]" class="form-control" placeholder="Masukkan ATP" required>
+                <button type="button" class="btn btn-secondary" onclick="removeField(this)">-</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-primary mt-2" onclick="addTpField('tpFields-${cpIndex}', ${cpIndex})">+ Tambah ATP</button>
+    `;
+    cpContainer.appendChild(newCpField);
+}
+ 
     // Tambah ATP di form edit
     function addTpField(containerId, cpIndex) {
         let container = document.getElementById(containerId);

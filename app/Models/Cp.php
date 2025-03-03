@@ -13,7 +13,7 @@ class Cp extends Model
     protected $fillable = ['konkes_id', 'cp'];
 
     // Relasi ke ATP (One to Many)
-    public function atps()
+    public function atp()
     {
         return $this->hasMany(Atp::class, 'cp_id', 'id');
     }

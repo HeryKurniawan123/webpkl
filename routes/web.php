@@ -39,18 +39,16 @@ Route::get('/home', function () {
 Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/dashboard/siswa', [HakAksesController::class, 'siswa'])->name('siswa.dashboard');
 
+    //DATA PRIBADI SISWA
     Route::get('/siswa/data-pribadi', [DataPribadiController::class, 'create'])->name('siswa.data_pribadi.create');
     Route::post('/siswa/data-pribadi', [DataPribadiController::class, 'store'])->name('siswa.data_pribadi.store');
 
     //USULAN
     Route::get('/form-usulan', [DataController::class, 'dataUsulan'])->name('usulan.index');
-
     Route::get('/usulan', [UsulanIdukaController::class, 'index'])->name('usulan.index');
     Route::post('/usulan', [UsulanIdukaController::class, 'store'])->name('usulan.store');
     Route::get('/usulan/cetak/{id}', [UsulanIdukaController::class, 'cetakSurat'])->name('usulan.cetakSurat');
-
     Route::get('/surat-usulan/detail', [DataController::class, 'detailUsulan'])->name('detail.usulan');
-
     Route::get('/surat-usulan', [DataController::class, 'suratUsulanPDF'])->name('surat.usulan');
     Route::get('/surat-usulan/PDF', [PdfController::class, 'usulanPdf'])->name('usulan.pdf');
     Route::get('/siswa-usulan/PDF', [PdfController::class, 'siswaUsulanPdf'])->name('siswa.usulan.pdf');
@@ -63,6 +61,8 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     // SISWA
     Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
     Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+
+    //PENGAJUAN
     Route::get('/review-pengajuan', [HubinController::class, 'index'])->name('review.pengajuan');
     Route::get('/detail-pengajuan', [HubinController::class, 'show'])->name('detail.pengajuan');
     Route::get('/history/diterima', [HubinController::class, 'diterima'])->name('history.diterima');
@@ -81,7 +81,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/data-siswa-kelas', [SiswaController::class, 'showSiswa'])->name('siswa.kelas');
 
     //PROKER
-    Route::get('/program-kerja', [DataController::class, 'proker'])->name('proker.index');
+    Route::get('/program-keahlian', [DataController::class, 'proker'])->name('proker.index');
     Route::get('/proker', [ProkerController::class, 'index'])->name('proker.index');
     Route::post('/proker', [ProkerController::class, 'store'])->name('proker.store');
     Route::put('/proker/{proker}', [ProkerController::class, 'update'])->name('proker.update');
@@ -120,27 +120,26 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
 
 
+    //USULAN KAPGROG
     Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
     Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
     Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
-
-
-
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
+
+    //PENGAJUAN
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/detail-Surat-Pengajuan', [PersuratanController::class, 'show'])->name('detail.suratpengajuan');
-
     Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
-
     Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
+
 
     Route::get('/iduka/data-pribadi', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.data-pribadi');
     Route::get('/iduka/edit', [IdukaController::class, 'edit'])->name('iduka.edit');
@@ -155,23 +154,26 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
         return response()->json($cps);
     });
     
-
+   
+    //PEMBIMBING IDUKA
     Route::get('/pembimbing/create', [PembimbingController::class, 'create'])->name('iduka.pembimbing.create');
     Route::post('/pembimbing/store', [PembimbingController::class, 'store'])->name('iduka.pembimbing.store');
     Route::get('/pembimbing/show', [PembimbingController::class, 'show'])->name('iduka.pembimbing.show');
     Route::put('/pembimbing/update/{id}', [PembimbingController::class, 'update'])->name('iduka.pembimbing.update');
-
     Route::get('/iduka/download-pdf{id}', [IdukaController::class, 'downloadPDF'])->name('iduka.download-pdf');
+
+    Route::get('/data-institusi', [IdukaController::class, 'dataInstitusi'])->name('data.institusi');
 
 });
 
+
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
+
+    //USULAN KAPROG
     Route::get('/review-usulan', [KaprogController::class, 'reviewUsulan'])->name('review.usulan');
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
-
-
 
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
@@ -222,7 +224,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');
 
     //ORTU
-    Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');
+    Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');    
 });
 
 // // HAK AKSES : HUBIN
