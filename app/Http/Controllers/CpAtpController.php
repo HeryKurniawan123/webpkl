@@ -77,26 +77,45 @@ class CpAtpController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'cp' => 'required|string',
+            'cp' => 'required|array',
+            'cp.*' => 'required|string',
             'atp' => 'required|array',
-            'atp.*' => 'required|string',
+            'atp.*' => 'required|array',
+            'atp.*.*' => 'required|string',
         ]);
 
         try {
-            $cp = Cp::findOrFail($id);
-            $cp->update(['cp' => $request->cp]);
+            $kaprog = Auth::user()->guru;
 
-            // Hapus ATP lama
-            $cp->atp()->delete();
+            if (!$kaprog || !$kaprog->konkes_id) {
+                return redirect()->back()->with('error', 'Akses ditolak: Anda tidak memiliki Konsentrasi Keahlian.');
+            }
 
-            // Hitung ulang nomor ATP
-            $cpNumber = $cp->id;
-            foreach ($request->atp as $index => $deskripsi_atp) {
-                $atpNumber = "{$cpNumber}." . ($index + 1);
-                $cp->atp()->create([
-                    'atp' => $deskripsi_atp,
-                    'kode_atp' => $atpNumber,
-                ]);
+            // Ambil semua CP berdasarkan konsentrasi keahlian yang diakses
+            $cps = Cp::where('konkes_id', $kaprog->konkes_id)->get();
+
+            // Hapus semua ATP lama terkait CP yang diedit
+            foreach ($cps as $cp) {
+                $cp->atp()->delete();
+            }
+
+            // Update atau tambah CP dan ATP yang baru
+            foreach ($request->cp as $cpIndex => $cpText) {
+                // Update CP
+                $cp = $cps[$cpIndex] ?? new Cp();
+                $cp->konkes_id = $kaprog->konkes_id;
+                $cp->cp = $cpText;
+                $cp->save();
+
+                // Tambah ATP
+                if (isset($request->atp[$cpIndex])) {
+                    foreach ($request->atp[$cpIndex] as $atpIndex => $atpText) {
+                        $cp->atp()->create([
+                            'atp' => $atpText,
+                            'kode_atp' => ($cpIndex + 1) . '.' . ($atpIndex + 1),
+                        ]);
+                    }
+                }
             }
 
             return redirect()->route('cp.index')->with('success', 'CP dan ATP berhasil diperbarui.');

@@ -14,11 +14,10 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\KaprogController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
-use App\Http\Controllers\PembimbingController;
-use App\Http\Controllers\PersuratanController;
 use App\Http\Controllers\DataPribadiController;
-use App\Http\Controllers\UsulanIdukaController;
 use App\Http\Controllers\PengajuanPklController;
+use App\Http\Controllers\PersuratanController;
+use App\Http\Controllers\UsulanIdukaController;
 use App\Http\Controllers\TenagaKependidikanController;
 
 Route::get('/', function () {
@@ -140,19 +139,8 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
-    Route::get('/iduka/data-pribadi', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.data-pribadi');
-    Route::get('/iduka/edit', [IdukaController::class, 'edit'])->name('iduka.edit');
-    Route::put('/iduka/updatePribadi/{id}', [IdukaController::class, 'updatePribadi'])->name('iduka.updatePribadi');
-
     Route::get('/tambah-tp/iduka', [IdukaController::class, 'TpIduka'])->name('tp.iduka');
-
-    Route::get('/pembimbing/create', [PembimbingController::class, 'create'])->name('iduka.pembimbing.create');
-    Route::post('/pembimbing/store', [PembimbingController::class, 'store'])->name('iduka.pembimbing.store');
-    Route::put('/pembimbing/update/{id}', [PembimbingController::class, 'update'])->name('iduka.pembimbing.update');
     
-    
-
-    Route::get('/iduka/download-pdf{id}', [IdukaController::class, 'downloadPDF'])->name('iduka.download-pdf');
 });
 
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
