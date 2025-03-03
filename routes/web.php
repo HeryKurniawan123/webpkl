@@ -148,8 +148,9 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
     Route::get('/pembimbing/create', [PembimbingController::class, 'create'])->name('iduka.pembimbing.create');
     Route::post('/pembimbing/store', [PembimbingController::class, 'store'])->name('iduka.pembimbing.store');
-    Route::get('/pembimbing/show', [PembimbingController::class, 'show'])->name('iduka.pembimbing.show');
     Route::put('/pembimbing/update/{id}', [PembimbingController::class, 'update'])->name('iduka.pembimbing.update');
+    
+    
 
     Route::get('/iduka/download-pdf{id}', [IdukaController::class, 'downloadPDF'])->name('iduka.download-pdf');
 });

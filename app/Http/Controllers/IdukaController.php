@@ -115,7 +115,7 @@ class IdukaController extends Controller
     {
         $iduka = Iduka::where('id', $id)->first();
 
-        return view('iduka.detail', compact('iduka'));
+        return view('iduka.dataiduka.detailDataIduka', compact('iduka'));
     }
     
 
@@ -129,7 +129,7 @@ class IdukaController extends Controller
             'alamat' => 'required|string',
             'kode_pos' => 'required|string|max:10',
             'telepon' => 'required|string|max:20',
-            'email' => 'required|email|unique:iduka,email|unique:users,nip',
+            'email' => 'required|email|unique:idukas,email|unique:users,nip',
             'password' => 'required|string|min:6',
             'bidang_industri' => 'required|string',
             'kerjasama' => 'required|string',
@@ -138,7 +138,7 @@ class IdukaController extends Controller
             'rekomendasi' => 'nullable|boolean',
             'no_hp_pimpinan' => 'required|string|max:15',
         ]);
-
+    
         DB::transaction(function () use ($request) {
             // Simpan ke tabel users terlebih dahulu
             $user = User::create([
@@ -148,9 +148,9 @@ class IdukaController extends Controller
                 'role' => 'iduka',
             ]);
         
-            // Simpan ke tabel iduka dengan user_id dari User yang baru dibuat
-            Iduka::create([
-                'user_id' => $user->id, //  Sekarang $user sudah ada
+            // Simpan ke tabel idukas
+            DB::table('idukas')->insert([
+                'user_id' => $user->id,
                 'nama' => $request->nama,
                 'nama_pimpinan' => $request->nama_pimpinan,
                 'nip_pimpinan' => $request->nip_pimpinan,
@@ -166,14 +166,14 @@ class IdukaController extends Controller
                 'kuota_pkl' => $request->kuota_pkl,
                 'rekomendasi' => $request->rekomendasi ?? 0,
                 'no_hp_pimpinan' => $request->no_hp_pimpinan,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         });
-        
-
-
-
+    
         return redirect()->back()->with('success', 'Data Iduka berhasil ditambahkan dan User berhasil dibuat.');
     }
+    
 
     public function update(Request $request, $id)
     {

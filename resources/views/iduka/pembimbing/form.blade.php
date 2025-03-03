@@ -18,10 +18,10 @@
                         </ul>
                     </div>
                 @endif
-                <form action="{{ isset($pembimbing) ? route('iduka.pembimbing.update', $pembimbing->id) : route('iduka.pembimbing.store') }}" method="POST">
+                <form action="{{ !isset($pembimbing->id) ? route('iduka.pembimbing.store') : route('iduka.pembimbing.update', $pembimbing->id) }}" method="POST">
                     @csrf
-                    @if(isset($pembimbing))
-                        @method('PUT') {{-- Tambahkan ini agar Laravel mengenali sebagai update --}}
+                    @if(isset($pembimbing->id)) 
+                        @method('PUT') {{-- Gunakan PUT hanya untuk update --}}
                     @endif
                 
                     
@@ -34,7 +34,7 @@
                     <div class="mb-3">
                         <label class="form-label">NIP</label>
                         <input type="text" name="nip" class="form-control"
-                            value="{{ old('nip', $pembimbing->user->nip ?? '') }}" required>
+                            value="{{ old('nip', $pembimbing->nip ?? '') }}" required>
                     </div>
 
                     <div class="mb-3">
