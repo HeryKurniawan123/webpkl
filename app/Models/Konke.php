@@ -27,7 +27,8 @@ class Konke extends Model
     }
     public function cp()
     {
-        return $this->hasMany(Cp::class);
+        return $this->hasMany(Cp::class, 'konkes_id');
     }
+    
 
 }
