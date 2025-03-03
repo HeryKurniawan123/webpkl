@@ -15,10 +15,13 @@ use App\Http\Controllers\KaprogController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\DataPribadiController;
+use App\Http\Controllers\IdukaAtpController;
+use App\Http\Controllers\PembimbingController;
 use App\Http\Controllers\PengajuanPklController;
 use App\Http\Controllers\PersuratanController;
 use App\Http\Controllers\UsulanIdukaController;
 use App\Http\Controllers\TenagaKependidikanController;
+use App\Models\Cp;
 
 Route::get('/', function () {
     return view('welcome');
@@ -135,12 +138,31 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
-
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
-    Route::get('/tambah-tp/iduka', [IdukaController::class, 'TpIduka'])->name('tp.iduka');
+
+    Route::get('/iduka/data-pribadi', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.data-pribadi');
+    Route::get('/iduka/edit', [IdukaController::class, 'edit'])->name('iduka.edit');
+    Route::put('/iduka/updatePribadi/{id}', [IdukaController::class, 'updatePribadi'])->name('iduka.updatePribadi');
+
+    Route::get('/iduka-atp', [IdukaAtpController::class, 'index'])->name('tp.iduka');
+    Route::post('/iduka-atp/store', [IdukaAtpController::class, 'store'])->name('iduka_atp.store');
+    Route::put('/iduka-atp/update/{id}', [IdukaAtpController::class, 'update'])->name('iduka_atp.update');
+    Route::delete('/iduka-atp/destroy/{id}', [IdukaAtpController::class, 'destroy'])->name('iduka_atp.destroy');
+    Route::get('/get-cp-atp/{konkes_id}', function ($konkes_id) {
+        $cps = Cp::where('konkes_id', $konkes_id)->with('atp')->get();
+        return response()->json($cps);
+    });
     
+
+    Route::get('/pembimbing/create', [PembimbingController::class, 'create'])->name('iduka.pembimbing.create');
+    Route::post('/pembimbing/store', [PembimbingController::class, 'store'])->name('iduka.pembimbing.store');
+    Route::get('/pembimbing/show', [PembimbingController::class, 'show'])->name('iduka.pembimbing.show');
+    Route::put('/pembimbing/update/{id}', [PembimbingController::class, 'update'])->name('iduka.pembimbing.update');
+
+    Route::get('/iduka/download-pdf{id}', [IdukaController::class, 'downloadPDF'])->name('iduka.download-pdf');
+
 });
 
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
@@ -148,13 +170,13 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
-    
-    
+
+
 
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
-    
-    
+
+
     //TP
     Route::get('/cp', [CpAtpController::class, 'cp'])->name('cp.index');
     Route::post('/cp', [CpAtpController::class, 'store'])->name('cp.store');
@@ -185,16 +207,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/pengajuan/{iduka}', [PengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');
     Route::get('/pengajuan', [PengajuanPklController::class, 'index'])->name('pengajuan.index');
 
-   
+
     Route::get('/review-pengajuan', [PengajuanPklController::class, 'reviewPengajuan'])->name('review.pengajuan');
     Route::get('/detail-pengajuan/{id}', [PengajuanPklController::class, 'showPengajuan'])->name('pengajuan.detail');
     Route::patch('/pengajuan/{id}/terima', [PengajuanPklController::class, 'terima'])->name('pengajuan.terima');
     Route::patch('/pengajuan/{id}/tolak', [PengajuanPklController::class, 'tolak'])->name('pengajuan.tolak');
-    
+
     Route::get('/review/pengajuan/diterima', [PengajuanPklController::class, 'reviewPengajuanDiterima'])->name('review.pengajuanditerima');
     Route::get('/review/pengajuan/ditolak', [PengajuanPklController::class, 'reviewPengajuanDitolak'])->name('review.pengajuanditolak');
 
-    
+
 
     Route::get('/data-pribadi/iduka', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.pribadi');
     Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');

@@ -231,9 +231,7 @@ class IdukaController extends Controller
         return redirect(url()->previous())->with('success', 'Data IDUKA berhasil diperbarui!');
     }
 
-    public function TpIduka() {
-        return view('iduka.tp.tp');
-    }
+
 
 
     public function destroy($id)
@@ -266,5 +264,10 @@ class IdukaController extends Controller
     
         return $pdf->download('laporan_pridasi_iduka.pdf' . $user->id . '.pdf');
     }
+
+    public function TpIduka() {
+        return view('iduka.tp.tp');
+    }
+    
     
 }

@@ -2,6 +2,7 @@
 @section('content')
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,11 +12,13 @@
         .card-content {
             transition: transform 0.3s ease-in-out;
         }
+
         .card-content:hover {
             transform: scale(1.02);
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="content-wrapper">
@@ -42,8 +45,8 @@
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                                 <a href="#" class="btn btn-sm btn-danger">
-                                    <i class="bi bi-trash3"></i> 
-                                </a>           
+                                    <i class="bi bi-trash3"></i>
+                                </a>
                             </div>
                         </div>
                         <div class="card-body">
@@ -70,13 +73,13 @@
                 </div>
                 <div class="modal-body">
                     <div class="d-flex justify-content-center mb-3">
-                        <button class="btn btn-primary m-1 jurusan-btn" data-jurusan="rpl">RPL</button>
-                        <button class="btn btn-primary m-1 jurusan-btn" data-jurusan="tkj">TKJ</button>
-                        <button class="btn btn-primary m-1 jurusan-btn" data-jurusan="mp">MP</button>
-                        <button class="btn btn-primary m-1 jurusan-btn" data-jurusan="dpib">DPIB</button>
-                        <button class="btn btn-primary m-1 jurusan-btn" data-jurusan="tkr">TKR</button>
-                        <button class="btn btn-primary m-1 jurusan-btn" data-jurusan="ak">AK</button>
-                        <button class="btn btn-primary m-1 jurusan-btn" data-jurusan="sk">SK</button>
+                        @foreach($konkes as $konke)
+                        <button class="btn btn-primary m-1 jurusan-btn" data-konkes-id="{{ $konke->id }}">
+                            {{ $konke->name_konke }}
+                        </button>
+                        @endforeach
+
+
                     </div>
                     <div id="cpTpContainer">
                         <label class="d-flex justify-content-end me-2">Check All<input type="checkbox" id="checkAllTambah"></label>
@@ -146,54 +149,39 @@
             });
         });
 
-        const cpTpData = {
-            rpl: [
-                { id: "1.1", name: "Memahami konsep dasar pemrograman" },
-                { id: "1.2", name: "Menggunakan sintaks dasar dalam pemrograman" }
-            ],
-            tkj: [
-                { id: "2.1", name: "Memahami jaringan komputer" },
-                { id: "2.2", name: "Mengkonfigurasi perangkat jaringan" }
-            ],
-            tkr: [
-                { id: "2.1", name: "Memahami teknik otomotif" },
-                { id: "2.2", name: "Mengkonfigurasi abbba" }
-            ],
-            mp: [
-                { id: "2.1", name: "Memahami teknik dasar perkantoran" },
-                { id: "2.2", name: "Mengkonfigurasi pasjaja" }
-            ],
-            dpib: [
-                { id: "2.1", name: "Memahami teknik dasar pembangunan" },
-                { id: "2.2", name: "Mengkonfigurasi asga" }
-            ],
-            ak: [
-                { id: "2.1", name: "Memahami teknik akuntansi" },
-                { id: "2.2", name: "Mengkonfigurasi phabs" }
-            ],
-            sk: [
-                { id: "2.1", name: "Memahami dasar seni karawaitan" },
-                { id: "2.2", name: "Mengkonfigurasi hahn" }
-            ],
-        };
-
         document.querySelectorAll(".jurusan-btn").forEach(button => {
             button.addEventListener("click", function() {
-                const jurusan = this.getAttribute("data-jurusan");
+                const konkes_id = this.getAttribute("data-konkes-id"); // Ambil ID Konke dari button
                 const tpTambahBody = document.getElementById("tp-tambah-body");
-                tpTambahBody.innerHTML = "";
+                tpTambahBody.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
 
-                cpTpData[jurusan].forEach(tp => {
-                    tpTambahBody.innerHTML += `
-                        <tr>
-                            <td>${tp.name}</td>
-                            <td><input type="checkbox" class="tp-check" name="tp_check[]" value="${tp.id}"></td>
-                        </tr>
-                    `;
-                });
+                fetch(`/get-cp-atp/${konkes_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        tpTambahBody.innerHTML = "";
+
+                        data.forEach(cp => {
+                            let cpRow = `<tr><td><b>${cp.cp}</b></td><td></td></tr>`;
+                            tpTambahBody.innerHTML += cpRow;
+
+                            cp.atps.forEach((atp, index) => {
+                                tpTambahBody.innerHTML += `
+                                    <tr>
+                                        <td style='padding-left: 20px;'>${index + 1}. ${atp.atp}</td>
+                                        <td><input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}'></td>
+                                    </tr>
+                                `;
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                        tpTambahBody.innerHTML = "<tr><td colspan='2'>Gagal memuat data.</td></tr>";
+                    });
             });
         });
     });
 </script>
+
 </html>
 @endsection

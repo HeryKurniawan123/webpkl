@@ -136,4 +136,12 @@ class CpAtpController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+    public function getCpAtp($konkes_id)
+    {
+        $cps = Cp::where('konkes_id', $konkes_id)
+            ->with('atps') // Pastikan relasi 'atps' ada di model
+            ->get();
+    
+        return response()->json($cps);
+    }
 }
