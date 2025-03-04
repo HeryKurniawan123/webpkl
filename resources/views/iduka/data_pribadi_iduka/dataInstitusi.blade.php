@@ -8,15 +8,21 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Data Institusi/Perusahaan Tempat PKL</title>
     <style>
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
         table{
             width: 100%;
         }
-        td:first-child{
-            width: 5px;
-            white-space: nowrap;
+        td:first-child {
+            width: 2%; /* Lebih kecil dari sebelumnya */
+            min-width: 30px; /* Atur batas minimum */
+            text-align: center;
         }
         td:nth-child(2){
-            width: 400px;
+            width: 150px;
         }
         td:nth-child(3){
             width: 5px;
@@ -30,11 +36,11 @@
         .isi-keterangan table {
             width: 100%;
         }
-        .isi-keterangan table td {
-            padding: 6px;
-        }
+
         .isi-keterangan table td:first-child {
-            width: 5px;
+            width: 2%; /* Lebih kecil dari sebelumnya */
+            min-width: 30px; /* Atur batas minimum */
+            text-align: center;
         }
 
         .table-responsive {
@@ -61,20 +67,58 @@
                 font-size: 16px;
             }
         }
-        @media (max-width: 576px) {
-            .mb-3 {
-                flex-direction: column;
+       @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
             }
 
-            .mb-3 .col-md-6 {
+            .table-responsive table {
+                width: 100%;
+                border-collapse: collapse;
+                white-space: nowrap;
+            }
+
+            .table-responsive tr {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+            }
+
+            .table-responsive td:first-child {
+                display: none;
+            }
+
+            .table-responsive td {
+                display: block;
+                text-align: left;
+                padding: 5px 10px;
                 width: 100%;
             }
 
-            .mb-3 .col-md-6:last-child {
-                margin-left: 0;
+            .table-responsive td:hover {
+                white-space: normal;
+                overflow: visible;
+            }
+
+            .table-responsive td:nth-child(2) {
+                display: block;
+                margin-top: 5px;
+                color: #333;
+                white-space: normal; /* Biar teks bisa turun ke bawah */
+                word-wrap: break-word; /* Biar nggak kepotong */
+                overflow-wrap: break-word; /* Alternatif buat jaga-jaga */
+            }
+
+            .table-responsive td:nth-child(3) {
+                display: block;
+                margin-top: 5px;
+                color: #333;
+                white-space: normal; /* Biar teks bisa turun ke bawah */
+                word-wrap: break-word; /* Biar nggak kepotong */
+                overflow-wrap: break-word; /* Alternatif buat jaga-jaga */
             }
         }
-
     </style>
 </head>
 <body>
@@ -85,9 +129,10 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="mb-0">Data Institusi / Perusahaan Tempat PKL</h4>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editDataModal">
-                                    Edit
+                                <h5 class="mb-0">Data Institusi / Perusahaan Tempat PKL</h5>
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editDataModal">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <span class="d-none d-md-inline">Edit</span>
                                   </button>
                             </div>
                         </div>
@@ -99,20 +144,17 @@
                                     <tr>
                                         <td>1.</td>
                                         <td>Nama Institusi / DUDI</td>
-                                        <td>:</td>
-                                        <td>INOVINDO</td>
+                                        <td colspan="2">: INOVINDO</td>
                                     </tr>
                                     <tr>
                                         <td>2.</td>
                                         <td>Alamat Institusi / DUDI</td>
-                                        <td>:</td>
-                                        <td>BANDUNG</td>
+                                        <td colspan="2">: BANDUNG</td>
                                     </tr>
                                     <tr>
                                         <td rowspan="3"></td>
                                         <td rowspan="3"></td>
-                                        <td rowspan="3"></td>
-                                        <td>Kec.
+                                        <td colspan="2">Kec.
                                             <br>Kab/Kota*)
                                             <br>Prov.
                                         </td>
@@ -126,14 +168,12 @@
                                     <tr>
                                         <td>3.</td>
                                         <td>Bidang Usaja / Kerja</td>
-                                        <td>:</td>
-                                        <td>Pembuatan Website</td>
+                                        <td colspan="2">: Pembuatan Website</td>
                                     </tr>
                                     <tr>
                                         <td>4.</td>
                                         <td>Nomor Telepon / HP Perusahaan</td>
-                                        <td>:</td>
-                                        <td>082317340473</td>
+                                        <td colspan="2">: 082317340473</td>
                                     </tr>
                                     <tr>
                                         <td>5.</td>
@@ -147,26 +187,22 @@
                                     <tr>
                                         <td></td>
                                         <td><span>a) Nama Lengkap</span></td>
-                                        <td>:</td>
-                                        <td>MALVA RISKINA + GELAR</td> <!--nu kapital brarti kapital hurufna-->
+                                        <td colspan="2">: MALVA RISKINA + GELAR</td> <!--nu kapital brarti kapital hurufna-->
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td><span>b) Nomor Induk Pegawai / Nomor Induk Karyawan</span></td>
-                                        <td>:</td>
-                                        <td>222310275 (opsional)</td>
+                                        <td colspan="2">: 222310275 (opsional)</td>
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td><span>c) Jabatan</span></td>
-                                        <td>:</td>
-                                        <td>SISWA</td>
+                                        <td colspan="2">: SISWA</td>
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td><span>d) No Hp / Telepon</span></td>
-                                        <td>:</td>
-                                        <td>089551301707</td>
+                                        <td colspan="2">: 089551301707</td>
                                     </tr>
                                     {{-- pembimbing --}}
                                     <tr>
@@ -176,26 +212,22 @@
                                     <tr>
                                         <td></td>
                                         <td><span>a) Nama Lengkap</span></td>
-                                        <td>:</td>
-                                        <td>MALVA RISKINA + GELAR</td> <!--nu kapital brarti kapital hurufna-->
+                                        <td colspan="2">: MALVA RISKINA + GELAR</td> <!--nu kapital brarti kapital hurufna-->
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td><span>b) Nomor Induk Pegawai / Nomor Induk Karyawan</span></td>
-                                        <td>:</td>
-                                        <td>222310275 (opsional)</td>
+                                        <td colspan="2">: 222310275 (opsional)</td>
                                     </tr>
                                     <tr>
                                         <td></td>
                                         <td><span>d) No Hp / Telepon</span></td>
-                                        <td>:</td>
-                                        <td>089551301707</td>
+                                        <td colspan="2">: 089551301707</td>
                                     </tr>
                                     
                                     <tr>
                                         <td>6.</td>
                                         <td>Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat di cetak oleh perusahaan atau dibantu pihak sekolah?</td>
-                                        <td></td>
                                         <td>
                                             <input type="radio"> Cetak oleh perusahaan
                                             <br>
@@ -205,7 +237,6 @@
                                     <tr>
                                         <td>7.</td>
                                         <td>Apakah di institusi / perusahaan ada SOP (Standar Operasional Prosedur) / Aturan Kerja / Tata Tertib?</td>
-                                        <td></td>
                                         <td>
                                             <input type="radio"> Ya
                                             <br>
@@ -215,7 +246,6 @@
                                     <tr>
                                         <td>8.</td>
                                         <td>Apakah di institusi / perusahaan menerapkan K3LH (kesehatan, keselamatan kerja, dan lingkungan hidup)?</td>
-                                        <td></td>
                                         <td>
                                             <input type="radio"> Ya
                                             <br>
@@ -364,8 +394,8 @@
                 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-              <button type="button" class="btn btn-primary">Simpan</button>
+              <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+              <button type="button" class="btn btn-primary btn-sm">Simpan</button>
             </div>
           </div>
         </div>

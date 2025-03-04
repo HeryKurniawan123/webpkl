@@ -10,22 +10,17 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Detail Iduka</title>
     <style>
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
         .table td {
             vertical-align: middle;
         }
 
         .table td:first-child {
-            width: 40%;
-            text-align: left;
-        }
-
-        .table td:nth-child(2) {
-            width: 1%;
-            text-align: right;
-        }
-
-        .table td:last-child {
-            width: 55%;
+            width: 30%;
             text-align: left;
         }
 
@@ -35,31 +30,72 @@
             border-radius: 8px 8px 0 0;
         }
 
-        .btn-back {
-            background-color: #7e7dfb;
-            color: white;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        @media (max-width: 576px) {
+            .modal-dialog {
+                max-width: 95%;
+            }
+
+            table {
+                font-size: 14px;
+                white-space: nowrap;
+            }
+
+            td, th {
+                padding: 8px;
+            }
+
+            h4 {
+                font-size: 16px;
+            }
         }
 
-        .btn-back:hover {
-            background-color: #7e7dfb;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
         }
 
-        .btn-back:active {
-            color: white;
-            background-color: #6b6bfa !important;
-            transform: translateY(3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+        /* Responsif untuk tabel */
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: hidden; /* Hapus scroll ke samping */
+            }
+
+            .table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .table tr {
+                display: flex;
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .table td {
+                display: block;
+                width: 100%;
+                padding: 8px;
+            }
+
+            .table td:first-child {
+                display: inline-block;
+                width: auto;
+                white-space: nowrap;
+                font-weight: bold;
+            }
+
+            .table td:nth-child(2) {
+                display: block;
+                margin-top: 5px;
+                color: #333;
+                white-space: normal; /* Biar teks bisa turun ke bawah */
+                word-wrap: break-word; /* Biar nggak kepotong */
+                overflow-wrap: break-word; /* Alternatif buat jaga-jaga */
+            }
         }
+
+
     </style>
 </head>
 
@@ -68,88 +104,100 @@
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
-                    <div class="card-header" style="background-color: #7e7dfb">
-                        <h5 style="color: white;">DETAIL IDUKA - {{ $iduka->nama }}</h5>
+
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Detail Data Institusi / Perusahaan</h5>
+                                
+                                <!-- Tombol Titik Tiga -->
+                                <div class="d-flex gap-2 ms-auto">
+                                    <a href="{{ route('data.iduka') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
+                                        <i class="bi bi-arrow-left-circle"></i>
+                                        <span class="d-none d-md-inline">Kembali</span>
+                                    </a>
+                                    <div class="dropdown">
+                                        <button class="btn btn-light p-1 rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="bi bi-filetype-pdf text-danger"></i> <span class="text-danger">Export PDF</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('iduka.edit', $iduka->id) }}" class="dropdown-item">
+                                                    <i class="bi bi-pencil-square text-warning"></i> <span class="text-warning">Edit</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                
                     <div class="card">
                         <div class="card-body">
-                            <div class="d-flex justify-content-end mt-0 mb-2">
-                                <button type="button" class="btn btn-danger gap-2 me-2" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
-                                    <i class="bi bi-filetype-pdf"></i>
-                                </button>
-                                <button type="button" class="btn btn-back shadow-sm" data-bs-toggle="modal" data-bs-target="#editIdukaModal">
-                                    Edit Data
-                                </button>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <tr>
+                                        <td><i class="bi bi-building"></i> Nama IDUKA</td>
+                                        <td>: {{ $iduka->nama }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-building"></i> Nama Pimpinan</td>
+                                        <td>: {{ $iduka->nama_pimpinan ?? '-'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-building"></i> NIP/NIK Pimpinan</td>
+                                        <td>: {{ $iduka->nip_pimpinan ?? '-'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-building"></i> Nomor Telepon Pimpinan</td>
+                                        <td>: {{ $iduka->no_hp_pimpinan ?? '-'}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-building"></i> Jabatan</td>
+                                        <td>: {{ $iduka->jabatan?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-geo-alt"></i> Alamat Lengkap</td>
+                                        <td>: {{ $iduka->alamat }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-geo-alt"></i> Kode Pos</td>
+                                        <td>: {{ $iduka->kode_pos }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-telephone"></i> Nomor Telepon</td>
+                                        <td>: {{ $iduka->telepon }}</td>
+                                    </tr>
+    
+                                    <tr>
+                                        <td><i class="bi bi-envelope"></i> Email</td>
+                                        <td>: {{ $iduka->email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-lock"></i> Password</td>
+                                        <td>: ******</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-briefcase"></i> Bidang Industri</td>
+                                        <td>: {{ $iduka->bidang_industri }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-handshake"></i> Kerjasama</td>
+                                        <td>: {{ $iduka->kerjasama }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-people"></i> Jumlah Kuota PKL</td>
+                                        <td>: {{ $iduka->kuota_pkl }}</td>
+                                    </tr>
+    
+                                </table>
                             </div>
-                            <table class="table table-striped">
-                                <tr>
-                                    <td><i class="bi bi-building"></i> Nama IDUKA</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->nama }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-building"></i> Nama Pimpinan</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->nama_pimpinan ?? '-'}}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-building"></i> NIP/NIK Pimpinan</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->nip_pimpinan ?? '-'}}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-building"></i> Nomor Telepon Pimpinan</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->no_hp_pimpinan ?? '-'}}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-building"></i> Jabatan</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->jabatan?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-geo-alt"></i> Alamat Lengkap</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->alamat }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-geo-alt"></i> Kode Pos</td>
-                                    <td> : </td>
-                                    <td>{{ $iduka->kode_pos }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-telephone"></i> Nomor Telepon</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->telepon }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td><i class="bi bi-envelope"></i> Email</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->email }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-lock"></i> Password</td>
-                                    <td>:</td>
-                                    <td>******</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-briefcase"></i> Bidang Industri</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->bidang_industri }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-handshake"></i> Kerjasama</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->kerjasama }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-people"></i> Jumlah Kuota PKL</td>
-                                    <td>:</td>
-                                    <td>{{ $iduka->kuota_pkl }}</td>
-                                </tr>
-
-                            </table>
                             <div class="col-lg-12 d-flex justify-content-between mt-4">
                                 <a href="{{ route('data.iduka')}}" class="btn btn-back shadow-sm">
                                     Kembali

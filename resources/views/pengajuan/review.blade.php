@@ -60,16 +60,24 @@
 <body>
     <div class="container-fluid">
         <div class="content-wrapper">
-            <div class="container-xxl flex-grow-1 container-p-y">
-                <h4 class="mb-4">Review Pengajuan IDUKA</h4>
-
-                <div class="button-group">
-                    <a href="{{ route('review.pengajuanditerima') }}" class="btn btn-success btn-status">History Diterima</a>
-                    <a href="{{ route('review.pengajuanditolak') }}" class="btn btn-danger btn-status">History Ditolak</a>
-                </div>
-
-
+            <div class="container-xxl flex-grow-1 container-p-y">            
                 <div class="row">
+                    <div class="card mb-3">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Review Pengajuan Institusi / Perusahaan</h5>
+                    
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('review.pengajuanditerima') }}" class="btn btn-success btn-status btn-sm">
+                                    <i class="bi bi-check-circle"></i> 
+                                    <span class="d-none d-md-inline">History Diterima</span>
+                                </a>
+                                <a href="{{ route('review.pengajuanditolak') }}" class="btn btn-danger btn-status btn-sm">
+                                    <i class="bi bi-x-circle"></i> 
+                                    <span class="d-none d-md-inline">History Ditolak</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>    
                     <div class="col-md-12 mt-3">
 
                         {{-- Jika tidak ada pengajuan --}}

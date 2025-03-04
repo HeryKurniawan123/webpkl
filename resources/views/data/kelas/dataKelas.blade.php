@@ -57,7 +57,63 @@
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row"><br><br><br>
+                <div class="row">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">Data Kelas</h5>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                        <i class="bi bi-search"></i>
+                                        <span class="d-none d-md-inline">Search</span>
+                                    </button>
+                    
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahKelasModal">
+                                        <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="searchModalLabel">Cari Kelas</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="#" method="GET">
+                                            <div class="mb-3">
+                                                <label for="kelas" class="form-label">Pilih Kelas</label>
+                                                <select name="kelas" id="kelas" class="form-control">
+                                                    <option value="">-- Pilih Kelas --</option>
+                                                    <option value="X">X</option>
+                                                    <option value="XI">XI</option>
+                                                    <option value="XII">XII</option>
+                                                </select>
+                                            </div>
+                        
+                                            <div class="mb-3">
+                                                <label for="konsentrasi" class="form-label">Pilih Konsentrasi Keahlian</label>
+                                                <select name="konsentrasi" id="konsentrasi" class="form-control">
+                                                    <option value="">-- Pilih Konsentrasi Keahlian --</option>
+                                                    <option value="RPL">Rekayasa Perangkat Lunak</option>
+                                                    <option value="TKJ">Teknik Komputer dan Jaringan</option>
+                                                    <option value="DKV">Desain Komunikasi Visual</option>
+                                                    <option value="TKRO">Teknik Kendaraan Ringan Otomotif</option>
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+{{-- 
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <form action="{{ route('kelas.index') }}" class="d-flex" style="width: 100%; max-width: 500px;">
                             <input type="text" name="search" class="form-control me-2" placeholder="Cari Kelas" style="flex: 1; min-width: 250px;">
@@ -68,7 +124,7 @@
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahKelasModal">
                             Tambah Data
                         </button>
-                    </div>
+                    </div> --}}
 
                     @forelse ($kelas as $item)
                     <div class="col-md-4">

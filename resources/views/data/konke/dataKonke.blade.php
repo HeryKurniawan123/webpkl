@@ -1,55 +1,103 @@
 @extends('layout.main')
-
 @section('content')
+<style>
+    @media (max-width: 768px) {
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            min-width: 400px; 
+            max-width: 100%; 
+            white-space: normal; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            min-width: 200px; 
+            max-width: 100%; 
+            white-space: normal; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+    }
+</style>
 <div class="container-fluid">
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row">
-                <div class="card">
+                <div class="card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <form action="{{ route('konke.index') }}" method="GET" class="d-flex" style="width: 100%; max-width: 500px;">
-                                <input type="text" name="search" class="form-control me-2" placeholder="Cari Program Keahlian" style="flex: 1; min-width: 250px;">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-search"></i> 
+                            <h5 class="mb-0">Data Konsentrasi Keahlian</h5>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                    <i class="bi bi-search"></i>
+                                    <span class="d-none d-md-inline">Cari</span>
                                 </button>
-                            </form>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahKonkeModal">
-                                Tambah Data
-                            </button>
+                
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahKonkeModal">
+                                    <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
+                                </button>
+                            </div>
                         </div>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Konsentrasi keahlian</th>
-                                    <th>Program Keahlian</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($konke as $index => $k)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $k->name_konke }}</td>
-                                    <td>{{ $k->proker->name }}</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editKonkeModal{{ $k->id }}">
-                                            <i class="bi bi-pen"></i>
-                                        </button>
-                                        <form action="{{ route('konke.destroy', $k->id) }}" method="POST" class="delete-btn d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bi bi-trash3"></i>
+                    </div>
+                
+                    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="searchModalLabel">Cari Konsentrasi Keahlian</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="#">
+                                        <input type="text" name="search" class="form-control" placeholder="Cari Konsentrasi Keahlian...">
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" style="text-align: center">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Konsentrasi keahlian</th>
+                                        <th>Program Keahlian</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($konke as $index => $k)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $k->name_konke }}</td>
+                                        <td>{{ $k->proker->name }}</td>
+                                        <td>
+                                            <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editKonkeModal{{ $k->id }}">
+                                                <i class="bi bi-pen"></i>
                                             </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                            <form action="{{ route('konke.destroy', $k->id) }}" method="POST" class="delete-btn d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 

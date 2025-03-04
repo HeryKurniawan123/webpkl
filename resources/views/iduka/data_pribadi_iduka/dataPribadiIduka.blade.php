@@ -59,6 +59,31 @@
                 transform: translateY(3px);
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+            .table {
+                min-width: 100%;
+            }
+            @media (max-width: 576px) {
+                .modal-dialog {
+                    max-width: 95%;
+                }
+
+                table {
+                    font-size: 14px;
+                    white-space: nowrap;
+                }
+
+                td, th {
+                    padding: 8px;
+                }
+
+                h4 {
+                    font-size: 16px;
+                }
+            }
         </style>
     </head>
 
@@ -67,15 +92,22 @@
             <div class="content-wrapper">
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="row">
-                        <div class="d-flex justify-content-end mt-0 mb-2">
-                            <button type="button" class="btn btn-danger gap-2 me-2" data-bs-toggle="modal"
-                                data-bs-target="#tambahIdukaModal">
-                                <a  href="{{ route('iduka.download-pdf', $iduka->id) }}" style="color: white"><i class="bi bi-filetype-pdf"></i></a>
-                              
-                            </button>
-                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editDataPribadiIdukaModal">
-                                Edit Data
-                            </button>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Data Pribadi Institusi / Perusahaan</h5>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('iduka.download-pdf', $iduka->id) }}" class="btn btn-danger btn-sm d-flex align-items-center gap-2">
+                                            <i class="bi bi-filetype-pdf"></i>
+                                            <span class="d-none d-md-inline">PDF</span>
+                                        </a>
+                                        <button type="button" class="btn btn-primary btn-sm d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#editDataPribadiIdukaModal">
+                                            <i class="bi bi-pencil-square"></i>
+                                            <span class="d-none d-md-inline">Edit</span>
+                                        </button>
+                                    </div>
+                                </div>                                
+                            </div>
                         </div>
                         <div class="card-header" style="background-color: #7e7dfb">
                             <h5 style="color: white;">DATA PRIBADI IDUKA - nama iduka</h5>
@@ -89,58 +121,60 @@
 
                             </div> --}}
                             
-                                <table class="table table-striped">
-                                    @if($iduka)
-                                        <tr>
-                                            <td><i class="bi bi-building"></i> Nama IDUKA</td>
-                                            <td>:</td>
-                                            <td>{{ $iduka->nama }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-geo-alt"></i> Alamat Lengkap</td>
-                                            <td>:</td>
-                                            <td>{{ $iduka->alamat }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-geo-alt"></i> Kode Pos</td>
-                                            <td> : </td>
-                                            <td>{{ $iduka->kode_pos }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-telephone"></i> Nomor Telepon IDUKA</td>
-                                            <td>:</td>
-                                            <td>{{ $iduka->telepon }}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td><i class="bi bi-envelope"></i> Email</td>
-                                            <td>:</td>
-                                            <td>{{ $iduka->email }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-lock"></i> Password</td>
-                                            <td>:</td>
-                                            <td>******</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-briefcase"></i> Bidang Industri</td>
-                                            <td>:</td>
-                                            <td>{{ $iduka->bidang_industri }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-handshake"></i> Kerjasama</td>
-                                            <td>:</td>
-                                            <td>{{ $iduka->kerjasama }} {{ $iduka->kerjasama_lainnya }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td><i class="bi bi-people"></i> Jumlah Kuota PKL</td>
-                                            <td>:</td>
-                                            <td>{{ $iduka->kuota_pkl }}</td>
-                                        </tr>
-                                        @else
-                                        <p>Data tidak ditemukan.</p>
-                                    @endif
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        @if($iduka)
+                                            <tr>
+                                                <td><i class="bi bi-building"></i> Nama IDUKA</td>
+                                                <td>:</td>
+                                                <td>{{ $iduka->nama }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-geo-alt"></i> Alamat Lengkap</td>
+                                                <td>:</td>
+                                                <td>{{ $iduka->alamat }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-geo-alt"></i> Kode Pos</td>
+                                                <td> : </td>
+                                                <td>{{ $iduka->kode_pos }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-telephone"></i> Nomor Telepon IDUKA</td>
+                                                <td>:</td>
+                                                <td>{{ $iduka->telepon }}</td>
+                                            </tr>
+    
+                                            <tr>
+                                                <td><i class="bi bi-envelope"></i> Email</td>
+                                                <td>:</td>
+                                                <td>{{ $iduka->email }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-lock"></i> Password</td>
+                                                <td>:</td>
+                                                <td>******</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-briefcase"></i> Bidang Industri</td>
+                                                <td>:</td>
+                                                <td>{{ $iduka->bidang_industri }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-handshake"></i> Kerjasama</td>
+                                                <td>:</td>
+                                                <td>{{ $iduka->kerjasama }} {{ $iduka->kerjasama_lainnya }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-people"></i> Jumlah Kuota PKL</td>
+                                                <td>:</td>
+                                                <td>{{ $iduka->kuota_pkl }}</td>
+                                            </tr>
+                                            @else
+                                            <p>Data tidak ditemukan.</p>
+                                        @endif
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -151,7 +185,8 @@
                         </div>
                         <div class="card">
                             <div class="card-body">
-                                <table class="table table-striped">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
                                     @if($iduka)
                                     <tr>
                                         <td><i class="bi bi-person"></i> Nama Pimpinan</td>
@@ -174,9 +209,10 @@
                                         <td>{{ $iduka->no_hp_pimpinan }}</td>
                                     </tr>
                                     @else
-        <p>Data tidak ditemukan.</p>
-    @endif
+                                        <p>Data tidak ditemukan.</p>
+                                    @endif
                                 </table>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -187,28 +223,29 @@
                         </div>
                         <div class="card">
                             <div class="card-body">
-                               
-                                <table class="table table-striped">
-                                    @if($pembimbing)
-                                    <tr>
-                                        <td><i class="bi bi-person"></i> Nama Pembimbing</td>
-                                        <td>:</td>
-                                        <td>{{ $pembimbing->name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><i class="bi bi-person-vcard"></i> NIP/NIK Pembimbing</td>
-                                        <td>:</td>
-                                        <td>{{ $pembimbing->nip }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><i class="bi bi-telephone"></i> No HP / Telepon</td>
-                                        <td>:</td>
-                                        <td>{{ $pembimbing->no_hp }}</td>
-                                    </tr>
-                                    @else
-        <p>Belum ada pembimbing terdaftar.</p>
-    @endif
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        @if($pembimbing)
+                                        <tr>
+                                            <td><i class="bi bi-person"></i> Nama Pembimbing</td>
+                                            <td>:</td>
+                                            <td>{{ $pembimbing->name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="bi bi-person-vcard"></i> NIP/NIK Pembimbing</td>
+                                            <td>:</td>
+                                            <td>{{ $pembimbing->nip }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="bi bi-telephone"></i> No HP / Telepon</td>
+                                            <td>:</td>
+                                            <td>{{ $pembimbing->no_hp }}</td>
+                                        </tr>
+                                        @else
+                                            <p>Belum ada pembimbing terdaftar.</p>
+                                        @endif
+                                    </table>
+                                </div>
                                 {{-- <div class="col-lg-12 d-flex justify-content-between mt-4">
                                 <a href="{{ route('iduka.dashboard')}}" class="btn btn-back shadow-sm">
                                     Kembali

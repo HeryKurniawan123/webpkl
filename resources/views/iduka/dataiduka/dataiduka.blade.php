@@ -57,66 +57,122 @@
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <form action="{{ route('data.iduka') }}" method="GET" class="d-flex" style="width: 100%; max-width: 500px;">
-                            <input type="text" name="search" class="form-control me-2" placeholder="Cari Iduka..." style="flex: 1; min-width: 250px;">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </form>
-
-                        <div class="d-flex gap-2">
-                            <select class="form-select w-auto" id="filterIduka">
-                                <option value="all">Semua</option>
-                                <option value="rekomendasi">Rekomendasi</option>
-                                <option value="ajuan">Ajuan</option>
-                            </select>       
-                            @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
-                                Tambah Iduka
-                            </button>
-                            @endif
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">Data Institusi / Perusahaan</h5>
+                            
+                                <!-- Desktop Layout: Filter -> Search -> Tambah -->
+                                <div class="d-none d-md-flex gap-2 align-items-center">
+                                    <select class="form-select form-select-sm w-auto" id="filterIduka">
+                                        <option value="all">Semua</option>
+                                        <option value="rekomendasi">Rekomendasi</option>
+                                        <option value="ajuan">Ajuan</option>
+                                    </select>  
+                            
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                            
+                                    @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                    @endif
+                                </div>
+                            
+                                <!-- Mobile Layout -->
+                                <div class="d-flex d-md-none flex-column align-items-end">
+                                    <!-- Search & Tambah -->
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                            
+                                        @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                        @endif
+                                    </div>
+                            
+                                    <!-- Dropdown filter di bawah, tetap ke kanan -->
+                                    <select class="form-select form-select-sm w-auto mt-2" id="filterIdukaMobile">
+                                        <option value="all">Semua</option>
+                                        <option value="rekomendasi">Rekomendasi</option>
+                                        <option value="ajuan">Ajuan</option>
+                                    </select>  
+                                </div>
+                            </div>                                                                                                               
+                        </div>
+                    
+                        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="searchModalLabel">Cari Institusi / Perusahaan</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="#">
+                                            <input type="text" name="search" class="form-control" placeholder="Cari Institusi / Perusahaan...">
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-md-12 mt-3">
                         @if ($iduka->isEmpty())
-                        <div class="alert alert-warning">
-                            Belum ada data Iduka yang tersedia.
-                        </div>
+                            <div class="alert alert-warning">
+                                Belum ada data Iduka yang tersedia.
+                            </div>
                         @else
-                        @foreach ($iduka as $i)
-                        <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="mb-0" style="font-size: 18px">{{ $i->nama }}</div>
-                                    <div class="">{{ $i->alamat }}</div>
-                                    @if ($i->rekomendasi == 1)
-                                    <div class="text-success mt-1"><strong>Rekomendasi:</strong> IDUKA ini direkomendasikan</div>
-                                    @endif
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    <a href="{{ route('detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    <div class="dropdown ms-2">
-                                        <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            ⋮
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus iduka ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="dropdown-item text-danger">Hapus</button>
-                                                </form>
-                                            </li>
-                                        </ul>
+                            @foreach ($iduka as $i)
+                            <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div style="min-width: 0;">
+                                        <!-- Nama Iduka dengan batas 2 baris -->
+                                        <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
+                                            {{ $i->nama }}
+                                        </div>
+                                        <!-- Alamat dengan text-truncate -->
+                                        <div class="text-muted text-truncate w-100" style="font-size: 14px;">
+                                            {{ $i->alamat }}
+                                        </div>
+                                        @if ($i->rekomendasi == 1)
+                                        <div class="text-success mt-1" style="font-size: 13px;">
+                                            <strong>Rekomendasi:</strong> IDUKA ini direkomendasikan
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <a href="{{ route('detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
+                                        <div class="dropdown ms-2">
+                                            <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                ⋮
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus iduka ini?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="dropdown-item text-danger">Hapus</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        @endforeach
+                            @endforeach
                         @endif
                     </div>
+                    
                 </div>
             </div>
         </div>
