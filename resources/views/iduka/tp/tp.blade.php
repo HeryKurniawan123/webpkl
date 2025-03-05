@@ -70,7 +70,7 @@
                         </div>
                     </div>
 
-                    @foreach($idukaAtps->groupBy('konkes_id') as $konke_id => $konke_items)
+                    @foreach($idukaAtps->groupBy('konkes_id') as $konkes_id => $konke_items)
                     <div class="card card-content mt-3">
                         <div class="card-header">
                             <b>{{ $konke_items->first()->konke->name_konke }}</b> <!-- Menampilkan Nama Konke -->
@@ -176,7 +176,7 @@
 
                 tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
 
-                fetch(`/get-cp-atp/${konke_id}`)
+                fetch(`/get-cp-atp/${konkes_id}`)
                     .then(response => response.json())
                     .then(data => {
                         tpTambahBody.innerHTML = "";

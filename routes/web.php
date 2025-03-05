@@ -146,8 +146,8 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::post('/iduka-atp/store', [IdukaAtpController::class, 'store'])->name('iduka_atp.store');
     Route::put('/iduka-atp/update/{id}', [IdukaAtpController::class, 'update'])->name('iduka_atp.update');
     Route::delete('/iduka-atp/destroy/{id}', [IdukaAtpController::class, 'destroy'])->name('iduka_atp.destroy');
-    Route::get('/get-cp-atp/{konke_id}', function ($konke_id) {
-        $cps = Cp::where('konke_id', $konke_id)->with('atp')->get();
+    Route::get('/get-cp-atp/{konkes_id}', function ($konkes_id) {
+        $cps = Cp::where('konkes_id', $konkes_id)->with('atp')->get();
         return response()->json($cps);
         Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
 
