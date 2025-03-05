@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class IdukaAtp extends Model
 {
     use HasFactory;
-    protected $fillable = ['iduka_id', 'cp_id', 'atp_id','is_selected'];
+    protected $fillable = ['iduka_id', 'cp_id', 'atp_id','is_selected','konkes_id'];
 
     public function iduka()
     {
@@ -23,5 +23,9 @@ class IdukaAtp extends Model
     public function atp()
     {
         return $this->belongsTo(Atp::class);
+    }
+    public function konke()
+    {
+        return $this->belongsTo(Konke::class, 'konkes_id');
     }
 }
