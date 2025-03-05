@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('iduka_atps', function (Blueprint $table) {
+        Schema::create('iduka_vifot', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('iduka_id')->constrained('idukas')->onDelete('cascade');
+            $table->foreignId('atp_id')->constrained('atps')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('iduka_atps');
+        Schema::dropIfExists('iduka_vifot');
     }
 };

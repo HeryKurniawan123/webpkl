@@ -40,6 +40,11 @@ class Iduka extends Model
         return $this->hasMany(Pembimbing::class, 'user_id');
     }
     
+    public function atps()
+    {
+        return $this->belongsToMany(Atp::class, 'iduka_atps')->withPivot('cp_id')->withTimestamps();
+    }
+    
 
 
 }

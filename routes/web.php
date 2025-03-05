@@ -152,6 +152,8 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/get-cp-atp/{konkes_id}', function ($konkes_id) {
         $cps = Cp::where('konkes_id', $konkes_id)->with('atp')->get();
         return response()->json($cps);
+        Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
+
     });
     
    

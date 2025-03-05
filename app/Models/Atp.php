@@ -17,5 +17,9 @@ class Atp extends Model
     {
         return $this->belongsTo(Cp::class, 'cp_id', 'id');
     }
+    public function idukas() {
+        return $this->belongsToMany(Iduka::class, 'iduka_atp');
+    }
+    
 }
 

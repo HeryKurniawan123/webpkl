@@ -34,7 +34,7 @@
                                         <i class="bi bi-search"></i>
                                         <span class="d-none d-md-inline">Search</span>
                                     </button>
-                    
+
                                     <!-- Tombol Tambah TP -->
                                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahTpModal">
                                         <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah TP</span>
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                         </div>
-                    
+
                         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -62,97 +62,88 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    @forelse($idukaAtps->groupBy('cp.cp') as $cp_name => $items)
                     <div class="card card-content mt-3">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <b>1. Nama Capaian Pembelajaran</b>
+                            <b>{{ $cp_name }}</b>
                             <div class="dropdown">
-                                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
-                                <a href="#" class="btn btn-sm btn-danger">
-                                    <i class="bi bi-trash3"></i>
-                                </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item text-danger" href="#" title="Download PDF">
-                                            <i class="bi bi-file-earmark-pdf"></i> Cetak PDF
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-warning" href="#" data-bs-toggle="modal" data-bs-target="#editTpModal" title="Edit">
-                                            <i class="bi bi-pencil-square"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item text-danger" href="#">
-                                            <i class="bi bi-trash3"></i> Hapus
-                                        </a>
-                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-file-earmark-pdf"></i> Cetak PDF</a></li>
+                                    <li><a class="dropdown-item text-warning" href="#" data-bs-toggle="modal" data-bs-target="#editTpModal"><i class="bi bi-pencil-square"></i> Edit</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash3"></i> Hapus</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="card-body">
                             <ul>
-                                <li>1.1. Nama Tujuan Pembelajaran</li>
-                                <li>1.2. Nama Tujuan Pembelajaran</li>
-                                <li>1.3. Nama Tujuan Pembelajaran</li>
+                                @foreach($items as $item)
+                                <li>{{ $item->atp->atp }}</li>
+                                @endforeach
                             </ul>
                         </div>
-                    </div>                    
+                    </div>
+                    @empty
+                    <p class="text-muted">Belum ada Tujuan Pembelajaran untuk IDUKA ini.</p>
+                    @endforelse
+
                 </div>
             </div>
         </div>
     </div>
 
-<!-- Modal Tambah -->
-<div class="modal fade" id="tambahTpModal" tabindex="-1" aria-labelledby="tambahTpModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5">Tambah Tujuan Pembelajaran Iduka</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="{{ route('iduka_atp.store') }}" method="POST">
-                @csrf
-                <input type="hidden" name="iduka_id" id="iduka_id"> <!-- Hidden ID Iduka -->
-                
-                <div class="modal-body">
-                    <div class="d-flex justify-content-center mb-3">
-                        @foreach($konkes as $konke)
-                        <button type="button" class="btn btn-primary m-1 jurusan-btn" data-konkes-id="{{ $konke->id }}">
-                            {{ $konke->name_konke }}
-                        </button>
-                        @endforeach
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="tambahTpModal" tabindex="-1" aria-labelledby="tambahTpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Tambah Tujuan Pembelajaran Iduka</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('iduka_atp.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="iduka_id" id="iduka_id"> <!-- Hidden ID Iduka -->
+
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center mb-3">
+                            @foreach($konkes as $konke)
+                            <button type="button" class="btn btn-primary m-1 jurusan-btn" data-konkes-id="{{ $konke->id }}">
+                                {{ $konke->name_konke }}
+                            </button>
+                            @endforeach
+                        </div>
+
+                        <div id="cpTpContainer">
+                            <label class="d-flex justify-content-end me-2">Check All<input type="checkbox" id="checkAllTambah"></label>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Tujuan Pembelajaran</th>
+                                        <th>Checklist</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tp-tambah-body">
+                                    <!-- Data TP akan ditampilkan di sini -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div id="cpTpContainer">
-                        <label class="d-flex justify-content-end me-2">Check All<input type="checkbox" id="checkAllTambah"></label>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Nama Tujuan Pembelajaran</th>
-                                    <th>Checklist</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tp-tambah-body">
-                                <!-- Data TP akan ditampilkan di sini -->
-                            </tbody>
-                        </table>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Simpan Data</button>
                     </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary btn-sm">Simpan Data</button>
-                </div>
-            </form>
+                </form>
+
+            </div>
         </div>
     </div>
-</div>
 
 
-{{-- modaledit --}}
+    {{-- modaledit --}}
     <div class="modal fade" id="editTpModal" tabindex="-1" aria-labelledby="editTpModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -187,12 +178,14 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Event listener untuk tombol "Check All"
         document.getElementById("checkAllTambah").addEventListener("click", function() {
             document.querySelectorAll("#tp-tambah-body .tp-check").forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
         });
 
+        // Event listener untuk tombol pilih jurusan
         document.querySelectorAll(".jurusan-btn").forEach(button => {
             button.addEventListener("click", function(event) {
                 event.preventDefault(); // Mencegah modal tertutup otomatis
@@ -200,7 +193,7 @@
                 const konkes_id = this.getAttribute("data-konkes-id");
                 document.getElementById("iduka_id").value = konkes_id; // Set ID Iduka ke hidden input
                 const tpTambahBody = document.getElementById("tp-tambah-body");
-                
+
                 tpTambahBody.innerHTML = "<tr><td colspan='2'>Loading...</td></tr>";
 
                 fetch(`/get-cp-atp/${konkes_id}`)
@@ -214,11 +207,11 @@
 
                             cp.atp.forEach((atp, index) => {
                                 tpTambahBody.innerHTML += `
-                                    <tr>
-                                        <td style='padding-left: 20px;'>${index + 1}. ${atp.atp}</td>
-                                        <td><input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}'></td>
-                                    </tr>
-                                `;
+                                <tr>
+                                    <td style='padding-left: 20px;'>${index + 1}. ${atp.atp}</td>
+                                    <td><input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}'></td>
+                                </tr>
+                            `;
                             });
                         });
                     })

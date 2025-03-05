@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class IdukaAtp extends Model
 {
     use HasFactory;
-    protected $fillable = ['iduka_id', 'cp_id', 'atp_id'];
+    protected $fillable = ['iduka_id', 'cp_id', 'atp_id','is_selected'];
 
     public function iduka()
     {
