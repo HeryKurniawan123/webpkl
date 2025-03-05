@@ -144,7 +144,12 @@
                                     <tr>
                                         <td>1.</td>
                                         <td>Nama Institusi / DUDI</td>
+                                        <td>:</td>
                                         <td colspan="2">: INOVINDO</td>
+
+                                       
+                                       
+
                                     </tr>
                                     <tr>
                                         <td>2.</td>

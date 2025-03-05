@@ -10,7 +10,7 @@ class Cp extends Model
     use HasFactory;
 
     protected $table = 'cps'; // Pastikan sesuai nama tabel di database
-    protected $fillable = ['konkes_id', 'cp'];
+    protected $fillable = ['konke_id', 'cp'];
 
     // Relasi ke ATP (One to Many)
     public function atp()
@@ -21,7 +21,7 @@ class Cp extends Model
     // Relasi ke Konsentrasi Keahlian (Many to One)
     public function konke()
     {
-        return $this->belongsTo(Konke::class, 'konkes_id', 'id');
+        return $this->belongsTo(Konke::class, 'konke_id', 'id');
     }
 }
 

@@ -11,7 +11,7 @@ class KelasController extends Controller
 {
     public function index()
     {
-        $kelas = Kelas::with('konke')->get();
+        $kelas = Kelas::orderBy('created_at', 'desc')->get(); // Urutkan berdasarkan created_at descending
         $konke = Konke::all();
 
         return view('data.kelas.dataKelas', compact('kelas', 'konke'));
@@ -24,15 +24,25 @@ class KelasController extends Controller
             'konke_id' => 'required|exists:konkes,id',
             'name_kelas' => 'required|string|max:255',
         ]);
-
+    
+        // Cek apakah kombinasi kelas dan name_kelas sudah ada
+        $exists = Kelas::where('kelas', $request->kelas)
+            ->where('name_kelas', $request->name_kelas)
+            ->exists();
+    
+        if ($exists) {
+            return redirect()->back()->with('error', 'Gagal menambahkan! kelas sudah ada.');
+        }
+    
         Kelas::create([
             'kelas' => $request->kelas,
             'konke_id' => $request->konke_id,
             'name_kelas' => $request->name_kelas,
         ]);
-
+    
         return redirect()->back()->with('success', 'Data kelas berhasil ditambahkan.');
     }
+    
 
     public function showSiswa($id)
     {

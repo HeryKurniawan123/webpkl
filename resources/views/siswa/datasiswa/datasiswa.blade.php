@@ -116,39 +116,41 @@
                                     <table class="table table-hover">
                                         <thead style="text-align: center">
                                             <tr>
-                                                <th>No</th>
-                                                <th>Nama</th>
-                                                <th>NIS</th>
-                                                <th>Kelas</th>
-                                                <th>Konsentrasi Keahlian</th>
-                                                <th>Status</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody style="text-align: center">
-                                            @foreach ($siswa as $index => $s)
-                                                <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $s->name }}</td>
-                                                    <td>{{ $s->nip }}</td>
-                                                    <td>{{ optional($s->kelas)->name_kelas ?? '-' }}</td>
-                                                    <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
-                                                    <td></td>
-                                                    <td>
-                                                        <div class="d-flex gap-1 justify-content-center flex-nowrap">
-                                                            <button class="btn btn-warning btn-sm d-flex align-items-center"
-                                                                data-bs-toggle="modal" data-bs-target="#editSiswaModal{{ $s->id }}">
+                                                    <th>No</th>
+                                                    <th>Nama</th>
+                                                    <th>NIS</th>
+                                                    <th>Kelas</th>
+                                                    <th>Konsentrasi Keahlian</th>
+                                                    <th>Status</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($siswa as $index => $s)
+                                                    <tr>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $s->name }}</td>
+                                                        <td>{{ $s->nip }}</td>
+                                                        <td>{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}</td>
+                                                        <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
+                                                        <td></td>
+                                                        <td>
+                                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                                data-bs-target="#editSiswaModal{{ $s->id }}">
+
                                                                 <i class="bi bi-pen"></i>
                                                             </button>
                                                             <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
-                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus siswa ini?')">
+
+                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" class="delete-btn d-inline">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
-                                                                    <i class="bi bi-trash3"></i>
-                                                                </button>
+                                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                              >
+                                                                    <i class="bi bi-trash3"></i></button>
+
                                                             </form>
                                                         </div>
                                                     </td>                                                                                                        
@@ -334,4 +336,68 @@
     @include('siswa.datasiswa.editSiswa')
 
     </html>
+    <script>
+         document.addEventListener("DOMContentLoaded", function () {
+        // Ambil data dari session flash Laravel melalui input hidden
+        let successMessage = document.getElementById("success-message")?.value;
+        let errorMessage = document.getElementById("error-message")?.value;
+
+        if (successMessage) {
+            Swal.fire({
+                icon: "success",
+                title: "Sukses!",
+                text: successMessage,
+                showConfirmButton: false,
+                timer: 3000
+            });
+        }
+
+        if (errorMessage) {
+            Swal.fire({
+                icon: "error",
+                title: "Gagal!",
+                text: errorMessage,
+                showConfirmButton: true
+            });
+        }
+    });
+    
+            document.querySelectorAll('.delete-btn').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Apakah kamu yakin?",
+                text: "Data ini tidak bisa dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, Hapus!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector("input[name='search']");
+    const tableRows = document.querySelectorAll("tbody tr");
+
+    searchInput.addEventListener("keyup", function() {
+        const searchValue = this.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? "" : "none";
+        });
+    });
+});
+
+
+
+</script>
 @endsection

@@ -39,50 +39,44 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
-                
-                    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="searchModalLabel">Cari Konsentrasi Keahlian</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="#">
-                                        <input type="text" name="search" class="form-control" placeholder="Cari Konsentrasi Keahlian...">
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary btn-sm">Cari</button>
-                                </div>
-                            </div>
+                        @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
                         </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped" style="text-align: center">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Konsentrasi keahlian</th>
-                                        <th>Program Keahlian</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($konke as $index => $k)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $k->name_konke }}</td>
-                                        <td>{{ $k->proker->name }}</td>
-                                        <td>
-                                            <div class="d-flex gap-1 justify-content-center flex-nowrap">
-                                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#editKonkeModal{{ $k->id }}">
-                                                <i class="bi bi-pen"></i>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                        <table class="table table-striped">
+                            
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Konsentrasi keahlian</th>
+                                    <th>Program Keahlian</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($konke as $index => $k)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $k->name_konke }}</td>
+                                    <td>{{ $k->proker->name }}</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#editKonkeModal{{ $k->id }}">
+                                            <i class="bi bi-pen"></i>
+                                        </button>
+                                        <form action="{{ route('konke.destroy', $k->id) }}" method="POST" class="delete-btn d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash3"></i>
+
                                             </button>
                                             <form action="{{ route('konke.destroy', $k->id) }}" method="POST" class="delete-btn d-inline">
                                                 @csrf
@@ -191,6 +185,21 @@
             });
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector("input[name='search']");
+    const tableRows = document.querySelectorAll("tbody tr");
+
+    searchInput.addEventListener("keyup", function() {
+        const searchValue = this.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? "" : "none";
+        });
+    });
+});
+
     </script>
 @endsection
 

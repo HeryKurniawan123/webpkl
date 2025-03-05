@@ -17,11 +17,12 @@ class SiswaController extends Controller
     {
         $siswa = User::where('role', 'siswa')
                 ->with(['kelas', 'konke'])
+                ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at descending
                 ->get();
         $konke = Konke::all();
         $kelas = Kelas::all();
-
-        return view('siswa.datasiswa.datasiswa', compact('siswa', 'kelas', 'konke'  ));
+    
+        return view('siswa.datasiswa.datasiswa', compact('siswa', 'konke', 'kelas'));
     }
 
     public function showSiswa() {
@@ -30,9 +31,11 @@ class SiswaController extends Controller
 
     public function show($id)
     {
+        $konke = Konke::all();
+        $kelas = Kelas::all();
         $siswa = User::with('dataPribadi')->findOrFail($id);
         $dataPribadi = User::with('dataPribadi')->where('id', Auth::id())->first();
-        return view('siswa.datasiswa.detailSiswa', compact('siswa', 'dataPribadi'));
+        return view('siswa.datasiswa.detailSiswa', compact('siswa', 'dataPribadi', 'konke', 'kelas'));
     }
     
 
