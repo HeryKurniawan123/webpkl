@@ -114,6 +114,7 @@
                                         <table class="table table-hover" style="text-align: center">
                                             <thead>
                                                 <tr>
+
                                                     <th>No</th>
                                                     <th>Nama</th>
                                                     <th>NIS</th>
@@ -251,15 +252,12 @@
                                 required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">kelas</label>
-                            <select class="form-control" name="kelas_id" required>
-                                <option value="">Pilih Kelas</option>
-                                @foreach ($kelas as $kls)
-                                    <option value="{{ $kls->id }}">{{ $kls->kelas }} {{ $kls->name_kelas }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <label class="form-label">Kelas</label>
+                            <input type="text" class="form-control" value="{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}" readonly>
+                            <input type="hidden" name="kelas_id" value="{{ $s->kelas_id }}">
                         </div>
+                        
+                        
                         <div class="mb-3">
                             <label class="form-label">Konsentrasi Keahlian</label>
                             <select class="form-control" name="konke_id" required>

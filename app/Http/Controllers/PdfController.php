@@ -19,7 +19,7 @@ class PdfController extends Controller
 
 
         $kaprog = DB::table('gurus')
-            ->where('konkes_id', $usulanIduka->konke_id)
+            ->where('konke_id', $usulanIduka->konke_id)
             ->first();
 
         $pdf = Pdf::loadView('data.usulan.suratUsulanPDF', compact('dataPribadi', 'usulanIduka', 'kaprog'));

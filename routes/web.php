@@ -119,12 +119,9 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::put('/kependik/{id}', [TenagaKependidikanController::class, 'update'])->name('kependik.update');
     Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
 
-
-    //USULAN KAPGROG
-    Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
-    Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
-    Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
+
+  
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -149,8 +146,8 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::post('/iduka-atp/store', [IdukaAtpController::class, 'store'])->name('iduka_atp.store');
     Route::put('/iduka-atp/update/{id}', [IdukaAtpController::class, 'update'])->name('iduka_atp.update');
     Route::delete('/iduka-atp/destroy/{id}', [IdukaAtpController::class, 'destroy'])->name('iduka_atp.destroy');
-    Route::get('/get-cp-atp/{konkes_id}', function ($konkes_id) {
-        $cps = Cp::where('konkes_id', $konkes_id)->with('atp')->get();
+    Route::get('/get-cp-atp/{konke_id}', function ($konke_id) {
+        $cps = Cp::where('konke_id', $konke_id)->with('atp')->get();
         return response()->json($cps);
         Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
 
@@ -176,6 +173,15 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
+
+
+      //USULAN KAPGROG
+      Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
+      Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
+      Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
+      Route::get('/kaprog/review/detail/{id}', [KaprogController::class, 'show'])->name('kaprog.review.detail');
+
+
 
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');

@@ -14,7 +14,7 @@ class GuruController extends Controller
     public function dataguru()
     {
         $user = User::where('role', 'guru')->with('konke')->get();
-        $guru = Guru::all(); // Pastikan relasi "konke" sudah benar
+        $guru = Guru::orderBy('created_at', 'desc')->get(); // Urutkan berdasarkan created_at descending
         $konkes = Konke::all(); // Ambil data konsentrasi keahlian
         return view('hubin.dataguru.dataguru', compact('guru', 'konkes')); 
     }
@@ -26,46 +26,49 @@ class GuruController extends Controller
     }
 
     public function store(Request $request)
-{
-    // Validasi input
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'nik' => 'required|string|max:20|unique:gurus,nik',
-        'nip' => 'required|string|max:20|unique:users,nip',
-        'email' => 'required|email|max:255|unique:gurus,email|unique:users,email',
-        'password' => 'required|min:8',
-       'konkes_id' => 'nullable|exists:konkes,id', // Opsional
-        'role' => 'required|in:guru,kaprog,hubin,psekolah', // Validasi role
-    ]);
-
-    DB::transaction(function () use ($request) {
-        // Simpan data ke tabel gurus
-        $guru = Guru::create([
-            'nama' => $request->nama,
-            'nik' => $request->nik,
-            'nip' => $request->nip,
-            'email' => $request->email,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
-            'password' => Hash::make($request->password),
-            'konkes_id' => $request->konkes_id,
+    {
+        // Validasi input
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'nik' => 'required|string|max:20|unique:gurus,nik',
+            'nip' => 'required|string|max:20|unique:users,nip',
+            'email' => 'required|email|max:255|unique:gurus,email|unique:users,email',
+            'password' => 'required|min:8',
+            'konke_id' => 'nullable|exists:konkes,id', // Opsional
+            'role' => 'required|in:guru,kaprog,hubin,psekolah', // Validasi role
         ]);
-
-        // Simpan data ke tabel users
-        User::create([
-            'name' => $request->nama,
-            'email' => $request->email,
-            'nip' => $request->nip,
-            'password' => Hash::make($request->password),
-            'role' => $request->role, 
-        ]);
-    });
-
-    return redirect()->route('guru.index')->with('success', 'Data Guru berhasil ditambahkan!');
-}
+    
+        DB::transaction(function () use ($request) {
+            // Simpan data ke tabel users terlebih dahulu
+            $user = User::create([
+                'name' => $request->nama,
+                'email' => $request->email,
+                'nip' => $request->nip,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+                'konke_id' => $request->konke_id,
+            ]);
+    
+            // Simpan data ke tabel gurus dengan user_id yang baru dibuat
+            Guru::create([
+                'nama' => $request->nama,
+                'nik' => $request->nik,
+                'nip' => $request->nip,
+                'email' => $request->email,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'alamat' => $request->alamat,
+                'no_hp' => $request->no_hp,
+                'password' => Hash::make($request->password),
+                'konke_id' => $request->konke_id,
+                'user_id' => $user->id, // Menyimpan user_id ke tabel gurus
+            ]);
+        });
+    
+        return redirect()->route('guru.index')->with('success', 'Data Guru berhasil ditambahkan!');
+    }
+    
 
     public function edit(Guru $guru)
     {
@@ -85,7 +88,7 @@ class GuruController extends Controller
         'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
         'alamat' => 'required|string',
         'no_hp' => 'required|string',
-        'konkes_id' => 'nullable|exists:konkes,id', // Opsional
+        'konke_id' => 'nullable|exists:konkes,id', // Opsional
     ]);
 
     DB::transaction(function () use ($request, $guru) {
@@ -99,7 +102,7 @@ class GuruController extends Controller
             'jenis_kelamin' => $request->jenis_kelamin,
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
-            'konkes_id' => $request->konkes_id,
+            'konke_id' => $request->konke_id,
         ]);
 
         // Update password jika diisi

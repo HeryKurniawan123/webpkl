@@ -170,11 +170,13 @@
                 event.preventDefault();
                 const konkes_id = this.getAttribute("data-konkes-id");
                 document.getElementById("konkes_id").value = konkes_id;
+
+               
                 const tpTambahBody = document.getElementById("tp-tambah-body");
 
                 tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
 
-                fetch(`/get-cp-atp/${konkes_id}`)
+                fetch(`/get-cp-atp/${konke_id}`)
                     .then(response => response.json())
                     .then(data => {
                         tpTambahBody.innerHTML = "";

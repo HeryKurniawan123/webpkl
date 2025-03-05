@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('cps', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('konkes_id')->constrained('konkes')->onDelete('cascade'); // Relasi ke Konsentrasi Keahlian
+            $table->foreignId('konke_id')->constrained('konkes')->onDelete('cascade'); // Relasi ke Konsentrasi Keahlian
             $table->text('cp');
             $table->timestamps();
         });

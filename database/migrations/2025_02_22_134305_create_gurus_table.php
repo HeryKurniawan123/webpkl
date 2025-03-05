@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('alamat');
             $table->string('no_hp');
             $table->string('password');
-            $table->foreignId('konkes_id')->constrained('konkes')->onDelete('cascade');
+            $table->foreignId('konke_id')->constrained('konkes')->onDelete('cascade');
             $table->timestamps();
         });
     }

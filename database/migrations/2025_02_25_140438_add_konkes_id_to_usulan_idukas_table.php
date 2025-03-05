@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('usulan_idukas', function (Blueprint $table) {
-            $table->unsignedBigInteger('konkes_id')->after('user_id')->nullable();
+            $table->unsignedBigInteger('konke_id')->after('user_id')->nullable();
 
             // Jika ada relasi ke tabel konkes, tambahkan foreign key
-            $table->foreign('konkes_id')->references('id')->on('konkes')->onDelete('set null');
+            $table->foreign('konke_id')->references('id')->on('konkes')->onDelete('set null');
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('usulan_idukas', function (Blueprint $table) {
-            $table->dropForeign(['konkes_id']);
-            $table->dropColumn('konkes_id');
+            $table->dropForeign(['konke_id']);
+            $table->dropColumn('konke_id');
         });
     }
 };
