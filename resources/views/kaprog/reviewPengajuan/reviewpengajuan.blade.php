@@ -76,6 +76,12 @@
                         </div>
 
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
+                            @if(session()->has('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif   
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="mb-0" style="font-size: 18px">Nama</strong></div>

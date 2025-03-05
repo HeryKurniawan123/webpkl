@@ -54,16 +54,19 @@
          </style>
     </head>
     <body>
-        <div class="container-fluid">
-            <div class="content-wrapper">
-                <div class="container-xxl flex-grow-1 container-p-y">
-                    <div class="row">            
+        <div class="container-fluid">              
                         <div class="col-md-12 mt-3">
                             <div class="button-group">
                                 <a href="{{ route('history.diterima') }}" class="btn btn-success btn-status">History Diterima</a>
                                 <a href="{{ route('history.ditolak') }}" class="btn btn-danger btn-status">History Ditolak</a>
                             </div>
 
+                            @if(session()->has('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif   
                             <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>

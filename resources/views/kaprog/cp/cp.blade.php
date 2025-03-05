@@ -3,11 +3,6 @@
 @section('content')
 <div class="container mt-4">
 
-    {{-- Notifikasi --}}
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-
     {{-- Form Pencarian dan Tombol Tambah --}}
     <div class="card">
         <div class="card-body">
@@ -23,6 +18,12 @@
         </div>
     </div>
 
+    @if(session()->has('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif   
     {{-- Menampilkan CP dan ATP dalam satu card per konsentrasi --}}
     @foreach ($konke as $konsentrasi)
     <div class="card mt-3">

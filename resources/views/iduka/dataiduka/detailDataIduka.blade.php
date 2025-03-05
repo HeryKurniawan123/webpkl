@@ -203,9 +203,9 @@
                                     Kembali
                                 </a>
                                 @if(auth()->user()->role == 'siswa')
-                                <form action="{{ route('pengajuan.ajukan', $iduka->id) }}" method="POST">
+                                <form action="{{ route('pengajuan.ajukan', $iduka->id) }}" method="POST" class="ajukan-form">
                                     @csrf
-                                    <button type="submit" class="btn btn-primary shadow-sm">Ajukan PKL</button>
+                                    <button type="submit" class="ajukan-btn btn btn-primary shadow-sm">Ajukan PKL</button>
                                 </form>
                                 @endif
 
@@ -216,6 +216,29 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.querySelectorAll('.ajukan-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Mencegah penghapusan langsung
+
+            Swal.fire({
+                title: "Apakah kamu yakin?",
+                text: "Ingin mengajukan Institusi ini?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, Ajukan!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.closest('.ajukan-form').submit(); // Form terdekat dikirim
+                }
+            });
+        });
+    });
+
+    </script>
 
     @include('iduka.dataiduka.editiduka')
 </body>

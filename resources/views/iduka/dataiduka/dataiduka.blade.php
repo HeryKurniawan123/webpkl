@@ -132,6 +132,12 @@
                                 Belum ada data Iduka yang tersedia.
                             </div>
                         @else
+                        @if(session()->has('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif   
                             @foreach ($iduka as $i)
                             <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;">
                                 <div class="d-flex justify-content-between align-items-center">
@@ -158,10 +164,10 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
-                                                    <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus iduka ini?');">
+                                                    <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="dropdown-item text-danger">Hapus</button>
+                                                        <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
                                                     </form>
                                                 </li>
                                             </ul>
@@ -177,6 +183,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Mencegah penghapusan langsung
+
+            Swal.fire({
+                title: "Apakah kamu yakin?",
+                text: "Data ini tidak bisa dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, Hapus!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.closest('.delete-form').submit(); // Form terdekat dikirim
+                }
+            });
+        });
+    });
+    </script>
 
     @include('iduka.dataiduka.createiduka')
 </body>

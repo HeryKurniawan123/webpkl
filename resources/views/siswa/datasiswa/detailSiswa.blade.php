@@ -79,6 +79,12 @@
                     <div class="row">
                         <div class="col-md-12 mt-3">
                             <div class="card">
+                                @if(session()->has('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif   
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
                                         <li class="nav-item">

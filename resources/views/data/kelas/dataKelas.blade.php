@@ -50,6 +50,15 @@
         .card-hover:hover .dropdown-btn {
             color: white !important;
         }
+
+        .colored-toast {
+            background-color: #28a745 !important; /* Warna hijau */
+            color: white !important; /* Teks putih */
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
     </style>
 </head>
 
@@ -57,7 +66,7 @@
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row">
+                <div class="row">                        
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -113,19 +122,13 @@
                             </div>
                         </div>                        
                     </div>
-{{-- 
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <form action="{{ route('kelas.index') }}" class="d-flex" style="width: 100%; max-width: 500px;">
-                            <input type="text" name="search" class="form-control me-2" placeholder="Cari Kelas" style="flex: 1; min-width: 250px;">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </form>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahKelasModal">
-                            Tambah Data
-                        </button>
-                    </div> --}}
 
+                    @if(session()->has('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif   
                     @forelse ($kelas as $item)
                     <div class="col-md-4">
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
@@ -141,7 +144,7 @@
                                             <form action="{{ route('kelas.destroy', $item->id) }}" method="POST" class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="dropdown-item text-danger">Hapus</button>
+                                                <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
                                             </form>
                                         </li>
                                         <li>
@@ -257,9 +260,9 @@
     </div>
 
     <script>
-        document.querySelectorAll('.delete-btn').forEach(form => {
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Mencegah form terkirim langsung
 
                 Swal.fire({
                     title: "Apakah kamu yakin?",
@@ -271,15 +274,32 @@
                     confirmButtonText: "Ya, Hapus!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        Swal.fire({
-                            title: "Berhasil dihapus!",
-                            text: "Data telah dihapus.",
-                            icon: "success"
-                        });
+                        this.closest('.delete-form').submit(); // Temukan form terdekat dan submit
                     }
                 });
             });
         });
+
+        function showAlert() {
+            let alertBox = document.getElementById("myAlert");
+            alertBox.classList.add("show");
+            alertBox.classList.remove("hide");
+
+            // Hilangkan setelah 3 detik
+            setTimeout(() => {
+                hideAlert();
+            }, 3000);
+        }
+
+        function hideAlert() {
+            let alertBox = document.getElementById("myAlert");
+            alertBox.classList.add("hide");
+            setTimeout(() => {
+                alertBox.classList.remove("show");
+            }, 500);
+        }
+
+
     </script>
 </body>
 

@@ -42,11 +42,12 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                        @endif
+                        @if(session()->has('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif   
                         <div class="table-responsive">
                             <table class="table table-hover" style="text-align: center">
                                 <thead>
@@ -75,10 +76,10 @@
                                                     <i class="bi bi-eye"></i>
                                                 </button>
             
-                                                <form action="{{ route('kependik.destroy', $item->id) }}" method="POST" class="delete-btn d-inline">
+                                                <form action="{{ route('kependik.destroy', $item->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                    <button type="submit" class="delete-btn btn btn-danger btn-sm">
                                                         <i class="bi bi-trash3"></i>
                                                     </button>
                                                 </form>
@@ -229,9 +230,9 @@
 </div>
 @include('tk.detailTK')
 <script>
-    document.querySelectorAll('.delete-btn').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); 
 
             Swal.fire({
                 title: "Apakah kamu yakin?",
@@ -243,7 +244,7 @@
                 confirmButtonText: "Ya, Hapus!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    this.closest('.delete-form').submit(); 
                 }
             });
         });

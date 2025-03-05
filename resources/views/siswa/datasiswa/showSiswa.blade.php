@@ -8,33 +8,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Data Siswa Kelas XII RPL 2</title>
-        <style>
-            /* .btn-back {
-                background-color: #7e7dfb;
-                color: white;
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-                border: none;
-                padding: 10px 20px;
-                border-radius: 5px;
-                font-size: 16px;
-                cursor: pointer;
-                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
-            }
-
-            .btn-back:hover {
-                background-color: #7e7dfb;
-                color: white;
-                transform: translateY(-3px);
-                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
-            }
-
-            .btn-back:active {
-                color: white;
-                background-color: #6b6bfa !important;
-                transform: translateY(3px);
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            } */
-        </style>
     </head>
 
     <body>
@@ -44,6 +17,12 @@
                     <div class="row">
                         <div class="card mb-3">
                             <div class="card-body">
+                                @if(session()->has('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif   
                                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
                                     <div class="d-md-flex d-block">
                                         <h5 class="mb-0">Data Siswa </h5>

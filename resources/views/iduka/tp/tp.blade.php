@@ -62,9 +62,14 @@
                             </div>
                         </div>
                     </div>
-
                     @forelse($idukaAtps->groupBy('cp.cp') as $cp_name => $items)
                     <div class="card card-content mt-3">
+                        @if(session()->has('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif   
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <b>{{ $cp_name }}</b>
                             <div class="dropdown">
@@ -87,7 +92,9 @@
                         </div>
                     </div>
                     @empty
-                    <p class="text-muted">Belum ada Tujuan Pembelajaran untuk IDUKA ini.</p>
+                    <div class="alert alert-warning mt-3 d-flex justify-content-center align-items-center text-center">
+                        <span style="text-align: center">Belum ada Tujuan Pembelajaran untuk Institusi ini.</span>
+                    </div>
                     @endforelse
 
                 </div>

@@ -82,12 +82,20 @@
 
                         {{-- Jika tidak ada pengajuan --}}
                         @if($pengajuans->isEmpty())
-                        <p class="text-center">Tidak ada pengajuan yang tersedia.</p>
+                        <div class="alert alert-warning d-flex justify-content-center align-items-center text-center">
+                            <span style="text-align: center">Belum ada Tujuan Pembelajaran untuk Institusi ini.</span>
+                        </div>
                         @else
 
                         {{-- Looping Data Pengajuan --}}
                         @foreach($pengajuans as $pengajuan)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
+                            @if(session()->has('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif   
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="mb-0" style="font-size: 18px">

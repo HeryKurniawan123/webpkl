@@ -103,6 +103,12 @@
                         </div>
                         <div class="card">
                             <div class="card-body">
+                                @if(session()->has('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif   
                                 @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <ul>
@@ -143,10 +149,10 @@
                                                             <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
-                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus siswa ini?')">
+                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
+                                                                <button type="submit" class="delete-btn btn btn-danger btn-sm d-flex align-items-center">
                                                                     <i class="bi bi-trash3"></i>
                                                                 </button>
                                                             </form>
@@ -329,6 +335,30 @@
     </div>
     
 
+    <script>
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Mencegah aksi default tombol
+
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Data ini tidak bisa dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Hapus!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Temukan form terdekat dan submit
+                        this.closest('form').submit();
+                    }
+                });
+            });
+        });
+
+
+    </script>
 
     @include('siswa.datasiswa.createSiswa')
     @include('siswa.datasiswa.editSiswa')

@@ -55,6 +55,12 @@
                     <form id="pdfForm" method="GET" action="{{ route('download.pdf') }}">
                         @csrf
                         <div class="row">
+                            @if(session()->has('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif   
                             <div class="col-md-12 mt-3">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div class="d-flex gap-2">

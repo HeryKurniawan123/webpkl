@@ -11,12 +11,6 @@
                     </div>
                     <div class="card shadow mb-4">
                         <div class="card-body">
-                            {{-- <h1 class="h3 mb-2 text-gray-800">Data Diri Pembimbing</h1> --}}
-            
-                            @if (session('success'))
-                                <p style="color: green;">{{ session('success') }}</p>
-                            @endif
-            
                             @if ($errors->any())
                                 <div style="color: red;">
                                     <ul>
@@ -26,6 +20,13 @@
                                     </ul>
                                 </div>
                             @endif
+
+                            @if(session()->has('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            @endif   
                             <form action="{{ !isset($pembimbing->id) ? route('iduka.pembimbing.store') : route('iduka.pembimbing.update', $pembimbing->id) }}" method="POST">
                                 @csrf
                                 @if(isset($pembimbing->id)) 

@@ -4,7 +4,7 @@
 <div class="container-fluid">
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="row">
+            <div class="row">          
                 <div class="card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -52,6 +52,12 @@
                             </ul>
                         </div>
                         @endif
+                        @if(session()->has('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif   
                         <div class="table-responsive">
                             <table class="table table-hover" style="text-align: center">
                                 <thead>
@@ -78,13 +84,13 @@
                                                     data-bs-target="#editGuruModal{{ $g->id }}">
                                                     <i class="bi bi-pen"></i>
                                                 </button>
-                                                <form action="{{ route('guru.destroy', $g->id) }}" method="POST" class="delete-btn d-inline">
+                                                <form action="{{ route('guru.destroy', $g->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                    <button type="submit" class="delete-btn btn btn-danger btn-sm">
                                                         <i class="bi bi-trash3"></i>
                                                     </button>
-                                                </form>
+                                                </form>                                                
                                             </div>
                                         </td>
                                     </tr>
@@ -268,9 +274,9 @@
 </div>
 
 <script>
-    document.querySelectorAll('.delete-btn').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Mencegah penghapusan langsung
 
             Swal.fire({
                 title: "Apakah kamu yakin?",
@@ -282,10 +288,11 @@
                 confirmButtonText: "Ya, Hapus!"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    this.closest('.delete-form').submit(); // Form terdekat dikirim
                 }
             });
         });
     });
+
 </script>
 @endsection

@@ -19,6 +19,30 @@
             overflow-wrap: break-word;
         }
     }
+
+    .alert {
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #ffc107;
+        color: #333;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+    }
+
+    .alert .bi-exclamation-circle-fill {
+        margin-right: 10px;
+    }
+
+    .alert .close-btn {
+        margin-left: 10px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
 </style>
 <div class="container-fluid">
     <div class="content-wrapper">
@@ -60,8 +84,16 @@
                         </div>
                     </div>
                 </div>
+
+                
                 <div class="card">
                     <div class="card-body">
+                        @if(session()->has('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif   
                         <div class="table-responsive">
                             <table class="table table-striped" style="text-align: center">
                                 <thead>
@@ -84,10 +116,10 @@
                                                 data-bs-target="#editKonkeModal{{ $k->id }}">
                                                 <i class="bi bi-pen"></i>
                                             </button>
-                                            <form action="{{ route('konke.destroy', $k->id) }}" method="POST" class="delete-btn d-inline">
+                                            <form action="{{ route('konke.destroy', $k->id) }}" method="POST" class="delete-form d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                <button type="submit" class="delete-btn btn btn-danger btn-sm">
                                                     <i class="bi bi-trash3"></i>
                                                 </button>
                                             </form>

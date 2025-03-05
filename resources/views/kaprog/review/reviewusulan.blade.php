@@ -68,13 +68,17 @@
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <h4 class="mb-4">Review Usulan IDUKA</h4>
-                @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-                @endif
-                @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
+
                 <div class="row">
+                    @if(session()->has('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif   
+                    @if(session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
                     <div class="col-md-12 mt-3">
                         <div class="button-group">
                             @if($usulanIdukas->isNotEmpty())
