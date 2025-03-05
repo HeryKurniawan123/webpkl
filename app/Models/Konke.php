@@ -23,7 +23,7 @@ class Konke extends Model
 
     public function gurus()
     {
-        return $this->hasMany(Guru::class, 'konkes_id', 'id');
+        return $this->hasMany(Guru::class, 'konke_id', 'id');
     }
     public function dataPribadis()
     {
@@ -31,7 +31,7 @@ class Konke extends Model
     }
     public function cp()
     {
-        return $this->hasMany(Cp::class, 'konkes_id');
+        return $this->hasMany(Cp::class, 'konke_id');
     }
     
 

@@ -119,12 +119,9 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::put('/kependik/{id}', [TenagaKependidikanController::class, 'update'])->name('kependik.update');
     Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
 
-
-    //USULAN KAPGROG
-    Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
-    Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
-    Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
+
+  
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -177,6 +174,15 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
 
+
+      //USULAN KAPGROG
+      Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
+      Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
+      Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
+      Route::get('/kaprog/review/detail/{id}', [KaprogController::class, 'show'])->name('kaprog.review.detail');
+
+
+
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
 
@@ -208,15 +214,13 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
 
+    //mengajukan pkl
     Route::post('/pengajuan/{iduka}', [PengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');
     Route::get('/pengajuan', [PengajuanPklController::class, 'index'])->name('pengajuan.index');
-
-
     Route::get('/review-pengajuan', [PengajuanPklController::class, 'reviewPengajuan'])->name('review.pengajuan');
     Route::get('/detail-pengajuan/{id}', [PengajuanPklController::class, 'showPengajuan'])->name('pengajuan.detail');
     Route::patch('/pengajuan/{id}/terima', [PengajuanPklController::class, 'terima'])->name('pengajuan.terima');
     Route::patch('/pengajuan/{id}/tolak', [PengajuanPklController::class, 'tolak'])->name('pengajuan.tolak');
-
     Route::get('/review/pengajuan/diterima', [PengajuanPklController::class, 'reviewPengajuanDiterima'])->name('review.pengajuanditerima');
     Route::get('/review/pengajuan/ditolak', [PengajuanPklController::class, 'reviewPengajuanDitolak'])->name('review.pengajuanditolak');
 

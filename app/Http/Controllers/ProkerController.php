@@ -9,15 +9,7 @@ class ProkerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Proker::query();
-
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
-        $proker = $query->get();
-        $proker = Proker::all();
-
+        $proker = Proker::all(); // Urutkan berdasarkan created_at descending
         return view('data.proker.dataProker', compact('proker'));
     }
 

@@ -141,7 +141,7 @@
                                                 <tr>
                                                     <td>Kelas</td>
                                                     <td>:</td>
-                                                    <td>{{ optional($siswa->kelas)->name_kelas ?? '-' }}</td>
+                                                    <td>{{ $siswa->kelas->kelas }} {{ optional($siswa->kelas)->name_kelas ?? '-' }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Konsentrasi Keahlian</td>
@@ -190,7 +190,7 @@
                                                 <tr>
                                                     <td>Password</td>
                                                     <td>:</td>
-                                                    <td>**</td>
+                                                    <td>********</td>
                                                 </tr>
 
                                             </table>
@@ -311,15 +311,32 @@
                             <label class="form-label">NIS</label>
                             <input type="text" class="form-control" name="nip" value="{{ $siswa->nip }}" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Konsentrasi Keahlian</label>
-                            <input type="text" class="form-control" name="konsentrasi_keahlian"
-                                value="{{ optional($siswa->konke)->name_konke }}" >
-                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Kelas</label>
-                            <input type="text" class="form-control" name="kelas"   value="{{ optional($siswa->kelas)->name_kelas }}" required>
+                            <select class="form-control" name="kelas_id" required>
+                                <option value="">Pilih Kelas</option>
+                                @foreach ($kelas as $kls)
+                                    <option value="{{ $kls->id }}" {{ $siswa->kelas_id == $kls->id ? 'selected' : '' }}>
+                                        {{ $kls->kelas }} {{ $kls->name_kelas }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+                       
+                        <div class="mb-3">
+                            <label class="form-label"> Konsentrasi Keahlian</label>
+                            <select class="form-control" name="konke_id" required>
+                                <option value="">Pilih Konsentrasi Keahlian</option>
+                                @foreach ($konke as $k)
+                                    <option value="{{ $k->id }}" {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
+                                        {{ $k->name_konke }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                     
                         <div class="mb-3">
                             <label class="form-label">Alamat</label>
                             <input type="text" class="form-control" name="alamat" value="{{ optional($siswa->dataPribadi)->alamat_siswa }}" required>

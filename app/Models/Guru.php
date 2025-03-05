@@ -19,7 +19,7 @@ class Guru extends Model
         'alamat',
         'no_hp',
         'password',
-        'konkes_id',
+        'konke_id',
         'user_id',
     ];
     protected $hidden = [
@@ -28,25 +28,25 @@ class Guru extends Model
     // Relasi ke Proker (Many to One)
     public function proker()
     {
-        return $this->belongsTo(Proker::class, 'konkes_id', 'id');
+        return $this->belongsTo(Proker::class, 'konke_id', 'id');
     }
 
     // Relasi ke Guru (One to Many)
     public function gurus()
     {
-        return $this->hasMany(Guru::class, 'konkes_id');
+        return $this->hasMany(Guru::class, 'konke_id');
     }
 
     // Relasi ke CP (One to Many)
     public function cp()
     {
-        return $this->hasMany(Cp::class, 'konkes_id');
+        return $this->hasMany(Cp::class, 'konke_id');
     }
 
     // Relasi ke Data Pribadi (One to Many)
     public function dataPribadis()
     {
-        return $this->hasMany(DataPribadi::class, 'konkes_id');
+        return $this->hasMany(DataPribadi::class, 'konke_id');
     }
     public function user()
     {
@@ -54,6 +54,6 @@ class Guru extends Model
     }
     public function konke()
     {
-        return $this->belongsTo(Konke::class, 'konkes_id', 'id');
+        return $this->belongsTo(Konke::class, 'konke_id', 'id');
     }
 }

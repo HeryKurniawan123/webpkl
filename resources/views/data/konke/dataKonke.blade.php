@@ -64,7 +64,6 @@
                             </div>
                         </div>
                     </div>
-                
                     <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -123,7 +122,6 @@
                                                     <i class="bi bi-trash3"></i>
                                                 </button>
                                             </form>
-                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -223,6 +221,21 @@
             });
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.querySelector("input[name='search']");
+        const tableRows = document.querySelectorAll("tbody tr");
+
+        searchInput.addEventListener("keyup", function() {
+            const searchValue = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? "" : "none";
+            });
+        });
+    });
+
     </script>
 @endsection
 

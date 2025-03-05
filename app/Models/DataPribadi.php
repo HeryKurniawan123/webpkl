@@ -38,6 +38,7 @@ class DataPribadi extends Model
 
         'email_ortu',
         'no_tlp',
+       
     ];
 
     public function user()

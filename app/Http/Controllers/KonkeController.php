@@ -10,7 +10,7 @@ class KonkeController extends Controller
 {
     public function index()
     {
-        $konke = Konke::with('proker')->get();
+        $konke = Konke::all(); // Urutkan berdasarkan created_at descending
         $proker = Proker::all();
 
         return view('data.konke.dataKonke', compact('konke', 'proker'));
@@ -22,6 +22,15 @@ class KonkeController extends Controller
             'name_konke' => 'required|string|max:255',
             'proker_id' => 'required|exists:prokers,id'
         ]);
+
+         // Cek apakah kombinasi kelas dan name_kelas sudah ada
+         $exists = Konke::where('name_konke', $request->name_konke)
+         ->where('proker_id', $request->proker_id)
+         ->exists();
+ 
+     if ($exists) {
+         return redirect()->back()->with('error', 'Gagal menambahkan! Konsentrasi Keahlian sudah ada.');
+     }
 
         Konke::create([
             'name_konke' => $request->name_konke,

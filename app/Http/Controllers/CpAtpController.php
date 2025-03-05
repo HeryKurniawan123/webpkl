@@ -15,12 +15,12 @@ class CpAtpController extends Controller
     {
         $kaprog = Auth::user()->guru;
     
-        if (!$kaprog || !$kaprog->konkes_id) {
+        if (!$kaprog || !$kaprog->konke_id) {
             abort(403, 'Akses ditolak: Anda tidak memiliki Konsentrasi Keahlian.');
         }
     
         // Ambil semua Konsentrasi Keahlian yang dimiliki Kaprog
-        $konke = \App\Models\Konke::where('id', $kaprog->konkes_id)->with('cp.atp')->get();
+        $konke = \App\Models\Konke::where('id', $kaprog->konke_id)->with('cp.atp')->get();
     
         return view('kaprog.cp.cp', compact('konke'));
     }
@@ -39,7 +39,7 @@ class CpAtpController extends Controller
     
         $kaprog = Auth::user()->guru;
     
-        if (!$kaprog || !$kaprog->konkes_id) {
+        if (!$kaprog || !$kaprog->konke_id) {
             return redirect()->back()->with('error', 'Akses ditolak: Anda tidak memiliki Konsentrasi Keahlian.');
         }
     
@@ -50,7 +50,7 @@ class CpAtpController extends Controller
     
                 // Simpan CP
                 $cp = Cp::create([
-                    'konkes_id' => $kaprog->konkes_id,
+                    'konke_id' => $kaprog->konke_id,
                     'cp' => $cpText,
                 ]);
     
@@ -87,12 +87,12 @@ class CpAtpController extends Controller
         try {
             $kaprog = Auth::user()->guru;
 
-            if (!$kaprog || !$kaprog->konkes_id) {
+            if (!$kaprog || !$kaprog->konke_id) {
                 return redirect()->back()->with('error', 'Akses ditolak: Anda tidak memiliki Konsentrasi Keahlian.');
             }
 
             // Ambil semua CP berdasarkan konsentrasi keahlian yang diakses
-            $cps = Cp::where('konkes_id', $kaprog->konkes_id)->get();
+            $cps = Cp::where('konke_id', $kaprog->konke_id)->get();
 
             // Hapus semua ATP lama terkait CP yang diedit
             foreach ($cps as $cp) {
@@ -103,7 +103,7 @@ class CpAtpController extends Controller
             foreach ($request->cp as $cpIndex => $cpText) {
                 // Update CP
                 $cp = $cps[$cpIndex] ?? new Cp();
-                $cp->konkes_id = $kaprog->konkes_id;
+                $cp->konke_id = $kaprog->konke_id;
                 $cp->cp = $cpText;
                 $cp->save();
 
@@ -136,9 +136,9 @@ class CpAtpController extends Controller
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-    public function getCpAtp($konkes_id)
+    public function getCpAtp($konke_id)
     {
-        $cps = Cp::where('konkes_id', $konkes_id)
+        $cps = Cp::where('konke_id', $konke_id)
             ->with('atp') // Pastikan relasi 'atps' ada di model
             ->get();
     

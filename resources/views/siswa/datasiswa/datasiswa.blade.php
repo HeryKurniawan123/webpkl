@@ -149,10 +149,10 @@
                                                             <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
-                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST">
+                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus siswa ini?')">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="delete-btn btn btn-danger btn-sm d-flex align-items-center">
+                                                                <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
                                                                     <i class="bi bi-trash3"></i>
                                                                 </button>
                                                             </form>
@@ -364,4 +364,68 @@
     @include('siswa.datasiswa.editSiswa')
 
     </html>
+    <script>
+         document.addEventListener("DOMContentLoaded", function () {
+        // Ambil data dari session flash Laravel melalui input hidden
+        let successMessage = document.getElementById("success-message")?.value;
+        let errorMessage = document.getElementById("error-message")?.value;
+
+        if (successMessage) {
+            Swal.fire({
+                icon: "success",
+                title: "Sukses!",
+                text: successMessage,
+                showConfirmButton: false,
+                timer: 3000
+            });
+        }
+
+        if (errorMessage) {
+            Swal.fire({
+                icon: "error",
+                title: "Gagal!",
+                text: errorMessage,
+                showConfirmButton: true
+            });
+        }
+    });
+    
+            document.querySelectorAll('.delete-btn').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Apakah kamu yakin?",
+                text: "Data ini tidak bisa dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Ya, Hapus!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector("input[name='search']");
+    const tableRows = document.querySelectorAll("tbody tr");
+
+    searchInput.addEventListener("keyup", function() {
+        const searchValue = this.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? "" : "none";
+        });
+    });
+});
+
+
+
+</script>
 @endsection

@@ -210,4 +210,37 @@
 </body>
 
 </html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.querySelector('input[name="search"]');
+        const filterSelect = document.getElementById("filterIduka");
+        const idukaCards = document.querySelectorAll(".card-hover");
+
+        function filterData() {
+            const searchValue = searchInput.value.toLowerCase();
+            const filterValue = filterSelect.value;
+
+            idukaCards.forEach(card => {
+                const nama = card.querySelector(".mb-0").textContent.toLowerCase(); // Ambil nama Iduka
+                const alamat = card.querySelector(".text-muted")?.textContent.toLowerCase() || ''; // Ambil alamat Iduka
+                const isRekomendasi = card.querySelector(".text-success") !== null; // Cek apakah ada label rekomendasi
+
+                let matchesSearch = nama.includes(searchValue) || alamat.includes(searchValue);
+                let matchesFilter = 
+                    filterValue === "all" ||
+                    (filterValue === "rekomendasi" && isRekomendasi) ||
+                    (filterValue === "ajuan" && !isRekomendasi);
+
+                // Tampilkan atau sembunyikan kartu berdasarkan filter
+                card.style.display = (matchesSearch && matchesFilter) ? "block" : "none";
+            });
+        }
+
+        searchInput.addEventListener("input", filterData);
+        filterSelect.addEventListener("change", filterData);
+    });
+
+    
+</script>
+
 @endsection

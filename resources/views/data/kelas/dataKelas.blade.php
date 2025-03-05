@@ -9,14 +9,18 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Data Kelas</title>
     <style>
-        .card-hover {
+         .card-hover {
             transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            /* Pastikan elemen ini menjadi referensi posisi */
         }
 
         .card-hover:hover {
             transform: scale(1.03);
             background-color: #7e7dfb !important;
             color: white !important;
+            z-index: 1;
+            /* Pastikan card tetap di bawah dropdown */
         }
 
         .card-hover:hover .btn-hover {
@@ -51,13 +55,15 @@
             color: white !important;
         }
 
-        .colored-toast {
-            background-color: #28a745 !important; /* Warna hijau */
-            color: white !important; /* Teks putih */
-            font-weight: bold;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        .dropdown-menu {
+            z-index: 9999 !important;
+            /* Pastikan dropdown selalu di atas */
+            position: absolute !important;
+            /* Jangan biarkan Bootstrap mengubahnya */
+            transform: translate3d(0px, 0px, 0px) !important;
+            will-change: transform;
         }
+
 
     </style>
 </head>
@@ -66,7 +72,7 @@
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row">                        
+                <div class="row">
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -123,12 +129,13 @@
                         </div>                        
                     </div>
 
+
                     @if(session()->has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             {{ session('success') }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
-                    @endif   
+                    @endif
                     @forelse ($kelas as $item)
                     <div class="col-md-4">
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
@@ -138,13 +145,14 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a href="{{ route('siswa.kelas', ['id' => $item->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">⋮</button>
+                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown"
+                                        data-bs-display="static" aria-expanded="false">⋮</button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <form action="{{ route('kelas.destroy', $item->id) }}" method="POST" class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
+                                                <button type="submit" class="dropdown-item text-danger">Hapus</button>
                                             </form>
                                         </li>
                                         <li>
@@ -260,9 +268,9 @@
     </div>
 
     <script>
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault(); // Mencegah form terkirim langsung
+        document.querySelectorAll('.delete-btn').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
 
                 Swal.fire({
                     title: "Apakah kamu yakin?",
@@ -274,31 +282,55 @@
                     confirmButtonText: "Ya, Hapus!"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        this.closest('.delete-form').submit(); // Temukan form terdekat dan submit
+                        Swal.fire({
+                            title: "Berhasil dihapus!",
+                            text: "Data telah dihapus.",
+                            icon: "success"
+                        });
                     }
                 });
             });
         });
 
-        function showAlert() {
-            let alertBox = document.getElementById("myAlert");
-            alertBox.classList.add("show");
-            alertBox.classList.remove("hide");
+        document.addEventListener("DOMContentLoaded", function() {
+                document.querySelectorAll(".dropdown-btn").forEach(function(btn) {
+                    btn.addEventListener("click", function() {
+                        let dropdownMenu = this.nextElementSibling;
 
-            // Hilangkan setelah 3 detik
-            setTimeout(() => {
-                hideAlert();
-            }, 3000);
-        }
+                        // Hapus semua dropdown yang sudah aktif
+                        document.querySelectorAll(".dropdown-menu").forEach(menu => {
+                            if (menu !== dropdownMenu) {
+                                menu.style.zIndex =
+                                "9999"; // Pastikan semua dropdown tetap di atas
+                            }
+                        });
 
-        function hideAlert() {
-            let alertBox = document.getElementById("myAlert");
-            alertBox.classList.add("hide");
-            setTimeout(() => {
-                alertBox.classList.remove("show");
-            }, 500);
-        }
+                        // Pastikan dropdown saat ini di atas semua elemen
+                        dropdownMenu.style.zIndex = "10000";
+                    });
+                });
 
+                // Tutup dropdown saat klik di luar
+                document.addEventListener("click", function(event) {
+                    if (!event.target.matches(".dropdown-btn")) {
+                        document.querySelectorAll(".dropdown-menu").forEach(menu => {
+                            menu.style.zIndex = "9999";
+                        });
+                    }
+                });
+            });
+
+
+
+            document.getElementById("searchInput").addEventListener("keyup", function() {
+                let filter = this.value.toLowerCase();
+                let cards = document.querySelectorAll(".card-hover");
+
+                cards.forEach(card => {
+                    let title = card.querySelector(".kelas-title").textContent.toLowerCase();
+                    card.style.display = title.includes(filter) ? "" : "none";
+                });
+            });
 
     </script>
 </body>

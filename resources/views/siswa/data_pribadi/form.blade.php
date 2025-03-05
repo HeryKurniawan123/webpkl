@@ -23,11 +23,11 @@
                 <form action="{{ route('siswa.data_pribadi.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="id" value="{{ old('id', $dataPribadi->id ?? '') }}">
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Nama Lengkap</label>
                         <input type="text" name="name" class="form-control"
-                        value="{{ old('name', $siswa->name ?? '') }}" required>
+                            value="{{ old('name', $siswa->name ?? '') }}" required>
                     </div>
 
                     <div class="mb-3">
@@ -40,26 +40,26 @@
                         <label class="form-label">Kelas</label>
                         <select class="form-control" name="kelas_id" required>
                             <option value="">Pilih Kelas</option>
-                            @foreach($kelas as $kls)
-                                <option value="{{ $kls->id }}" 
-                                    {{ $siswa->kelas_id == $kls->id ? 'selected' : '' }}>
+                            @foreach ($kelas as $kls)
+                                <option value="{{ $kls->id }}" {{ $siswa->kelas_id == $kls->id ? 'selected' : '' }}>
                                     {{ $kls->kelas }} {{ $kls->name_kelas }}
                                 </option>
                             @endforeach
                         </select>
-                    </div>     
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label"> Konsentrasi Keahlian</label>
                         <select class="form-control" name="konke_id" required>
                             <option value="">Pilih Konsentrasi Keahlian</option>
-                            @foreach($konke as $k)
-                                <option value="{{ $k->id }}" 
-                                    {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
+                            @foreach ($konke as $k)
+                                <option value="{{ $k->id }}" {{ $siswa->konke_id == $k->id ? 'selected' : '' }}>
                                     {{ $k->name_konke }}
                                 </option>
                             @endforeach
                         </select>
-                    </div>     
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Alamat</label>
                         <textarea name="alamat_siswa" class="form-control" required>{{ old('alamat_siswa', $dataPribadi->alamat_siswa ?? '') }}</textarea>
@@ -68,31 +68,34 @@
                     <div class="mb-3">
                         <label class="form-label">No Tlp Siswa</label>
                         <input type="text" name="no_hp" class="form-control"
-                        value="{{ old('no_hp', $siswa->no_hp ?? '') }}" required>
+                            value="{{ old('no_hp', $dataPribadi->no_hp ?? '') }}" required>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Jenis Kelamin</label>
                         <select class="form-control" name="jk" required>
                             <option value="">Pilih Jenis Kelamin</option>
-                            <option value="laki_laki">Laki-laki</option>
-                            <option value="perempuan">Perempuan</option>
-                           
+                            <option value="laki_laki"
+                                {{ old('jk', $dataPribadi->jk ?? '') == 'laki_laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="perempuan"
+                                {{ old('jk', $dataPribadi->jk ?? '') == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Agama</label>
                         <input type="text" name="agama" class="form-control"
-                        value="{{ old('agama', $siswa->agama ?? '') }}" required>
+                            value="{{ old('agama', $dataPribadi->agama ?? '') }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Tempat Lahir</label>
                         <input type="text" name="tempat_lhr" class="form-control"
-                        value="{{ old('tempat_lhr', $siswa->tempat_lhr ?? '') }}" required>
+                            value="{{ old('tempat_lhr', $dataPribadi->tempat_lhr ?? '') }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Tanggal Lahir</label>
                         <input type="date" name="tgl_lahir" class="form-control"
-                        value="{{ old('tgl_lahir', $siswa->tgl_lahir ?? '') }}" required>
+                            value="{{ old('tgl_lahir', $dataPribadi->tgl_lahir ?? '') }}" required>
                     </div>
 
                     <div class="mb-3">
@@ -156,8 +159,8 @@
                             value="{{ old('pekerjaan_ibu', $dataPribadi->pekerjaan_ibu ?? '') }}" required>
                     </div>
 
-                   
-                    {{-- info ortu --}} 
+
+                    {{-- info ortu --}}
                     <div class="mb-3">
                         <label class="form-label">Email Orang Tua</label>
                         <input type="email" name="email_ortu" class="form-control"
@@ -169,9 +172,10 @@
                         <input type="text" name="no_tlp" class="form-control"
                             value="{{ old('no_tlp', $dataPribadi->no_tlp ?? '') }}" required>
                     </div>
+                   
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
+                        <label class="form-label">Password </label>
+                        <input type="password" class="form-control" name="password" placeholder="Password">
                     </div>
 
                     <button type="submit" class="btn btn-primary">Simpan</button>

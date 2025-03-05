@@ -14,8 +14,9 @@ class SiswaImport implements ToModel
             'name'     => $row[0], // Nama Siswa
             'nip'      => $row[1], // NIS
             'kelas' => $row[2], // Kelas
-            'email'   => $row[3], // Email
-            'password' => Hash::make($row[4]), // Password
+            'konke' => $row[3], // Konke
+            'email'   => $row[4], // Email
+            'password' => Hash::make($row[5]), // Password
             'role'     => 'siswa', // Set peran sebagai 'siswa'
         ]);
     }

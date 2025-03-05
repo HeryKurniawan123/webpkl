@@ -31,7 +31,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <form action="#">
-                                        <input type="text" name="search" class="form-control" placeholder="Cari Tujuan Pembelajaran...">
+                                        <input type="text" name="search" class="form-control" placeholder="Cari Guru...">
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -92,6 +92,7 @@
                                                     </button>
                                                 </form>                                                
                                             </div>
+
                                         </td>
                                     </tr>
     
@@ -102,6 +103,75 @@
                                                 <div class="modal-header">
                                                     <h1 class="modal-title fs-5" id="editGuruModalLabel{{ $g->id }}">Form Edit Data Guru</h1>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                                            <form action="{{ route('guru.update', $g->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Nama Guru</label>
+                                                        <input type="text" class="form-control" name="nama" value="{{ $g->nama }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">NIK</label>
+                                                        <input type="text" class="form-control" name="nik" value="{{ $g->nik }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">NIP/NUPTK</label>
+                                                        <input type="text" class="form-control" name="nip" value="{{ $g->nip }}">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Tempat Lahir</label>
+                                                        <input type="text" class="form-control" name="tempat_lahir" value="{{ $g->tempat_lahir }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Tanggal Lahir</label>
+                                                        <input type="date" class="form-control" name="tanggal_lahir" value="{{ $g->tanggal_lahir }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Jenis Kelamin</label>
+                                                        <select class="form-control" name="jenis_kelamin" required>
+                                                            <option value="Laki-laki" {{ $g->jenis_kelamin == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                                            <option value="Perempuan" {{ $g->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Alamat</label>
+                                                        <textarea class="form-control" name="alamat" rows="3" required>{{ $g->alamat }}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Konsentrasi Keahlian</label>
+                                                        <select name="konkes_id" class="form-control">
+                                                            @foreach ($konkes as $konke)
+                                                            <option value="{{ $konke->id }}" @if($konke->id == $g->konkes_id) selected @endif>
+                                                                {{ $konke->name_konke }}
+                                                            </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Email</label>
+                                                        <input type="email" class="form-control" name="email" value="{{ $g->email }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">No HP</label>
+                                                        <input type="text" class="form-control" name="no_hp" value="{{ $g->no_hp }}" required>
+                                                    </div>
+                                                    <!-- <div class="mb-3">
+    <label class="form-label">Role</label>
+    <select class="form-control" name="role" required>
+        <option value="guru" {{ $g->role == 'guru' ? 'selected' : '' }}>Guru</option>
+        <option value="kaprog" {{ $g->role == 'kaprog' ? 'selected' : '' }}>Kaprog</option>
+        <option value="hubin" {{ $g->role == 'hubin' ? 'selected' : '' }}>Hubin</option>
+        <option value="psekolah" {{ $g->role == 'psekolah' ? 'selected' : '' }}>Pimpinan Sekolah</option>
+    </select>
+</div> -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Password (Opsional)</label>
+                                                        <input type="password" class="form-control" name="password">
+                                                    </div>
+
                                                 </div>
                                                 <form action="{{ route('guru.update', $g->id) }}" method="POST">
                                                     @csrf
@@ -294,5 +364,18 @@
         });
     });
 
+    document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector("input[name='search']");
+    const tableRows = document.querySelectorAll("tbody tr");
+
+    searchInput.addEventListener("keyup", function() {
+        const searchValue = this.value.toLowerCase();
+
+        tableRows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? "" : "none";
+        });
+    });
+});
 </script>
 @endsection

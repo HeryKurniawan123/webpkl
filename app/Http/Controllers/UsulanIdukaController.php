@@ -40,7 +40,7 @@ class UsulanIdukaController extends Controller
 
         UsulanIduka::create([
             'user_id' => $user->id,
-            'konke_id' => $dataPribadi->konke_id, // Tambahkan konkes_id
+            'konke_id' => $dataPribadi->konke_id, // Tambahkan konke_id
             'nama' => $request->nama,
             'nama_pimpinan' => $request->nama_pimpinan,
             'nip_pimpinan' => $request->nip_pimpinan,

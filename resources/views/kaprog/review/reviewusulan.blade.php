@@ -98,7 +98,8 @@
                                     <div class="">Kelas: {{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</div>
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    <a href="{{ route('detail.pengajuan', ['id' => $usulan->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    <a href="{{ route('kaprog.review.detail', ['id' => $usulan->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+
                                     <div class="dropdown ms-2">
                                         <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             ⋮
