@@ -128,11 +128,10 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
     //PENGAJUAN
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
-    Route::get('/detail-Surat-Pengajuan', [PersuratanController::class, 'show'])->name('detail.suratpengajuan');
-    Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
-    Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
-    Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
-    Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
+   
+
+   
+
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
@@ -149,10 +148,10 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/get-cp-atp/{konkes_id}', function ($konkes_id) {
         $cps = Cp::where('konkes_id', $konkes_id)->with('atp')->get();
         return response()->json($cps);
-        Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
-
+        
     });
-    
+    Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
+    Route::get('/pengajuan-review', [PengajuanPklController::class, 'reviewPengajuan'])->name('pengajuan.review');
    
     //PEMBIMBING IDUKA
     Route::get('/pembimbing/create', [PembimbingController::class, 'create'])->name('iduka.pembimbing.create');
@@ -217,7 +216,7 @@ Route::middleware(['auth'])->group(function () {
     //mengajukan pkl
     Route::post('/pengajuan/{iduka}', [PengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');
     Route::get('/pengajuan', [PengajuanPklController::class, 'index'])->name('pengajuan.index');
-    Route::get('/review-pengajuan', [PengajuanPklController::class, 'reviewPengajuan'])->name('review.pengajuan');
+
     Route::get('/detail-pengajuan/{id}', [PengajuanPklController::class, 'showPengajuan'])->name('pengajuan.detail');
     Route::patch('/pengajuan/{id}/terima', [PengajuanPklController::class, 'terima'])->name('pengajuan.terima');
     Route::patch('/pengajuan/{id}/tolak', [PengajuanPklController::class, 'tolak'])->name('pengajuan.tolak');
@@ -230,7 +229,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');
 
     //ORTU
-    Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');    
+    Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');   
+    
+    //persuratan
+    Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
+    Route::get('/review-pengajuan', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
+    Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
+    Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
+    Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
+    Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
+    Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
 });
 
 // // HAK AKSES : HUBIN

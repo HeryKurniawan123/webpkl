@@ -100,8 +100,6 @@
                         </div>
                     </div>
                     @endforeach
-
-
                 </div>
             </div>
         </div>
@@ -165,43 +163,61 @@
             });
         });
 
-        document.querySelectorAll(".jurusan-btn").forEach(button => {
-            button.addEventListener("click", function(event) {
-                event.preventDefault();
-                const konkes_id = this.getAttribute("data-konkes-id");
-                document.getElementById("konkes_id").value = konkes_id;
+        // Event delegation untuk menangani klik jurusan/konke
+    document.addEventListener("click", function(event) {
+        if (event.target.classList.contains("jurusan-btn")) {
+            event.preventDefault();
+            
+            const konkes_id = event.target.getAttribute("data-konkes-id");
+            document.getElementById("konkes_id").value = konkes_id;
 
-               
-                const tpTambahBody = document.getElementById("tp-tambah-body");
+            console.log("Konke diklik! ID:", konkes_id); // Debug log
 
-                tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
+            const tpTambahBody = document.getElementById("tp-tambah-body");
 
-                fetch(/get-cp-atp/${konkes_id})
-                    .then(response => response.json())
-                    .then(data => {
-                        tpTambahBody.innerHTML = "";
-                        data.forEach(cp => {
-                            let cpRow = <tr><td><b>${cp.cp}</b></td><td></td></tr>;
-                            tpTambahBody.innerHTML += cpRow;
-                            cp.atp.forEach((atp, index) => {
-                                tpTambahBody.innerHTML += `
-                                 <tr>
+            // Tampilkan loading sementara
+            tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
+
+            // Fetch data dari server
+            fetch(`/get-cp-atp/${konkes_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Data diterima:", data); // Debug respons dari server
+
+                    tpTambahBody.innerHTML = ""; // Kosongkan data sebelumnya
+
+                    // Jika tidak ada data, tampilkan pesan
+                    if (data.length === 0) {
+                        tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Tidak ada data CP & ATP.</td></tr>";
+                        return;
+                    }
+
+                    // Looping data CP
+                    data.forEach(cp => {
+                        // Tambahkan baris CP
+                        let cpRow = `<tr><td><b>${cp.cp}</b></td><td></td></tr>`;
+                        tpTambahBody.innerHTML += cpRow;
+
+                        // Looping data ATP di dalam CP
+                        cp.atp.forEach(atp => {
+                            let atpRow = `
+                            <tr>
                                 <td style='padding-left: 20px;'><b>${atp.kode_atp}</b> ${atp.atp}</td>
                                 <td class="text-end">
-                                    <input type='checkbox' class='tp-check' 
-                                           name='tp_check[]' value='${atp.id}' 
-                                           ${atp.is_selected ? 'checked' : ''}>
+                                    <input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}' ${atp.is_selected ? 'checked' : ''}>
                                 </td>
                             </tr>`;
-                            });
+                            tpTambahBody.innerHTML += atpRow;
                         });
-                    })
-                    .catch(error => {
-                        console.error("Error fetching data:", error);
-                        tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-danger'>Gagal memuat data.</td></tr>";
                     });
-            });
-        });
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-danger'>Gagal memuat data.</td></tr>";
+                });
+        }
+    });
+        
     });
 </script>
 

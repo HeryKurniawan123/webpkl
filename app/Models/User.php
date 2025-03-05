@@ -71,10 +71,11 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function pembimbing()
-    {
-        return $this->hasOne(Pembimbing::class, 'user_id');
-    }
+    public function pembimbingpkl()
+{
+    return $this->hasOne(pembimbing::class, 'user_id', 'id');
+}
+
     /**
      * The attributes that should be hidden for serialization.
      *

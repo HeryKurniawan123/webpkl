@@ -20,6 +20,11 @@ class PengajuanPkl extends Model
 
     public function iduka()
     {
-        return $this->belongsTo(Iduka::class, 'iduka_id');
+        return $this->belongsTo(Iduka::class, 'iduka_id', 'id');
     }
+    
+    public function pembimbingpkl()
+{
+    return $this->belongsTo(Pembimbing::class, 'user_id', 'user_id');
+}
 }

@@ -245,7 +245,7 @@
                             </a>
                         </li>
                         <li class="menu-item {{ Request::routeIs('pengajuan') ? 'active' : '' }}">
-                            <a href="{{ route('pengajuan') }}" class="menu-link">
+                            <a href="{{ route('persuratan.review') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
@@ -253,7 +253,7 @@
                         @endif
                         @if(in_array(auth()->user()->role, ['kaprog', 'iduka']))
                         <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
-                            <a href="{{ route('review.pengajuan') }}" class="menu-link">
+                            <a href="{{ route('pengajuan.review') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
