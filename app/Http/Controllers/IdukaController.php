@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+
+
 class IdukaController extends Controller
 {
     public function index()
@@ -118,6 +120,82 @@ class IdukaController extends Controller
         return view('iduka.dataiduka.detailDataIduka', compact('iduka'));
     }
     
+    public function storeInstitusi(Request $request, $id)
+{
+    // Validasi hanya untuk kolom6, kolom7, dan kolom8
+    $validatedData = $request->validate([
+        'kolom6' => 'required|string|in:Ya,Tidak', // Hanya menerima nilai "Ya" atau "Tidak"
+        'kolom7' => 'required|string|in:Ya,Tidak', // Hanya menerima nilai "Ya" atau "Tidak"
+        'kolom8' => 'required|string|in:Ya,Tidak', // Hanya menerima nilai "Ya" atau "Tidak"
+    ]);
+
+    // Menyimpan data ke tabel idukas
+    DB::table('idukas')
+        ->where('id', $id) // Menambahkan kondisi where untuk update berdasarkan ID
+        ->update([
+            'kolom6' => $validatedData['kolom6'],
+            'kolom7' => $validatedData['kolom7'],
+            'kolom8' => $validatedData['kolom8'],
+            'updated_at' => now(),
+        ]);
+
+    return redirect()->back()->with('success', 'Data berhasil disimpan!');
+}
+    
+public function updateInstitusi(Request $request, $id)
+{
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'nama_pimpinan' => 'required|string|max:255',
+        'nip_pimpinan' => 'required|string|max:50',
+        'jabatan' => 'required|string|max:255',
+        'alamat' => 'required|string',
+        'telepon' => 'required|numeric',
+        'bidang_industri' => 'required|string',
+        'no_hp_pimpinan' => 'required|numeric',
+        'kolom6' => 'required|string|in:Ya,Tidak',
+        'kolom7' => 'required|string|in:Ya,Tidak',
+        'kolom8' => 'required|string|in:Ya,Tidak',
+    ]);
+
+    $iduka = Iduka::findOrFail($id);
+
+    DB::transaction(function () use ($request, $iduka) {
+        // Update data di tabel idukas
+        $iduka->update([
+            'nama' => $request->nama,
+            'nama_pimpinan' => $request->nama_pimpinan,
+            'nip_pimpinan' => $request->nip_pimpinan,
+            'jabatan' => $request->jabatan,
+            'alamat' => $request->alamat,
+            'telepon' => $request->telepon,
+            'bidang_industri' => $request->bidang_industri,
+            'no_hp_pimpinan' => $request->no_hp_pimpinan,
+            'kolom6' => $request->kolom6,
+            'kolom7' => $request->kolom7,
+            'kolom8' => $request->kolom8,
+        ]);
+
+        // Update data di tabel users (jika ada relasi user)
+        if ($iduka->user) {
+            $iduka->user->update([
+                'name' => $request->nama, // Update nama di tabel users
+                'nip' => $request->nip_pimpinan, // Update nip di tabel users
+            ]);
+        }
+
+        // Update data pembimbing (jika ada relasi pembimbing)
+        $pembimbing = Pembimbing::where('user_id', $iduka->user_id)->first();
+        if ($pembimbing) {
+            $pembimbing->update([
+                'name' => $request->name, // Update nama pembimbing
+                'nip' => $request->nip, // Update nip pembimbing
+            ]);
+        }
+    });
+
+    return redirect()->back()->with('success', 'Data institusi berhasil diperbarui!');
+}
 
     public function store(Request $request)
 {
@@ -227,6 +305,10 @@ public function update(Request $request, $id)
             'kuota_pkl' => $request->kuota_pkl,
             'rekomendasi' => $request->rekomendasi ?? 0,
             'no_hp_pimpinan' => $request->no_hp_pimpinan,
+            'kolom6' => $request->kolom6,
+            'kolom7' => $request->kolom7,
+            'kolom8' => $request->kolom8,
+
         ]);
     });
     
@@ -236,7 +318,14 @@ public function update(Request $request, $id)
 
 
     public function dataInstitusi(){
-        return view('iduka.data_pribadi_iduka.dataInstitusi');
+
+        $user = auth()->user();
+    
+        // Ambil data Iduka dan Pembimbing terkait
+        $iduka = Iduka::where('user_id', $user->id)->first();
+        $pembimbing = Pembimbing::where('user_id', $user->id)->first();
+        return view('iduka.data_pribadi_iduka.dataInstitusi', compact('iduka', 'pembimbing'));
+
     }
 
 

@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Models\Cp;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DataController;
@@ -14,14 +16,15 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\KaprogController;
 use App\Http\Controllers\ProkerController;
 use App\Http\Controllers\HakAksesController;
-use App\Http\Controllers\DataPribadiController;
 use App\Http\Controllers\IdukaAtpController;
 use App\Http\Controllers\PembimbingController;
-use App\Http\Controllers\PengajuanPklController;
 use App\Http\Controllers\PersuratanController;
+use App\Http\Controllers\DataPribadiController;
 use App\Http\Controllers\UsulanIdukaController;
+use App\Http\Controllers\PengajuanPklController;
 use App\Http\Controllers\TenagaKependidikanController;
-use App\Models\Cp;
+use App\Http\Controllers\DataPribadiPersuratanController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -128,8 +131,9 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
     //PENGAJUAN
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
-   
-
+    
+    Route::get('/persuratan/data_pribadi', [DataPribadiPersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
+    Route::post('/persuratan/data_pribadi', [DataPribadiPersuratanController::class, 'store'])->name('persuratan.data_pribadi.store');
    
 
 });
@@ -161,6 +165,12 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/iduka/download-pdf{id}', [IdukaController::class, 'downloadPDF'])->name('iduka.download-pdf');
 
     Route::get('/data-institusi', [IdukaController::class, 'dataInstitusi'])->name('data.institusi');
+
+    Route::post('/iduka/{id}/store', [IdukaController::class, 'storeInstitusi'])->name('iduka.storeInstitusi');
+
+    // Route::put('/iduka/{id}/update', [IdukaController::class, 'update'])->name('iduka.update');
+    Route::put('/iduka/{id}/update-institusi', [IdukaController::class, 'updateInstitusi'])->name('iduka.updateInstitusi');
+
 
 });
 
