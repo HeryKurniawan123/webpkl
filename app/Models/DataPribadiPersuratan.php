@@ -27,11 +27,13 @@ class DataPribadiPersuratan extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,  'id');
+        return $this->belongsTo(User::class,  'user_id', 'id');
+
     }
 
     public function dataPersuratan()
     {
-        return $this->hasOne(DataPribadiPersuratan::class, 'id');
+        return $this->hasOne(DataPribadiPersuratan::class, 'user_id', 'id');
+
     }
 }    

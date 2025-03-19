@@ -12,16 +12,20 @@ class DataPribadiPersuratanController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $persuratan = $user->load(['dataPersuratan']);
         $dataPersuratan = DataPribadiPersuratan::where('user_id', $user->id)->first();
         
-        return view('persuratan.data_pribadi.form', compact('persuratan', 'dataPersuratan'));
+        // Jika tidak ada data, buat array kosong agar form tetap bisa menerima input
+        if (!$dataPersuratan) {
+            $dataPersuratan = new DataPribadiPersuratan();
+        }
+        
+        return view('persuratan.data_pribadi.form', compact('user', 'dataPersuratan'));
     }
 
     public function store(Request $request)
     {
-        $dataPersuratan = Auth::user()->dataPersuratan;
-        $user = Auth::user(); // Ambil data user yang sedang login
+        $user = Auth::user();
+        $dataPersuratan = DataPribadiPersuratan::where('user_id', $user->id)->first();
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -33,20 +37,17 @@ class DataPribadiPersuratanController extends Controller
             'tempat_lahir' => 'required|string',
             'tanggal_lahir' => 'nullable|date',
             'email' => 'required|email|unique:data_pribadi_persuratans,email,' . ($dataPersuratan->id ?? 'null') . ',id',
-            // Hapus validasi untuk password jika tidak diperlukan
         ]);
 
         // Data untuk tabel data_pribadi_persuratans
-        $data = $request->except(['password']); // Exclude password dari data array
+        $data = $request->except(['password']);
 
-        // Jika password diisi, maka kita akan meng-update password
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);
         }
 
-        $data['user_id'] = Auth::id();
+        $data['user_id'] = $user->id;
 
-        // Update atau create data di tabel data_pribadi_persuratans
         if (!$dataPersuratan) {
             $dataPersuratan = DataPribadiPersuratan::create($data);
         } else {
@@ -60,7 +61,6 @@ class DataPribadiPersuratanController extends Controller
             'email' => $request->email,
         ];
 
-        // Jika password diisi, update password di tabel users
         if ($request->filled('password')) {
             $userData['password'] = bcrypt($request->password);
         }
@@ -68,8 +68,7 @@ class DataPribadiPersuratanController extends Controller
         $user->update($userData);
 
         return redirect()->back()
-        ->with('success', 'Data pribadi berhasil disimpan.')
-        ->withInput(); // Menyimpan input yang sudah diisi
+            ->with('success', 'Data pribadi berhasil disimpan.')
+            ->withInput();
     }
-
 }

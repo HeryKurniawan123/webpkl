@@ -126,4 +126,5 @@ class SiswaController extends Controller
 
         return view('admin.datasiswa.detailSiswa', compact('siswa', 'kelas', 'konke'));
     }
+    
 }

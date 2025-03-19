@@ -68,7 +68,8 @@ class User extends Authenticatable
 
     public function dataPersuratan()
     {
-        return $this->hasOne(DataPribadiPersuratan::class, 'user_id');
+        return $this->hasOne(DataPribadiPersuratan::class, 'user_id', 'id');
+
     }
     
 

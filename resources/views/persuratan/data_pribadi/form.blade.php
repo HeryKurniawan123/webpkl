@@ -42,6 +42,7 @@
                         <label for="alamat" class="form-label">Alamat Lengkap</label>
                         <textarea name="alamat" id="alamat" class="form-control" required>{{ old('alamat', $dataPersuratan->alamat ?? '') }}</textarea>
                     </div>
+                    
 
                     <div class="mb-3">
                         <label for="no_hp" class="form-label">No Telpon</label>
