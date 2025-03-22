@@ -245,7 +245,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/review-pengajuan', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
     Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
-    Route::get('/download-pdf', [PersuratanController::class, 'downloadPdf'])->name('download.pdf');
+    Route::get('/persuratan/download/{id}', [PersuratanController::class, 'downloadPdf'])
+    ->name('persuratan.download');
     Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');

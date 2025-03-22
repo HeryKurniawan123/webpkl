@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IdukaAtp;
 use App\Models\PengajuanPkl;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -17,13 +18,16 @@ class PersuratanController extends Controller
     {
         $pengajuan = PengajuanPkl::with([
             'dataPribadi.kelas',
-            'iduka.user.pembimbingpkl' // Mengambil pembimbing lewat user di iduka
+            'iduka.user.pembimbingpkl', // Mengambil pembimbing lewat user di iduka
+            'iduka.konkes',
+            'iduka.cps',
+            'iduka.atps'
         ])->findOrFail($id);
-    
+
         return view('persuratan.suratPengajuan.detailSuratPengajuan', compact('pengajuan'));
     }
-    
-    
+
+
 
     public function idukaBaru()
     {
@@ -35,11 +39,15 @@ class PersuratanController extends Controller
         return view('persuratan.PengajuanIdukaBaru.detailidukaBaru');
     }
 
-    public function downloadPdf()
-    {
-        $pdf = Pdf::loadView('persuratan.suratPengajuan.surat-pengajuan');
-        return $pdf->download('surat_pengajuan_pkl.pdf');
-    }
+    public function downloadPdf($id)
+{
+    $pengajuan = PengajuanPkl::with(['dataPribadi.kelas', 'iduka.user.pembimbingpkl', 'iduka.konkes', 'iduka.cps', 'iduka.atps'])
+        ->findOrFail($id);
+
+    $pdf = Pdf::loadView('persuratan.suratPengajuan.surat-pengajuan', compact('pengajuan'));
+
+    return $pdf->download('Surat_Pengajuan_' . $pengajuan->dataPribadi->nama . '.pdf');
+}
 
     public function create()
     {

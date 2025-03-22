@@ -18,7 +18,7 @@ class PdfController extends Controller
         $usulanIduka = UsulanIduka::where('user_id', $user->id)->latest()->first();
 
 
-        $kaprog = DB::table('gurus')
+        $kaprog = DB::table('usulan_idukas')
             ->where('konke_id', $usulanIduka->konke_id)
             ->first();
 

@@ -3,247 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surat Pengajuan</title>
+    <title>Surat Pengajuan PKL</title>
     <style>
         body {
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 14px;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: white; 
+            color: black; 
+            font-size: 14px; 
         }
-    
-        h2 {
-            text-align: center;
-        }
-    
-        .table {
-            width: 100%;
+        table {
+            width: 100%; 
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: white; 
+            color: black; 
         }
-    
-        .table td {
-            border:none; /* Hanya garis horizontal */
-            padding: 8px;
+        .no-border-table, .no-border-table th, .no-border-table td {
+            border: none; /* Menghilangkan border */
+            background-color: white; 
+            color: black; 
         }
-    
-        .table th {
-            border: none;
-            padding: 8px;
-            text-align: left;
-            background-color: #f2f2f2;
-            page-break-after: always; 
+        .border-table, .border-table th, .border-table td {
+            border: 1px solid black;
+            background-color: white; 
+            color: black; 
         }
-    
-        .table td:first-child {
-            width: 35%;
-            font-weight: normal;
+        th, td {
+            padding: 6px; 
+            text-align: left; 
+            line-height: 1.2; 
         }
-    
-        .table td:nth-child(2) {
-            width: 2%;
-            text-align: left;
-            border: none; /* Menghilangkan garis vertikal */
-        }
-    
-        .table td:last-child {
-            width: 63%;
-        }
-
-        .indent {
-            padding-left: 20px;
+        th span {
+            display: block;
             margin-left: 20px;
         }
 
-        .tabel {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .isi {
+            display: block;
+            margin-left: 40px;   
         }
-        .tabel td, .tabel th {
-            padding: 8px;
-            vertical-align: top;
+        .status {
+            width: 10%;
         }
-        .indent {
-            padding-left: 40px;
+        .page th {
+            font-weight: bold; 
+            width: 50%; 
         }
-        .checkbox {
-            width: 30px;
+        .page td {
+            width: 50%; 
+        }
+        .form-title {
             text-align: center;
+            font-size: 18px; 
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: black; 
         }
-
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .form-section h2 {
+            font-size: 16px; 
+            margin-bottom: 10px;
+            color: black; 
+        }
+        .form-section p {
+            margin: 5px 0;
+            color: black; 
+            line-height: 1.2; 
+        }
+        .form-section .note {
+            font-size: 14px; 
+            color: black; 
+        }
+        .form-section .signature {
+            text-align: right;
+            margin-top: 20px;
+            color: black; 
+        }
         .page-break {
             page-break-before: always;
         }
     </style>
-    
 </head>
 <body>
+    <!-- Halaman Pertama -->
+    <div class="page">
+        <div class="form-title">DATA INSTITUSI/ PERUSAHAAN TEMPAT PKL</div>
+        <!-- Tabel pertama tanpa border -->
+        <table class="no-border-table">
+            <tr>
+                <th>1. Nama Institusi/ DUDI</th>
+                <td>: {{ $pengajuan->iduka->nama }}</td>
+            </tr>
+            <tr>
+                <th>2. Alamat Institusi / DUDI</th>
+                <td>: {{ $pengajuan->iduka->alamat }}</td>
+            </tr>
+            <tr>
+                <th>3. Bidang Usaha / Kerja</th>
+                <td>: {{ $pengajuan->iduka->bidang_industri }}</td>
+            </tr>
+            <tr>
+                <th>4. Nomor Telepon / HP Perusahaan></th>
+                <td>: {{ $pengajuan->iduka->telepon }}</td>
+            </tr>
+            <tr>
+                <th>5. Yang akan menandatangani sertifikat PKL</th>
+                <td>
 
-    <h3>DATA INSTITUSI / PERUSAHAN TEMPAT PKL</h3>
-
-    <table class="table">
-        <tr>
-            <td>1. Nama Institusi / DUDI</td>
-            <td>:</td>
-            <td>ASN</td>
-        </tr>
-        <tr>
-            <td>2. Alamat Institusi / DUDI</td>
-            <td>:</td>
-            <td>Tasik</td>
-        </tr>
-        <tr>
-            <td>3. Bidang Usaha / Kerja</td>
-            <td>:</td>
-            <td>RPL</td>
-        </tr>
-        <tr>
-            <td>4. Nomor Telpon Perusahaan</td>
-            <td>:</td>
-            <td>11</td>
-        </tr>
-        <tr>
-            <td>5. Yang akan menandatangani sertifikat PKL</td>
-        </tr>
-        <tr>
-            <td style=" font-weight: bold; margin-left: 30px;">A.	Kepala/ Pimpinan institusi/ Perusahaan</td>
-        </tr>
-        <tr>
-            <td  class="indent">a. Nama Pemimpin</td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td  class="indent">b. Nomor Induk Pegawai/ Nomor Induk Karyawan </td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td class="indent">c. Jabatan</td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td class="indent">d. No Telpon Pemimpin</td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-
-        <tr>
-            <td class="indent" style=" font-weight: bold;">B.	Pembimbing Institusi/ Perusahaan</td>
-        </tr>
-        <tr>
-            <td class="indent">a. Nama Pembimbing</td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td class="indent">b. Nomor Induk Pegawai/ Nomor Induk Karyawan </td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td class="indent">c. Jabatan</td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td class="indent">d. No Telpon Pembimbing</td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td>6. Apakah institusi  / perusahaan akan menerbitkan surat keterangan atau sertifikat di cetak oleh perusahaan atau dibantu pihak sekolah ? </td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td>7. Apakah di institusi / perusahaan ada SOP (Standar Operasional Prosedur) / Aturan Kerja / Tata tertib ?  </td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-        <tr>
-            <td>8. Apakah di institusi / perusahaan menerapkan K3LH (kesehatan, keselamatan kerja, dan lingkungan hidup ?  </td>
-            <td>:</td>
-            <td>08123456789</td>
-        </tr>
-    </table>
-
-    <h3>Ket :</h3>
-    <ol>
-        <li>Seluruh data institusi/perusahaan tempat PKL diinput melalui link <a href="https://bit.ly/DataDUDIKA2024">https://bit.ly/DataDUDIKA2024</a></li>
-        <li>Jika cetak sertifikat atau surat keterangan PKL akan dibantu oleh pihak sekolah, mohon untuk dapat mengirimkan Logo dan Kop surat perusahaan untuk kami cantumkan di berkas Sertifikat.
-            <ul>
-                <li>Jika logo dalam bentuk file, bisa di transfer via <i>WhatsApp</i>, email atau <i>flashdisk</i> murid/guru yang menerima berkas ini.</li>
-                <li>Jika terdapat di web, mohon diisikan alamat web-nya. Alamat web: ...................................</li>
-                <li>Jika logo terdapat di brosur, pamflet, atau bon, mohon izin untuk kami bawa atau kami foto sebagai contoh untuk kami desain ulang.</li>
-            </ul>
-        <li>Pilih salah satu / coret yang tidak sesuai</li>
-        </li>
-    </ol>
+                </td>
+            </tr>
+            <tr>
+                <th><span> A. Kepala/ Pimpinan institusi/ Perusahaan</span></th>
+            </tr>
+            <tr>
+                <th style="font-weight: normal">
+                    <div class="isi">
+                        Nama Lengkap
+                    </div>
+                </th>
+                <td>: {{ $pengajuan->iduka->nama_pimpinan }}</td>
+            </tr>
+            
+            <tr>
+                <th style="font-weight: normal">
+                    <div class="isi">
+                        Induk Pegawai/ Nomor Induk Karyawan
+                    </div>
+                </th>
+                <td>: {{ $pengajuan->iduka->nip_pimpinan }}</td>
+            </tr>
+            <tr>
+                <th style="font-weight: normal">
+                   <div class="isi"> Jabatan </div>
+                </th>
+                <td>: {{ $pengajuan->iduka->jabatan }}</td>
+            </tr>
+            <tr>
+                <th style="font-weight: normal">
+                    <div class="isi"> HP / Telepon</div>
+                </th>
+                <td>: {{ $pengajuan->iduka->no_hp_pimpinan }}</td>
+            </tr>
+            <tr>
+                <th><span>B. Pembimbing Institusi/ Perusahaan</span></th>
+            </tr>
+            <tr>
+                <th style="font-weight: normal"> 
+                    <div class="isi"> Nama Lengkap</div>
+                </th>
+                <td>: {{ $pengajuan->iduka->user->pembimbingpkl->name ?? '-' }}</td>
+            </tr>
+            <tr>
+                <th style="font-weight: normal">
+                     <div class="isi"> Induk Pegawai/ Nomor Induk Karyawan</div>
+                    </th>
+                <td>: {{ $pengajuan->iduka->user->pembimbingpkl->nip ?? '-' }}</td>
+            </tr>
+            <tr>
+                <th style="font-weight: normal"><div class="isi"> HP / Telepon </div>
+                </th>
+                <td>: {{ $pengajuan->iduka->user->pembimbingpkl->no_hp ?? '-' }}</td>
+            </tr>
+            <tr>
+                <th>6. Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat di cetak oleh perusahaan atau dibantu pihak sekolah?</th>
+                <td>
+                    <strong>: Cetak oleh perusahaan</strong>
+                </td>
+            </tr>
+            <tr>
+                <th>7. Apakah di institusi / perusahaan ada SOP (Standar Operasional Prosedur) / Aturan Kerja / Tata tertib?</th>
+                <td>
+                    <strong>: Ya</strong>
+                </td>
+            </tr>
+            <tr>
+                <th>8. Apakah di institusi / perusahaan menerapkan K3LH (kesehatan, keselamatan kerja, dan lingkungan hidup)?</th>
+                <td>
+                    <strong>: Ya</strong>
+                </td>
+            </tr>
+        </table>
+        <div class="notes">
+            <h3>Ket :</h3>
+            <ol>
+                <li>
+                    Seluruh data <strong>institusi/ perusahaan tempat PKL</strong> diinput melalui link 
+                    <a href="https://bit.ly/DataDUDIKA2024" target="_blank">https://bit.ly/DataDUDIKA2024</a>
+                </li>
+                <li>
+                    Jika cetak sertifikat atau surat keterangan PKL akan dibantu oleh pihak sekolah, mohon untuk dapat mengirimkan <strong>Logo dan Kop surat perusahaan</strong> untuk kami cantumkan di berkas Sertifikat.
+                    <ul>
+                        <li><em>Jika logo dalam bentuk file</em>, bisa di transfer via <strong>WhatsApp</strong>, email, atau flashdisk murid/guru yang <em>menerima berkas ini</em>.</li>
+                        <li><em>Jika terdapat di web</em>, mohon diisikan alamat web-nya. <strong>Alamat web</strong>: .......................................</li>
+                        <li><em>Jika logo terdapat di brosur, pamflet, atau bon</em>, mohon ijin untuk kami bawa atau kami foto sebagai contoh untuk kami <strong>desain ulang</strong>.</li>
+                    </ul>
+                </li>
+                <li>
+                    *) Pilih salah satu / <del>coret</del> yang tidak sesuai
+                </li>
+            </ol>
+        </div>
+    </div>
 
     <div class="page-break"></div>
+    
+    <div class="form-section">
+        <h2>AKTIFITAS KERJA / KOMPETENSI YANG TERDAPAT DI INSTITUSI/ PERUSAHAAN</h2>
+        <p>Konsentrasi Keahlian: <strong>Manajemen Perkantoran</strong></p>
+        <table class="border-table">
+            <tr>
+                <th>1. Merancang dan Mengelola Basis Data</th>
+                <th class="status">Status</th>
+            </tr>
+            <tr>
+                <td>1. Membuat kelompok perintah yang termasuk dalam Data Definition Language, Data Manipulation Language dan Data Control Language dalam basis data.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>2. Menerapkan perintah Structured Query Language (SQL) bertingkat, function and stored procedure dan trigger dalam basis data.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>3. Menerapkan proses backup, restore dalam basis data.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <th>2. Pemrograman Berbasis Teks, Grafis, dan Multimedia</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>1. Membuat pemrograman terstruktur dan pemrograman berorientasi objek tingkat lanjut.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>2. Membuat pemodelan perangkat lunak berorientasi objek.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>3. Melakukan pemrograman antar muka grafis (Graphical User Interface) pengembangan perangkat lunak.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <th>3. Merancang Program Aplikasi Berbasis Web</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>1. Menerapkan pembuatan program aplikasi halaman web menggunakan server side scripting (PHP).</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>2. Menerapkan teknologi framework dalam pembuatan aplikasi web.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>3. Menerapkan basis data dalam pemrograman Web.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>4. Menerapkan dokumentasi dan mempresentasikan hasil pembuatan aplikasi berbasis web yang telah dikembangkan.</td>
+                <td><strong>✓</strong></td>
+            </tr>
+            <tr>
+                <td>5. Membuat UI/UX dalam penerapan pemrograman web.</td>
+                <td><strong>✓</strong></td>
+            </tr>
 
-    <h3>AKTIFITAS KERJA / KOMPETENSI YANG TERDAPAT DI INSTITUSI / PERUSAHAAN</h3>
-    <p>(Berilah tanda ceklist (√) pada kolom yang tersedia)</p>
-    <p><b>Konsentrasi Keahlian : Manajemen Perkantoran</b></p>
-
-    <table class="tabel">
-        <tr>
-            <td style="width: 90%;"><b>1. Merancang dan Mengelola Basis Data</b></td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">1.1 Membuat kelompok perintah yang termasuk dalam Data Definition Language, Data Manipulation Language, dan Data Control Language dalam basis data.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">1.2 Menerapkan perintah Structured Query Language (SQL) bertingkat, function, dan stored procedure serta trigger dalam basis data.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">1.3 Menerapkan proses backup, restore dalam basis data.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td><b>2. Pemrograman Berbasis Teks, Grafis, dan Multimedia</b></td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">2.1 Membuat pemrograman terstruktur dan pemrograman berorientasi objek tingkat lanjut.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">2.2 Membuat pemodelan perangkat lunak berorientasi objek.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">2.3 Melakukan pemrograman antar muka grafis (Graphical User Interface) pengembangan perangkat lunak.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td><b>3. Merancang Program Aplikasi Berbasis Web</b></td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">3.1 Menerapkan pembuatan program aplikasi halaman web menggunakan server side scripting (PHP).</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">3.2 Menerapkan teknologi framework dalam pembuatan aplikasi web.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">3.3 Menerapkan basis data dalam pemrograman web.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">3.4 Menerapkan dokumentasi dan mempresentasikan hasil pembuatan aplikasi berbasis web yang telah dikembangkan.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-        <tr>
-            <td class="indent">3.5 Membuat UI/UX dalam perancangan program web.</td>
-            <td class="checkbox">⬜</td>
-        </tr>
-    </table>
+        </table>
+    </div>
+    <div class="form-section signature" style="text-align: right;">
+        <p>.................., <span style="margin-left: 20px;">............................. 2025</span></p>
+        <p>Pimpinan institusi/ Perusahaan,</p>
+        <br><br><br><br>
+        <p>(<span style="text-decoration: underline dotted;">............................................</span>)</p>
+        <p>NIP.</p>
+    </div>
+    
 </body>
 </html>
