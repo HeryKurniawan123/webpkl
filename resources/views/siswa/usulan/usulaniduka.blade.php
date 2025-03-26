@@ -112,11 +112,11 @@
                                 
                                 <!-- Tombol Titik Tiga -->
                                 <div class="d-flex gap-2 ms-auto">
-                                    <a href="{{ route('data.iduka') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
+                                    <a href="{{ route('iduka.usulan') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
-                                    <div class="dropdown">
+                                    {{-- <div class="dropdown">
                                         <button class="btn btn-light p-1 rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </button>
@@ -132,7 +132,7 @@
                                                 </a>
                                             </li>
                                         </ul>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -198,10 +198,7 @@
     
                                 </table>
                             </div>
-                            <div class="col-lg-12 d-flex justify-content-between mt-4">
-                                <a href="{{ route('data.iduka') }}" class="btn btn-back shadow-sm">
-                                    Kembali
-                                </a>
+                            <div class="col-lg-12 d-flex justify-content-end mt-4">
                                 @if(auth()->user()->role == 'siswa')
                                 <button id="btnBuatUsulan" type="button" class="btn btn-success btn-sm d-none">
                                     <i class="bi bi-file-earmark-plus"></i> Buat Usulan
@@ -209,7 +206,7 @@
                                 <form action="{{ route('pengajuan.ajukan', $iduka->id) }}" method="POST" class="ajukan-form">
                                     @csrf
                                     <button type="submit" id="btnAjukanPKL" class="ajukan-btn btn btn-primary shadow-sm">
-                                        Ajukan PKL
+                                        Usulkan PKL
                                     </button>
                                 </form>
                                 @endif

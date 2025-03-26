@@ -1,8 +1,21 @@
 @extends('layout.main')
 @section('content')
-
     <!DOCTYPE html>
     <html lang="en">
+        {{-- table{
+            width: 100%;
+        }
+        td:first-child {
+            width: 2%; 
+            min-width: 30px; 
+            text-align: center;
+        }
+        td:nth-child(2){
+            width: 150px;
+        }
+        td:nth-child(3){
+            width: 5px;
+        } --}}
 
     <head>
         <meta charset="UTF-8">
@@ -169,14 +182,14 @@
                                     </div>
                                 @endif
                                 @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                                 <div class="table-responsive">
                                     <table class="table table-hover mb-3">
                                         <tr>

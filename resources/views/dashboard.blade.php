@@ -46,19 +46,16 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
               <li>
-                <a href="{{ route('usulan.index') }}" type="button" class="dropdown-item">
-                  Buat Usulan
-                </a>
+                  <a href="{{ route('iduka.usulan') }}" type="button" class="dropdown-item" onclick="setUsulanStatus(true)">
+                      Buat Usulan
+                  </a>
               </li>
               <li>
-                <a href="{{ route('data.iduka') }}" type="button" class="dropdown-item">
-                  Buat Pengajuan
-                </a>
-                {{-- <button type="button" class="dropdown-item" >
-                                            Buat Pengajuan
-                                        </button> --}}
+                  <a href="{{ route('data.iduka') }}" type="button" class="dropdown-item" onclick="setUsulanStatus(false)">
+                      Buat Pengajuan
+                  </a>
               </li>
-            </ul>
+          </ul>          
           </div>
         </div>
       </div>

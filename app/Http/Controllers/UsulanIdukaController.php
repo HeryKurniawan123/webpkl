@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\DataPribadi;
 use App\Models\UsulanIduka;
+use App\Models\Iduka;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class UsulanIdukaController extends Controller
+class  UsulanIdukaController extends Controller
 {
     public function index()
     {
@@ -75,4 +76,20 @@ class UsulanIdukaController extends Controller
     public function lihatPDF() {
         return view('data.usulan.suratUsulanPDF');
     }
+
+    public function dataIdukaUsulan()
+    {
+   
+        $iduka = Iduka::orderBy('created_at', 'desc')->get(); 
+        return view('siswa.usulan.dataIdukaUsulan', compact('iduka'));
+    }
+
+    public function detailIdukaUsulan($id)
+    {
+        $iduka = Iduka::where('id', $id)->first();
+
+        return view('siswa.usulan.usulaniduka', compact('iduka'));
+    }
+
+
 }
