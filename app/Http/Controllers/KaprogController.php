@@ -26,7 +26,7 @@ class KaprogController extends Controller
     // Ambil usulan yang punya konke_id sama dengan Kaprog
     $usulanIdukas = UsulanIduka::with(['user.dataPribadi.kelas'])
         ->where('status', 'proses')
-        ->where('konke_id', $kaprog->konke_id) // Sesuaikan dengan Kaprog yang login
+        ->where('konke_id', $kaprog->konkes_id) // Sesuaikan dengan Kaprog yang login
         ->get();
 
     return view('kaprog.review.reviewusulan', compact('usulanIdukas'));
@@ -90,7 +90,7 @@ public function show($id)
 
         $usulanDiterima = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'diterima')
-            ->where('konke_id', $kaprog->konke_id) // Filter sesuai Kaprog yang login
+            ->where('konke_id', $kaprog->konkes_id) // Filter sesuai Kaprog yang login
             ->get();
 
         return view('kaprog.review.historyditerima', compact('usulanDiterima'));
@@ -107,7 +107,7 @@ public function show($id)
 
         $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'ditolak')
-            ->where('konke_id', $kaprog->konke_id) // Filter sesuai Kaprog yang login
+            ->where('konke_id', $kaprog->konkes_id) // Filter sesuai Kaprog yang login
             ->get();
 
         return view('kaprog.review.historyditolak', compact('usulanDitolak'));

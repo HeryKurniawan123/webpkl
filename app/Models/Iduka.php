@@ -45,6 +45,19 @@ class Iduka extends Model
     {
         return $this->belongsToMany(Atp::class, 'iduka_atps')->withPivot('cp_id')->withTimestamps();
     }
+    // Relasi ke Kompetensi Keahlian (Konkes)
+    public function konkes()
+    {
+        return $this->belongsToMany(Konke::class, 'iduka_atps', 'iduka_id', 'konkes_id');
+    }
+
+     // Relasi ke CP (Capaian Pembelajaran)
+     public function cps()
+     {
+         return $this->belongsToMany(Cp::class, 'iduka_atps', 'iduka_id', 'cp_id');
+     }
+ 
+    
     
 
 

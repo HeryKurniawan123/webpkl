@@ -217,9 +217,10 @@
                                 <a href="{{ route('persuratan.review') }}" class="btn btn-secondary">
                                     <i class="bi bi-arrow-left"></i> Kembali
                                 </a>
-                                <a href="{{ route('download.pdf') }}" class="btn btn-danger">
-                                    <i class="bi bi-filetype-pdf"></i> Download PDF
+                                <a href="{{ route('persuratan.download', $pengajuan->id) }}" class="btn btn-primary">
+                                    Download PDF
                                 </a>
+
                             </div>
                         </div>
                     </div>
