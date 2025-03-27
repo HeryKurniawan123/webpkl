@@ -11,16 +11,13 @@
             height: 70px;
             flex-direction: column;
             justify-content: center;
-            /* Menjaga jarak sama antara atas dan bawah */
             display: flex;
         }
 
         .card-hover:hover {
             transform: scale(1.03);
             background-color: #7e7dfb !important;
-            /* Warna diperbaiki */
             color: white !important;
-            /* Agar teks berubah saat hover */
         }
 
         .card-hover:hover .btn-hover {
@@ -55,10 +52,8 @@
             color: white !important;
         }
 
-        /* Memberikan margin bawah pada button-group */
         .button-group {
             margin-bottom: 18px;
-            /* Menambahkan jarak bawah 20px antara tombol dan card */
         }
     </style>
 </head>
@@ -79,17 +74,17 @@
                     @if(session('error'))
                     <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
+
                     <div class="col-md-12 mt-3">
                         <div class="button-group">
-                            @if($usulanIdukas->isNotEmpty())
+                           
                             <a href="{{ route('review.historyditerima') }}" class="btn btn-success btn-status">History Diterima</a>
                             <a href="{{ route('review.historyditolak') }}" class="btn btn-danger btn-status">History Ditolak</a>
-                            @else
-                            <p class="text-muted">Data usulan tidak ditemukan.</p>
-                            @endif
-
+                           
                         </div>
 
+                        {{-- **Bagian Usulan IDUKA** --}}
+                       
                         @foreach($usulanIdukas as $usulan)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
@@ -99,22 +94,6 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a href="{{ route('kaprog.review.detail', ['id' => $usulan->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-
-                                    <div class="dropdown ms-2">
-                                        <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            ⋮
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                {{-- <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus iduka ini?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="dropdown-item text-danger">Hapus</button>
-                                                    </form> --}}
-                                                <button type="submit" class="dropdown-item text-danger">Hapus</button>
-                                            </li>
-                                        </ul>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -122,6 +101,23 @@
                         @if($usulanIdukas->isEmpty())
                         <p class="text-muted">Belum ada usulan IDUKA.</p>
                         @endif
+
+                        {{-- **Bagian Pengajuan PKL** --}}
+                      
+                        @foreach($pengajuanUsulans as $pengajuan)
+                        <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuan->user->name }}</strong></div>
+                                    <div class="">Kelas: {{ $pengajuan->user->dataPribadi->kelas->name_kelas ?? '-' }}</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <a href="{{ route('kaprog.review.detailUsulan', ['id' => $pengajuan->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                        
                     </div>
                 </div>
             </div>

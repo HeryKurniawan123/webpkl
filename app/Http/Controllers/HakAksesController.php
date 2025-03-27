@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PengajuanPkl;
+use App\Models\PengajuanUsulan;
 use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,8 @@ class HakAksesController extends Controller
         $user = auth()->user();
         $usulanSiswa = UsulanIduka::where('user_id', $user->id)->get();
         $pengajuanSiswa = PengajuanPkl::where('siswa_id', $user->id)->with('iduka')->get();
-        return view('dashboard', compact('usulanSiswa', 'pengajuanSiswa'));
+        $usulanPkl = PengajuanUsulan::with(['iduka'])->where('user_id', $user->id)->get();
+        return view('dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl'));
     }
     function iduka(){
         return view('dashboard');

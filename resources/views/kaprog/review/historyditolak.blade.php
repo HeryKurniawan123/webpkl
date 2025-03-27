@@ -96,6 +96,27 @@
                                         <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
                                     </tr>
                                     @endif
+
+                                    @foreach ($usulanDitolakPkl as $usul)
+                                    <tr>
+                                        <td>{{ $index + 2 }}</td>
+                                        <td>{{ $usul->user->name }}</td>
+                                        <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                        <td>{{ $usul->iduka->nama }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
+                                        <td><span class="badge bg-danger">Ditolak</span></td>
+                                        <td>
+                                            <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                            
+                                        </td>
+                                    </tr>
+                                    @endforeach
                                     <!-- Add more rows here -->
                                 </tbody>
                             </table>

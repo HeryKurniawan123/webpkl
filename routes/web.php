@@ -55,8 +55,15 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/surat-usulan', [DataController::class, 'suratUsulanPDF'])->name('surat.usulan');
     Route::get('/surat-usulan/PDF', [PdfController::class, 'usulanPdf'])->name('usulan.pdf');
     Route::get('/siswa-usulan/PDF', [PdfController::class, 'siswaUsulanPdf'])->name('siswa.usulan.pdf');
+    
     Route::get('/surat-pengajuan/detail', [DataController::class, 'detailPengajuan'])->name('detail.pengajuan');
     Route::get('/data-iduka/usulan', [UsulanIdukaController::class, 'dataIdukaUsulan'])->name('iduka.usulan');
+
+    Route::post('/usulan-iduka/{iduka}', [UsulanIdukaController::class, 'storeAjukanPkl'])->name('usulan.iduka.storeAjukanPkl');
+    
+    Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
+Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
+
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -181,8 +188,12 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     //USULAN KAPROG
     Route::get('/review-usulan', [KaprogController::class, 'reviewUsulan'])->name('review.usulan');
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
+
+    Route::put('/usulan-diterimaUsulan/{id}', [KaprogController::class, 'diterimaUsulan'])->name('usulan.diterimaUsulan');
+
+
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
-    Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
+    Route::put('/usulan-ditolak/{id}', [KaprogController::class, ''])->name('usulan.ditolak');
 
 
       //USULAN KAPGROG
@@ -190,6 +201,7 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
       Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
       Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
       Route::get('/kaprog/review/detail/{id}', [KaprogController::class, 'show'])->name('kaprog.review.detail');
+      Route::get('/kaprog/review/detailUsulan/{id}', [KaprogController::class, 'showUsulan'])->name('kaprog.review.detailUsulan');
 
 
 

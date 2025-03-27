@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Iduka;
 use App\Models\DataPribadi;
 use App\Models\UsulanIduka;
-use App\Models\Iduka;
+use App\Models\PengajuanUsulan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,6 +14,7 @@ class  UsulanIdukaController extends Controller
     public function index()
     {
         $usulanSiswa = UsulanIduka::where('user_id', Auth::id())->get();
+        
         return view('data.usulan.formUsulan', compact('usulanSiswa'));
     }
 
@@ -53,10 +55,60 @@ class  UsulanIdukaController extends Controller
             'bidang_industri' => $request->bidang_industri,
             'kerjasama' => $request->kerjasama,
             'status' => 'proses',
+            'iduka_id' => $request->iduka_id,
         ]);
 
         return redirect()->back()->with('success', 'Usulan berhasil diajukan.');
     }
+
+    public function storeAjukanPkl(Request $request, $iduka_id)
+    {
+        $user = Auth::user();
+        $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
+        $iduka = Iduka::findOrFail($iduka_id);
+        
+        if (!$dataPribadi) {
+            return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
+        }
+    
+        // Cek apakah siswa sudah mengajukan PKL ke IDUKA ini sebelumnya
+        $cekUsulan = PengajuanUsulan::where('user_id', $user->id)
+                                    ->where('iduka_id', $iduka_id)
+                                    ->first();
+    
+        if ($cekUsulan) {
+            return redirect()->back()->with('error', 'Kamu sudah mengajukan PKL ke IDUKA ini.');
+        }
+    
+        // Simpan data ke tabel pengajuan_pkls, bukan usulan_idukas
+        PengajuanUsulan::create([
+            'user_id' => $user->id,
+            'konke_id' => $dataPribadi->konke_id,
+            'iduka_id' => $iduka_id,
+            'status' => 'proses', // Status awal adalah "proses"
+        ]);
+    
+        return redirect()->back()->with('success', 'Pengajuan PKL berhasil dikirim dan sedang menunggu persetujuan.');
+    }
+    
+
+    public function approvePengajuanUsulan($id)
+{
+    $usulan = PengajuanUsulan::findOrFail($id);
+    $usulan->update(['status' => 'diterima']);
+
+    return redirect()->back()->with('success', 'Pengajuan PKL diterima.');
+}
+
+public function rejectPengajuanUsulan($id)
+{
+    $usulan = PengajuanUsulan::findOrFail($id);
+    $usulan->update(['status' => 'ditolak']);
+
+    return redirect()->back()->with('error', 'Pengajuan PKL ditolak.');
+}
+
+
 
 
     public function approve($id)

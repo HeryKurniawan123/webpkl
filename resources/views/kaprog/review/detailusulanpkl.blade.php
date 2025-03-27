@@ -171,52 +171,52 @@
                             <tr>
                                     <td>Nama IDUKA</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->nama ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->nama ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Nama Pimpinan</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->nama_pimpinan ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->nama_pimpinan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>NIP/NIP Pimpinan</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->nip_pimpinan ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->nip_pimpinan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Jabatan</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->jabatan ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->jabatan ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Alamat Lengkap IDUKA</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->alamat ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->alamat ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Kode Pos</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->kode_pos ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->kode_pos ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>No Telepon Kantor/Perusahaan</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->telepon ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->telepon ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Email</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->email ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->email ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Bidang Industri</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->bidang_industri ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->bidang_industri ?? '-' }}</td>
                                 </tr>
                                 <tr>
                                     <td>Kerja Sama</td>
                                     <td>:</td>
-                                    <td>{{ $usulan->kerjasama ?? '-' }}</td>
+                                    <td>{{ $usulan->iduka->kerjasama ?? '-' }}</td>
                                 </tr>
                             </table>
 
@@ -228,16 +228,16 @@
                                 </div>
 
                                 <div class="button-group">
-                                <form action="{{ route('usulan.diterima', $usulan->id) }}" method="POST">
+                                <form action="{{ route('usulan.diterimaUsulan', $usulan->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit"   class="btn btn-action btn-accept">Terima</button>
+                                    <button type="submit" name="status" value="diterima"  class="btn btn-action btn-accept">Terima</button>
                                 </form>
 
-                                <form action="{{ route('usulan.ditolak', $usulan->id) }}" method="POST">
+                                <form action="{{ route('usulan.diterimaUsulan', $usulan->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit" class="btn btn-action btn-reject">Tolak</button>
+                                    <button type="submit" name="status" value="ditolak"  class="btn btn-action btn-reject">Tolak</button>
                                 </form>
                                 </div>
                             </div>

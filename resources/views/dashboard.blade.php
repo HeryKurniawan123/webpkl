@@ -104,6 +104,37 @@
                   <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
                 </tr>
                 @endforelse
+
+                @forelse($usulanPkl as $index => $usul)
+                <tr>
+                  <td>{{ $index + 2 }}.</td>
+                  <td>{{ $usul->iduka->nama }}</td>
+                  <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d/m/Y') }}</td>
+                  <td>
+                    @if($usul->status == 'proses')
+                    <span class="badge bg-warning">Menunggu Verifikasi</span>
+                    @elseif($usul->status == 'diterima')
+                    <span class="badge bg-success">Diterima</span>
+                    @else
+                    <span class="badge bg-danger">Ditolak</span>
+                    @endif
+                  </td>
+                  <td>
+                    <a href="{{ route('detail.usulan', $usul->id) }}" class="btn btn-info btn-sm">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    @if($usul->status == 'diterima')
+                    <a href="{{ route('usulan.pdf', $usul->id) }}" class="btn btn-danger btn-sm">
+                      <i class="bi bi-filetype-pdf"></i>
+                    </a>
+                    @endif
+                  </td>
+                </tr>
+                @empty
+                <tr>
+                  <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
+                </tr>
+                @endforelse
               </tbody>
             </table>
           </div>

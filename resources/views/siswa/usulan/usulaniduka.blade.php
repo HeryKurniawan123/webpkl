@@ -203,12 +203,22 @@
                                 <button id="btnBuatUsulan" type="button" class="btn btn-success btn-sm d-none">
                                     <i class="bi bi-file-earmark-plus"></i> Buat Usulan
                                 </button>
-                                <form action="{{ route('pengajuan.ajukan', $iduka->id) }}" method="POST" class="ajukan-form">
+                                <form action="{{ route('usulan.iduka.storeAjukanPkl', $iduka->id) }}" method="POST" class="ajukan-form">
                                     @csrf
-                                    <button type="submit" id="btnAjukanPKL" class="ajukan-btn btn btn-primary shadow-sm">
+                                    <input type="hidden" name="nama" value="{{ $iduka->nama }}">
+                                    <input type="hidden" name="alamat" value="{{ $iduka->alamat }}">
+                                    <input type="hidden" name="kode_pos" value="{{ $iduka->kode_pos}}">
+                                    <input type="hidden" name="telepon" value="{{ $iduka->telepon }}">
+                                    <input type="hidden" name="email" value="{{ $iduka->email }}">
+                                    <input type="hidden" name="bidang_industri" value="{{ $iduka->bidang_industri }}">
+                                    <input type="hidden" name="kerjasama" value="{{ $iduka->kerjasama }}">
+                                    <input type="hidden" name="kuota_pkl" value="{{ $iduka->kuota_pkl }}">
+                                    
+                                    <button type="submit" class="ajukan-btn btn btn-primary shadow-sm">
                                         Usulkan PKL
                                     </button>
                                 </form>
+                                                             
                                 @endif
                             </div>                            
                         </div>
@@ -217,29 +227,36 @@
             </div>
         </div>
     </div>
-
     <script>
-    document.querySelectorAll('.ajukan-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); // Mencegah penghapusan langsung
-
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Ingin mengajukan Institusi ini?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Ajukan!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.closest('.ajukan-form').submit(); 
-                }
+        document.querySelectorAll('.ajukan-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+        
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Ingin mengajukan Institusi ini?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Ajukan!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.closest('.ajukan-form').submit();
+                    }
+                });
             });
         });
-    });
-
-    </script>
+        
+        @if(session('success'))
+            Swal.fire("Berhasil!", "{{ session('success') }}", "success");
+        @endif
+        
+        @if(session('error'))
+            Swal.fire("Gagal!", "{{ session('error') }}", "error");
+        @endif
+        </script>
+        
 
     @include('iduka.dataiduka.editiduka')
 </body>

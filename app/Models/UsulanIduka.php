@@ -12,7 +12,7 @@ class UsulanIduka extends Model
 
     protected $fillable = [
         'user_id', 'konke_id','nama', 'nama_pimpinan', 'nip_pimpinan', 'jabatan',
-        'alamat', 'kode_pos', 'telepon', 'email', 'bidang_industri', 'kerjasama', 'status'
+        'alamat', 'kode_pos', 'telepon', 'email', 'bidang_industri', 'kerjasama',  'iduka_id', 'status'
     ];
 
     public function user()
