@@ -51,10 +51,17 @@
                   </a>
               </li>
               <li>
-                  <a href="{{ route('data.iduka') }}" type="button" class="dropdown-item" onclick="setUsulanStatus(false)">
-                      Buat Pengajuan
-                  </a>
-              </li>
+    @if($sudahDiterima)
+        <a href="#" class="dropdown-item" onclick="alert('Kamu sudah diterima di tempat PKL. Tidak bisa mengajukan lagi.')">
+            Buat Pengajuan
+        </a>
+    @else
+        <a href="{{ route('data.iduka') }}" class="dropdown-item">
+            Buat Pengajuan
+        </a>
+    @endif
+</li>
+
           </ul>          
           </div>
         </div>
@@ -174,11 +181,11 @@
                             <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info btn-sm">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            @if($pengajuan->status == 'diterima')
+                            <!-- @if($pengajuan->status == 'diterima')
                             <a href="" class="btn btn-danger btn-sm">
                                 <i class="bi bi-filetype-pdf"></i>
                             </a>
-                            @endif
+                            @endif -->
                         </td>
                     </tr>
                     @empty

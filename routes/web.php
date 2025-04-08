@@ -231,7 +231,7 @@ Route::middleware(['auth'])->group(function () {
 
     // IDUKA
     Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
-    Route::get('/iduka/{id}', [IdukaController::class, 'show'])->name('detail.iduka');
+    Route::get('/iduka/detail/{id}', [IdukaController::class, 'show'])->name('detail.iduka');
     Route::post('/iduka/store', [IdukaController::class, 'store'])->name('iduka.store');
     Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
@@ -256,7 +256,7 @@ Route::middleware(['auth'])->group(function () {
     
     //persuratan
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
-    Route::get('/review-pengajuan', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
+    Route::get('/review-pengajuan/iduka', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
     Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
     Route::get('/persuratan/download/{id}', [PersuratanController::class, 'downloadPdf'])
     ->name('persuratan.download');

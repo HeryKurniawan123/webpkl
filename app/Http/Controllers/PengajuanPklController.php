@@ -12,20 +12,27 @@ class PengajuanPklController extends Controller
     public function ajukan(Request $request, $iduka_id)
     {
         $siswa = auth()->user();
-
-        // Cek apakah siswa sudah mengajukan ke IDUKA ini
+    
+        // Cek apakah siswa sudah pernah diterima di IDUKA manapun
+        if (PengajuanPkl::where('siswa_id', $siswa->id)->where('status', 'diterima')->exists()) {
+            return back()->with('error', 'Anda sudah diterima PKL di IDUKA, tidak dapat mengajukan ulang.');
+        }
+    
+        // Cek apakah siswa sudah mengajukan ke IDUKA ini sebelumnya
         if (PengajuanPkl::where('siswa_id', $siswa->id)->where('iduka_id', $iduka_id)->exists()) {
             return back()->with('error', 'Anda sudah mengajukan PKL ke IDUKA ini.');
         }
-
+    
+        // Simpan pengajuan baru
         PengajuanPkl::create([
             'siswa_id' => $siswa->id,
             'iduka_id' => $iduka_id,
             'status' => 'proses',
         ]);
-
+    
         return back()->with('success', 'Pengajuan PKL berhasil diajukan.');
     }
+    
 
     // IDUKA menerima atau menolak pengajuan
     public function verifikasi(Request $request, $id)

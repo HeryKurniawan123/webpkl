@@ -8,6 +8,7 @@ use App\Models\UsulanIduka;
 use App\Models\PengajuanUsulan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class  UsulanIdukaController extends Controller
 {
@@ -32,6 +33,7 @@ class  UsulanIdukaController extends Controller
             'email' => 'required|email|unique:usulan_idukas,email',
             'bidang_industri' => 'required|string',
             'kerjasama' => 'required|string',
+            'password' => 'required|string|min:6',
         ]);
 
         $user = Auth::user();
@@ -56,6 +58,7 @@ class  UsulanIdukaController extends Controller
             'kerjasama' => $request->kerjasama,
             'status' => 'proses',
             'iduka_id' => $request->iduka_id,
+            'password' => Hash::make($request->password),
         ]);
 
         return redirect()->back()->with('success', 'Usulan berhasil diajukan.');

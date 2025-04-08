@@ -18,7 +18,10 @@ class HakAksesController extends Controller
         $usulanSiswa = UsulanIduka::where('user_id', $user->id)->get();
         $pengajuanSiswa = PengajuanPkl::where('siswa_id', $user->id)->with('iduka')->get();
         $usulanPkl = PengajuanUsulan::with(['iduka'])->where('user_id', $user->id)->get();
-        return view('dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl'));
+        $sudahDiterima = PengajuanPkl::where('siswa_id', $user->id)
+        ->where('status', 'diterima')
+        ->exists();
+        return view('dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima'));
     }
     function iduka(){
         return view('dashboard');

@@ -28,7 +28,11 @@ class Iduka extends Model
     ];
 
 
-
+    public function usulan()
+    {
+        return $this->hasOne(UsulanIduka::class, 'iduka_id');
+    }
+    
 
     public function user()
 {

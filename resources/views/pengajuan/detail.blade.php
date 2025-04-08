@@ -181,10 +181,10 @@
                 </div>
 
                 <div class="mt-3 d-flex justify-content-end mb-4">
-                    <a href="{{ route('review.pengajuan') }}" class="btn btn-primary me-2">
+                    <a href="" class="btn btn-primary me-2">
                         Kembali
                     </a>
-                    @if($pengajuan->status == 'proses')
+                    @if(Auth::user()->role == 'iduka' && $pengajuan->status == 'proses')
                     <form action="{{ route('pengajuan.terima', $pengajuan->id) }}" method="POST" class="me-2">
                         @csrf
                         @method('PATCH')

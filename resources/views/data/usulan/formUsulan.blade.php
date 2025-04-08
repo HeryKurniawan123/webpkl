@@ -53,6 +53,11 @@
                                 <input type="email" class="form-control" name="email" placeholder="Masukkan Email" required>
                             </div>
                             <div class="mb-3">
+    <label for="password" class="form-label">Password untuk Akun IDUKA</label>
+    <input type="password" name="password" id="password" class="form-control" required minlength="6">
+</div>
+
+                            <div class="mb-3">
                                 <label class="form-label">Bidang Industri</label>
                                 <input type="text" class="form-control" name="bidang_industri" placeholder="Masukkan Bidang Industri" required>
                             </div>
