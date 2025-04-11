@@ -39,7 +39,7 @@ class IdukaAtpController extends Controller
     Log::info('Request Data:', $request->all());
 
     $request->validate([
-        'konkes_id' => 'required',
+        'konke_id' => 'required',
     ]);
 
     $iduka_id = auth()->user()->iduka_id ?? null;
@@ -49,7 +49,7 @@ class IdukaAtpController extends Controller
 
     // Ambil semua ATP berdasarkan konkes_id
     $allAtp = Atp::whereHas('cp', function ($query) use ($request) {
-        $query->where('konkes_id', $request->konkes_id);
+        $query->where('konke_id', $request->konke_id);
     })->get();
     
 
@@ -57,7 +57,7 @@ class IdukaAtpController extends Controller
         IdukaAtp::updateOrCreate(
             [
                 'iduka_id' => $iduka_id,
-                'konkes_id' => $request->konkes_id,
+                'konke_id' => $request->konke_id,
                 'cp_id' => $atp->cp_id,
                 'atp_id' => $atp->id,
             ],

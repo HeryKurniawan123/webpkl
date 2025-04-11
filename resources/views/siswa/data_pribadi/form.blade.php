@@ -28,7 +28,7 @@
                         <label class="form-label">Nama Lengkap</label>
                         <input type="text" name="name" class="form-control"
                             value="{{ old('name', $siswa->name ?? '') }}" required>
-                    </div>
+                    </div>                    
 
                     <div class="mb-3">
                         <label class="form-label">NIP</label>

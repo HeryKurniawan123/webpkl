@@ -70,7 +70,7 @@
                         </div>
                     </div>
 
-                    @foreach($idukaAtps->groupBy('konkes_id') as $konkes_id => $konke_items)
+                    @foreach($idukaAtps->groupBy('konke_id') as $konke_id => $konke_items)
                     <div class="card card-content mt-3">
                         <div class="card-header">
                             <b>{{ $konke_items->first()->konke->name_konke ?? '-'}}</b> <!-- Menampilkan Nama Konke -->
@@ -116,12 +116,12 @@
                 <form action="{{ route('iduka_atp.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="iduka_id" id="iduka_id" value="{{ $iduka->id ?? '' }}"><input type="hidden" name="iduka_id" id="iduka_id" value="{{ auth()->user()->iduka_id }}">
-                    <input type="hidden" name="konkes_id" id="konkes_id">
+                    <input type="hidden" name="konke_id" id="konke_id">
 
                     <div class="modal-body">
                         <div class="d-flex justify-content-center mb-3">
                             @foreach($konkes as $konke)
-                            <button type="button" class="btn btn-primary m-1 jurusan-btn" data-konkes-id="{{ $konke->id }}">
+                            <button type="button" class="btn btn-primary m-1 jurusan-btn" data-konke-id="{{ $konke->id }}">
                                 {{ $konke->name_konke }}
                             </button>
                             @endforeach
@@ -168,10 +168,10 @@
         if (event.target.classList.contains("jurusan-btn")) {
             event.preventDefault();
             
-            const konkes_id = event.target.getAttribute("data-konkes-id");
-            document.getElementById("konkes_id").value = konkes_id;
+            const konke_id = event.target.getAttribute("data-konke-id");
+            document.getElementById("konke_id").value = konke_id;
 
-            console.log("Konke diklik! ID:", konkes_id); // Debug log
+            console.log("Konke diklik! ID:", konke_id); // Debug log
 
             const tpTambahBody = document.getElementById("tp-tambah-body");
 
@@ -179,7 +179,7 @@
             tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
 
             // Fetch data dari server
-            fetch(`/get-cp-atp/${konkes_id}`)
+            fetch(`/get-cp-atp/${konke_id}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("Data diterima:", data); // Debug respons dari server

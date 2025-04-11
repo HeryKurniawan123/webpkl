@@ -300,7 +300,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Konsentrasi Keahlian</label>
-                                        <select name="konkes_id" class="form-control">
+                                        <select name="konke_id" class="form-control">
                                             <option value="">Pilih Konsentrasi Keahlian (Opsional)</option> <!-- Opsi default -->
                                             @foreach ($konkes as $konke)
                                             <option value="{{ $konke->id }}">{{ $konke->name_konke }}</option>

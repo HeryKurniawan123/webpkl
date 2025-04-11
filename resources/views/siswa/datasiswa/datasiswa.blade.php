@@ -137,7 +137,7 @@
                                                     <td>{{ $index + 1 }}</td>
                                                     <td>{{ $s->name }}</td>
                                                     <td>{{ $s->nip }}</td>
-                                                    <td>{{ optional($s->kelas)->name_kelas ?? '-' }}</td>
+                                                    <td>{{ optional($s->kelas)->kelas ?? '-' }} {{ optional($s->kelas)->name_kelas ?? '-' }}</td>
                                                     <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
                                                     <td></td>
                                                     <td>

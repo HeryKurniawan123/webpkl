@@ -141,7 +141,7 @@
                                                 <tr>
                                                     <td>Kelas</td>
                                                     <td>:</td>
-                                                    <td>{{ $siswa->kelas->kelas }} {{ optional($siswa->kelas)->name_kelas ?? '-' }}</td>
+                                                    <td>{{ $siswa->kelas->kelas ?? '-'}} {{ optional($siswa->kelas)->name_kelas ?? '-' }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Konsentrasi Keahlian</td>

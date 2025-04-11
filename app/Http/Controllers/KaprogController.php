@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Cp;
 use App\Models\Atp;
+use App\Models\User;
 use App\Models\Iduka;
 use App\Models\UsulanIduka;
-use App\Models\PengajuanUsulan;
 use Illuminate\Http\Request;
+use App\Models\PengajuanUsulan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class KaprogController extends Controller
 {
@@ -24,12 +26,12 @@ class KaprogController extends Controller
 
         $usulanIdukas = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'proses')
-            ->where('konke_id', $kaprog->konkes_id)
+            ->where('konke_id', $kaprog->konke_id)
             ->get();
 
         $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas'])
             ->where('status', 'proses')
-            ->where('konke_id', $kaprog->konkes_id)
+            ->where('konke_id', $kaprog->konke_id)
             ->get();
 
         return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans'));
@@ -51,11 +53,12 @@ class KaprogController extends Controller
         return view('kaprog.review.detailusulanpkl', compact('usulan'));
     }
 
-    public function diterima($id)
+    public function diterima($id, Request $request)
     {
         $usulan = UsulanIduka::findOrFail($id);
-
-        Iduka::create([
+    
+        // Tambahkan ke tabel idukas
+        $iduka = Iduka::create([
             'nama' => $usulan->nama,
             'nama_pimpinan' => $usulan->nama_pimpinan,
             'nip_pimpinan' => $usulan->nip_pimpinan,
@@ -66,14 +69,25 @@ class KaprogController extends Controller
             'email' => $usulan->email,
             'bidang_industri' => $usulan->bidang_industri,
             'kerjasama' => $usulan->kerjasama,
-            'password' => bcrypt('defaultpassword'),
+            'password' => bcrypt('12345678'), 
             'kuota_pkl' => $usulan->kuota_pkl ?? 0,
         ]);
-
+    
+        // Tambahkan juga ke tabel users
+        User::create([
+            'iduka_id' => $iduka->id,
+            'name' => $usulan->nama,
+            'nip' => $usulan->email,
+            'password' => bcrypt('12345678'),
+            'role' => 'iduka', // pastikan role 'iduka' sudah dikenali dalam sistem
+        ]);
+    
+        // Update status usulan
         $usulan->update(['status' => 'diterima']);
-
-        return redirect()->route('review.usulan')->with('success', 'Usulan IDUKA diterima.');
+    
+        return redirect()->route('review.usulan')->with('success', 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.');
     }
+    
 
     public function ditolak($id)
     {
@@ -88,7 +102,7 @@ class KaprogController extends Controller
         $request->validate(['status' => 'required|in:diterima,ditolak']);
 
         $usulan = PengajuanUsulan::findOrFail($id);
-        $usulan->update(['status' => $request->status]);
+        $usulan->update(['status' => $request->status]);    
 
         $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
         $type = $request->status === 'diterima' ? 'success' : 'error';
@@ -105,12 +119,12 @@ class KaprogController extends Controller
 
         $usulanDiterima = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'diterima')
-            ->where('konke_id', $kaprog->konkes_id)
+            ->where('konke_id', $kaprog->konke_id)
             ->get();
 
         $usulanDiterimaPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->where('status', 'diterima')
-            ->where('konke_id', $kaprog->konkes_id)
+            ->where('konke_id', $kaprog->konke_id)
             ->get();
 
         return view('kaprog.review.historyditerima', compact('usulanDiterima', 'usulanDiterimaPkl'));
@@ -125,12 +139,12 @@ class KaprogController extends Controller
 
         $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'ditolak')
-            ->where('konke_id', $kaprog->konkes_id)
+            ->where('konke_id', $kaprog->konke_id)
             ->get();
 
         $usulanDitolakPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->where('status', 'ditolak')
-            ->where('konke_id', $kaprog->konkes_id)
+            ->where('konke_id', $kaprog->konke_id)
             ->get();
 
         return view('kaprog.review.historyditolak', compact('usulanDitolak', 'usulanDitolakPkl'));
