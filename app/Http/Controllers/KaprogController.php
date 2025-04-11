@@ -57,8 +57,17 @@ class KaprogController extends Controller
     {
         $usulan = UsulanIduka::findOrFail($id);
     
-        // Tambahkan ke tabel idukas
+        // Buat akun user untuk IDUKA terlebih dahulu
+        $user = User::create([
+            'name' => $usulan->nama,
+            'nip' => $usulan->email,
+            'password' => $usulan->password, // sudah di-hash dari awal
+            'role' => 'iduka',
+        ]);
+    
+        // Buat data di tabel idukas dan arahkan ke user_id dari akun IDUKA
         $iduka = Iduka::create([
+            'user_id' => $user->id, // <- ini sekarang menunjuk ke user ID dari akun IDUKA
             'nama' => $usulan->nama,
             'nama_pimpinan' => $usulan->nama_pimpinan,
             'nip_pimpinan' => $usulan->nip_pimpinan,
@@ -69,24 +78,19 @@ class KaprogController extends Controller
             'email' => $usulan->email,
             'bidang_industri' => $usulan->bidang_industri,
             'kerjasama' => $usulan->kerjasama,
-            'password' => bcrypt('12345678'), 
+            'password' => $usulan->password,
             'kuota_pkl' => $usulan->kuota_pkl ?? 0,
         ]);
     
-        // Tambahkan juga ke tabel users
-        User::create([
-            'iduka_id' => $iduka->id,
-            'name' => $usulan->nama,
-            'nip' => $usulan->email,
-            'password' => bcrypt('12345678'),
-            'role' => 'iduka', // pastikan role 'iduka' sudah dikenali dalam sistem
-        ]);
+        // Tambahkan iduka_id ke user agar relasi lengkap (jika pakai relasi ke iduka)
+        $user->update(['iduka_id' => $iduka->id]);
     
         // Update status usulan
         $usulan->update(['status' => 'diterima']);
     
         return redirect()->route('review.usulan')->with('success', 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.');
     }
+    
     
 
     public function ditolak($id)
