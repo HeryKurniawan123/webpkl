@@ -52,7 +52,7 @@ class Iduka extends Model
     // Relasi ke Kompetensi Keahlian (Konkes)
     public function konkes()
     {
-        return $this->belongsToMany(Konke::class, 'iduka_atps', 'iduka_id', 'konkes_id');
+        return $this->belongsToMany(Konke::class, 'iduka_atps', 'iduka_id', 'konke_id');
     }
 
      // Relasi ke CP (Capaian Pembelajaran)

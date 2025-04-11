@@ -47,7 +47,7 @@ class IdukaAtpController extends Controller
         return back()->withErrors(['error' => 'IDUKA tidak ditemukan untuk user ini.']);
     }
 
-    // Ambil semua ATP berdasarkan konkes_id
+    // Ambil semua ATP berdasarkan konke_id
     $allAtp = Atp::whereHas('cp', function ($query) use ($request) {
         $query->where('konke_id', $request->konke_id);
     })->get();

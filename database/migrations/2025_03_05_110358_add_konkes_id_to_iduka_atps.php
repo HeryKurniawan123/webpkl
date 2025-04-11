@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('iduka_atps', function (Blueprint $table) {
-            $table->unsignedBigInteger('konkes_id')->after('iduka_id');
-            $table->foreign('konkes_id')->references('id')->on('konkes')->onDelete('cascade');
+            $table->unsignedBigInteger('konke_id')->after('iduka_id');
+            $table->foreign('konke_id')->references('id')->on('konkes')->onDelete('cascade');
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('iduka_atps', function (Blueprint $table) {
-            $table->dropForeign(['konkes_id']);
-            $table->dropColumn('konkes_id');
+            $table->dropForeign(['konke_id']);
+            $table->dropColumn('konke_id');
         });
     }
 };

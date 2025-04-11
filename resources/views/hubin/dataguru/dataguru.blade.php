@@ -141,9 +141,9 @@
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Konsentrasi Keahlian</label>
-                                                        <select name="konkes_id" class="form-control">
+                                                        <select name="konke_id" class="form-control">
                                                             @foreach ($konkes as $konke)
-                                                            <option value="{{ $konke->id }}" @if($konke->id == $g->konkes_id) selected @endif>
+                                                            <option value="{{ $konke->id }}" @if($konke->id == $g->konke_id) selected @endif>
                                                                 {{ $konke->name_konke }}
                                                             </option>
                                                             @endforeach
@@ -210,9 +210,9 @@
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Konsentrasi Keahlian</label>
-                                                            <select name="konkes_id" class="form-control">
+                                                            <select name="konke_id" class="form-control">
                                                                 @foreach ($konkes as $konke)
-                                                                <option value="{{ $konke->id }}" @if($konke->id == $g->konkes_id) selected @endif>
+                                                                <option value="{{ $konke->id }}" @if($konke->id == $g->konke_id) selected @endif>
                                                                     {{ $konke->name_konke }}
                                                                 </option>
                                                                 @endforeach
