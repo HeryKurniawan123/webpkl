@@ -55,15 +55,14 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/surat-usulan', [DataController::class, 'suratUsulanPDF'])->name('surat.usulan');
     Route::get('/surat-usulan/PDF', [PdfController::class, 'usulanPdf'])->name('usulan.pdf');
     Route::get('/siswa-usulan/PDF', [PdfController::class, 'siswaUsulanPdf'])->name('siswa.usulan.pdf');
-    
+
     Route::get('/surat-pengajuan/detail', [DataController::class, 'detailPengajuan'])->name('detail.pengajuan');
     Route::get('/data-iduka/usulan', [UsulanIdukaController::class, 'dataIdukaUsulan'])->name('iduka.usulan');
 
     Route::post('/usulan-iduka/{iduka}', [UsulanIdukaController::class, 'storeAjukanPkl'])->name('usulan.iduka.storeAjukanPkl');
-    
-    Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
-Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
 
+    Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
+    Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -131,19 +130,15 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
 
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
-
-  
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
     //PENGAJUAN
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
-    
+
     Route::get('/persuratan/data_pribadi', [DataPribadiPersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
     Route::post('/persuratan/data_pribadi', [DataPribadiPersuratanController::class, 'store'])->name('persuratan.data_pribadi.store');
-   
-
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
@@ -160,11 +155,10 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/get-cp-atp/{konke_id}', function ($konke_id) {
         $cps = Cp::where('konke_id', $konke_id)->with('atp')->get();
         return response()->json($cps);
-        
     });
     Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
     Route::get('/pengajuan-review', [PengajuanPklController::class, 'reviewPengajuan'])->name('pengajuan.review');
-   
+
     //PEMBIMBING IDUKA
     Route::get('/pembimbing/create', [PembimbingController::class, 'create'])->name('iduka.pembimbing.create');
     Route::post('/pembimbing/store', [PembimbingController::class, 'store'])->name('iduka.pembimbing.store');
@@ -178,8 +172,6 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
     // Route::put('/iduka/{id}/update', [IdukaController::class, 'update'])->name('iduka.update');
     Route::put('/iduka/{id}/update-institusi', [IdukaController::class, 'updateInstitusi'])->name('iduka.updateInstitusi');
-
-
 });
 
 
@@ -187,6 +179,19 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 
     //USULAN KAPROG
     Route::get('/review-usulan', [KaprogController::class, 'reviewUsulan'])->name('review.usulan');
+
+    //form usulan
+    Route::get('kaprog/review/detail/{id}', [KaprogController::class, 'show'])->name('kaprog.review.detail');
+
+    //pengajuan usulan
+    Route::get('/kaprog/review/usulan-pkl/{iduka_id}', [KaprogController::class, 'showDetailPengajuanIduka'])->name('kaprog.review.detailUsulanPkl');
+    Route::put('/kaprog/review/usulan-pkl/status/{id}', [KaprogController::class, 'diterimaUsulan'])->name('kaprog.usulan-pkl.status');
+
+
+    Route::get('/kaprog/review/pengajuan-iduka/{iduka_id}', [KaprogController::class, 'showPengajuanByIduka'])->name('kaprog.review.detailPengajuanByIduka');
+    Route::post('/kaprog/review/pengajuan-iduka/{id}', [KaprogController::class, 'verifikasiPengajuan'])->name('kaprog.review.verifikasiPengajuan');
+
+
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
 
     Route::put('/usulan-diterimaUsulan/{id}', [KaprogController::class, 'diterimaUsulan'])->name('usulan.diterimaUsulan');
@@ -196,12 +201,12 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, ''])->name('usulan.ditolak');
 
 
-      //USULAN KAPGROG
-      Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
-      Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
-      Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
-      Route::get('/kaprog/review/detail/{id}', [KaprogController::class, 'show'])->name('kaprog.review.detail');
-      Route::get('/kaprog/review/detailUsulan/{id}', [KaprogController::class, 'showUsulan'])->name('kaprog.review.detailUsulan');
+    //USULAN KAPGROG
+    Route::get('/kaprog/usulan', [UsulanIdukaController::class, 'listUsulan'])->name('kaprog.usulan');
+    Route::post('/kaprog/usulan/terima/{id}', [UsulanIdukaController::class, 'terima'])->name('kaprog.usulan.terima');
+    Route::post('/kaprog/usulan/tolak/{id}', [UsulanIdukaController::class, 'tolak'])->name('kaprog.usulan.tolak');
+
+    Route::get('/kaprog/review/detailUsulan/{id}', [KaprogController::class, 'showUsulan'])->name('kaprog.review.detailUsulan');
 
 
 
@@ -252,20 +257,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');
 
     //ORTU
-    Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');   
-    
+    Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');
+
     //persuratan
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/review-pengajuan/iduka', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
     Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
     Route::get('/persuratan/download/{id}', [PersuratanController::class, 'downloadPdf'])
-    ->name('persuratan.download');
+        ->name('persuratan.download');
     Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
 
     Route::get('/iduka/{id}', [UsulanIdukaController::class, 'detailIdukaUsulan'])->name('detail.datausulan');
-
 });
 
 // // HAK AKSES : HUBIN

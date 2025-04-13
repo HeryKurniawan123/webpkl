@@ -29,12 +29,14 @@ class KaprogController extends Controller
             ->where('konke_id', $kaprog->konke_id)
             ->get();
 
+            $groupedIduka = $usulanIdukas->groupBy('email'); // setiap group mewakili satu usulan IDUKA
+
         $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas'])
             ->where('status', 'proses')
             ->where('konke_id', $kaprog->konke_id)
             ->get();
 
-        return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans'));
+        return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans', 'groupedIduka'));
     }
 
     public function show($id)
@@ -45,13 +47,13 @@ class KaprogController extends Controller
         return view('kaprog.review.detailusulan', compact('usulan'));
     }
 
-    public function showUsulan($id)
-    {
-        $usulan = PengajuanUsulan::with(['user.dataPribadi.konkes', 'user.dataPribadi.kelas', 'iduka'])
-            ->findOrFail($id);
+    // public function showUsulan($id)
+    // {
+    //     $usulan = PengajuanUsulan::with(['user.dataPribadi.konkes', 'user.dataPribadi.kelas', 'iduka'])
+    //         ->findOrFail($id);
 
-        return view('kaprog.review.detailusulanpkl', compact('usulan'));
-    }
+    //     return view('kaprog.review.detailusulanpkl', compact('usulan'));
+    // }
 
     public function diterima($id, Request $request)
     {
@@ -111,7 +113,9 @@ class KaprogController extends Controller
         $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
         $type = $request->status === 'diterima' ? 'success' : 'error';
 
-        return redirect()->route('review.usulan')->with($type, $msg);
+        return redirect()->route('kaprog.review.detailUsulanPkl', $usulan->iduka_id)
+        ->with($type, $msg);
+
     }
 
     public function historyDiterima()
@@ -135,22 +139,49 @@ class KaprogController extends Controller
     }
 
     public function historyDitolak()
-    {
-        $kaprog = DB::table('gurus')->where('user_id', Auth::id())->first();
-        if (!$kaprog) {
-            return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
-        }
-
-        $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
-            ->where('status', 'ditolak')
-            ->where('konke_id', $kaprog->konke_id)
-            ->get();
-
-        $usulanDitolakPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
-            ->where('status', 'ditolak')
-            ->where('konke_id', $kaprog->konke_id)
-            ->get();
-
-        return view('kaprog.review.historyditolak', compact('usulanDitolak', 'usulanDitolakPkl'));
+{
+    $kaprog = DB::table('gurus')->where('user_id', Auth::id())->first();
+    if (!$kaprog) {
+        return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
     }
+
+    $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
+        ->where('status', 'ditolak')
+        ->where('konke_id', $kaprog->konke_id)
+        ->get();
+
+    $usulanDitolakPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
+        ->where('status', 'ditolak')
+        ->whereHas('user', function ($query) use ($kaprog) {
+            $query->where('konke_id', $kaprog->konke_id);
+        })
+        ->get();
+
+    return view('kaprog.review.historyditolak', compact('usulanDitolak', 'usulanDitolakPkl'));
+}
+
+
+// public function showDetailUsulan($id)
+// {
+//     $usulan = UsulanIduka::with('user.dataPribadi.kelas', 'user.dataPribadi.konkes')
+//                 ->findOrFail($id);
+
+//     return view('kaprog.review.detailusulan', compact('usulan'));
+// }
+
+    
+
+    public function showDetailPengajuanIduka($iduka_id)
+    {
+        $iduka = Iduka::findOrFail($iduka_id);
+        $pengajuans = PengajuanUsulan::where('iduka_id', $iduka_id)
+            ->where('status', 'proses') // hanya yang masih dalam proses
+            ->with(['user.dataPribadi.kelas']) // eager load user, data pribadi, dan kelas
+            ->get();
+    
+        return view('kaprog.review.detailpengajuaniduka', compact('iduka', 'pengajuans'));
+    }
+    
+    
+
 }

@@ -15,7 +15,7 @@ class  UsulanIdukaController extends Controller
     public function index()
     {
         $usulanSiswa = UsulanIduka::where('user_id', Auth::id())->get();
-        
+
         return view('data.usulan.formUsulan', compact('usulanSiswa'));
     }
 
@@ -37,6 +37,15 @@ class  UsulanIdukaController extends Controller
         ]);
 
         $user = Auth::user();
+        // Cek apakah sudah ada usulan aktif
+        $cekUsulanAktif = UsulanIduka::where('user_id', $user->id)
+            ->whereIn('status', ['proses', 'diterima'])
+            ->exists();
+
+        if ($cekUsulanAktif) {
+            return redirect()->back()->with('error', 'Kamu sudah memiliki usulan yang sedang diproses atau sudah diterima.');
+        }
+
         $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
 
         if (!$dataPribadi) {
@@ -69,20 +78,28 @@ class  UsulanIdukaController extends Controller
         $user = Auth::user();
         $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
         $iduka = Iduka::findOrFail($iduka_id);
-        
+
         if (!$dataPribadi) {
             return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
         }
-    
+        // Cek apakah siswa sudah punya pengajuan PKL yang aktif (proses/diterima)
+        $cekPengajuanAktif = PengajuanUsulan::where('user_id', $user->id)
+            ->whereIn('status', ['proses', 'diterima'])
+            ->exists();
+
+        if ($cekPengajuanAktif) {
+            return redirect()->back()->with('error', 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.');
+        }
+
         // Cek apakah siswa sudah mengajukan PKL ke IDUKA ini sebelumnya
         $cekUsulan = PengajuanUsulan::where('user_id', $user->id)
-                                    ->where('iduka_id', $iduka_id)
-                                    ->first();
-    
+            ->where('iduka_id', $iduka_id)
+            ->first();
+
         if ($cekUsulan) {
             return redirect()->back()->with('error', 'Kamu sudah mengajukan PKL ke IDUKA ini.');
         }
-    
+
         // Simpan data ke tabel pengajuan_pkls, bukan usulan_idukas
         PengajuanUsulan::create([
             'user_id' => $user->id,
@@ -90,26 +107,26 @@ class  UsulanIdukaController extends Controller
             'iduka_id' => $iduka_id,
             'status' => 'proses', // Status awal adalah "proses"
         ]);
-    
+
         return redirect()->back()->with('success', 'Pengajuan PKL berhasil dikirim dan sedang menunggu persetujuan.');
     }
-    
+
 
     public function approvePengajuanUsulan($id)
-{
-    $usulan = PengajuanUsulan::findOrFail($id);
-    $usulan->update(['status' => 'diterima']);
+    {
+        $usulan = PengajuanUsulan::findOrFail($id);
+        $usulan->update(['status' => 'diterima']);
 
-    return redirect()->back()->with('success', 'Pengajuan PKL diterima.');
-}
+        return redirect()->back()->with('success', 'Pengajuan PKL diterima.');
+    }
 
-public function rejectPengajuanUsulan($id)
-{
-    $usulan = PengajuanUsulan::findOrFail($id);
-    $usulan->update(['status' => 'ditolak']);
+    public function rejectPengajuanUsulan($id)
+    {
+        $usulan = PengajuanUsulan::findOrFail($id);
+        $usulan->update(['status' => 'ditolak']);
 
-    return redirect()->back()->with('error', 'Pengajuan PKL ditolak.');
-}
+        return redirect()->back()->with('error', 'Pengajuan PKL ditolak.');
+    }
 
 
 
@@ -128,14 +145,15 @@ public function rejectPengajuanUsulan($id)
         return redirect()->back()->with('error', 'Usulan ditolak.');
     }
 
-    public function lihatPDF() {
+    public function lihatPDF()
+    {
         return view('data.usulan.suratUsulanPDF');
     }
 
     public function dataIdukaUsulan()
     {
-   
-        $iduka = Iduka::orderBy('created_at', 'desc')->get(); 
+
+        $iduka = Iduka::orderBy('created_at', 'desc')->get();
         return view('siswa.usulan.dataIdukaUsulan', compact('iduka'));
     }
 
@@ -145,6 +163,4 @@ public function rejectPengajuanUsulan($id)
 
         return view('siswa.usulan.usulaniduka', compact('iduka'));
     }
-
-
 }

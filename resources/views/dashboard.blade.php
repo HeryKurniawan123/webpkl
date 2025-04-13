@@ -46,23 +46,40 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
               <li>
-                  <a href="{{ route('iduka.usulan') }}" type="button" class="dropdown-item" onclick="setUsulanStatus(true)">
-                      Buat Usulan
-                  </a>
+                @if($sudahAjukan)
+                @if($statusAjukan === 'proses')
+                <a href="#" class="dropdown-item" onclick="alert('Kamu sudah mengajukan usulan atau pengajuan PKL dan sedang diproses.')">
+                  Buat Usulan
+                </a>
+                @elseif($statusAjukan === 'diterima')
+                <a href="#" class="dropdown-item" onclick="alert('Kamu sudah mengajukan dan pengajuan telah diterima.')">
+                  Buat Usulan
+                </a>
+                @else
+                <a href="#" class="dropdown-item" onclick="alert('Pengajuan sedang diproses atau telah diterima.')">
+                  Buat Usulan
+                </a>
+                @endif
+                @else
+                <a href="{{ route('iduka.usulan') }}" class="dropdown-item">
+                  Buat Usulan
+                </a>
+                @endif
               </li>
-              <li>
-    @if($sudahDiterima)
-        <a href="#" class="dropdown-item" onclick="alert('Kamu sudah diterima di tempat PKL. Tidak bisa mengajukan lagi.')">
-            Buat Pengajuan
-        </a>
-    @else
-        <a href="{{ route('data.iduka') }}" class="dropdown-item">
-            Buat Pengajuan
-        </a>
-    @endif
-</li>
 
-          </ul>          
+              <li>
+                @if($sudahDiterima)
+                <a href="#" class="dropdown-item" onclick="alert('Kamu sudah diterima di tempat PKL. Tidak bisa mengajukan lagi.')">
+                  Buat Pengajuan
+                </a>
+                @else
+                <a href="{{ route('data.iduka') }}" class="dropdown-item">
+                  Buat Pengajuan
+                </a>
+                @endif
+              </li>
+
+            </ul>
           </div>
         </div>
       </div>
@@ -153,47 +170,47 @@
           <div class="card-body">
             <h5>Riwayat Pengajuan</h5>
             <table class="table table-hover" style="text-align: center">
-                <thead>
-                    <tr>
-                        <td>#</td>
-                        <td>Nama IDUKA</td>
-                        <td>Tanggal Pengajuan</td>
-                        <td>Status</td>
-                        <td>Aksi</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($pengajuanSiswa as $index => $pengajuan)
-                    <tr>
-                        <td>{{ $index + 1 }}.</td>
-                        <td>{{ $pengajuan->iduka->nama }}</td>
-                        <td>{{ \Carbon\Carbon::parse($pengajuan->created_at)->format('d/m/Y') }}</td>
-                        <td>
-                            @if($pengajuan->status == 'proses')
-                            <span class="badge bg-warning">Menunggu Verifikasi</span>
-                            @elseif($pengajuan->status == 'diterima')
-                            <span class="badge bg-success">Diterima</span>
-                            @else
-                            <span class="badge bg-danger">Ditolak</span>
-                            @endif
-                        </td>
-                        <td>
-                            <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info btn-sm">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <!-- @if($pengajuan->status == 'diterima')
+              <thead>
+                <tr>
+                  <td>#</td>
+                  <td>Nama IDUKA</td>
+                  <td>Tanggal Pengajuan</td>
+                  <td>Status</td>
+                  <td>Aksi</td>
+                </tr>
+              </thead>
+              <tbody>
+                @forelse($pengajuanSiswa as $index => $pengajuan)
+                <tr>
+                  <td>{{ $index + 1 }}.</td>
+                  <td>{{ $pengajuan->iduka->nama }}</td>
+                  <td>{{ \Carbon\Carbon::parse($pengajuan->created_at)->format('d/m/Y') }}</td>
+                  <td>
+                    @if($pengajuan->status == 'proses')
+                    <span class="badge bg-warning">Menunggu Verifikasi</span>
+                    @elseif($pengajuan->status == 'diterima')
+                    <span class="badge bg-success">Diterima</span>
+                    @else
+                    <span class="badge bg-danger">Ditolak</span>
+                    @endif
+                  </td>
+                  <td>
+                    <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info btn-sm">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <!-- @if($pengajuan->status == 'diterima')
                             <a href="" class="btn btn-danger btn-sm">
                                 <i class="bi bi-filetype-pdf"></i>
                             </a>
                             @endif -->
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
+                  </td>
+                </tr>
+                @empty
+                <tr>
+                  <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
+                </tr>
+                @endforelse
+              </tbody>
             </table>
           </div>
         </div>
