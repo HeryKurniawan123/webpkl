@@ -113,7 +113,6 @@
                     <div class="card">
                         <div class="card-body">
                             <h5>Data Siswa</h5>
-
                             <table class="table table-striped">
                                 <tr>
                                     <td>Nama Siswa</td>
@@ -218,6 +217,11 @@
                                     <td>Kerja Sama</td>
                                     <td>:</td>
                                     <td>{{ $usulan->iduka->kerjasama ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Kuota PKL</td>
+                                    <td>:</td>
+                                    <td>{{ $usulan->iduka->kuota_pkl ?? '-' }}</td>
                                 </tr>
                             </table>
 

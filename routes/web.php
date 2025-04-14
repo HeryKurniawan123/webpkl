@@ -198,7 +198,11 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 
 
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
-    Route::put('/usulan-ditolak/{id}', [KaprogController::class, ''])->name('usulan.ditolak');
+
+    Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
+
+    Route::get('/kaprog/usulan-pkl/detail/{pengajuan}', [KaprogController::class, 'detailPengajuanSiswa'])->name('kaprog.usulan-pkl.detailSiswa');
+
 
 
     //USULAN KAPGROG

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class PengajuanUsulan extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'user_id',
         'konke_id',

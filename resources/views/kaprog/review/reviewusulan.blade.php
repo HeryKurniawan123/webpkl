@@ -84,22 +84,26 @@
                         {{-- Bagian Pengajuan PKL (jika diperlukan) --}}
                         @if(isset($pengajuanUsulans) && !$pengajuanUsulans->isEmpty())
                         <hr>
-                        <h4 class="mb-4">Review Pengajuan Usulan IDUKA</h4>
-                        @foreach($pengajuanUsulans as $pengajuan)
-                        <div class="card-hover">
+
+                       
+                        @foreach($pengajuanUsulans as $iduka_id => $pengajuanGroup)
+                        <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h5 class="mb-0"><strong>{{ $pengajuan->user->name }}</strong></h5>
-                                    <p class="mb-0">Institusi: {{ $pengajuan->iduka->nama ?? '-' }}</p>
-                                    <p class="mb-0">Status: {{ ucfirst($pengajuan->status) }}</p>
+                                        <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
+                                        <small class="text-muted">{{ $pengajuanGroup->count() }} siswa mengajukan ke sini</small>
+
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('kaprog.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    </div>
+                                    
                                 </div>
-                                <div>
-                                <a href="{{ route('kaprog.review.detailUsulanPkl', ['iduka_id' => $pengajuan->iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                </div>
+                               
                             </div>
-                        </div>
                         @endforeach
-                        @endif
+                    @endif
+                    
 
                     </div>
                 </div>

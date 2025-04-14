@@ -70,7 +70,8 @@ class  UsulanIdukaController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->back()->with('success', 'Usulan berhasil diajukan.');
+
+        return redirect()->route('siswa.dashboard')->with('success', 'Usulan berhasil diajukan.');
     }
 
     public function storeAjukanPkl(Request $request, $iduka_id)
@@ -108,7 +109,10 @@ class  UsulanIdukaController extends Controller
             'status' => 'proses', // Status awal adalah "proses"
         ]);
 
-        return redirect()->back()->with('success', 'Pengajuan PKL berhasil dikirim dan sedang menunggu persetujuan.');
+
+       
+        return redirect()->route('siswa.dashboard')->with('success', 'Usulan berhasil diajukan.');
+
     }
 
 

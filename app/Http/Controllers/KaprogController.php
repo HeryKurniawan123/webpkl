@@ -29,14 +29,25 @@ class KaprogController extends Controller
             ->where('konke_id', $kaprog->konke_id)
             ->get();
 
-            $groupedIduka = $usulanIdukas->groupBy('email'); // setiap group mewakili satu usulan IDUKA
 
-        $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas'])
+        $groupedIduka = $usulanIdukas->groupBy('email'); // setiap group mewakili satu usulan IDUKA
+
+        $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->where('status', 'proses')
             ->where('konke_id', $kaprog->konke_id)
-            ->get();
+            ->get()
+            ->groupBy('iduka_id');
+
+
 
         return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans', 'groupedIduka'));
+    }
+
+
+    public function detailPengajuanSiswa($pengajuanId)
+    {
+        $usulan = PengajuanUsulan::with(['user.dataPribadi.kelas', 'user.dataPribadi.konkes', 'iduka'])->findOrFail($pengajuanId);
+        return view('kaprog.review.detailpengajuansiswa', compact('usulan'));
     }
 
     public function show($id)
@@ -59,6 +70,7 @@ class KaprogController extends Controller
     {
         $usulan = UsulanIduka::findOrFail($id);
     
+
         // Buat akun user untuk IDUKA terlebih dahulu
         $user = User::create([
             'name' => $usulan->nama,
@@ -66,7 +78,8 @@ class KaprogController extends Controller
             'password' => $usulan->password, // sudah di-hash dari awal
             'role' => 'iduka',
         ]);
-    
+
+
         // Buat data di tabel idukas dan arahkan ke user_id dari akun IDUKA
         $iduka = Iduka::create([
             'user_id' => $user->id, // <- ini sekarang menunjuk ke user ID dari akun IDUKA
@@ -83,17 +96,19 @@ class KaprogController extends Controller
             'password' => $usulan->password,
             'kuota_pkl' => $usulan->kuota_pkl ?? 0,
         ]);
-    
+
+
+
         // Tambahkan iduka_id ke user agar relasi lengkap (jika pakai relasi ke iduka)
         $user->update(['iduka_id' => $iduka->id]);
-    
+
         // Update status usulan
         $usulan->update(['status' => 'diterima']);
-    
+
         return redirect()->route('review.usulan')->with('success', 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.');
     }
-    
-    
+
+
 
     public function ditolak($id)
     {
@@ -108,13 +123,16 @@ class KaprogController extends Controller
         $request->validate(['status' => 'required|in:diterima,ditolak']);
 
         $usulan = PengajuanUsulan::findOrFail($id);
-        $usulan->update(['status' => $request->status]);    
+
+        $usulan->update(['status' => $request->status]);
+
 
         $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
         $type = $request->status === 'diterima' ? 'success' : 'error';
 
         return redirect()->route('kaprog.review.detailUsulanPkl', $usulan->iduka_id)
-        ->with($type, $msg);
+
+            ->with($type, $msg);
 
     }
 
@@ -139,37 +157,39 @@ class KaprogController extends Controller
     }
 
     public function historyDitolak()
-{
-    $kaprog = DB::table('gurus')->where('user_id', Auth::id())->first();
-    if (!$kaprog) {
-        return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
+
+    {
+        $kaprog = DB::table('gurus')->where('user_id', Auth::id())->first();
+        if (!$kaprog) {
+            return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
+        }
+
+        $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
+            ->where('status', 'ditolak')
+            ->where('konke_id', $kaprog->konke_id)
+            ->get();
+
+        $usulanDitolakPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
+            ->where('status', 'ditolak')
+            ->whereHas('user', function ($query) use ($kaprog) {
+                $query->where('konke_id', $kaprog->konke_id);
+            })
+            ->get();
+
+        return view('kaprog.review.historyditolak', compact('usulanDitolak', 'usulanDitolakPkl'));
     }
 
-    $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
-        ->where('status', 'ditolak')
-        ->where('konke_id', $kaprog->konke_id)
-        ->get();
 
-    $usulanDitolakPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
-        ->where('status', 'ditolak')
-        ->whereHas('user', function ($query) use ($kaprog) {
-            $query->where('konke_id', $kaprog->konke_id);
-        })
-        ->get();
+    // public function showDetailUsulan($id)
+    // {
+    //     $usulan = UsulanIduka::with('user.dataPribadi.kelas', 'user.dataPribadi.konkes')
+    //                 ->findOrFail($id);
 
-    return view('kaprog.review.historyditolak', compact('usulanDitolak', 'usulanDitolakPkl'));
-}
+    //     return view('kaprog.review.detailusulan', compact('usulan'));
+    // }
 
 
-// public function showDetailUsulan($id)
-// {
-//     $usulan = UsulanIduka::with('user.dataPribadi.kelas', 'user.dataPribadi.konkes')
-//                 ->findOrFail($id);
 
-//     return view('kaprog.review.detailusulan', compact('usulan'));
-// }
-
-    
 
     public function showDetailPengajuanIduka($iduka_id)
     {
@@ -178,10 +198,9 @@ class KaprogController extends Controller
             ->where('status', 'proses') // hanya yang masih dalam proses
             ->with(['user.dataPribadi.kelas']) // eager load user, data pribadi, dan kelas
             ->get();
-    
+
+
         return view('kaprog.review.detailpengajuaniduka', compact('iduka', 'pengajuans'));
     }
-    
-    
 
 }

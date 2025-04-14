@@ -13,6 +13,9 @@
                     <tr>
                         <th>Nama Siswa</th>
                         <th>Kelas</th>
+
+                        <th>Konsentrasi Keahlian</th>
+
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -21,7 +24,9 @@
                     @foreach($pengajuans as $pengajuan)
                     <tr>
                         <td>{{ $pengajuan->user->name }}</td>
-                        <td>{{ $pengajuan->user->dataPribadi->kelas->nama ?? '-' }}</td>
+                        <td>{{ $pengajuan->user->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                        <td>{{ $pengajuan->user->dataPribadi->konkes->name_konke }}</td>
+
                         <td>{{ ucfirst($pengajuan->status) }}</td>
                         <td>
                             <form method="POST" action="{{ route('kaprog.usulan-pkl.status', $pengajuan->id) }}">
@@ -37,6 +42,9 @@
                                 <input type="hidden" name="status" value="ditolak">
                                 <button class="btn btn-danger btn-sm">Tolak</button>
                             </form>
+
+                            <a href="{{ route('kaprog.usulan-pkl.detailSiswa', $pengajuan->id) }}" class="btn btn-primary btn-sm mb-1">Lihat Detail</a>
+
                         </td>
                     </tr>
                     @endforeach

@@ -30,7 +30,9 @@ class PengajuanPklController extends Controller
             'status' => 'proses',
         ]);
     
-        return back()->with('success', 'Pengajuan PKL berhasil diajukan.');
+
+        return redirect()->route('siswa.dashboard')->with('success', 'Pengajuan PKL berhasil diajukan.');
+
     }
     
 
