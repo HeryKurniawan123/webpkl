@@ -106,7 +106,7 @@ class KaprogController extends Controller
         $user->update(['iduka_id' => $iduka->id]);
 
         // Update status usulan
-        $usulan->update(['status' => 'diterima']);
+        $usulan->update(['status' => 'diterima', 'iduka_id' => $iduka->id]);
 
         return redirect()->route('review.usulan')->with('success', 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.');
     }
@@ -212,7 +212,7 @@ class KaprogController extends Controller
     $tipe = $request->input('tipe');
 
     if ($tipe === 'usulan') {
-        $usulan = \App\Models\UsulanIduka::with('user')->find($id);
+        $usulan = UsulanIduka::with('user')->find($id);
         if (!$usulan) {
             return response()->json(['success' => false, 'message' => 'Data usulan tidak ditemukan.']);
         }
@@ -220,7 +220,7 @@ class KaprogController extends Controller
         if ($usulan->surat_izin == 'belum') {
             $usulan->update(['surat_izin' => 'sudah']);
 
-            \App\Models\CetakUsulan::create([
+            CetakUsulan::create([
                 'siswa_id' => $usulan->user_id,
                 'iduka_id' => $usulan->iduka_id,
                 'status' => 'proses',
@@ -231,7 +231,7 @@ class KaprogController extends Controller
     }
 
     if ($tipe === 'pkl') {
-        $usulan = \App\Models\PengajuanUsulan::with('user')->find($id);
+        $usulan = PengajuanUsulan::with('user')->find($id);
         if (!$usulan) {
             return response()->json(['success' => false, 'message' => 'Data PKL tidak ditemukan.']);
         }
@@ -239,7 +239,7 @@ class KaprogController extends Controller
         if ($usulan->surat_izin == 'belum') {
             $usulan->update(['surat_izin' => 'sudah']);
 
-            \App\Models\CetakUsulan::create([
+            CetakUsulan::create([
                 'siswa_id' => $usulan->user_id,
                 'iduka_id' => $usulan->iduka_id,
                 'status' => 'proses',

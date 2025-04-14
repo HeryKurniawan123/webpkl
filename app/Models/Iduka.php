@@ -30,7 +30,7 @@ class Iduka extends Model
 
     public function usulan()
     {
-        return $this->hasMany(UsulanIduka::class, 'iduka_id');
+        return $this->hasOne(UsulanIduka::class, 'iduka_id');
     }
     
 
