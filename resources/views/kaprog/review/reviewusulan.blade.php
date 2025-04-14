@@ -85,7 +85,7 @@
                         @if(isset($pengajuanUsulans) && !$pengajuanUsulans->isEmpty())
                         <hr>
 
-                       
+                        <h4 class="mb-4">Review Ajuan Usulan IDUKA</h4>
                         @foreach($pengajuanUsulans as $iduka_id => $pengajuanGroup)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">

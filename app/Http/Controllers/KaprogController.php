@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Cp;
 use App\Models\Atp;
+use App\Models\CetakUsulan;
 use App\Models\User;
 use App\Models\Iduka;
+use App\Models\PengajuanPkl;
 use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
 use App\Models\PengajuanUsulan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class KaprogController extends Controller
 {
@@ -202,5 +205,52 @@ class KaprogController extends Controller
 
         return view('kaprog.review.detailpengajuaniduka', compact('iduka', 'pengajuans'));
     }
+
+    //fungsi mengirim ke tabel pengajuan jika siswa sudah mengirim surat
+    public function updateSuratIzin(Request $request, $id): JsonResponse
+{
+    $tipe = $request->input('tipe');
+
+    if ($tipe === 'usulan') {
+        $usulan = \App\Models\UsulanIduka::with('user')->find($id);
+        if (!$usulan) {
+            return response()->json(['success' => false, 'message' => 'Data usulan tidak ditemukan.']);
+        }
+
+        if ($usulan->surat_izin == 'belum') {
+            $usulan->update(['surat_izin' => 'sudah']);
+
+            \App\Models\CetakUsulan::create([
+                'siswa_id' => $usulan->user_id,
+                'iduka_id' => $usulan->iduka_id,
+                'status' => 'proses',
+            ]);
+
+            return response()->json(['success' => true]);
+        }
+    }
+
+    if ($tipe === 'pkl') {
+        $usulan = \App\Models\PengajuanUsulan::with('user')->find($id);
+        if (!$usulan) {
+            return response()->json(['success' => false, 'message' => 'Data PKL tidak ditemukan.']);
+        }
+
+        if ($usulan->surat_izin == 'belum') {
+            $usulan->update(['surat_izin' => 'sudah']);
+
+            \App\Models\CetakUsulan::create([
+                'siswa_id' => $usulan->user_id,
+                'iduka_id' => $usulan->iduka_id,
+                'status' => 'proses',
+            ]);
+
+            return response()->json(['success' => true]);
+        }
+    }
+
+    return response()->json(['success' => false, 'message' => 'Tidak ada perubahan.']);
+}
+    
 
 }

@@ -13,6 +13,7 @@ class PengajuanUsulan extends Model
         'konke_id',
         'iduka_id',
         'status',
+        'surat_izin'
     ];
 
     public function user() {

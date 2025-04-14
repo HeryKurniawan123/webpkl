@@ -12,7 +12,7 @@ class UsulanIduka extends Model
 
     protected $fillable = [
         'user_id', 'konke_id','nama', 'nama_pimpinan', 'nip_pimpinan', 'jabatan',
-        'alamat', 'kode_pos', 'telepon', 'email', 'bidang_industri', 'kerjasama',  'iduka_id', 'status', 'password'
+        'alamat', 'kode_pos', 'telepon', 'email', 'bidang_industri', 'kerjasama',  'iduka_id', 'status', 'password', 'surat_izin'
     ];
 
     public function user()
@@ -22,9 +22,9 @@ class UsulanIduka extends Model
     // app/Models/UsulanIduka.php
 
 
-public function iduka()
-{
-    return $this->belongsTo(Iduka::class);
-}
+    public function iduka()
+    {
+        return $this->belongsTo(Iduka::class, 'iduka_id');
+    }
 
 }
