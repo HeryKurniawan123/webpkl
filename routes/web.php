@@ -197,8 +197,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
 
     Route::put('/usulan-diterimaUsulan/{id}', [KaprogController::class, 'diterimaUsulan'])->name('usulan.diterimaUsulan');
-
-
+//cek
+    Route::get('/review/pengajuan/kaprog/detail/{iduka_id}', [KaprogController::class, 'detailusulan'])->name('kaprog.review.detailUsulanPkl');
+    
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
 
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
@@ -276,7 +277,8 @@ Route::middleware(['auth'])->group(function () {
     //persuratan
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/review-pengajuan/iduka', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
-    Route::get('/review/pengajuan/detail/{iduka_id}', [PersuratanController::class, 'detailUsulan'])->name('kaprog.review.detailUsulanPkl');
+    Route::get('/review/persuratan/pengajuan/detail/{iduka_id}', [PersuratanController::class, 'detailUsulan'])->name('kaprog.review.detailUsulanPkl');
+    
     Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
     Route::get('/persuratan/download/{id}', [PersuratanController::class, 'downloadPdf'])
         ->name('persuratan.download');

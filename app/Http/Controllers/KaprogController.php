@@ -57,11 +57,11 @@ class KaprogController extends Controller
 
     public function show($id)
     {
-        $usulan = UsulanIduka::with(['user.dataPribadi.konkes', 'user.dataPribadi.kelas'])
-            ->findOrFail($id);
-
+        $usulan = Iduka::with(['PengajuanUsulan.siswa.dataPribadi.kelas'])->findOrFail($id);
+    
         return view('kaprog.review.detailusulan', compact('usulan'));
     }
+    
 
     // public function showUsulan($id)
     // {
@@ -135,7 +135,7 @@ class KaprogController extends Controller
         $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
         $type = $request->status === 'diterima' ? 'success' : 'error';
 
-        return redirect()->route('kaprog.review.detailUsulanPkl', $usulan->iduka_id)
+        return redirect()->route('kaprog.review.reviewusulan', $usulan->iduka_id)
 
             ->with($type, $msg);
     }
@@ -309,6 +309,16 @@ class KaprogController extends Controller
     return response()->json(['message' => 'Pengajuan berhasil dikirim ke IDUKA.']);
 }
 
+
+public function detailusulan($iduka_id)
+{
+    $pengajuanUsulans = PengajuanUsulan::with(['dataPribadi.kelas'])
+        ->where('iduka_id', $iduka_id)
+        ->where('status', 'proses')
+        ->get();
+
+    return view('kaprog.review.detailusulan', compact('pengajuanUsulans'));
+}
 
     
 }

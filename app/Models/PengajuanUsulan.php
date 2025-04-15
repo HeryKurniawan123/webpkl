@@ -29,4 +29,9 @@ class PengajuanUsulan extends Model
     {
         return $this->belongsTo(Iduka::class, 'iduka_id');
     }
+    public function siswa()
+{
+    return $this->belongsTo(User::class, 'siswa_id');
+}
+
 }

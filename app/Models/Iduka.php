@@ -61,7 +61,10 @@ class Iduka extends Model
          return $this->belongsToMany(Cp::class, 'iduka_atps', 'iduka_id', 'cp_id');
      }
  
-    
+     public function pengajuanUsulans()
+     {
+         return $this->hasMany(PengajuanUsulan::class, 'iduka_id');
+     }
     
 
 
