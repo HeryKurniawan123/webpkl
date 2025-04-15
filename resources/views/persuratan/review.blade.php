@@ -94,7 +94,7 @@
                                     <small class="text-muted">{{ $pengajuanGroup->count() }} siswa mengajukan ke sini</small>
                                 </div>
                                 <div>
-                                    <a href="{{ route('kaprog.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    <a href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
                                 </div>
                             </div>
                         </div>
