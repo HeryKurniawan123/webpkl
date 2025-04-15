@@ -7,16 +7,16 @@
             <div class="row">
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Detail Pengajuan PKL</h5>
+                        <h5 class="mb-0">Detail Pengajuan PKL ke: {{ $iduka->nama }}</h5>
+                        <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">← Kembali</a>
                     </div>
                 </div>
+
                 <div class="col-md-12 mt-3">
-                    {{-- Jika tidak ada pengajuan untuk IDUKA --}}
-                    @if($pengajuanUsulans->isEmpty())
+                    @if($pengajuans->isEmpty())
                     <p class="text-center">Tidak ada pengajuan yang tersedia untuk IDUKA ini.</p>
                     @else
-                    {{-- Looping Daftar Siswa --}}
-                    @foreach($pengajuanUsulans as $pengajuan)
+                    @foreach($pengajuans as $pengajuan)
                     <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -26,25 +26,23 @@
                                 <div>
                                     Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
                                 </div>
-
                                 <div>
                                     Status: {{ ucfirst($pengajuan->status) }}
                                 </div>
                             </div>
-
                             <div>
                                 {{-- Tombol untuk melihat detail --}}
                                 <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-info">
                                     Lihat Detail
                                 </a>
-                                @if($pengajuan->status === 'sudah')
-                                <button class="btn btn-success" disabled>Sudah</button>
-                                @else
-                                <button class="btn btn-primary btn-proses" data-id="{{ $pengajuan->id }}">Proses</button>
-                                @endif
+                                <button class="btn btn-primary btn-proses"
+                                    data-id="{{ $pengajuan->id }}"
+                                    data-iduka_id="{{ $iduka->id }}">
+                                    Kirim
+                                </button>
+
 
                             </div>
-
                         </div>
                     </div>
                     @endforeach
@@ -65,26 +63,35 @@
         buttons.forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.dataset.id;
+                const iduka_id = this.dataset.iduka_id; // Pastikan iduka_id ada dalam data tombol
 
-                if (confirm('Yakin ingin memproses pengajuan ini?')) {
-                    axios.post(`/review/pengajuan/proses/${id}`)
+                if (!iduka_id) {
+                    alert('IDUKA ID tidak valid.');
+                    return;
+                }
+
+                if (confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?')) {
+                    axios.post(`/review/pengajuan/proses/${id}`, {
+                            iduka_id: iduka_id
+                        })
                         .then(response => {
                             alert(response.data.message);
-
-                            // Ubah teks tombol jadi "Sudah"
                             this.textContent = 'Sudah';
-
-                            // Optional: nonaktifkan tombol agar tidak bisa diklik lagi
                             this.disabled = true;
                             this.classList.remove('btn-primary');
                             this.classList.add('btn-success');
                         })
                         .catch(error => {
-                            alert('Terjadi kesalahan saat memproses.');
+                            if (error.response.status === 409) {
+                                alert('Data sudah dikirim sebelumnya.');
+                            } else {
+                                alert('Terjadi kesalahan saat mengirim.');
+                            }
                         });
                 }
             });
         });
     });
 </script>
+
 @endpush

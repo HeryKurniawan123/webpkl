@@ -58,19 +58,32 @@ class PersuratanController extends Controller
     public function reviewPengajuan()
     {
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
+            ->where('status', 'proses') 
             ->orderBy('created_at', 'desc')
             ->get()
-            ->groupBy('iduka_id');
-
+            ->groupBy('iduka_id'); 
+    
         return view('persuratan.review', compact('pengajuanUsulans'));
     }
+    
 
     public function detailUsulan($iduka_id)
     {
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
             ->where('iduka_id', $iduka_id)
+            ->where('status', 'proses')
             ->get();
 
         return view('persuratan.detail', compact('pengajuanUsulans'));
     }
+
+    public function prosesPengajuan($id)
+{
+    $pengajuan = CetakUsulan::findOrFail($id);
+    $pengajuan->status = 'sudah';
+    $pengajuan->save();
+
+    return response()->json(['success' => true, 'message' => 'Status berhasil diubah menjadi "sudah"']);
+}
+
 }

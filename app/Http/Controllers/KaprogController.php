@@ -234,10 +234,10 @@ class KaprogController extends Controller
                 ]);
 
                 return response()->json(['success' => true]);
-        } else {
-            return response()->json(['success' => false, 'message' => 'Surat izin sudah diubah sebelumnya.']);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Surat izin sudah diubah sebelumnya.']);
+            }
         }
-    }
 
         if ($tipe === 'pkl') {
             $usulan = PengajuanUsulan::with('user')->find($id);
@@ -262,4 +262,53 @@ class KaprogController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Tipe permintaan tidak valid.']);
     }
+
+    //mengirim ke iduka
+    public function reviewPengajuan()
+    {
+        $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
+            ->where('status', 'sudah')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('iduka_id');
+
+        return view('kaprog.review.reviewpengajuan', compact('pengajuanUsulans'));
+    }
+
+    public function detailUsulanPkl($iduka_id)
+    {
+        $iduka = Iduka::findOrFail($iduka_id);
+
+        $pengajuans = CetakUsulan::with(['dataPribadi.kelas'])
+            ->where('iduka_id', $iduka_id)
+            ->where('status', 'sudah') // Atau status yang kamu inginkan
+            ->get();
+
+        return view('kaprog.review.reviewdetail', compact('iduka', 'pengajuans'));
+    }
+
+    public function prosesPengajuan($id, Request $request): JsonResponse
+{
+    $pengajuan = PengajuanUsulan::findOrFail($id);
+
+    if ($pengajuan->status === 'dikirim') {
+        return response()->json(['message' => 'Pengajuan sudah dikirim sebelumnya.'], 409);
+    }
+
+    $pengajuan->update([
+        'status' => 'dikirim',
+    ]);
+
+    // Insert ke tabel pengajuan_pkl (jika diperlukan)
+    PengajuanPkl::create([
+        'siswa_id' => $pengajuan->user_id,
+        'iduka_id' => $request->iduka_id,
+        'status' => 'proses',
+    ]);
+
+    return response()->json(['message' => 'Pengajuan berhasil dikirim ke IDUKA.']);
+}
+
+
+    
 }
