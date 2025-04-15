@@ -68,8 +68,8 @@
                                     <th>Nama IDUKA</th>
                                     <th>Tanggal Pengajuan</th>
                                     <th>Status</th>
-                                    <th>Aksi</th>
                                     <th>Surat Izin</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,16 +83,6 @@
                                     <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
                                     <td><span class="badge bg-success">Diterima</span></td>
                                     <td>
-                                        <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-
-                                    </td>
-                                    <td>
                                         @if($usulan->surat_izin == 'belum')
                                         <form class="form-surat-izin" data-id="{{ $usulan->id }}" data-tipe="usulan">
                                             @csrf
@@ -104,9 +94,16 @@
                                         <span class="badge bg-success">Sudah</span>
                                         @endif
                                     </td>
+                                    <td>
+                                        <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
 
-
-
+                                    </td>
                                 </tr>
                                 @endforeach
                                 @if($usulanDiterima->isEmpty())
@@ -124,15 +121,6 @@
                                     <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
                                     <td><span class="badge bg-success">Diterima</span></td>
                                     <td>
-                                        <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-
-                                    <td>
                                         @if($usul->surat_izin == 'belum')
                                         <form class="form-surat-izin" data-id="{{ $usul->id }}" data-tipe="pkl">
                                             @csrf
@@ -144,10 +132,14 @@
                                         <span class="badge bg-success">Sudah</span>
                                         @endif
                                     </td>
-
-
-
-
+                                    <td>
+                                        <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
                                 </tr>
                                 @endforeach
                                 <!-- Add more rows here -->
@@ -187,20 +179,36 @@
                             tipe: tipe
                         })
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP status ' + response.status);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         console.log('Response:', data);
                         if (data.success) {
                             form.outerHTML = '<span class="badge bg-success">Sudah</span>';
                         } else {
-                            alert(data.message || 'Terjadi kesalahan');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: data.message || 'Terjadi kesalahan!',
+                            });
+
                         }
                     })
-
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Gagal memperbarui surat izin');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Gagal memperbarui surat izin. Silakan coba lagi.',
+                        });
+
                     });
+
+
             });
         });
     });

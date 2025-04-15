@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
+
 
 class KaprogController extends Controller
 {
@@ -72,7 +74,7 @@ class KaprogController extends Controller
     public function diterima($id, Request $request)
     {
         $usulan = UsulanIduka::findOrFail($id);
-    
+
 
         // Buat akun user untuk IDUKA terlebih dahulu
         $user = User::create([
@@ -136,7 +138,6 @@ class KaprogController extends Controller
         return redirect()->route('kaprog.review.detailUsulanPkl', $usulan->iduka_id)
 
             ->with($type, $msg);
-
     }
 
     public function historyDiterima()
@@ -208,49 +209,57 @@ class KaprogController extends Controller
 
     //fungsi mengirim ke tabel pengajuan jika siswa sudah mengirim surat
     public function updateSuratIzin(Request $request, $id): JsonResponse
-{
-    $tipe = $request->input('tipe');
+    {
+        Log::info('Update Surat Izin', [
+            'request' => $request->all(),
+            'usulan_id' => $id,
+            'tipe' => $request->input('tipe'),
+        ]);
 
-    if ($tipe === 'usulan') {
-        $usulan = UsulanIduka::with('user')->find($id);
-        if (!$usulan) {
-            return response()->json(['success' => false, 'message' => 'Data usulan tidak ditemukan.']);
-        }
+        $tipe = $request->input('tipe');
 
-        if ($usulan->surat_izin == 'belum') {
-            $usulan->update(['surat_izin' => 'sudah']);
+        if ($tipe === 'usulan') {
+            $usulan = UsulanIduka::with('user')->find($id);
+            if (!$usulan) {
+                return response()->json(['success' => false, 'message' => 'Data usulan tidak ditemukan.']);
+            }
 
-            CetakUsulan::create([
-                'siswa_id' => $usulan->user_id,
-                'iduka_id' => $usulan->iduka_id,
-                'status' => 'proses',
-            ]);
+            if ($usulan->surat_izin == 'belum') {
+                $usulan->update(['surat_izin' => 'sudah']);
 
-            return response()->json(['success' => true]);
-        }
-    }
+                CetakUsulan::create([
+                    'siswa_id' => $usulan->user_id,
+                    'iduka_id' => $usulan->iduka_id,
+                    'status' => 'proses',
+                ]);
 
-    if ($tipe === 'pkl') {
-        $usulan = PengajuanUsulan::with('user')->find($id);
-        if (!$usulan) {
-            return response()->json(['success' => false, 'message' => 'Data PKL tidak ditemukan.']);
-        }
-
-        if ($usulan->surat_izin == 'belum') {
-            $usulan->update(['surat_izin' => 'sudah']);
-
-            CetakUsulan::create([
-                'siswa_id' => $usulan->user_id,
-                'iduka_id' => $usulan->iduka_id,
-                'status' => 'proses',
-            ]);
-
-            return response()->json(['success' => true]);
+                return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Surat izin sudah diubah sebelumnya.']);
         }
     }
 
-    return response()->json(['success' => false, 'message' => 'Tidak ada perubahan.']);
-}
-    
+        if ($tipe === 'pkl') {
+            $usulan = PengajuanUsulan::with('user')->find($id);
+            if (!$usulan) {
+                return response()->json(['success' => false, 'message' => 'Data PKL tidak ditemukan.']);
+            }
 
+            if ($usulan->surat_izin == 'belum') {
+                $usulan->update(['surat_izin' => 'sudah']);
+
+                CetakUsulan::create([
+                    'siswa_id' => $usulan->user_id,
+                    'iduka_id' => $usulan->iduka_id,
+                    'status' => 'proses',
+                ]);
+
+                return response()->json(['success' => true]);
+            } else {
+                return response()->json(['success' => false, 'message' => 'Surat izin PKL sudah diperbarui sebelumnya.']);
+            }
+        }
+
+        return response()->json(['success' => false, 'message' => 'Tipe permintaan tidak valid.']);
+    }
 }

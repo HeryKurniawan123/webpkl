@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CetakUsulan;
 use App\Models\IdukaAtp;
 use App\Models\PengajuanPkl;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class PersuratanController extends Controller
 
     public function show($id)
     {
-        $pengajuan = PengajuanPkl::with([
+        $pengajuan = CetakUsulan::with([
             'dataPribadi.kelas',
             'iduka.user.pembimbingpkl', // Mengambil pembimbing lewat user di iduka
             'iduka.konkes',
@@ -40,14 +41,14 @@ class PersuratanController extends Controller
     }
 
     public function downloadPdf($id)
-{
-    $pengajuan = PengajuanPkl::with(['dataPribadi.kelas', 'iduka.user.pembimbingpkl', 'iduka.konkes', 'iduka.cps', 'iduka.atps'])
-        ->findOrFail($id);
+    {
+        $pengajuan = CetakUsulan::with(['dataPribadi.kelas', 'iduka.user.pembimbingpkl', 'iduka.konkes', 'iduka.cps', 'iduka.atps'])
+            ->findOrFail($id);
 
-    $pdf = Pdf::loadView('persuratan.suratPengajuan.surat-pengajuan', compact('pengajuan'));
+        $pdf = Pdf::loadView('persuratan.suratPengajuan.surat-pengajuan', compact('pengajuan'));
 
-    return $pdf->download('Surat_Pengajuan_' . $pengajuan->dataPribadi->nama . '.pdf');
-}
+        return $pdf->download('Surat_Pengajuan_' . $pengajuan->dataPribadi->nama . '.pdf');
+    }
 
     public function create()
     {
@@ -56,12 +57,20 @@ class PersuratanController extends Controller
 
     public function reviewPengajuan()
     {
-        // Ambil semua pengajuan tanpa filter status
-        $pengajuans = PengajuanPkl::with(['dataPribadi', 'dataPribadi.kelas', 'iduka'])
+        $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
             ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('iduka_id');
+
+        return view('persuratan.review', compact('pengajuanUsulans'));
+    }
+
+    public function detailUsulan($iduka_id)
+    {
+        $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
+            ->where('iduka_id', $iduka_id)
             ->get();
 
-
-        return view('persuratan.review', compact('pengajuans'));
+        return view('persuratan.detail', compact('pengajuanUsulans'));
     }
 }

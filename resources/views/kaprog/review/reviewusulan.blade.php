@@ -71,7 +71,7 @@
                                     <div class="">Kelas: {{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</div>
                                 </div>
                                 <div class="d-flex align-items-center">
-                                <a href="{{ route('kaprog.review.detail', ['id' => $usulan->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    <a href="{{ route('kaprog.review.detail', ['id' => $usulan->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
                                 </div>
                             </div>
                         </div>
@@ -90,20 +90,20 @@
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                        <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
-                                        <small class="text-muted">{{ $pengajuanGroup->count() }} siswa mengajukan ke sini</small>
+                                    <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
+                                    <small class="text-muted">{{ $pengajuanGroup->count() }} siswa mengajukan ke sini</small>
 
-                                    </div>
-                                    <div>
-                                        <a href="{{ route('kaprog.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    </div>
-                                    
                                 </div>
-                               
+                                <div>
+                                    <a href="{{ route('kaprog.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                </div>
+
                             </div>
+
+                        </div>
                         @endforeach
-                    @endif
-                    
+                        @endif
+
 
                     </div>
                 </div>
