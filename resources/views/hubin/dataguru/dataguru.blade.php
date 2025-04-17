@@ -103,113 +103,48 @@
                                                 <div class="modal-header">
                                                     <h1 class="modal-title fs-5" id="editGuruModalLabel{{ $g->id }}">Form Edit Data Guru</h1>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
-                                            <form action="{{ route('guru.update', $g->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Nama Guru</label>
-                                                        <input type="text" class="form-control" name="nama" value="{{ $g->nama }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">NIK</label>
-                                                        <input type="text" class="form-control" name="nik" value="{{ $g->nik }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">NIP/NUPTK</label>
-                                                        <input type="text" class="form-control" name="nip" value="{{ $g->nip }}">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Tempat Lahir</label>
-                                                        <input type="text" class="form-control" name="tempat_lahir" value="{{ $g->tempat_lahir }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Tanggal Lahir</label>
-                                                        <input type="date" class="form-control" name="tanggal_lahir" value="{{ $g->tanggal_lahir }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Jenis Kelamin</label>
-                                                        <select class="form-control" name="jenis_kelamin" required>
-                                                            <option value="Laki-laki" {{ $g->jenis_kelamin == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                                            <option value="Perempuan" {{ $g->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Alamat</label>
-                                                        <textarea class="form-control" name="alamat" rows="3" required>{{ $g->alamat }}</textarea>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Konsentrasi Keahlian</label>
-                                                        <select name="konke_id" class="form-control">
-                                                            @foreach ($konkes as $konke)
-                                                            <option value="{{ $konke->id }}" @if($konke->id == $g->konke_id) selected @endif>
-                                                                {{ $konke->name_konke }}
-                                                            </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Email</label>
-                                                        <input type="email" class="form-control" name="email" value="{{ $g->email }}" required>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">No HP</label>
-                                                        <input type="text" class="form-control" name="no_hp" value="{{ $g->no_hp }}" required>
-                                                    </div>
-                                                    <!-- <div class="mb-3">
-    <label class="form-label">Role</label>
-    <select class="form-control" name="role" required>
-        <option value="guru" {{ $g->role == 'guru' ? 'selected' : '' }}>Guru</option>
-        <option value="kaprog" {{ $g->role == 'kaprog' ? 'selected' : '' }}>Kaprog</option>
-        <option value="hubin" {{ $g->role == 'hubin' ? 'selected' : '' }}>Hubin</option>
-        <option value="psekolah" {{ $g->role == 'psekolah' ? 'selected' : '' }}>Pimpinan Sekolah</option>
-    </select>
-</div> -->
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Password (Opsional)</label>
-                                                        <input type="password" class="form-control" name="password">
-                                                    </div>
-
                                                 </div>
                                                 <form action="{{ route('guru.update', $g->id) }}" method="POST">
                                                     @csrf
                                                     @method('PUT')
                                                     <div class="modal-body">
                                                         <div class="mb-3">
-                                                            <label class="form-label">Nama Guru</label>
+                                                            <label class="form-label">Nama Guru*</label>
                                                             <input type="text" class="form-control" name="nama" value="{{ $g->nama }}" required>
+                                                            <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">NIK</label>
+                                                            <label class="form-label">NIK*</label>
                                                             <input type="text" class="form-control" name="nik" value="{{ $g->nik }}" required>
+                                                            <small class="form-text text-muted"><i>Isi NIK di sini, pastikan sesuai dengan data di KTP!</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">NIP/NUPTK</label>
+                                                            <label class="form-label">NIP/NUPTK ( opsional )</label>
                                                             <input type="text" class="form-control" name="nip" value="{{ $g->nip }}">
+                                                            <small class="form-text text-muted"><i>Isi NIP atau NUPTK di sini, pastikan sudah benar!</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Tempat Lahir</label>
+                                                            <label class="form-label">Tempat Lahir*</label>
                                                             <input type="text" class="form-control" name="tempat_lahir" value="{{ $g->tempat_lahir }}" required>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Tanggal Lahir</label>
+                                                            <label class="form-label">Tanggal Lahir*</label>
                                                             <input type="date" class="form-control" name="tanggal_lahir" value="{{ $g->tanggal_lahir }}" required>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Jenis Kelamin</label>
+                                                            <label class="form-label">Jenis Kelamin*</label>
                                                             <select class="form-control" name="jenis_kelamin" required>
                                                                 <option value="Laki-laki" {{ $g->jenis_kelamin == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                                                                 <option value="Perempuan" {{ $g->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                                                             </select>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Alamat</label>
+                                                            <label class="form-label">Alamat*</label>
                                                             <textarea class="form-control" name="alamat" rows="3" required>{{ $g->alamat }}</textarea>
+                                                            <small class="form-text text-muted"><i>Pastikan alamat ditulis dengan lengkap dan sesuai.</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Konsentrasi Keahlian</label>
+                                                            <label class="form-label">Konsentrasi Keahlian*</label>
                                                             <select name="konke_id" class="form-control">
                                                                 @foreach ($konkes as $konke)
                                                                 <option value="{{ $konke->id }}" @if($konke->id == $g->konke_id) selected @endif>
@@ -220,12 +155,14 @@
                                                         </div>
     
                                                         <div class="mb-3">
-                                                            <label class="form-label">Email</label>
+                                                            <label class="form-label">Email*</label>
                                                             <input type="email" class="form-control" name="email" value="{{ $g->email }}" required>
+                                                            <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">No HP</label>
+                                                            <label class="form-label">No HP*</label>
                                                             <input type="text" class="form-control" name="no_hp" value="{{ $g->no_hp }}" required>
+                                                            <small class="form-text text-muted"><i>Masukkan nomor hp aktif. Pastikan bisa diakses!</i></small>
                                                         </div>
                                                         <!-- <div class="mb-3">
                                                             <label class="form-label">Role</label>
@@ -239,6 +176,7 @@
                                                         <div class="mb-3">
                                                             <label class="form-label">Password (Opsional)</label>
                                                             <input type="password" class="form-control" name="password">
+                                                            <small class="form-text text-muted">Password minimal 8 karakter.</small>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -268,39 +206,43 @@
                                 @csrf
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <label class="form-label">Nama Guru</label>
+                                        <label class="form-label">Nama Guru*</label>
                                         <input type="text" class="form-control" name="nama" required>
+                                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">NIK</label>
+                                        <label class="form-label">NIK*</label>
                                         <input type="text" class="form-control" name="nik" required>
+                                        <small class="form-text text-muted"><i>Isi NIK di sini ya, pastikan sesuai dengan data di KTP!</i></small>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">NIP/NUPTK (opsional)</label>
                                         <input type="text" class="form-control" name="nip">
+                                        <small class="form-text text-muted"><i>Isi NIP atau NUPTK di sini, pastikan sudah benar!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Tempat Lahir</label>
+                                        <label class="form-label">Tempat Lahir*</label>
                                         <input type="text" class="form-control" name="tempat_lahir" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Tanggal Lahir</label>
+                                        <label class="form-label">Tanggal Lahir*</label>
                                         <input type="date" class="form-control" name="tanggal_lahir" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Jenis Kelamin</label>
+                                        <label class="form-label">Jenis Kelamin*</label>
                                         <select class="form-control" name="jenis_kelamin" required>
                                             <option value="Laki-laki">Laki-laki</option>
                                             <option value="Perempuan">Perempuan</option>
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Alamat</label>
+                                        <label class="form-label">Alamat*</label>
                                         <textarea class="form-control" name="alamat" rows="3" required></textarea>
+                                        <small class="form-text text-muted"><i>Pastikan alamat ditulis dengan lengkap dan sesuai.</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Konsentrasi Keahlian</label>
-                                        <select name="konke_id" class="form-control">
+                                        <label class="form-label">Konsentrasi Keahlian*</label>
+                                        <select name="konkes_id" class="form-control">
                                             <option value="">Pilih Konsentrasi Keahlian (Opsional)</option> <!-- Opsi default -->
                                             @foreach ($konkes as $konke)
                                             <option value="{{ $konke->id }}">{{ $konke->name_konke }}</option>
@@ -308,15 +250,17 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Email</label>
-                                        <input type="email" class="form-control" name="email" required>
+                                        <label class="form-label">Email*</label>
+                                        <input type="email" class="form-control" name="email" required> 
+                                        <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">No HP</label>
+                                        <label class="form-label">No HP*</label>
                                         <input type="text" class="form-control" name="no_hp" required>
+                                        <small class="form-text text-muted"><i>Masukkan nomor hp aktif. Pastikan bisa diakses!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Role</label>
+                                        <label class="form-label">Role*</label>
                                         <select class="form-control" name="role" required>
                                             <option value="guru">Guru</option>
                                             <option value="kaprog">Kaprog</option>
@@ -325,15 +269,16 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Password</label>
+                                        <label class="form-label">Password*</label>
                                         <input type="password" class="form-control" name="password" required>
+                                        <small class="form-text text-muted">Password minimal 8 karakter.</small>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                                     <button type="submit" class="btn btn-primary">Simpan Data</button>
                                 </div>
-                            </form>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -78,12 +78,15 @@ class PersuratanController extends Controller
     }
 
     public function prosesPengajuan($id)
-{
-    $pengajuan = CetakUsulan::findOrFail($id);
-    $pengajuan->status = 'sudah';
-    $pengajuan->save();
+    {
+        $pengajuan = CetakUsulan::findOrFail($id);
+        $pengajuan->status = 'sudah';
+        $pengajuan->save();
 
-    return response()->json(['success' => true, 'message' => 'Status berhasil diubah menjadi "sudah"']);
-}
+        return response()->json(['success' => true, 'message' => 'Status berhasil diubah menjadi "sudah"']);
+    }
 
+    public function suratPengantar(){
+        return view('surat_pengantar.surat_pengantarPDF');
+    }
 }

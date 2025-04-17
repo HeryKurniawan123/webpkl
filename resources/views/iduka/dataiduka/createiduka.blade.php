@@ -9,49 +9,58 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Nama Iduka</label>
-                        <input type="text" class="form-control" name="nama" placeholder="Masukkan Nama Iduka" required>
+                        <label class="form-label">Nama Institusi / Perusahaan*</label>
+                        <input type="text" class="form-control" name="nama" placeholder="Masukkan Nama Institusi / Perusahaan" required>
+                        <small class="form-text text-muted"><i>Nama Institusi ini akan tercatat di sistem, pastikan sudah benar!</i></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Nama Pimpinan</label>
-                        <input type="text" class="form-control" name="nama_pimpinan" placeholder="Masukkan Nama Pimpinan" required>
+                        <label class="form-label">Nama Lengkap Pimpinan*</label>
+                        <input type="text" class="form-control" name="nama_pimpinan" placeholder="Masukkan Nama Lengkap Pimpinan" required>
+                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!<i/></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">NIP/NIK Pimpinan</label>
+                        <label class="form-label">NIP/NIK Pimpinan*</label>
                         <input type="text" class="form-control" name="nip_pimpinan" placeholder="Masukkan Nip/Nik Pimpinan" required>
+                        <small class="form-text text-muted"><i>Isi NIP atau NUPTK di sini, pastikan sudah benar!</i></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Nomor Telepon Pimpinan</label>
+                        <label class="form-label">Nomor Telepon Pimpinan*</label>
                         <input type="text" class="form-control" name="no_hp_pimpinan" placeholder="Masukkan Nomor Telepon Pimpinan" required>
+                        <small class="form-text text-muted"><i>Masukkan nomor telepon aktif. Pastikan bisa diakses!</i></small>
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Jabatan</label>
+                        <label class="form-label">Jabatan*</label>
                         <input type="text" class="form-control" name="jabatan" placeholder="Masukkan Jabatan" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Alamat Lengkap</label>
+                        <label class="form-label">Alamat Lengkap*</label>
                         <input type="text" class="form-control" name="alamat" placeholder="Masukkan Alamat Lengkap" required>
+                        <small class="form-text text-muted"><i>Masukkan alamat lengkap lokasi PKL di sini.</i></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Kode Pos</label>
+                        <label class="form-label">Kode Pos*</label>
                         <input type="text" class="form-control" name="kode_pos" placeholder="Masukkan Kode Pos" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Nomor Telepon (Kantor / Perusahaan)</label>
+                        <label class="form-label">Nomor Telepon (Kantor / Perusahaan)*</label>
                         <input type="number" class="form-control" name="telepon" placeholder="Masukkan Nomor Telepon" required>
+                        <small class="form-text text-muted"<i>Masukkan nomor telepon aktif. Pastikan bisa diakses!</i></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">Email*</label>
                         <input type="email" class="form-control" name="email" placeholder="Masukkan Email" required>
+                        <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>                        
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
+                        <label class="form-label">Password*</label>
                         <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
+                        <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Bidang Industri</label>
+                        <label class="form-label">Bidang Industri*</label>
                         <input type="text" class="form-control" name="bidang_industri" placeholder="Masukkan Bidang Industri" required>
+                        <small class="form-text text-muted"><i>Silakan isi bidang industri yang Anda tekuni secara spesifik dan sesuai dengan sektor usaha.</i></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Kerjasama</label>
@@ -85,17 +94,18 @@
                         <input type="text" class="form-control" name="kerjasama_lainnya" placeholder="Masukkan Jenis Kerjasama">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Jumlah Kuota PKL</label>
+                        <label class="form-label">Jumlah Kuota PKL*</label>
                         <input type="number" class="form-control" name="kuota_pkl" placeholder="Masukkan Kuota PKL" required>
+                        <small class="form-text text-muted"><i>Masukkan jumlah kuota PKL yang tersedia untuk siswa.</i></small>
                     </div>
                     <div class="mb-3">
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="rekomendasi" name="rekomendasi" value="1">
-        <label class="form-check-label" for="rekomendasi">
-            Saya merekomendasikan IDUKA ini
-        </label>
-    </div>
-</div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rekomendasi" name="rekomendasi" value="1">
+                            <label class="form-check-label" for="rekomendasi">
+                                Saya merekomendasikan IDUKA ini
+                            </label>
+                        </div>
+                    </div>
 
 
                 </div>

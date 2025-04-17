@@ -120,8 +120,9 @@
                                                 @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="mb-3">
-                                                        <label class="form-label">Program Keahlian</label>
+                                                        <label class="form-label">Program Keahlian*</label>
                                                         <input type="text" class="form-control" name="name" value="{{ $item->name }}" required>
+                                                        <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar!</i></small>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -150,8 +151,9 @@
                                 @csrf
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <label class="form-label">Program Keahlian</label>
+                                        <label class="form-label">Program Keahlian*</label>
                                         <input type="text" class="form-control" name="name" placeholder="Masukkan Program Keahlian" required>
+                                        <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar!</i></small>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
