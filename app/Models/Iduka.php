@@ -32,40 +32,47 @@ class Iduka extends Model
     {
         return $this->hasOne(UsulanIduka::class, 'iduka_id');
     }
-    
+
 
     public function user()
-{
-    return $this->belongsTo(User::class, 'user_id', 'id');
-}
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
 
     public function pembimbing()
     {
         return $this->hasMany(Pembimbing::class, 'user_id');
     }
-    
+
+    // Model: Iduka.php
     public function atps()
     {
-        return $this->belongsToMany(Atp::class, 'iduka_atps')->withPivot('cp_id')->withTimestamps();
+        return $this->hasMany(IdukaAtp::class, 'iduka_id');
     }
+
     // Relasi ke Kompetensi Keahlian (Konkes)
     public function konkes()
     {
         return $this->belongsToMany(Konke::class, 'iduka_atps', 'iduka_id', 'konke_id');
     }
 
-     // Relasi ke CP (Capaian Pembelajaran)
-     public function cps()
-     {
-         return $this->belongsToMany(Cp::class, 'iduka_atps', 'iduka_id', 'cp_id');
-     }
- 
-     public function pengajuanUsulans()
-     {
-         return $this->hasMany(PengajuanUsulan::class, 'iduka_id');
-     }
-    
+    // Relasi ke CP (Capaian Pembelajaran)
+   // IdukaAtp.php
+
+public function cp()
+{
+    return $this->belongsTo(Cp::class);
+}
+
+public function atp()
+{
+    return $this->belongsTo(Atp::class);
+}
 
 
+    public function pengajuanUsulans()
+    {
+        return $this->hasMany(PengajuanUsulan::class, 'iduka_id');
+    }
 }

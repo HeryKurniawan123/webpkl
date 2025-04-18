@@ -17,12 +17,12 @@ class IdukaAtp extends Model
 
     public function cp()
     {
-        return $this->belongsTo(Cp::class);
+        return $this->belongsTo(Cp::class, 'cp_id');
     }
 
     public function atp()
     {
-        return $this->belongsTo(Atp::class);
+        return $this->belongsTo(Atp::class, 'atp_id');
     }
     public function konke()
     {

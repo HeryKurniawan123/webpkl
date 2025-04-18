@@ -376,6 +376,12 @@
                     </li>
                     @endif
                     @if(auth()->user()->role == 'kaprog')
+                    <li class="menu-item {{ Request::routeIs('data.iduka') ? 'active' : '' }}">
+                        <a href="/data-iduka" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Iduka</div>
+                        </a>
+                    </li>
                     <li class="menu-item {{ Request::routeIs('cp.index') ? 'active' : '' }}">
                         <a href="{{ route('cp.index')}}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>

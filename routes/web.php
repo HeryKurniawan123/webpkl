@@ -207,9 +207,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
 
     Route::put('/usulan-diterimaUsulan/{id}', [KaprogController::class, 'diterimaUsulan'])->name('usulan.diterimaUsulan');
-//cek
+    //cek
     Route::get('/review/pengajuan/kaprog/detail/{iduka_id}', [KaprogController::class, 'detailusulan'])->name('kaprog.review.detailUsulanPkl');
-    
+
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');
 
     Route::put('/usulan-ditolak/{id}', [KaprogController::class, 'ditolak'])->name('usulan.ditolak');
@@ -250,6 +250,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/cp/{id}', [CpAtpController::class, 'show'])->name('cp.show');
     Route::put('/cp/{id}', [CpAtpController::class, 'update'])->name('cp.update');
     Route::delete('/cp/{id}', [CpAtpController::class, 'destroy'])->name('cp.destroy');
+
+    Route::get('/kaprog/download-atp-iduka/{id}', [IdukaController::class, 'downloadAtpIduka'])
+    ->name('kaprog.download.atp');
 });
 
 
@@ -293,10 +296,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/review-pengajuan/iduka', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
     Route::get('/review/persuratan/pengajuan/detail/{iduka_id}', [PersuratanController::class, 'detailUsulan'])->name('persuratan.review.detailUsulanPkl');
-    
+
+    //dowload pdf atp dan cp iduka
     Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
     Route::get('/persuratan/download/{id}', [PersuratanController::class, 'downloadPdf'])
         ->name('persuratan.download');
+
+    // membuat data persuratan
     Route::get('/persuratan/data-pribadi', [PersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
@@ -305,7 +311,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/review/pengajuan/proses/{id}', [PersuratanController::class, 'prosesPengajuan'])->name('persuratan.pengajuan.proses');
 
 
-    
+
     Route::get('/iduka/{id}', [UsulanIdukaController::class, 'detailIdukaUsulan'])->name('detail.datausulan');
 });
 

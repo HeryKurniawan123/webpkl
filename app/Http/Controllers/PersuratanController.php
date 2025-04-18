@@ -76,6 +76,7 @@ class PersuratanController extends Controller
 
         return view('persuratan.detail', compact('pengajuanUsulans'));
     }
+    
 
     public function prosesPengajuan($id)
     {

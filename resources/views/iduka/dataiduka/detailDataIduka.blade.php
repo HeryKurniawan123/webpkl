@@ -10,7 +10,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Detail Iduka</title>
     <style>
-        html, body {
+        html,
+        body {
             max-width: 100%;
             overflow-x: hidden;
         }
@@ -40,7 +41,8 @@
                 white-space: nowrap;
             }
 
-            td, th {
+            td,
+            th {
                 padding: 8px;
             }
 
@@ -58,7 +60,8 @@
         /* Responsif untuk tabel */
         @media (max-width: 768px) {
             .table-responsive {
-                overflow-x: hidden; /* Hapus scroll ke samping */
+                overflow-x: hidden;
+                /* Hapus scroll ke samping */
             }
 
             .table {
@@ -89,13 +92,14 @@
                 display: block;
                 margin-top: 5px;
                 color: #333;
-                white-space: normal; /* Biar teks bisa turun ke bawah */
-                word-wrap: break-word; /* Biar nggak kepotong */
-                overflow-wrap: break-word; /* Alternatif buat jaga-jaga */
+                white-space: normal;
+                /* Biar teks bisa turun ke bawah */
+                word-wrap: break-word;
+                /* Biar nggak kepotong */
+                overflow-wrap: break-word;
+                /* Alternatif buat jaga-jaga */
             }
         }
-
-
     </style>
 </head>
 
@@ -109,13 +113,17 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Detail Data Institusi / Perusahaan</h5>
-                                
+
                                 <!-- Tombol Titik Tiga -->
                                 <div class="d-flex gap-2 ms-auto">
                                     <a href="{{ route('data.iduka') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
+                                    <a href="{{ route('kaprog.download.atp', $iduka->id) }}" class="btn btn-danger">
+                                        Download PDF ATP
+                                    </a>
+
                                     <div class="dropdown">
                                         <button class="btn btn-light p-1 rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical"></i>
@@ -137,7 +145,7 @@
                             </div>
                         </div>
                     </div>
-                
+
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -174,7 +182,7 @@
                                         <td><i class="bi bi-telephone"></i> Nomor Telepon</td>
                                         <td>: {{ $iduka->telepon }}</td>
                                     </tr>
-    
+
                                     <tr>
                                         <td><i class="bi bi-envelope"></i> Email</td>
                                         <td>: {{ $iduka->email }}</td>
@@ -195,7 +203,7 @@
                                         <td><i class="bi bi-people"></i> Jumlah Kuota PKL</td>
                                         <td>: {{ $iduka->kuota_pkl }}</td>
                                     </tr>
-    
+
                                 </table>
                             </div>
                             <div class="col-lg-12 d-flex justify-content-between mt-4">
@@ -213,7 +221,7 @@
                                     </button>
                                 </form>
                                 @endif
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -222,26 +230,25 @@
     </div>
 
     <script>
-    document.querySelectorAll('.ajukan-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); // Mencegah penghapusan langsung
+        document.querySelectorAll('.ajukan-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Mencegah penghapusan langsung
 
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Ingin mengajukan Institusi ini?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Ajukan!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.closest('.ajukan-form').submit(); 
-                }
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Ingin mengajukan Institusi ini?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Ajukan!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.closest('.ajukan-form').submit();
+                    }
+                });
             });
         });
-    });
-
     </script>
 
     @include('iduka.dataiduka.editiduka')
