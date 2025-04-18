@@ -224,19 +224,21 @@
                             <label class="form-label">Nama Siswa</label>
                             <input type="text" class="form-control" name="name" placeholder="Masukkan Nama Siswa"
                                 required>
+                            <small class="form-text text-muted">Nama lengkap ini akan tercatat di sistem, pastikan sudah benar ya!</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">NIS</label>
                             <input type="text" class="form-control" name="nip" placeholder="Masukkan NISN"
                                 required>
+                            <small class="form-text text-muted">Isi NIS di sini, pastikan sudah benar ya!</small>
                         </div>
+                        @foreach ($siswa as $index => $s)
                         <div class="mb-3">
                             <label class="form-label">Kelas</label>
                             <input type="text" class="form-control" value="{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}" readonly>
                             <input type="hidden" name="kelas_id" value="{{ $s->kelas_id }}">
                         </div>
-                        
-                        
+                        @endforeach                        
                         <div class="mb-3">
                             <label class="form-label">Konsentrasi Keahlian</label>
                             <select class="form-control" name="konke_id" required>
@@ -250,11 +252,13 @@
                             <label class="form-label">Email</label>
                             <input type="text" class="form-control" name="email" placeholder="Masukkan Email"
                                 required>
+                            <small class="form-text text-muted">Masukkan email aktif. Pastikan bisa diakses ya!</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
                             <input type="password" class="form-control" name="password" placeholder="Masukkan Password"
                                 required>
+                            <small class="form-text text-muted">Password minimal 8 karakter.</small>
                         </div>
                     </div>
                     <div class="modal-footer">

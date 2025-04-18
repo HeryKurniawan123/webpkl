@@ -12,62 +12,71 @@
 
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Iduka</label>
+                        <label for="nama" class="form-label">Nama Institusi / Perusahaan*</label>
                         <input type="text" class="form-control" name="nama" value="{{ $iduka->nama }}" required>
+                        <small class="form-text text-muted">Nama Institusi ini akan tercatat di sistem, pastikan sudah benar ya!</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="nama_pimpinan" class="form-label">Nama Pimpinan</label>
+                        <label for="nama_pimpinan" class="form-label">Nama Lengkap Pimpinan*</label>
                         <input type="text" class="form-control" name="nama_pimpinan" value="{{ $iduka->nama_pimpinan }}" required>
+                        <small class="form-text text-muted">Nama lengkap ini akan tercatat di sistem, pastikan sudah benar ya!</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="nip_pimpinan" class="form-label">NIP/NIK Pimpinan</label>
+                        <label for="nip_pimpinan" class="form-label">NIP/NIK Pimpinan*</label>
                         <input type="text" class="form-control" name="nip_pimpinan" value="{{ $iduka->nip_pimpinan }}" required>
+                        <small class="form-text text-muted">Isi NIP atau NUPTK di sini, pastikan sudah benar ya!</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="no_hp_pimpinan" class="form-label">Nomor Telepon Pimpinan</label>
+                        <label for="no_hp_pimpinan" class="form-label">Nomor Telepon Pimpinan*</label>
                         <input type="text" class="form-control" name="no_hp_pimpinan" value="{{ $iduka->no_hp_pimpinan ?? '-' }}" required>
+                        <small class="form-text text-muted">Masukkan nomor telepon aktif. Pastikan bisa diakses ya!</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="jabatan" class="form-label">Jabatan</label>
+                        <label for="jabatan" class="form-label">Jabatan*</label>
                         <input type="text" class="form-control" name="jabatan" value="{{ $iduka->jabatan }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="alamat" class="form-label">Alamat Lengkap</label>
+                        <label for="alamat" class="form-label">Alamat Lengkap*</label>
                         <input type="text" class="form-control" name="alamat" value="{{ $iduka->alamat }}" required>
+                        <small class="form-text text-muted">Masukkan alamat lengkap lokasi PKL di sini ya.</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="kode_pos" class="form-label">Kode Pos</label>
+                        <label for="kode_pos" class="form-label">Kode Pos*</label>
                         <input type="text" class="form-control" name="kode_pos" value="{{ $iduka->kode_pos }}" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="telepon" class="form-label">Nomor Telepon</label>
+                        <label for="telepon" class="form-label">Nomor Telepon*</label>
                         <input type="text" class="form-control" name="telepon" value="{{ $iduka->telepon }}" required>
+                        <small class="form-text text-muted">Masukkan nomor telepon aktif. Pastikan bisa diakses ya!</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">Email*</label>
                         <input type="email" class="form-control" name="email" value="{{ $iduka->email }}" required>
+                        <small class="form-text text-muted">Masukkan email aktif. Pastikan bisa diakses ya!</small>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password (Biarkan kosong jika tidak ingin diubah)</label>
                         <input type="password" class="form-control" name="password">
+                        <small class="form-text text-muted">Password minimal 8 karakter.</small>
                     </div>
 
                     <div class="mb-3">
-                        <label for="bidang_industri" class="form-label">Bidang Industri</label>
+                        <label for="bidang_industri" class="form-label">Bidang Industri*</label>
                         <input type="text" class="form-control" name="bidang_industri" value="{{ $iduka->bidang_industri }}" required>
+                        <small class="form-text text-muted">Silakan isi bidang industri yang Anda tekuni secara spesifik dan sesuai dengan sektor usaha.</small>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Kerjasama</label>
+                        <label class="form-label">Kerjasama*</label>
                         <div class="row">
                             <div class="col-md-6">
                                 @php
@@ -98,8 +107,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="jumlah_kuota_pkl" class="form-label">Jumlah Kuota PKL</label>
+                            <label for="jumlah_kuota_pkl" class="form-label">Jumlah Kuota PKL*</label>
                             <input type="number" class="form-control" name="kuota_pkl" value="{{ $iduka->kuota_pkl }}" required>
+                            <small class="form-text text-muted">Masukkan jumlah kuota PKL yang tersedia untuk siswa.</small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Rekomendasi</label>

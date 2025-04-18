@@ -176,19 +176,17 @@
                                                                 @method('PUT')
                                                                 <div class="modal-body">
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">Nama Siswa</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="name" value="{{ $s->name }}"
-                                                                            required>
+                                                                        <label class="form-label">Nama Lengkap Siswa*</label>
+                                                                        <input type="text" class="form-control" name="name" value="{{ $s->name }}" required>
+                                                                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!</i></small>
                                                                     </div>
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">NIS</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="nip" value="{{ $s->nip }}"
-                                                                            required>
+                                                                        <label class="form-label">NIS*</label>
+                                                                        <input type="text" class="form-control" name="nip" value="{{ $s->nip }}" required>
+                                                                        <small class="form-text text-muted"><i>Isi NIS di sini, pastikan sudah benar!</i></small>
                                                                     </div>
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">Kelas</label>
+                                                                        <label class="form-label">Kelas*</label>
                                                                         <select class="form-control" name="kelas_id"
                                                                             required>
                                                                             <option value="">Pilih Kelas</option>
@@ -200,10 +198,11 @@
                                                                                 </option>
                                                                             @endforeach
                                                                         </select>
+                                                                        <small class="form-text text-muted"><i>Pilih kelas yang sesuai!</i></small>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label"> Konsentrasi
-                                                                            Keahlian</label>
+                                                                            Keahlian*</label>
                                                                         <select class="form-control" name="konke_id"
                                                                             required>
                                                                             <option value="">Pilih Konsentrasi
@@ -217,16 +216,16 @@
                                                                         </select>
                                                                     </div>
                                                                     <div class="mb-3">
-                                                                        <label class="form-label">Email</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="email" value="{{ $s->email }}"
-                                                                            required>
+                                                                        <label class="form-label">Email*</label>
+                                                                        <input type="text" class="form-control" name="email" value="{{ $s->email }}" required>
+                                                                        <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Password Baru
                                                                             (Opsional)</label>
                                                                         <input type="password" class="form-control"
                                                                             name="password">
+                                                                        <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
@@ -263,16 +262,19 @@
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Nama Siswa</label>
-                            <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="Masukkan Nama Siswa" required>
+                            <label class="form-label">Nama Lengkap Siswa*</label>
+                            <input type="text" class="form-control" name="name" value="{{ old('name') }}" placeholder="Masukkan Nama Lengkap Siswa" required>                                                                        
+                            <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!</i></small>
+                           
                             @error('name')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                 
                         <div class="mb-3">
-                            <label class="form-label">NIS</label>
+                            <label class="form-label">NIS*</label>
                             <input type="text" class="form-control" name="nip" value="{{ old('nip') }}" placeholder="Masukkan NISN" required>
+                            <small class="form-text text-muted"><i>Isi NIS di sini, pastikan sudah benar!</i></small>
                             @error('nip')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -288,13 +290,14 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <small class="form-text text-muted"><i>Pilih kelas yang sesuai!</i></small>
                             @error('kelas_id')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                 
                         <div class="mb-3">
-                            <label class="form-label">Konsentrasi Keahlian</label>
+                            <label class="form-label">Konsentrasi Keahlian*</label>
                             <select class="form-control" name="konke_id" required>
                                 <option value="">Pilih Konsentrasi Keahlian</option>
                                 @foreach ($konke as $k)
@@ -309,16 +312,18 @@
                         </div>
                 
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                            <label class="form-label">Email*</label>
                             <input type="email" class="form-control" name="email" value="{{ old('email') }}" placeholder="Masukkan Email" required>
+                            <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                             @error('email')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                 
                         <div class="mb-3">
-                            <label class="form-label">Password</label>
+                            <label class="form-label">Password*</label>
                             <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
+                            <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                             @error('password')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror

@@ -187,7 +187,7 @@
 
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Kelas</label>
+                            <label class="form-label">Kelas*</label>
                             <select class="form-control" name="kelas" required>
                                 <option value="">Pilih Kelas</option>
                                 <option value="X">X</option>
@@ -196,7 +196,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Konsentrasi Keahlian</label>
+                            <label class="form-label">Konsentrasi Keahlian*</label>
                             <select class="form-control" name="konke_id" required>
                                 <option value="">Pilih Konsentrasi Keahlian</option>
                                 @foreach($konke as $k)
@@ -205,8 +205,9 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="nama_kelas" class="form-label">Nama Kelas</label>
+                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
                             <input type="text" class="form-control" id="name_kelas" name="name_kelas" placeholder="Masukkan Nama Kelas" required>
+                            <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar ya!</i></small>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -230,7 +231,7 @@
                     @method('PUT')
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Kelas</label>
+                            <label class="form-label">Kelas*</label>
                             <select class="form-control" name="kelas" required>
                                 <option value="">Pilih Kelas</option>
                                 <option value="X" {{ isset($item) && $item->kelas == 'X' ? 'selected' : '' }}>X</option>
@@ -241,7 +242,7 @@
 
 
                         <div class="mb-3">
-                            <label class="form-label">Konsentrasi Keahlian</label>
+                            <label class="form-label">Konsentrasi Keahlian*</label>
                             <select class="form-control" name="konke_id" required>
                                 <option value="">Pilih Konsentrasi Keahlian</option>
                                 @foreach($konke as $k)
@@ -254,8 +255,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="nama_kelas" class="form-label">Nama Kelas</label>
+                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
                             <input type="text" class="form-control" id="name_kelas" name="name_kelas" value="{{ $item->name_kelas ?? '-'}}" placeholder="Masukkan Nama Kelas" required>
+                            <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar ya!</i></small>
                         </div>
                     </div>
                     <div class="modal-footer">

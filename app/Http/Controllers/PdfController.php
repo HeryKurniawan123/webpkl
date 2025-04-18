@@ -45,4 +45,16 @@ class PdfController extends Controller
         
         return $pdf->download('siswa_usulan_iduka.pdf');
     }
+
+    public function suratPengantarPDF(){
+         $data = [
+            'nama' => 'Vayana Liora',
+            'tanggal' => now()->format('d-m-Y'),
+        ];
+
+        $pdf = Pdf::loadView('surat_pengantar.surat_pengantarPDF', $data);
+
+        return $pdf->download('surat-pengantar.pdf');
+
+    }
 }

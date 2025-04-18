@@ -38,6 +38,10 @@ Route::get('/home', function () {
     return redirect('/logout');
 });
 
+Route::get('/landing-page', function() {
+    return view('landing.landing');
+});
+
 // Siswa biodata
 Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/dashboard/siswa', [HakAksesController::class, 'siswa'])->name('siswa.dashboard');
@@ -139,6 +143,12 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
     Route::get('/persuratan/data_pribadi', [DataPribadiPersuratanController::class, 'create'])->name('persuratan.data_pribadi.create');
     Route::post('/persuratan/data_pribadi', [DataPribadiPersuratanController::class, 'store'])->name('persuratan.data_pribadi.store');
+
+    //SURAT PENGANTAR
+    Route::get('/surat-pengantar-pdf', [PersuratanController::class, 'suratPengantar'])->name('surat.pengantar');
+    Route::get('/surat-pengantar-PDF', [PdfController::class, 'suratPengantarPDF'])->name('surat.pengantarPDF');
+   
+
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {

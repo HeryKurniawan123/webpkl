@@ -100,47 +100,54 @@
                                                     @method('PUT')
                                                     <div class="modal-body">
                                                         <div class="mb-3">
-                                                            <label class="form-label">Nama GTK</label>
+                                                            <label class="form-label">Nama Lengkap*</label>
                                                             <input type="text" class="form-control" name="nama" value="{{ $item->nama }}" required>
+                                                            <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">NIK</label>
+                                                            <label class="form-label">NIK*</label>
                                                             <input type="text" class="form-control" name="nik" value="{{ $item->nik }}" required>
+                                                            <small class="form-text text-muted"><i>Isi NIK di sini ya, pastikan sesuai dengan data di KTP</i></small>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">NIP/NUPTK (opsional)</label>
                                                             <input type="text" class="form-control" name="nip_nuptk" value="{{ $item->nip_nuptk }}">
+                                                            <small class="form-text text-muted"><i>Isi NIP atau NUPTK di sini, pastikan sudah benar!</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Tempat Lahir</label>
+                                                            <label class="form-label">Tempat Lahir*</label>
                                                             <input type="text" class="form-control" name="tempat_lahir" value="{{ $item->tempat_lahir }}" required>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Tanggal Lahir</label>
+                                                            <label class="form-label">Tanggal Lahir*</label>
                                                             <input type="date" class="form-control" name="tanggal_lahir" value="{{ $item->tanggal_lahir }}" required>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Jenis Kelamin</label>
+                                                            <label class="form-label">Jenis Kelamin*</label>
                                                             <select class="form-control" name="jenis_kelamin" required>
                                                                 <option value="Laki-laki" {{ $item->jenis_kelamin == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
                                                                 <option value="Perempuan" {{ $item->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                                                             </select>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Alamat</label>
+                                                            <label class="form-label">Alamat*</label>
                                                             <textarea class="form-control" name="alamat" rows="3" required>{{ $item->alamat }}</textarea>
+                                                            <small class="form-text text-muted"><i>Pastikan alamat ditulis dengan lengkap dan sesuai.</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">Email</label>
+                                                            <label class="form-label">Email*</label>
                                                             <input type="email" class="form-control" name="email" value="{{ $item->email }}" required>
+                                                            <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                                                         </div>
                                                         <div class="mb-3">
-                                                            <label class="form-label">No HP</label>
+                                                            <label class="form-label">No HP*</label>
                                                             <input type="text" class="form-control" name="no_hp" value="{{ $item->no_hp }}" required>
+                                                            <small class="form-text text-muted"><i>Masukkan nomor hp aktif. Pastikan bisa diakses!</i></small>
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label">Password (Kosongkan jika tidak ingin diubah)</label>
                                                             <input type="password" class="form-control" name="password" placeholder="Masukkan Password Baru">
+                                                            <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -170,27 +177,30 @@
                                 @csrf
                                 <div class="modal-body">
                                     <div class="mb-3">
-                                        <label class="form-label">Nama GTK</label>
-                                        <input type="text" class="form-control" name="nama" placeholder="Masukkan Nama GTK" required>
+                                        <label class="form-label">Nama Lengkap*</label>
+                                        <input type="text" class="form-control" name="nama" placeholder="Masukkan Nama Lengkap" required>
+                                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">NIK</label>
+                                        <label class="form-label">NIK*</label>
                                         <input type="text" class="form-control" name="nik" placeholder="Masukkan NIK" required>
+                                        <small class="form-text text-muted"><i>Isi NIK di sini ya, pastikan sesuai dengan data di KTP!</i></small>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">NIP/NUPTK (opsional)</label>
                                         <input type="text" class="form-control" name="nip_nuptk" placeholder="Masukkan NIP/NUPTK">
+                                        <small class="form-text text-muted"><i>Isi NIP atau NUPTK di sini, pastikan sudah benar!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Tempat Lahir</label>
+                                        <label class="form-label">Tempat Lahir*</label>
                                         <input type="text" class="form-control" name="tempat_lahir" placeholder="Masukkan Tempat Lahir" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Tanggal Lahir</label>
+                                        <label class="form-label">Tanggal Lahir*</label>
                                         <input type="date" class="form-control" name="tanggal_lahir" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Jenis Kelamin</label>
+                                        <label class="form-label">Jenis Kelamin*</label>
                                         <select class="form-control" name="jenis_kelamin" required>
                                             <option value="">Pilih Jenis Kelamin</option>
                                             <option value="Laki-laki">Laki-laki</option>
@@ -198,20 +208,24 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Alamat</label>
+                                        <label class="form-label">Alamat*</label>
                                         <textarea class="form-control" name="alamat" rows="3" placeholder="Masukkan Alamat" required></textarea>
+                                        <small class="form-text text-muted"><i>Pastikan alamat ditulis dengan lengkap dan sesuai.</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Email</label>
+                                        <label class="form-label">Email*</label>
                                         <input type="email" class="form-control" name="email" placeholder="Masukkan Email" required>
+                                        <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">No HP</label>
+                                        <label class="form-label">No HP*</label>
                                         <input type="text" class="form-control" name="no_hp" placeholder="Masukkan No HP" required>
+                                        <small class="form-text text-muted"><i>Masukkan nomor hp aktif. Pastikan bisa diakses!</i></small>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Password</label>
+                                        <label class="form-label">Password*</label>
                                         <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
+                                        <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                                     </div>
                                 </div>
                                 <div class="modal-footer">

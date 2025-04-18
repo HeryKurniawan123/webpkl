@@ -62,7 +62,6 @@
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="mb-0">Data Institusi / Perusahaan</h5>
                             
-                                <!-- Desktop Layout: Filter -> Search -> Tambah -->
                                 <div class="d-none d-md-flex gap-2 align-items-center">
                                     <select class="form-select form-select-sm w-auto" id="filterIduka">
                                         <option value="all">Semua</option>

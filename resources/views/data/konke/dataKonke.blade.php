@@ -143,24 +143,26 @@
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Nama Konsentrasi Keahlian</label>
+                        <label class="form-label">Nama Konsentrasi Keahlian*</label>
                         <input type="text" class="form-control" name="name_konke" required>
+                        <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar!</i></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Program Keahlian</label>
+                        <label class="form-label">Program Keahlian*</label>
                         <select class="form-control" name="proker_id" required>
                             <option value="">Pilih Program Keahlian</option>
                             @foreach($proker as $p)
                                 <option value="{{ $p->id }}">{{ $p->name }}</option>
                             @endforeach
                         </select>
+                        <small class="form-text text-muted"><i>Pilih Program Keahlian yang sesuai!</i></small>                        
                     </div>                            
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
-            </form>
+            </form>
         </div>
     </div>
 </div>
@@ -178,17 +180,19 @@
                 @method('PUT')
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Nama Konsentrasi Keahlian</label>
+                        <label class="form-label">Nama Konsentrasi Keahlian*</label>
                         <input type="text" class="form-control" name="name_konke" value="{{ $k->name_konke }}" required>
+                        <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar!</i></small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Program Keahlian</label>
+                        <label class="form-label">Program Keahlian*</label>
                         <select class="form-control" name="proker_id" required>
                             <option value="">Pilih Program Keahlian</option>
                             @foreach($proker as $p)
-                                <option value="{{ $p->id }}" {{ $k->proker_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
+                            <option value="{{ $p->id }}" {{ $k->proker_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
                             @endforeach
                         </select>
+                        <small class="form-text text-muted"><i>Pilih Program Keahlian yang sesuai!</i></small>                        
                     </div>                            
                 </div>
                 <div class="modal-footer">
