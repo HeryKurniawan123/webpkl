@@ -216,7 +216,12 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     //pengajuan iduka
     Route::get('/kaprog/review-pengajuan', [KaprogController::class, 'reviewPengajuan'])->name('kaprog.review.pengajuan');
     Route::get('/kaprog/review-pengajuan/{iduka_id}/detail', [KaprogController::class, 'detailUsulanPkl'])->name('kaprog.review.reviewdetail');
-    Route::post('/review/pengajuan/proses/{id}', [KaprogController::class, 'prosesPengajuan'])->name('kaprog.pengajuan.proses');
+
+    
+ Route::post('/review/pengajuan/{id}', [KaprogController::class, 'prosesPengajuan'])->name('kaprog.pengajuan.prosesPengajuan');
+
+ 
+
 
 
 

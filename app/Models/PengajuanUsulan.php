@@ -15,10 +15,11 @@ class PengajuanUsulan extends Model
         'status',
         'surat_izin'
     ];
-
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
+    
 
     public function dataPribadi()
     {

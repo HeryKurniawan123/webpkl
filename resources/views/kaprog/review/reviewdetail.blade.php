@@ -1,60 +1,97 @@
 @extends('layout.main')
 
 @section('content')
-<div class="container-fluid">
-    <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="row">
-                <div class="card mb-3">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Detail Pengajuan PKL ke: {{ $iduka->nama }}</h5>
-                        <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">← Kembali</a>
-                    </div>
-                </div>
-
-                <div class="col-md-12 mt-3">
-                    @if($pengajuans->isEmpty())
-                    <p class="text-center">Tidak ada pengajuan yang tersedia untuk IDUKA ini.</p>
-                    @else
-                    @foreach($pengajuans as $pengajuan)
-                    <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="mb-0" style="font-size: 18px">
-                                    <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
-                                </div>
-                                <div>
-                                    Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
-                                </div>
-                                <div>
-                                    Status: {{ ucfirst($pengajuan->status) }}
-                                </div>
-                            </div>
-                            <div>
-                                {{-- Tombol untuk melihat detail --}}
-                                <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-info">
-                                    Lihat Detail
-                                </a>
-                                <button class="btn btn-primary btn-proses"
-                                    data-id="{{ $pengajuan->id }}"
-                                    data-iduka_id="{{ $iduka->id }}">
-                                    Kirim
-                                </button>
-
-
-                            </div>
+    <div class="container-fluid">
+        <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+                <div class="row">
+                    <div class="card mb-3">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Detail Pengajuan PKL ke: {{ $iduka->nama }}</h5>
+                            <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">← Kembali</a>
                         </div>
                     </div>
-                    @endforeach
-                    @endif
+
+                    <div class="col-md-12 mt-3">
+                        @if ($pengajuans->isEmpty())
+                            <p class="text-center">Tidak ada pengajuan yang tersedia untuk IDUKA ini.</p>
+                        @else
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            @if (session('error'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ session('error') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            @if (session('info'))
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    {{ session('info') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                            @endif
+
+                            @foreach ($pengajuans as $pengajuan)
+                                <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="mb-0" style="font-size: 18px">
+                                                <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
+                                            </div>
+                                            <div>
+                                                Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }}
+                                                {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
+                                            </div>
+                                            <div>
+                                                Status: {{ ucfirst($pengajuan->status) }}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            {{-- Tombol untuk melihat detail --}}
+                                            <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}"
+                                                class="btn btn-info">
+                                                Lihat Detail
+                                            </a>
+                                            @if ($pengajuan->status === 'diterima') 
+                                                <button class="btn btn-success" disabled>Sudah Dikirim</button>
+                                            @else
+                                                <form
+                                                    action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}"
+                                                    method="POST" style="display: inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
+                                                    <button type="submit" class="btn btn-primary"
+                                                        onclick="return confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?')">
+                                                        Kirim
+                                                    </button>
+                                                </form>
+                                            @endif
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
-@push('scripts')
+{{-- @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -94,4 +131,4 @@
     });
 </script>
 
-@endpush
+@endpush --}}

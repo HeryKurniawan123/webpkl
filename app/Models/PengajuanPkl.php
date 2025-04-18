@@ -8,8 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class PengajuanPkl extends Model
 {
     use HasFactory;
-    protected $table = 'pengajuan_pkl';
-    protected $fillable = ['siswa_id', 'iduka_id', 'status'];
+// App\Models\PengajuanPkl.php
+
+protected $table = 'pengajuan_pkl';
+protected $fillable = ['siswa_id', 'iduka_id', 'status'];
+
+
+public function siswa()
+{
+    return $this->belongsTo(User::class, 'siswa_id');
+}
 
     public function dataPribadi()
     {
@@ -26,5 +34,10 @@ class PengajuanPkl extends Model
     public function pembimbingpkl()
 {
     return $this->belongsTo(Pembimbing::class, 'user_id', 'user_id');
+}
+
+public function pengajuanUsulan()
+{
+    return $this->belongsTo(PengajuanUsulan::class, 'user_id', 'id');
 }
 }

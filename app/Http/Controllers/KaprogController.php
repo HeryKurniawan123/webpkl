@@ -58,10 +58,10 @@ class KaprogController extends Controller
     public function show($id)
     {
         $usulan = Iduka::with(['PengajuanUsulan.siswa.dataPribadi.kelas'])->findOrFail($id);
-    
+
         return view('kaprog.review.detailusulan', compact('usulan'));
     }
-    
+
 
     // public function showUsulan($id)
     // {
@@ -70,6 +70,75 @@ class KaprogController extends Controller
 
     //     return view('kaprog.review.detailusulanpkl', compact('usulan'));
     // }
+
+    // public function prosesPengajuan($id, Request $request): JsonResponse
+    // {
+
+
+
+    //     $pengajuan = PengajuanUsulan::findOrFail($id);
+
+    //     if ($pengajuan->status === 'dikirim') {
+    //         return response()->json(['message' => 'Pengajuan sudah dikirim sebelumnya.'], 409);
+    //     }
+
+    //     $pengajuan->update([
+    //         'status' => 'dikirim',
+    //     ]);
+
+    //     // Cek apakah data sudah ada agar tidak dobel
+    //     $existing = PengajuanPkl::where('siswa_id', $pengajuan->user_id)
+    //         ->where('iduka_id', $request->iduka_id)
+    //         ->first();
+
+    // 
+    //         PengajuanPkl::create([
+    //             'siswa_id' => $pengajuan->user_id,
+    //             'iduka_id' => $request->iduka_id,
+    //             'status' => 'proses',
+    //         ]);
+   
+
+
+    //     return response()->json(['message' => 'Pengajuan berhasil dikirim ke IDUKA.']);
+    // }
+
+    public function prosesPengajuan($id, Request $request)
+{
+    $request->validate([
+        'iduka_id' => 'required|exists:idukas,id',
+    ]);
+
+    // Ambil pengajuan berdasarkan ID
+    $pengajuan = PengajuanUsulan::findOrFail($id);
+
+    // Pastikan user_id ini belum pernah diterima ke iduka yang sama
+    $sudahAda = PengajuanPkl::where('siswa_id', $pengajuan->user_id)
+        ->where('iduka_id', $request->iduka_id)
+        ->exists();
+
+    if ($sudahAda) {
+        return redirect()->back()->with('info', 'Data sudah dikirim sebelumnya.');
+    }
+
+    // Simpan ke pengajuan_pkl sesuai user_id dari pengajuan ini
+    PengajuanPkl::create([
+        'siswa_id' => $pengajuan->user_id, // <-- ini sudah benar!
+        'iduka_id' => $request->iduka_id,
+        'status' => 'diterima',
+    ]);
+
+    // (opsional) update status pengajuan_usulan-nya
+    // $pengajuan->update([
+    //     'status' => 'diterima',
+    // ]);
+
+    return redirect()->back()->with('success', 'Pengajuan berhasil dikirim.');
+}
+
+    
+    
+
 
     public function diterima($id, Request $request)
     {
@@ -287,38 +356,16 @@ class KaprogController extends Controller
         return view('kaprog.review.reviewdetail', compact('iduka', 'pengajuans'));
     }
 
-    public function prosesPengajuan($id, Request $request): JsonResponse
-{
-    $pengajuan = PengajuanUsulan::findOrFail($id);
 
-    if ($pengajuan->status === 'dikirim') {
-        return response()->json(['message' => 'Pengajuan sudah dikirim sebelumnya.'], 409);
+
+
+    public function detailusulan($iduka_id)
+    {
+        $pengajuanUsulans = PengajuanUsulan::with(['dataPribadi.kelas'])
+            ->where('iduka_id', $iduka_id)
+            ->where('status', 'proses')
+            ->get();
+
+        return view('kaprog.review.detailusulan', compact('pengajuanUsulans'));
     }
-
-    $pengajuan->update([
-        'status' => 'dikirim',
-    ]);
-
-    // Insert ke tabel pengajuan_pkl (jika diperlukan)
-    PengajuanPkl::create([
-        'siswa_id' => $pengajuan->user_id,
-        'iduka_id' => $request->iduka_id,
-        'status' => 'proses',
-    ]);
-
-    return response()->json(['message' => 'Pengajuan berhasil dikirim ke IDUKA.']);
-}
-
-
-public function detailusulan($iduka_id)
-{
-    $pengajuanUsulans = PengajuanUsulan::with(['dataPribadi.kelas'])
-        ->where('iduka_id', $iduka_id)
-        ->where('status', 'proses')
-        ->get();
-
-    return view('kaprog.review.detailusulan', compact('pengajuanUsulans'));
-}
-
-    
 }
