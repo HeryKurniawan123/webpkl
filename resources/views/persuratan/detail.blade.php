@@ -40,7 +40,7 @@
                                 @if($pengajuan->status === 'sudah')
                                 <button class="btn btn-success" disabled>Sudah</button>
                                 @else
-                                <button class="btn btn-primary btn-proses" data-id="{{ $pengajuan->id }}">Proses</button>
+                                <button class="btn btn-primary btn-proses" data-id="{{ $pengajuan->id }}">Kirim</button>
                                 @endif
 
                             </div>
@@ -58,6 +58,7 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const buttons = document.querySelectorAll('.btn-proses');
@@ -65,24 +66,43 @@
         buttons.forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.dataset.id;
+                const buttonRef = this;
 
-                if (confirm('Yakin ingin memproses pengajuan ini?')) {
-                    axios.post(`/review/pengajuan/proses/${id}`)
-                        .then(response => {
-                            alert(response.data.message);
+                Swal.fire({
+                    title: 'Apakah surat pengantar sudah di print?',
+                    text: "Data akan dikirim ke Kaprog!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Sudah!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.post(`/review/pengajuan/proses/${id}`)
+                            .then(response => {
+                                Swal.fire({
+                                    title: 'Data berhasil dikirim!',
+                                    text: response.data.message,
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
 
-                            // Ubah teks tombol jadi "Sudah"
-                            this.textContent = 'Sudah';
-
-                            // Optional: nonaktifkan tombol agar tidak bisa diklik lagi
-                            this.disabled = true;
-                            this.classList.remove('btn-primary');
-                            this.classList.add('btn-success');
-                        })
-                        .catch(error => {
-                            alert('Terjadi kesalahan saat memproses.');
-                        });
-                }
+                                // Ubah tombol
+                                buttonRef.textContent = 'Sudah';
+                                buttonRef.disabled = true;
+                                buttonRef.classList.remove('btn-primary');
+                                buttonRef.classList.add('btn-success');
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Terjadi kesalahan saat memproses.',
+                                    icon: 'error'
+                                });
+                            });
+                    }
+                });
             });
         });
     });

@@ -84,8 +84,9 @@ class PersuratanController extends Controller
         $pengajuan->status = 'sudah';
         $pengajuan->save();
 
-        return response()->json(['success' => true, 'message' => 'Status berhasil diubah menjadi "sudah"']);
+        return response()->json(['success' => true, 'message' => 'Data berhasil di kirim ke Kaprog.']);
     }
+
     //mengubah semua status siswa jadi sudah
     public function kirimSemua($iduka_id)
     {
@@ -98,7 +99,7 @@ class PersuratanController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Semua status pengajuan berhasil diubah menjadi "sudah".'
+            'message' => 'Data Berhasil di kirim ke Kaprog.'
         ]);
     }
 
@@ -106,4 +107,15 @@ class PersuratanController extends Controller
     {
         return view('surat_pengantar.surat_pengantarPDF');
     }
+
+    public function historykirim()
+    {
+        $dataDikirim = CetakUsulan::with('iduka', 'siswa')
+            ->where('status', 'sudah')
+            ->orderByDesc('created_at') // Urut berdasarkan tanggal terbaru
+            ->get();
+    
+        return view('persuratan.historykirim', compact('dataDikirim'));
+    }
+    
 }

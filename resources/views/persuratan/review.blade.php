@@ -67,14 +67,11 @@
                             <h5 class="mb-0">Review Pengajuan Institusi / Perusahaan</h5>
 
                             <div class="d-flex gap-2">
-                                <a href="{{ route('review.pengajuanditerima') }}" class="btn btn-success btn-status btn-sm">
+                                <a href="{{route('persuratan.review.historyDikirim')}}" class="btn btn-success btn-status btn-sm">
                                     <i class="bi bi-check-circle"></i>
-                                    <span class="d-none d-md-inline">History Diterima</span>
+                                    <span class="d-none d-md-inline">History Dikirim</span>
                                 </a>
-                                <a href="{{ route('review.pengajuanditolak') }}" class="btn btn-danger btn-status btn-sm">
-                                    <i class="bi bi-x-circle"></i>
-                                    <span class="d-none d-md-inline">History Ditolak</span>
-                                </a>
+                               
                             </div>
                         </div>
                     </div>
@@ -95,7 +92,13 @@
                                 </div>
                                 <div>
                                     <a href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    <button class="btn btn-primary btn-kirim" data-iduka="{{ $iduka_id }}">Kirim</button>
+                                    <button
+                                        class="btn btn-primary btn-kirim"
+                                        data-iduka="{{ $iduka_id }}"
+                                        data-nama="{{ htmlspecialchars($pengajuanGroup->first()->iduka->nama, ENT_QUOTES) }}">
+                                        Kirim
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
@@ -119,25 +122,47 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const kirimButtons = document.querySelectorAll('.btn-kirim');
-
+        
         kirimButtons.forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function() {
                 const idukaId = this.dataset.iduka;
+                const idukaNama = this.dataset.nama || 'IDUKA';
 
-                if (confirm('Yakin ingin mengubah semua status siswa pada IDUKA ini menjadi "sudah"?')) {
-                    axios.post(`/review/pengajuan/kirim-semua/${idukaId}`)
-                        .then(response => {
-                            alert(response.data.message);
-                            location.reload(); // reload agar status diperbarui di tampilan
-                        })
-                        .catch(error => {
-                            console.error(error);
-                            alert('Terjadi kesalahan saat mengirim data.');
-                        });
-                }
+                Swal.fire({
+                    title: `Kirim Semua Siswa untuk ${idukaNama}?`,
+                    text: 'Data akan dikirim ke Kaprog',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Kirim!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.post(`/review/pengajuan/kirim-semua/${idukaId}`)
+                            .then(response => {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: response.data.message,
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    location.reload(); // reload untuk update tampilan
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Terjadi kesalahan saat mengirim data.',
+                                    icon: 'error'
+                                });
+                            });
+                    }
+                });
             });
         });
     });

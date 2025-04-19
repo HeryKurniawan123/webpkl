@@ -31,6 +31,10 @@ class CetakUsulan extends Model
 {
     return $this->belongsTo(Pembimbing::class, 'user_id', 'user_id');
 }
+public function siswa()
+{
+    return $this->belongsTo(DataPribadi::class);
+}
     
 
 }

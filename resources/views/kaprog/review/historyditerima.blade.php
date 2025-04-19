@@ -189,6 +189,13 @@
                         console.log('Response:', data);
                         if (data.success) {
                             form.outerHTML = '<span class="badge bg-success">Sudah</span>';
+                            Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Surat izin berhasil diperbarui, dan dikirim ke Persuratan',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
                         } else {
                             Swal.fire({
                                 icon: 'error',

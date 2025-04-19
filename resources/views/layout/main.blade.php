@@ -252,7 +252,7 @@
                         </a>
                     </li>
                     @endif
-                    @if(in_array(auth()->user()->role, ['kaprog', 'iduka']))
+                    @if(in_array(auth()->user()->role, ['iduka']))
                     <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
                         <a href="{{ route('pengajuan.review') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>

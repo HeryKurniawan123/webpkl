@@ -294,6 +294,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pengajuan', [PersuratanController::class, 'index'])->name('pengajuan');
     Route::get('/review-pengajuan/iduka', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
     Route::get('/review/persuratan/pengajuan/detail/{iduka_id}', [PersuratanController::class, 'detailUsulan'])->name('persuratan.review.detailUsulanPkl');
+    Route::get('/review/pengajuan/history-dikirim', [PersuratanController::class, 'historykirim'])->name('persuratan.review.historyDikirim');
+
 
     //dowload pdf atp dan cp iduka
     Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
