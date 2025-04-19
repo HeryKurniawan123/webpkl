@@ -95,6 +95,7 @@
                                 </div>
                                 <div>
                                     <a href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    <button class="btn btn-primary btn-kirim" data-iduka="{{ $iduka_id }}">Kirim</button>
                                 </div>
                             </div>
                         </div>
@@ -115,3 +116,30 @@
 </html>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const kirimButtons = document.querySelectorAll('.btn-kirim');
+
+        kirimButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const idukaId = this.dataset.iduka;
+
+                if (confirm('Yakin ingin mengubah semua status siswa pada IDUKA ini menjadi "sudah"?')) {
+                    axios.post(`/review/pengajuan/kirim-semua/${idukaId}`)
+                        .then(response => {
+                            alert(response.data.message);
+                            location.reload(); // reload agar status diperbarui di tampilan
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            alert('Terjadi kesalahan saat mengirim data.');
+                        });
+                }
+            });
+        });
+    });
+</script>
+@endpush

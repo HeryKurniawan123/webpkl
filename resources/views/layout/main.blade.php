@@ -102,133 +102,65 @@
                         <span class="menu-header-text">Data</span>
                     </li>
 
-                        <!-- Layouts -->
-                        @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
-                        {{-- <li
-                            class="menu-item {{ Request::routeIs('admin.tkr', 'admin.tkj', 'admin.pemantauan', 'admin.dpib', 'admin.akl', 'admin.mp', 'admin.sk') ? 'active open' : '' }}">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-user"></i>
-                                <div data-i18n="Layouts">Siswa</div>
-                            </a>
+                    <!-- Layouts -->
+                    @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
+                    <li
+                        class="menu-item {{ Request::routeIs('admin.tkr', 'admin.tkj', 'admin.pemantauan', 'admin.dpib', 'admin.akl', 'admin.mp', 'admin.sk') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-user"></i>
+                            <div data-i18n="Layouts">Siswa</div>
+                        </a>
 
-                            <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                                    <a href="{{ route('data.siswa') }}" class="menu-link">
-                                        <div data-i18n="Without menu">Data Siswa</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                                    <a href="{{ route('kelas.index') }}" class="menu-link">
-                                        <div data-i18n="Without menu">TKR</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="{{ route('kelas.index') }}" class="menu-link">
-                                        <div data-i18n="Without menu">TKJ</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="{{ route('kelas.index') }}" class="menu-link">
-                                        <div data-i18n="Without menu">RPL</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="{{ route('kelas.index') }}" class="menu-link">
-                                        <div data-i18n="Without menu">DPIB</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="{{ route('kelas.index') }}" class="menu-link">
-                                        <div data-i18n="Without menu">AKL</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="{{ route('kelas.index') }}" class="menu-link">
-                                        <div data-i18n="Without menu">MP</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                    <a href="{{ route('kelas.index') }}" class="menu-link">
-                        
-                                        <div data-i18n="Without menu">SK</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> --}}
-                        <li
-                            class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-user"></i>
-                                <div data-i18n="Layouts">GTK</div>
-                            </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
+                                <a href="{{ route('data.siswa') }}" class="menu-link">
+                                    <div data-i18n="Without menu">Data Siswa</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
+                                <a href="{{ route('kelas.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">TKR</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                <a href="{{ route('kelas.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">TKJ</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                <a href="{{ route('kelas.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">RPL</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                <a href="{{ route('kelas.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">DPIB</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                <a href="{{ route('kelas.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">AKL</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                <a href="{{ route('kelas.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">MP</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                                <a href="{{ route('kelas.index') }}" class="menu-link">
 
-                            <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('guru.index') ? 'active' : '' }}">
-                                    <a href="{{route('guru.index')}}" class="menu-link">
-                                        <div data-i18n="Without menu">Guru</div>
-                                    </a>
-                                </li>
-                                <li class="menu-item {{ Request::routeIs('tk.index') ? 'active' : '' }}">
-                                    <a href="{{route('tk.index')}}" class="menu-link">
-                                        <div data-i18n="Without menu">Tenaga Kependidikan</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('data.iduka') ? 'active' : '' }}">
-                            <a href="/data-iduka" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data Iduka</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                            <a href="{{ route('kelas.index')}}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-user"></i>
-                                <div data-i18n="Basic">Data Kelas</div>
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->user()->role == 'iduka')
-                        <li class="menu-item {{ Request::routeIs('iduka.pribadi') ? 'active' : '' }}">
-                            <a href="{{ route('iduka.pribadi')}}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data Pribadi Iduka</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('data.institusi') ? 'active' : '' }}">
-                            <a href="{{ route('data.institusi')}}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data Institusi / Perusahaan</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('tp.iduka') ? 'active' : '' }}">
-                            <a href="{{ route('tp.iduka')}}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">TP</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                            <a href="{{ route('iduka.pembimbing.create')}}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Pembimbing</div>
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->user()->role == 'siswa')
-                        <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">
-                            <a href="{{ route('siswa.data_pribadi.create') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data Pribadi Siswa</div>
-                            </a>
-                        </li>
-                        @endif
-                        @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
-                        <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                            <a href="{{ route('data.siswa') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data siswa</div>
-                            </a>
-                        </li>
+                                    <div data-i18n="Without menu">SK</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li
+                        class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-user"></i>
+                            <div data-i18n="Layouts">GTK</div>
+                        </a>
 
                         <ul class="menu-sub">
                             <li class="menu-item {{ Request::routeIs('guru.index') ? 'active' : '' }}">
@@ -304,53 +236,6 @@
                             <div data-i18n="Basic">Konsentrasi Keahlian</div>
                         </a>
                     </li>
-
-                        @endif
-                        @if(auth()->user()->role == 'persuratan')
-                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
-                            <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Data Pribadi Persuratan</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('pengajuan') ? 'active' : '' }}">
-                            <a href="{{ route('persuratan.review') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Review Pengajuan</div>
-                            </a>
-                        </li>
-                        @endif
-                        @if(in_array(auth()->user()->role, ['kaprog', 'iduka']))
-                        <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
-                            <a href="{{ route('pengajuan.review') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Review Pengajuan</div>
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->user()->role == 'kaprog')
-                        <li class="menu-item {{ Request::routeIs('cp.index') ? 'active' : '' }}">
-                            <a href="{{ route('cp.index')}}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Tujuan Pembelajaran</div>
-                            </a>
-                        </li>
-                        <li class="menu-item {{ Request::routeIs('review.usulan') ? 'active' : '' }}">
-                            <a href="{{ route('review.usulan') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Review Usulan</div>
-                            </a>
-                        </li>
-                        @endif
-                        {{-- <li class="menu-header small text-uppercase">
-                            <span class="menu-header-text">Pusat Control</span>
-                        </li>
-                        <li
-                            class="menu-item {{ Request::routeIs('users.siswa.index', 'users.gtk.index') ? 'active open' : '' }}">
-                            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                                <i class="menu-icon tf-icons bx bx-layout"></i>
-                                <div data-i18n="Layouts">Tambah User</div>
-                            </a>
 
                     @endif
                     @if(auth()->user()->role == 'persuratan')
@@ -438,13 +323,6 @@
                         </a>
                     </li>
 
-                        <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                            <a href="" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Pust Bantuan</div>
-                            </a>
-                        </li>
-                  
 
                 </ul>
             </aside>

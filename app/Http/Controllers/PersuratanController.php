@@ -21,7 +21,7 @@ class PersuratanController extends Controller
             'dataPribadi.kelas',
             'iduka.user.pembimbingpkl', // Mengambil pembimbing lewat user di iduka
             'iduka.konkes',
-            'iduka.cps',
+            'iduka.cp',
             'iduka.atps'
         ])->findOrFail($id);
 
@@ -42,7 +42,7 @@ class PersuratanController extends Controller
 
     public function downloadPdf($id)
     {
-        $pengajuan = CetakUsulan::with(['dataPribadi.kelas', 'iduka.user.pembimbingpkl', 'iduka.konkes', 'iduka.cps', 'iduka.atps'])
+        $pengajuan = CetakUsulan::with(['dataPribadi.kelas', 'iduka.user.pembimbingpkl', 'iduka.konkes', 'iduka.cp', 'iduka.atps'])
             ->findOrFail($id);
 
         $pdf = Pdf::loadView('persuratan.suratPengajuan.surat-pengajuan', compact('pengajuan'));
@@ -58,14 +58,14 @@ class PersuratanController extends Controller
     public function reviewPengajuan()
     {
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
-            ->where('status', 'proses') 
+            ->where('status', 'proses')
             ->orderBy('created_at', 'desc')
             ->get()
-            ->groupBy('iduka_id'); 
-    
+            ->groupBy('iduka_id');
+
         return view('persuratan.review', compact('pengajuanUsulans'));
     }
-    
+
 
     public function detailUsulan($iduka_id)
     {
@@ -76,7 +76,7 @@ class PersuratanController extends Controller
 
         return view('persuratan.detail', compact('pengajuanUsulans'));
     }
-    
+
 
     public function prosesPengajuan($id)
     {
@@ -86,8 +86,24 @@ class PersuratanController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Status berhasil diubah menjadi "sudah"']);
     }
+    //mengubah semua status siswa jadi sudah
+    public function kirimSemua($iduka_id)
+    {
+        $pengajuanList = CetakUsulan::where('iduka_id', $iduka_id)->where('status', 'proses')->get();
 
-    public function suratPengantar(){
+        foreach ($pengajuanList as $pengajuan) {
+            $pengajuan->status = 'sudah';
+            $pengajuan->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Semua status pengajuan berhasil diubah menjadi "sudah".'
+        ]);
+    }
+
+    public function suratPengantar()
+    {
         return view('surat_pengantar.surat_pengantarPDF');
     }
 }
