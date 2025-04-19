@@ -104,37 +104,35 @@ class KaprogController extends Controller
     // }
 
     public function prosesPengajuan($id, Request $request)
-{
-    $request->validate([
-        'iduka_id' => 'required|exists:idukas,id',
-    ]);
-
-    // Ambil pengajuan berdasarkan ID
-    $pengajuan = PengajuanUsulan::findOrFail($id);
-
-    // Pastikan user_id ini belum pernah diterima ke iduka yang sama
-    $sudahAda = PengajuanPkl::where('siswa_id', $pengajuan->user_id)
-        ->where('iduka_id', $request->iduka_id)
-        ->exists();
-
-    if ($sudahAda) {
-        return redirect()->back()->with('info', 'Data sudah dikirim sebelumnya.');
+    {
+        // Validasi iduka_id
+        $request->validate([
+            'iduka_id' => 'required|exists:idukas,id',
+        ]);
+    
+        // Ambil data cetak_usulan berdasarkan ID
+        $cetak = CetakUsulan::findOrFail($id);
+    
+        // Cek duplikat: pastikan siswa + iduka belum pernah di-push ke pengajuan_pkl
+        $duplikat = PengajuanPkl::where('siswa_id', $cetak->data_pribadi_id)
+            ->where('iduka_id', $request->iduka_id)
+            ->exists();
+    
+        if ($duplikat) {
+            return redirect()->back()->with('info', 'Data sudah dikirim sebelumnya.');
+        }
+    
+        // Simpan ke tabel pengajuan_pkl
+        PengajuanPkl::create([
+           'siswa_id' => $cetak->siswa_id, // jika kolom ini yang benar
+            'iduka_id'   => $request->iduka_id,
+            'status'     => 'proses',
+            // Jika tabel pengajuan_pkl punya kolom lain seperti created_at/updated_at, akan di-handle otomatis
+        ]);
+    
+        return redirect()->back()->with('success', 'Pengajuan berhasil dikirim.');
     }
-
-    // Simpan ke pengajuan_pkl sesuai user_id dari pengajuan ini
-    PengajuanPkl::create([
-        'siswa_id' => $pengajuan->user_id, // <-- ini sudah benar!
-        'iduka_id' => $request->iduka_id,
-        'status' => 'diterima',
-    ]);
-
-    // (opsional) update status pengajuan_usulan-nya
-    // $pengajuan->update([
-    //     'status' => 'diterima',
-    // ]);
-
-    return redirect()->back()->with('success', 'Pengajuan berhasil dikirim.');
-}
+    
 
     
     

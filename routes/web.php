@@ -38,7 +38,7 @@ Route::get('/home', function () {
     return redirect('/logout');
 });
 
-Route::get('/landing-page', function() {
+Route::get('/landing-page', function () {
     return view('landing.landing');
 });
 
@@ -147,8 +147,6 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     //SURAT PENGANTAR
     Route::get('/surat-pengantar-pdf', [PersuratanController::class, 'suratPengantar'])->name('surat.pengantar');
     Route::get('/surat-pengantar-PDF', [PdfController::class, 'suratPengantarPDF'])->name('surat.pengantarPDF');
-   
-
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
@@ -227,10 +225,10 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/kaprog/review-pengajuan', [KaprogController::class, 'reviewPengajuan'])->name('kaprog.review.pengajuan');
     Route::get('/kaprog/review-pengajuan/{iduka_id}/detail', [KaprogController::class, 'detailUsulanPkl'])->name('kaprog.review.reviewdetail');
 
-    
- Route::post('/review/pengajuan/{id}', [KaprogController::class, 'prosesPengajuan'])->name('kaprog.pengajuan.prosesPengajuan');
 
- 
+    Route::post('/review/pengajuan/{id}', [KaprogController::class, 'prosesPengajuan'])->name('kaprog.pengajuan.prosesPengajuan');
+
+
 
 
 
@@ -252,7 +250,7 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::delete('/cp/{id}', [CpAtpController::class, 'destroy'])->name('cp.destroy');
 
     Route::get('/kaprog/download-atp-iduka/{id}', [IdukaController::class, 'downloadAtpIduka'])
-    ->name('kaprog.download.atp');
+        ->name('kaprog.download.atp');
 });
 
 
