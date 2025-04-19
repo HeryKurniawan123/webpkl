@@ -79,10 +79,10 @@
                                                 <form action="{{ route('kependik.destroy', $item->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="delete-btn btn btn-danger btn-sm">
+                                                    <button type="button" class="delete-btn btn btn-danger btn-sm">
                                                         <i class="bi bi-trash3"></i>
                                                     </button>
-                                                </form>
+                                                </form>                                                
                                            </div>
                                         </td>
                                     </tr>
@@ -243,27 +243,45 @@
     </div>
 </div>
 @include('tk.detailTK')
-<script>
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); 
 
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Data ini tidak bisa dikembalikan!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Hapus!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.closest('.delete-form').submit(); 
-                }
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Mencegah submit langsung
+
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Data ini tidak bisa dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.closest('form').submit(); // Submit form setelah konfirmasi
+                    }
+                });
             });
         });
-    });
 
+        @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: @json(session('success')),
+            timer: 2000,
+            showConfirmButton: false
+        });
+        @endif
+    });
+</script>
+
+<script>
     document.addEventListener("DOMContentLoaded", function() {
         const form = document.querySelector("#tambahTkModal form");
 

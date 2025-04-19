@@ -168,6 +168,7 @@
                                                         @method('DELETE')
                                                         <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
                                                     </form>
+                                                    
                                                 </li>
                                             </ul>
                                         </div>
@@ -183,27 +184,45 @@
         </div>
     </div>
 
-    <script>
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); // Mencegah penghapusan langsung
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Data ini tidak bisa dikembalikan!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Hapus!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.closest('.delete-form').submit(); // Form terdekat dikirim
-                }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // SweetAlert Konfirmasi Hapus
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Data ini tidak bisa dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.closest('form').submit();
+                    }
+                });
             });
         });
+
+        // Notifikasi SweetAlert setelah aksi sukses (hapus, tambah, dll)
+        @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: @json(session('success')),
+            timer: 2000,
+            showConfirmButton: false
+        });
+        @endif
     });
-    </script>
+</script>
+
 
     @include('iduka.dataiduka.createiduka')
 </body>
@@ -241,5 +260,7 @@
 
     
 </script>
+
+
 
 @endsection

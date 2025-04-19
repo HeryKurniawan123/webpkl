@@ -149,13 +149,13 @@
                                                             <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
-                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus siswa ini?')">
+                                                            <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" class="form-hapus-siswa">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
                                                                     <i class="bi bi-trash3"></i>
                                                                 </button>
-                                                            </form>
+                                                            </form>                                                            
                                                         </div>
                                                     </td>                                                                                                        
                                                 </tr>
@@ -230,7 +230,7 @@
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                                                                    <button type="button" class="btn btn-primary btn-sm">Simpan</button>
+                                                                    <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -433,4 +433,45 @@
 
 
 </script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const forms = document.querySelectorAll('.form-hapus-siswa');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // hentikan submit default
+                Swal.fire({
+                    title: 'Yakin ingin menghapus?',
+                    text: "Data siswa yang dihapus tidak bisa dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // submit form secara manual
+                    }
+                });
+            });
+        });
+    });
+    
+</script>
+@if (session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        timer: 2000,
+        showConfirmButton: false
+    });
+</script>
+@endif
+
+
 @endsection

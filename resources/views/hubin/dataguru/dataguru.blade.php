@@ -87,10 +87,10 @@
                                                 <form action="{{ route('guru.destroy', $g->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="delete-btn btn btn-danger btn-sm">
+                                                    <button type="button" class="delete-btn btn btn-danger btn-sm">
                                                         <i class="bi bi-trash3"></i>
                                                     </button>
-                                                </form>                                                
+                                                </form>
                                             </div>
 
                                         </td>
@@ -288,27 +288,48 @@
     </div>
 </div>
 
-<script>
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); // Mencegah penghapusan langsung
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Data ini tidak bisa dikembalikan!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Hapus!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.closest('.delete-form').submit(); // Form terdekat dikirim
-                }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Menangani klik tombol hapus
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();  // Mencegah form submit langsung
+
+                // Menampilkan konfirmasi SweetAlert
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Data ini tidak bisa dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.closest('form').submit();  // Kirim form jika user mengonfirmasi
+                    }
+                });
             });
         });
-    });
 
+        // Menampilkan SweetAlert setelah penghapusan atau aksi lainnya
+        @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: @json(session('success')),
+            timer: 2000,
+            showConfirmButton: false
+        });
+        @endif
+    });
+</script>
+
+
+<script>
     document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.querySelector("input[name='search']");
     const tableRows = document.querySelectorAll("tbody tr");
