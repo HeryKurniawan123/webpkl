@@ -186,6 +186,7 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- alert hapus --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

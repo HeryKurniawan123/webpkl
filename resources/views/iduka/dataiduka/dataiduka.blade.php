@@ -163,6 +163,8 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
+                                                    {{-- alert hapus --}}
+
                                                     <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
                                                         @csrf
                                                         @method('DELETE')
@@ -183,8 +185,10 @@
             </div>
         </div>
     </div>
+{{-- alert hapus --}}
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- alert hapus --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

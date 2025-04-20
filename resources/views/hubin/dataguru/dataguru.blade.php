@@ -84,6 +84,8 @@
                                                     data-bs-target="#editGuruModal{{ $g->id }}">
                                                     <i class="bi bi-pen"></i>
                                                 </button>
+                                                {{-- alert hapus --}}
+
                                                 <form action="{{ route('guru.destroy', $g->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
@@ -287,8 +289,9 @@
         </div>
     </div>
 </div>
-
+{{-- alert hapus --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- alert hapus --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
