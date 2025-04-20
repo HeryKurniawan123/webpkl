@@ -155,7 +155,9 @@
         <tr>
             <td style="padding: 0px; width: 10%; vertical-align: top;">Lampiran</td>
             <td style="padding: 2px; width: 60%;">: -</td>
-            <td style="padding: 2px; width: 40%;">Yth. Pimpinan {{ $pengajuan->iduka->nama ?? '-' }}</td>
+            @if ($pengajuans->isNotEmpty())
+            <td style="padding: 2px; width: 40%;">Yth. Pimpinan {{ $pengajuans->first()->iduka->nama ?? '-' }} </td>
+            @endif
         </tr>
         <tr>
             <td style="padding: 0px; width: 10%; vertical-align: top;">Perihal</td>

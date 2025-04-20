@@ -220,7 +220,7 @@
                                 <a href="{{ route('persuratan.download', $pengajuan->id) }}" class="btn btn-primary">
                                     Download PDF
                                 </a>
-                                <a href="{{ route('surat.pengantar.pdf', $pengajuan->id) }}" class="btn btn-success btn-sm">Unduh Surat Pengantar</a>
+                               
 
                             </div>
                         </div>

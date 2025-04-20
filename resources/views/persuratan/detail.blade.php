@@ -8,59 +8,59 @@
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detail Pengajuan PKL</h5>
-                       
+
                         @if($pengajuanUsulans->isNotEmpty())
-                            <a href="{{ route('semua.surat.pdf', $iduka_id) }}" class="btn btn-success">
-                                Unduh Surat Pengantar
-                            </a>
-                        </div>
-                        @endif
-                        
+                        <a href="{{ route('semua.surat.pdf', $iduka_id) }}" class="btn btn-success">
+                            Unduh Surat Pengantar
+                        </a>
                     </div>
-                </div>
-                <div class="col-md-12 mt-3">
-                    {{-- Jika tidak ada pengajuan untuk IDUKA --}}
-                    @if($pengajuanUsulans->isEmpty())
-                    <p class="text-center">Tidak ada pengajuan yang tersedia untuk IDUKA ini.</p>
-                    @else
-                    {{-- Looping Daftar Siswa --}}
-                    @foreach($pengajuanUsulans as $pengajuan)
-                    <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="mb-0" style="font-size: 18px">
-                                    <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
-                                </div>
-                                <div>
-                                    Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
-                                </div>
-
-                                <div>
-                                    Status: {{ ucfirst($pengajuan->status) }}
-                                </div>
-                            </div>
-
-                            <div>
-                                {{-- Tombol untuk melihat detail --}}
-                                <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-info">
-                                    Lihat Detail
-                                </a>
-                                @if($pengajuan->status === 'sudah')
-                                <button class="btn btn-success" disabled>Sudah</button>
-                                @else
-                                <button class="btn btn-primary btn-proses" data-id="{{ $pengajuan->id }}">Kirim</button>
-                                @endif
-
-                            </div>
-
-                        </div>
-                    </div>
-                    @endforeach
                     @endif
+
                 </div>
+            </div>
+            <div class="col-md-12 mt-3">
+                {{-- Jika tidak ada pengajuan untuk IDUKA --}}
+                @if($pengajuanUsulans->isEmpty())
+                <p class="text-center">Tidak ada pengajuan yang tersedia untuk IDUKA ini.</p>
+                @else
+                {{-- Looping Daftar Siswa --}}
+                @foreach($pengajuanUsulans as $pengajuan)
+                <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="mb-0" style="font-size: 18px">
+                                <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
+                            </div>
+                            <div>
+                                Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
+                            </div>
+
+                            <div>
+                                Status: {{ ucfirst($pengajuan->status) }}
+                            </div>
+                        </div>
+
+                        <div>
+                            {{-- Tombol untuk melihat detail --}}
+                            <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-info">
+                                Lihat Detail
+                            </a>
+                            @if($pengajuan->status === 'sudah')
+                            <button class="btn btn-success" disabled>Sudah</button>
+                            @else
+                            <button class="btn btn-primary btn-proses" data-id="{{ $pengajuan->id }}">Kirim</button>
+                            @endif
+
+                        </div>
+
+                    </div>
+                </div>
+                @endforeach
+                @endif
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 
