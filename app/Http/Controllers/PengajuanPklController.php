@@ -118,13 +118,28 @@ public function reviewPengajuanDitolak()
     return view('pengajuan.historyditolak', compact('pengajuans'));
 }
 
-    public function terima($id)
+public function terima($id)
 {
     $pengajuan = PengajuanPkl::findOrFail($id);
-    $pengajuan->update(['status' => 'diterima']);
 
-    return redirect()->route('review.pengajuan')->with('success', 'Pengajuan PKL telah diterima.');
+    // Pastikan hanya memproses jika belum diterima sebelumnya
+    if ($pengajuan->status !== 'diterima') {
+        // Kurangi kuota IDUKA
+        $iduka = Iduka::findOrFail($pengajuan->iduka_id);
+
+        if ($iduka->kuota_pkl > 0) {
+            $iduka->decrement('kuota_pkl');
+            $pengajuan->update(['status' => 'diterima']);
+
+            return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
+        } else {
+            return redirect()->route('pengajuan.review')->with('error', 'Kuota IDUKA sudah habis.');
+        }
+    }
+
+    return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
 }
+
 
 public function tolak($id)
 {

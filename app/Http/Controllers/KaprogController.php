@@ -366,4 +366,40 @@ class KaprogController extends Controller
 
         return view('kaprog.review.detailusulan', compact('pengajuanUsulans'));
     }
+    public function kirimSemua($iduka_id)
+    {
+        // Ambil semua pengajuan untuk IDUKA tersebut yang statusnya sudah 'sudah'
+        $cetak = CetakUsulan::where('iduka_id', $iduka_id)
+            ->where('status', 'sudah')
+            ->get();
+    
+        $jumlahTerkirim = 0;
+    
+        foreach ($cetak as $pengajuan) {
+            // Cek apakah sudah ada di pengajuan_pkl
+            $sudahAda = PengajuanPkl::where('siswa_id', $pengajuan->user_id)
+                ->where('iduka_id', $iduka_id)
+                ->exists();
+    
+            if (!$sudahAda) {
+                // Update status (kalau perlu)
+                $pengajuan->update(['status' => 'sudah']); // <- mungkin redundant kalau statusnya memang sudah 'sudah'
+    
+                // Tambahkan ke tabel pengajuan_pkl
+                PengajuanPkl::create([
+                    'siswa_id' => $pengajuan->siswa_id,
+                    'iduka_id' => $iduka_id,
+                    'status' => 'diterima',
+                ]);
+    
+                $jumlahTerkirim++;
+            }
+        }
+    
+        if ($jumlahTerkirim > 0) {
+            return redirect()->back()->with('success', "$jumlahTerkirim pengajuan berhasil dikirim.");
+        } else {
+            return redirect()->back()->with('info', "Semua pengajuan sudah pernah dikirim.");
+        }
+    }
 }

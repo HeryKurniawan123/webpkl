@@ -127,7 +127,7 @@
 <body>
 
     <div class="kop-surat">
-        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/jawabarat.png'))) }}" alt="Logo Jawa Barat" />
+        {{-- <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/jawabarat.png'))) }}" alt="Logo Jawa Barat" /> --}}
         <div class="teks">
             <h3>PEMERINTAH DAERAH PROVINSI JAWA BARAT</h3>
             <h3>DINAS PENDIDIKAN</h3>
@@ -170,14 +170,18 @@
         <th style="text-align: center; width: 25%%;">KONSENTRASI KEAHLIAN</th>
         <th style="text-align: center">KET</th>
     </tr>
+    @foreach($pengajuans as $index => $pengajuan)
     <tr>
-        <td style="width: 5%; text-align: center;">1</td>
-        <td style="text-align:center; width: 30%;">ADE FARHAN GUNAWAN</td>
-        <td align="center">XII RPL 1</td>
-        <td align="center; width:15%">222310217</td>
-        <td style="text-align: center;  width: 25%;">Rekayasa Perangkat Lunak</td>
-        <td></td>
+        <td style="width: 5%; text-align: center;">{{ $index + 1 }}</td>
+        <td style="text-align:center; width: 30%;">{{ $pengajuan->dataPribadi->name }}</td>
+        <td align="center">{{ $pengajuan->dataPribadi->kelas->kelas }} {{ $pengajuan->dataPribadi->kelas->name_kelas }}</td>
+        <td align="center">{{ $pengajuan->dataPribadi->nip }}</td>
+        <td style="text-align: center;">{{ $pengajuan->dataPribadi->konkes->name_konke ?? '-' }}</td>
+        <td align="center">{{ $pengajuan->status }}</td>
+    
     </tr>
+    @endforeach
+    
     
 </table>
 <br>
@@ -189,7 +193,7 @@
 </p>
 
 <div class="ttd">
-    <img src="{{ asset('images/ttd.png') }}" alt="" width="150">
+    {{-- <img src="{{ asset('images/ttd.png') }}" alt="" width="150"> --}}
 
 </div>
 

@@ -147,6 +147,9 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     //SURAT PENGANTAR
     Route::get('/surat-pengantar-pdf', [PersuratanController::class, 'suratPengantar'])->name('surat.pengantar');
     Route::get('/surat-pengantar-PDF', [PdfController::class, 'suratPengantarPDF'])->name('surat.pengantarPDF');
+
+    Route::get('/persuratan/download-kelompok/{iduka_id}', [PersuratanController::class, 'downloadKelompokPdf'])->name('download.kelompok.pdf');
+
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
@@ -228,7 +231,7 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 
     Route::post('/review/pengajuan/{id}', [KaprogController::class, 'prosesPengajuan'])->name('kaprog.pengajuan.prosesPengajuan');
 
-
+    Route::post('/kaprog/review/kirim-semua/{iduka_id}', [KaprogController::class, 'kirimSemua'])->name('kaprog.review.kirimSemua');
 
 
 

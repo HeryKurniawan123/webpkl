@@ -8,6 +8,10 @@
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detail Pengajuan PKL</h5>
+                        <a href="{{ route('download.kelompok.pdf', $iduka_id) }}" class="btn btn-success">
+                            <i class="fa fa-download"></i> Download Surat Pengantar
+                        </a>
+                        
                     </div>
                 </div>
                 <div class="col-md-12 mt-3">

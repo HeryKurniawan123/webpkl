@@ -73,9 +73,10 @@ class PersuratanController extends Controller
             ->where('iduka_id', $iduka_id)
             ->where('status', 'proses')
             ->get();
-
-        return view('persuratan.detail', compact('pengajuanUsulans'));
+    
+        return view('persuratan.detail', compact('pengajuanUsulans', 'iduka_id'));
     }
+    
 
 
     public function prosesPengajuan($id)
@@ -118,4 +119,23 @@ class PersuratanController extends Controller
         return view('persuratan.historykirim', compact('dataDikirim'));
     }
     
+
+    public function downloadKelompokPdf($iduka_id)
+{
+    // Ambil semua pengajuan berdasarkan IDUKA
+    $pengajuans = CetakUsulan::with(['dataPribadi.kelas', 'iduka.konkes'])
+        ->where('iduka_id', $iduka_id)
+        ->where('status', 'proses')
+        ->get();
+
+    if ($pengajuans->isEmpty()) {
+        return back()->with('error', 'Tidak ada data pengajuan untuk IDUKA ini.');
+    }
+
+    $iduka = $pengajuans->first()->iduka;
+
+    $pdf = Pdf::loadView('persuratan.suratPengajuan.surat-pengajuan-kelompok', compact('pengajuans', 'iduka'));
+
+    return $pdf->download('Surat_Pengajuan_Kelompok_' . $iduka->nama . '.pdf');
+}
 }
