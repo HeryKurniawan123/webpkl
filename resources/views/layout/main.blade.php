@@ -286,6 +286,7 @@
                         </a>
                     </li>
                     @endif
+                    @if(auth()->user()->role == 'hubin')
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Pusat Control</span>
                     </li>
@@ -316,13 +317,13 @@
                         <div data-i18n="Basic">Laporan</div>
                     </a>
                     </li> --}}
-                    <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                        <a href="" class="menu-link">
+                    <li class="menu-item {{ Request::routeIs('pusatbantuan.index') ? 'active' : '' }}">
+                        <a href="{{ route('pusatbantuan.index') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Pust Bantuan</div>
+                            <div data-i18n="Basic">Pusat Bantuan</div>
                         </a>
                     </li>
-
+                    @endif
 
                 </ul>
             </aside>

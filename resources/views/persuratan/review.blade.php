@@ -71,7 +71,7 @@
                                     <i class="bi bi-check-circle"></i>
                                     <span class="d-none d-md-inline">History Dikirim</span>
                                 </a>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -92,6 +92,14 @@
                                 </div>
                                 <div>
                                     <a href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
+                                    @foreach($pengajuanUsulans as $idukaId => $pengajuans)
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-0">{{ $pengajuans[0]->iduka->nama_perusahaan }}</h5>
+                                            <a href="{{ route('semua.surat.pdf', $idukaId) }}" class="btn btn-hover rounded-pill">
+                                                Unduh Surat Pengantar
+                                            </a>
+                                        </div>
+                                    @endforeach
                                     <button
                                         class="btn btn-primary btn-kirim"
                                         data-iduka="{{ $iduka_id }}"
@@ -126,7 +134,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const kirimButtons = document.querySelectorAll('.btn-kirim');
-        
+
         kirimButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const idukaId = this.dataset.iduka;

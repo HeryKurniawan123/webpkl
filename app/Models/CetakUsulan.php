@@ -35,6 +35,12 @@ public function siswa()
 {
     return $this->belongsTo(DataPribadi::class);
 }
+
+public function suratPengantar()
+{
+    return $this->belongsTo(SuratPengantar::class);
+}
+
     
 
 }

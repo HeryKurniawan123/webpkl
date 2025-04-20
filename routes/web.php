@@ -24,7 +24,8 @@ use App\Http\Controllers\UsulanIdukaController;
 use App\Http\Controllers\PengajuanPklController;
 use App\Http\Controllers\TenagaKependidikanController;
 use App\Http\Controllers\DataPribadiPersuratanController;
-
+use App\Http\Controllers\PusatbantuanController;
+use App\Http\Controllers\SuratPengantarController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -134,6 +135,10 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
 
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
+
+    Route::get('/pusat-bantuan', [SuratPengantarController::class, 'index'])->name('pusatbantuan.index');
+    Route::post('/pusat-bantuan/store', [SuratPengantarController::class, 'store'])->name('surat.store');
+    Route::post('/pusat-bantuan/update/{id}', [SuratPengantarController::class, 'update'])->name('surat.update');
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -146,9 +151,18 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
     //SURAT PENGANTAR
     Route::get('/surat-pengantar-pdf', [PersuratanController::class, 'suratPengantar'])->name('surat.pengantar');
-    Route::get('/surat-pengantar-PDF', [PdfController::class, 'suratPengantarPDF'])->name('surat.pengantarPDF');
+// <<<<<<< Updated upstream
+//     Route::get('/surat-pengantar-PDF', [PdfController::class, 'suratPengantarPDF'])->name('surat.pengantarPDF');
 
-    Route::get('/persuratan/download-kelompok/{iduka_id}', [PersuratanController::class, 'downloadKelompokPdf'])->name('download.kelompok.pdf');
+//     Route::get('/persuratan/download-kelompok/{iduka_id}', [PersuratanController::class, 'downloadKelompokPdf'])->name('download.kelompok.pdf');
+// =======
+    Route::get('/surat-pengantar/pdf/{id}', [SuratPengantarController::class, 'suratPengantarPDF'])->name('surat.pengantar.pdf');
+
+    Route::get('/surat-semuapengantarpdf/{iduka_id}', [SuratPengantarController::class, 'semuasurat'])
+     ->name('semua.surat.pdf');
+
+
+
 
 });
 

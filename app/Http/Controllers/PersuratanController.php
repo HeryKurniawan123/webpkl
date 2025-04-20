@@ -14,7 +14,7 @@ class PersuratanController extends Controller
     {
         return view('persuratan.suratPengajuan.suratPengajuan');
     }
-
+// DETAIL SISWA DI PERSURATAN
     public function show($id)
     {
         $pengajuan = CetakUsulan::with([
