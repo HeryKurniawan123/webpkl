@@ -9,13 +9,28 @@ use Illuminate\Http\Request;
 
 class KelasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kelas = Kelas::orderBy('created_at', 'desc')->get(); // Urutkan berdasarkan created_at descending
+        $query = Kelas::query();
+    
+        // Filter berdasarkan kelas (X, XI, XII)
+        if ($request->filled('kelas')) {
+            $query->where('kelas', $request->kelas);
+        }
+    
+        // Filter berdasarkan konsentrasi keahlian
+        if ($request->filled('konsentrasi')) {
+            $query->whereHas('konke', function ($q) use ($request) {
+                $q->where('name_konke', 'like', '%' . $request->konsentrasi . '%');
+            });
+        }
+    
+        $kelas = $query->orderBy('created_at', 'desc')->get();
         $konke = Konke::all();
-
+    
         return view('data.kelas.dataKelas', compact('kelas', 'konke'));
     }
+    
 
     public function store(Request $request)
     {

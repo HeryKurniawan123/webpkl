@@ -232,22 +232,19 @@
                                 required>
                             <small class="form-text text-muted">Isi NIS di sini, pastikan sudah benar ya!</small>
                         </div>
-                        @foreach ($siswa as $index => $s)
+                      
                         <div class="mb-3">
                             <label class="form-label">Kelas</label>
                             <input type="text" class="form-control" value="{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}" readonly>
                             <input type="hidden" name="kelas_id" value="{{ $s->kelas_id }}">
                         </div>
-                        @endforeach                        
+                                            
                         <div class="mb-3">
                             <label class="form-label">Konsentrasi Keahlian</label>
-                            <select class="form-control" name="konke_id" required>
-                                <option value="">Pilih Konsentrasi Keahlian</option>
-                                @foreach ($konke as $k)
-                                    <option value="{{ $k->id }}">{{ $k->name_konke }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" class="form-control" value="{{ $s->konke->name_konke }}" readonly>
+                            <input type="hidden" name="konke_id" value="{{ $s->konke_id }}">
                         </div>
+                      
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="text" class="form-control" name="email" placeholder="Masukkan Email"

@@ -98,32 +98,36 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="GET">
+                                        <form action="{{ route('kelas.index') }}" method="GET">
                                             <div class="mb-3">
                                                 <label for="kelas" class="form-label">Pilih Kelas</label>
                                                 <select name="kelas" id="kelas" class="form-control">
                                                     <option value="">-- Pilih Kelas --</option>
-                                                    <option value="X">X</option>
-                                                    <option value="XI">XI</option>
-                                                    <option value="XII">XII</option>
+                                                    <option value="X" {{ request('kelas') == 'X' ? 'selected' : '' }}>X</option>
+                                                    <option value="XI" {{ request('kelas') == 'XI' ? 'selected' : '' }}>XI</option>
+                                                    <option value="XII" {{ request('kelas') == 'XII' ? 'selected' : '' }}>XII</option>
                                                 </select>
                                             </div>
-                        
+                                        
                                             <div class="mb-3">
                                                 <label for="konsentrasi" class="form-label">Pilih Konsentrasi Keahlian</label>
                                                 <select name="konsentrasi" id="konsentrasi" class="form-control">
                                                     <option value="">-- Pilih Konsentrasi Keahlian --</option>
-                                                    <option value="RPL">Rekayasa Perangkat Lunak</option>
-                                                    <option value="TKJ">Teknik Komputer dan Jaringan</option>
-                                                    <option value="DKV">Desain Komunikasi Visual</option>
-                                                    <option value="TKRO">Teknik Kendaraan Ringan Otomotif</option>
+                                                    <option value="RPL" {{ request('konsentrasi') == 'RPL' ? 'selected' : '' }}>Rekayasa Perangkat Lunak</option>
+                                                    <option value="TKJ" {{ request('konsentrasi') == 'TKJ' ? 'selected' : '' }}>Teknik Komputer dan Jaringan</option>
+                                                    <option value="DKV" {{ request('konsentrasi') == 'DKV' ? 'selected' : '' }}>Desain Komunikasi Visual</option>
+                                                    <option value="TKRO" {{ request('konsentrasi') == 'TKRO' ? 'selected' : '' }}>Teknik Kendaraan Ringan Otomotif</option>
                                                 </select>
                                             </div>
+                                        
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                                            </div>
+                                            
                                         </form>
+                                        
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
-                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>                        
@@ -136,6 +140,15 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
+                    @if(request('kelas') || request('konsentrasi'))
+    <div class="alert alert-info">
+        Menampilkan hasil untuk: 
+        @if(request('kelas')) <strong>Kelas {{ request('kelas') }}</strong> @endif
+        @if(request('konsentrasi')) <strong>Konsentrasi {{ request('konsentrasi') }}</strong> @endif
+        <a href="{{ route('kelas.index') }}" class="btn btn-sm btn-link">Reset Filter</a>
+    </div>
+@endif
+
                     @forelse ($kelas as $item)
                     <div class="col-md-4">
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
@@ -145,8 +158,7 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a href="{{ route('siswa.kelas', ['id' => $item->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown"
-                                        data-bs-display="static" aria-expanded="false">⋮</button>
+                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">⋮</button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <form action="{{ route('kelas.destroy', $item->id) }}" method="POST" class="delete-form">
@@ -156,8 +168,7 @@
                                             </form>
                                         </li>
                                         <li>
-                                            <button class="dropdown-item text-warning" data-bs-toggle="modal"
-                                                data-bs-target="#editKelasModal{{ $item->id }}">
+                                            <button class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#editKelasModal{{ $item->id }}">
                                                 Edit
                                             </button>
                                         </li>
@@ -166,9 +177,57 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal Edit Kelas (diletakkan di dalam loop) -->
+    <div class="modal fade" id="editKelasModal{{ $item->id }}" tabindex="-1" aria-labelledby="editKelasModalLabel{{ $item->id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="editKelasModalLabel{{ $item->id }}">Form Edit Kelas</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('kelas.update', $item->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Kelas*</label>
+                            <select class="form-control" name="kelas" required>
+                                <option value="">Pilih Kelas</option>
+                                <option value="X" {{ $item->kelas == 'X' ? 'selected' : '' }}>X</option>
+                                <option value="XI" {{ $item->kelas == 'XI' ? 'selected' : '' }}>XI</option>
+                                <option value="XII" {{ $item->kelas == 'XII' ? 'selected' : '' }}>XII</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Konsentrasi Keahlian*</label>
+                            <select class="form-control" name="konke_id" required>
+                                <option value="">Pilih Konsentrasi Keahlian</option>
+                                @foreach($konke as $k)
+                                    <option value="{{ $k->id }}" {{ $item->konke_id == $k->id ? 'selected' : '' }}>
+                                        {{ $k->konke }} {{ $k->name_konke }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
+                            <input type="text" class="form-control" id="name_kelas{{ $item->id }}" name="name_kelas" value="{{ $item->name_kelas }}" placeholder="Masukkan Nama Kelas" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary">Simpan Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
                     @empty
                     <p class="text-center">Tidak ada data kelas yang tersedia.</p>
                     @endforelse
+                    
                 </div>
             </div>
         </div>
@@ -219,55 +278,11 @@
         </div>
     </div>
 
-    <div class="modal fade" id="editKelasModal{{ $item->id ?? '-' }}" tabindex="-1" aria-labelledby="editKelasModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="editKelasModalLabel">Form Tambah Kelas</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('kelas.update', $item->id ?? '-') }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Kelas*</label>
-                            <select class="form-control" name="kelas" required>
-                                <option value="">Pilih Kelas</option>
-                                <option value="X" {{ isset($item) && $item->kelas == 'X' ? 'selected' : '' }}>X</option>
-                                <option value="XI" {{ isset($item) && $item->kelas == 'XI' ? 'selected' : '' }}>XI</option>
-                                <option value="XII" {{ isset($item) && $item->kelas == 'XII' ? 'selected' : '' }}>XII</option>
-                            </select>
-                        </div>
+   
+
+    
 
 
-                        <div class="mb-3">
-                            <label class="form-label">Konsentrasi Keahlian*</label>
-                            <select class="form-control" name="konke_id" required>
-                                <option value="">Pilih Konsentrasi Keahlian</option>
-                                @foreach($konke as $k)
-                                <option value="{{ $k->id ?? '-' }}"
-                                    {{ isset($item) && $item->konke_id == $k->id ? 'selected' : '' }}>
-                                    {{ $k->konke }} {{ $k->name_konke }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
-                            <input type="text" class="form-control" id="name_kelas" name="name_kelas" value="{{ $item->name_kelas ?? '-'}}" placeholder="Masukkan Nama Kelas" required>
-                            <small class="form-text text-muted"><i>Nama ini akan terlihat oleh semua pengguna, pastikan sudah benar ya!</i></small>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary">Simpan Data</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <script>
         document.querySelectorAll('.delete-btn').forEach(form => {

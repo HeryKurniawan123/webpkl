@@ -25,8 +25,11 @@ class SiswaController extends Controller
         return view('siswa.datasiswa.datasiswa', compact('siswa', 'konke', 'kelas'));
     }
 
-    public function showSiswa() {
-        return view('siswa.datasiswa.showSiswa');
+    public function showSiswa($id) {
+        $konke = Konke::all();
+        $kelas = Kelas::all();
+        $siswa = User::with('dataPribadi')->findOrFail($id);
+        return view('siswa.datasiswa.showSiswa', compact('siswa', 'konke', 'kelas'));
     }
 
     public function show($id)
