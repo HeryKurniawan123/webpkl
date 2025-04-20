@@ -123,11 +123,10 @@
                                                                     <i class="bi bi-eye"></i>
                                                                 </a>
                                                                 <form action="{{ route('siswa.destroy', $s->id) }}"
-                                                                    method="POST" style="display:inline;">
+                                                                    method="POST"class="delete-form d-inline">
                                                                     @csrf
                                                                     @method('DELETE')
-                                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                                        onclick="return confirm('Yakin ingin menghapus siswa ini?')">
+                                                                    <button type="submit" class="delete-btn btn btn-danger btn-sm">
                                                                         <i class="bi bi-trash3"></i></button>
                                                                 </form>
                                                             </div>
@@ -273,4 +272,44 @@
     @include('siswa.datasiswa.editSiswa')
 
     </html>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle konfirmasi hapus
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Data ini tidak bisa dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.closest('form').submit();
+                    }
+                });
+            });
+        });
+
+        // SweetAlert notifikasi sukses
+        @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: @json(session('success')),
+            timer: 2000,
+            showConfirmButton: false
+        });
+        @endif
+    });
+</script>
+
 @endsection
+
