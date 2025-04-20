@@ -8,9 +8,13 @@
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detail Pengajuan PKL</h5>
-                        <a href="{{ route('download.kelompok.pdf', $iduka_id) }}" class="btn btn-success">
-                            <i class="fa fa-download"></i> Download Surat Pengantar
-                        </a>
+                       
+                        @if($pengajuanUsulans->isNotEmpty())
+                            <a href="{{ route('semua.surat.pdf', $iduka_id) }}" class="btn btn-success">
+                                Unduh Surat Pengantar
+                            </a>
+                        </div>
+                        @endif
                         
                     </div>
                 </div>
