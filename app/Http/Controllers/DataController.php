@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DataPribadi;
+use App\Models\PengajuanUsulan;
 use App\Models\UsulanIduka;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -35,8 +36,10 @@ class DataController extends Controller
         $user = auth()->user();
 
         $usulanIduka = UsulanIduka::where('user_id', $user->id)->latest()->first();
+        $pengajuanUsulan = PengajuanUsulan::with('iduka')->where('user_id', $user->id)->latest()->first();
         $dataPribadi = DataPribadi::with(['kelas', 'konkes'])->where('user_id', $user->id)->first();
-        return view('data.usulan.detailUsulan', compact('dataPribadi', 'usulanIduka'));
+        
+        return view('data.usulan.detailUsulan', compact('dataPribadi', 'usulanIduka', 'pengajuanUsulan'));
     }
 
 

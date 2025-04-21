@@ -201,7 +201,7 @@
             <td colspan="2">Disetujui,<br>Kaprog<br>
                 <div class="space"></div>
                 @if(isset($kaprog))
-                <strong>{{ $kaprog->nama }}</strong><br>
+                <strong>{{ $kaprog->name }}</strong><br>
                 NIP: {{ $kaprog->nip ?? '-' }}
                 @else
                 <strong>(...........................................)</strong><br>

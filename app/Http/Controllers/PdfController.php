@@ -16,16 +16,43 @@ class PdfController extends Controller
     {
         $user = Auth::user();
         $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
+    
+        // Mencari data dari usulan_idukas
         $usulanIduka = UsulanIduka::where('user_id', $user->id)->latest()->first();
+    
+        // Jika tidak ditemukan di usulan_idukas, cari di pengajuan_usulans
+        if (!$usulanIduka) {
+            $pengajuan = DB::table('pengajuan_usulans')->where('user_id', $user->id)->latest()->first();
+            
+            if ($pengajuan && $pengajuan->iduka_id) {
+                $usulanIduka = DB::table('idukas')->where('id', $pengajuan->iduka_id)->first();
+            }
+        } else {
+            // Jika ditemukan di usulan_idukas, ambil iduka_id dari situ
+            $usulanIduka = DB::table('idukas')->where('id', $usulanIduka->iduka_id)->first();
+        }
+    
+        // Jika usulanIduka masih kosong, tampilkan error
+        if (!$usulanIduka) {
+            return back()->with('error', 'Data IDUKA tidak ditemukan.');
+        }
+    
+        // Mencari kaprog berdasarkan konke_id
+        $kaprog = DB::table('users')
+        ->where('role', 'kaprog') // Memastikan role adalah kaprog
+        ->where('konke_id', $dataPribadi->konke_id) // Menyesuaikan dengan konke_id siswa
+        ->first();
 
-
-        $kaprog = DB::table('usulan_idukas')
-            ->where('konke_id', $usulanIduka->konke_id)
-            ->first();
-
+    // Jika Kaprog tidak ditemukan, tampilkan error
+    if (!$kaprog) {
+        return back()->with('error', 'Kaprog tidak ditemukan.');
+    }
+    
+        // Generate PDF
         $pdf = Pdf::loadView('data.usulan.suratUsulanPDF', compact('dataPribadi', 'usulanIduka', 'kaprog'));
         return $pdf->download('surat_usulan_iduka_baru.pdf');
     }
+    
     public function siswaUsulanPdf()
     {
         $user = Auth::user();

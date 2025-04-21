@@ -137,6 +137,7 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
+                            @if ($usulanIduka)
                             <table class="table table-hover">
                                 <tr>
                                     <td>Nama IDUKA</td>
@@ -169,7 +170,7 @@
                                     <td>{{ $usulanIduka->kode_pos ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <td>No Telepon Kantor/Perusahaan</td>
+                                    <td>No Telepon Kantor</td>
                                     <td>:</td>
                                     <td>{{ $usulanIduka->telepon ?? '-' }}</td>
                                 </tr>
@@ -188,8 +189,58 @@
                                     <td>:</td>
                                     <td>{{ $usulanIduka->kerjasama ?? '-' }}</td>
                                 </tr>
-
                             </table>
+                            @elseif ($pengajuanUsulan && $pengajuanUsulan->iduka)
+                            <table class="table table-hover">
+                                <tr>
+                                    <td>Nama IDUKA</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->nama ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Nama Pimpinan</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->nama_pimpinan ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Jabatan</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->jabatan ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Alamat Lengkap IDUKA</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->alamat ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Kode Pos</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->kode_pos ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>No Telepon Kantor</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->telepon ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->email ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Bidang Industri</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->bidang_industri ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Kerja Sama</td>
+                                    <td>:</td>
+                                    <td>{{ $pengajuanUsulan->iduka->kerjasama ?? '-' }}</td>
+                                </tr>
+                            </table>
+                            @else
+                            <p>Belum ada data IDUKA yang diusulkan atau diajukan.</p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -198,9 +249,7 @@
                         Kembali
                     </a>
 
-                    <a href="{{ route('siswa.usulan.pdf') }}" class="btn btn-danger">
-                        Export PDF <i class="bi bi-filetype-pdf"></i>
-                    </a>
+                   
 
                     <!-- <a href="{{ route('siswa.usulan.pdf') }}" class="btn btn-danger">
                         <i class="bi bi-filetype-pdf"></i>
