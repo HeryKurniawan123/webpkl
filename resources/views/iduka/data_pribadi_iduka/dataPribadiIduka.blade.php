@@ -109,6 +109,11 @@
                                 </div>                                
                             </div>
                         </div>
+                        @if (session('error'))
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <div class="card-header" style="background-color: #7e7dfb">
                             <h5 style="color: white;">DATA PRIBADI IDUKA - nama iduka</h5>
                         </div>

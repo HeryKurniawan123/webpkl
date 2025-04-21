@@ -49,8 +49,10 @@ class  UsulanIdukaController extends Controller
         $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
 
         if (!$dataPribadi) {
-            return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
+            return redirect()->route('siswa.data_pribadi.create') // arahkan ke form pengisian data pribadi
+                ->with('error', 'Silakan lengkapi data pribadi terlebih dahulu sebelum mengajukan usulan.');
         }
+
 
         UsulanIduka::create([
             'user_id' => $user->id,

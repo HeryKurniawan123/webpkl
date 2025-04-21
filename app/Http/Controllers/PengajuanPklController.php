@@ -124,21 +124,23 @@ public function terima($id)
 
     // Pastikan hanya memproses jika belum diterima sebelumnya
     if ($pengajuan->status !== 'diterima') {
-        // Kurangi kuota IDUKA
         $iduka = Iduka::findOrFail($pengajuan->iduka_id);
 
+        // Cek apakah kuota tersedia
         if ($iduka->kuota_pkl > 0) {
             $iduka->decrement('kuota_pkl');
             $pengajuan->update(['status' => 'diterima']);
 
             return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
         } else {
-            return redirect()->route('pengajuan.review')->with('error', 'Kuota IDUKA sudah habis.');
+            // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
+            return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
         }
     }
 
     return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
 }
+
 
 
 public function tolak($id)

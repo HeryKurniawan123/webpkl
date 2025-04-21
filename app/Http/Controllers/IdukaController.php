@@ -159,6 +159,7 @@ class IdukaController extends Controller
                     'name' => $request->nama_pembimbing,
                     'nip' => $request->nip_pembimbing,
                     'no_hp' => $request->no_hp_pembimbing,
+                    'password' => $request->password,
                 ]);
             } else {
                 Pembimbing::create([
@@ -166,6 +167,7 @@ class IdukaController extends Controller
                     'name' => $request->nama_pembimbing,
                     'nip' => $request->nip_pembimbing,
                     'no_hp' => $request->no_hp_pembimbing,
+                    'password' => $request->password,
                 ]);
             }
         });

@@ -57,9 +57,10 @@ class KaprogController extends Controller
 
     public function show($id)
     {
-        $usulan = Iduka::with(['PengajuanUsulan.siswa.dataPribadi.kelas'])->findOrFail($id);
+        $usulan = UsulanIduka::with(['user.dataPribadi.konkes', 'user.dataPribadi.kelas', 'iduka'])
+   ->findOrFail($id);
 
-        return view('kaprog.review.detailusulan', compact('usulan'));
+        return view('kaprog.review.detailusulanpkl', compact('usulan'));
     }
 
 

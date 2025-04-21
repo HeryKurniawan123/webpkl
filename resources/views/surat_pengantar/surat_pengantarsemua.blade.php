@@ -142,7 +142,7 @@
             <p>Kawali – Kabupaten Ciamis 46253</p>
         </div>
         <hr>
-        <p style="text-align: right;"> {{ $suratPengantar->tempat }}, {{ \Carbon\Carbon::parse($suratPengantar->tanggalbuat)->translatedFormat('d F Y') }}
+        <p style="text-align: right;"> {{ $suratPengantar->tempat ?? '-'}}, {{ \Carbon\Carbon::parse($suratPengantar->tanggalbuat ?? '')->translatedFormat('d F Y') }}
 
     </div>
 
