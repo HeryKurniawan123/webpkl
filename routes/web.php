@@ -280,12 +280,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/orangtua', [HakAksesController::class, 'orangtua'])->name('orangtua.dashboard');
     Route::get('/dashboard/pembimbingsekolah', [HakAksesController::class, 'psekolah'])->name('psekolah.dashboard');
 
-    // IDUKA
+    // IDUKA LOG KAPROG
     Route::get('/data-iduka', [IdukaController::class, 'index'])->name('data.iduka');
     Route::get('/iduka/detail/{id}', [IdukaController::class, 'show'])->name('detail.iduka');
     Route::post('/iduka/store', [IdukaController::class, 'store'])->name('iduka.store');
+    Route::get('/data-iduka/{id}/edit', [IdukaController::class, 'editiduka'])->name('iduka.edit');
     Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
+    Route::put('/iduka-update/{id}', [IdukaController::class, 'updateiduka'])->name('updateiduka.update');
+    Route::put('/iduka/{id}/tanggal', [IdukaController::class, 'updateTanggal'])->name('iduka.tanggal.update');
+
+
+    //--------
+    
 
     //mengajukan pkl
     Route::post('/pengajuan/{iduka}', [PengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');

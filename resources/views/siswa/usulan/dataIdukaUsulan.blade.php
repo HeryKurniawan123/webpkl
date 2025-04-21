@@ -61,7 +61,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="mb-0">Data Institusi / Perusahaan</h5>
-                            
+
                                 <div class="d-none d-md-flex gap-2 align-items-center">
                                     <a href="{{ route('siswa.dashboard') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
@@ -71,7 +71,7 @@
                                         <option value="all">Semua</option>
                                         <option value="rekomendasi">Rekomendasi</option>
                                         <option value="ajuan">Ajuan</option>
-                                    </select>  
+                                    </select>
                                     <div class="d-flex align-items-center">
                                         <div class="dropdown ms-2">
                                             <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -90,9 +90,9 @@
                                                 </li>
                                             </ul>
                                         </div>
-                                    </div>                                    
+                                    </div>
                                 </div>
-                            
+
                                 <!-- Mobile Layout -->
                                 <div class="d-flex d-md-none flex-column align-items-end">
                                     <!-- Search & Tambah -->
@@ -101,17 +101,17 @@
                                             <i class="bi bi-search"></i>
                                         </button>
                                     </div>
-                            
+
                                     <!-- Dropdown filter di bawah, tetap ke kanan -->
                                     <select class="form-select form-select-sm w-auto mt-2" id="filterIdukaMobile">
                                         <option value="all">Semua</option>
                                         <option value="rekomendasi">Rekomendasi</option>
                                         <option value="ajuan">Ajuan</option>
-                                    </select>  
+                                    </select>
                                 </div>
-                            </div>                                                                                                               
+                            </div>
                         </div>
-                    
+
                         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -134,79 +134,108 @@
 
                     <div class="col-md-12 mt-3">
                         @if ($iduka->isEmpty())
-                            <div class="alert alert-warning">
-                                Belum ada data Iduka yang tersedia.
-                            </div>
+                        <div class="alert alert-warning">
+                            Belum ada data Iduka yang tersedia.
+                        </div>
                         @else
                         @if(session()->has('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif   
-                            @foreach ($iduka as $i)
-                            <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div style="min-width: 0;">
-                                        <!-- Nama Iduka dengan batas 2 baris -->
-                                        <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
-                                            {{ $i->nama }}
-                                        </div>
-                                        <!-- Alamat dengan text-truncate -->
-                                        <div class="text-muted text-truncate w-100" style="font-size: 14px;">
-                                            {{ $i->alamat }}
-                                        </div>
-                                        @if ($i->rekomendasi == 1)
-                                        <div class="text-success mt-1" style="font-size: 13px;">
-                                            <strong>Rekomendasi:</strong> IDUKA ini direkomendasikan
-                                        </div>
-                                        @endif
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        @endif
+                        @foreach ($iduka as $i)
+                        <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div style="min-width: 0;">
+                                    <!-- Nama Iduka dengan batas 2 baris -->
+                                    <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
+                                        {{ $i->nama }}
                                     </div>
-                                    <div class="d-flex align-items-center">
-                                        <a href="{{ route('detail.datausulan', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
+                                    <!-- Alamat dengan text-truncate -->
+                                    <div class="text-muted text-truncate w-100" style="font-size: 14px;">
+                                        {{ $i->alamat }}
                                     </div>
+                                    @if ($i->rekomendasi == 1)
+                                    <div class="text-success mt-1" style="font-size: 13px;">
+                                        <strong>Rekomendasi:</strong> IDUKA ini direkomendasikan
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    @php
+                                    $awal = $i->tanggal_awal;
+                                    $akhir = $i->tanggal_akhir;
+                                    @endphp
+                                    <button
+                                        class="btn btn-hover rounded-pill btn-sm btn-detail"
+                                        data-id="{{ $i->id }}"
+                                        data-url="{{ route('detail.datausulan', $i->id) }}"
+                                        data-awal="{{ $awal }}"
+                                        data-akhir="{{ $akhir }}">
+                                        Detail
+                                    </button>
+
+
                                 </div>
                             </div>
-                            @endforeach
+                        </div>
+                        @endforeach
                         @endif
                     </div>
-                    
+
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault(); // Mencegah penghapusan langsung
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault(); // Mencegah penghapusan langsung
 
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Data ini tidak bisa dikembalikan!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Hapus!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    this.closest('.delete-form').submit(); // Form terdekat dikirim
-                }
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Data ini tidak bisa dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Hapus!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.closest('.delete-form').submit(); // Form terdekat dikirim
+                    }
+                });
             });
         });
-    });
     </script>
 
     @include('iduka.dataiduka.createiduka')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.querySelectorAll('.detail-disabled').forEach(btn => {
+            btn.addEventListener('click', function() {
+                let nama = this.getAttribute('data-nama');
+                Swal.fire({
+                    icon: 'info',
+                    title: 'IDUKA Ditutup',
+                    text: 'Pendaftaran ke IDUKA "' + nama + '" sudah ditutup.',
+                    confirmButtonColor: '#7e7dfb'
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const searchInput = document.querySelector('input[name="search"]');
         const filterSelect = document.getElementById("filterIduka");
         const idukaCards = document.querySelectorAll(".card-hover");
+        const detailButtons = document.querySelectorAll(".btn-detail");
 
         function filterData() {
             const searchValue = searchInput.value.toLowerCase();
@@ -218,7 +247,7 @@
                 const isRekomendasi = card.querySelector(".text-success") !== null; // Cek apakah ada label rekomendasi
 
                 let matchesSearch = nama.includes(searchValue) || alamat.includes(searchValue);
-                let matchesFilter = 
+                let matchesFilter =
                     filterValue === "all" ||
                     (filterValue === "rekomendasi" && isRekomendasi) ||
                     (filterValue === "ajuan" && !isRekomendasi);
@@ -230,9 +259,42 @@
 
         searchInput.addEventListener("input", filterData);
         filterSelect.addEventListener("change", filterData);
-    });
 
-    
+        detailButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const awal = this.dataset.awal;
+                const akhir = this.dataset.akhir;
+                const url = this.dataset.url;
+                const now = new Date();
+
+                // Jika tanggal kosong, izinkan masuk
+                if (!awal || !akhir) {
+                    window.location.href = url;
+                    return;
+                }
+
+                // Konversi ke objek Date
+                const startDate = new Date(awal);
+                const endDate = new Date(akhir);
+
+                // Buat tanggal hari ini tanpa jam
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+                if (today >= startDate && today <= endDate) {
+                    // Masih dalam rentang waktu, izinkan masuk
+                    window.location.href = url;
+                } else {
+                    // Di luar rentang waktu
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'IDUKA Ditutup',
+                        text: 'Maaf, IDUKA ini sudah tidak dapat diajukan!',
+                        confirmButtonColor: '#7e7dfb'
+                    });
+                }
+            });
+        });
+    });
 </script>
 
 @endsection

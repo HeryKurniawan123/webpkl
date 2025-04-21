@@ -35,6 +35,70 @@ class IdukaController extends Controller
 
         return view('iduka.data_pribadi_iduka.dataPribadiIduka', compact('iduka', 'pembimbing'));
     }
+    public function editiduka($id)
+    {
+        // Ambil data IDUKA berdasarkan ID
+        $iduka = Iduka::findOrFail($id);
+
+        return view('iduka.dataiduka.editiduka', compact('iduka'));
+    }
+    public function updateiduka(Request $request, $id)
+    {
+        $iduka = Iduka::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama' => 'required',
+            'nama_pimpinan' => 'required',
+            'nip_pimpinan' => 'required',
+            'no_hp_pimpinan' => 'required',
+            'jabatan' => 'required',
+            'alamat' => 'required',
+            'kode_pos' => 'required',
+            'telepon' => 'required',
+            'email' => 'required|email',
+            'bidang_industri' => 'required',
+            'kerjasama' => 'required',
+            'kuota_pkl' => 'required|integer',
+        ]);
+
+        // Update data
+        $iduka->fill($validated);
+
+        // Jika password diisi, update password juga
+        if ($request->filled('password')) {
+            $iduka->password = bcrypt($request->password);
+        }
+
+        // Cek rekomendasi (karena checkbox)
+        $iduka->rekomendasi = $request->has('rekomendasi') ? 1 : 0;
+
+        // Cek kerjasama_lainnya
+        if ($request->kerjasama === 'Lainnya') {
+            $iduka->kerjasama_lainnya = $request->kerjasama_lainnya;
+        } else {
+            $iduka->kerjasama_lainnya = null;
+        }
+
+        $iduka->save();
+
+        return redirect()->back()->with('success', 'Data IDUKA berhasil diperbarui.');
+    }
+
+    public function updateTanggal(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
+        ]);
+
+        $iduka = Iduka::findOrFail($id);
+        $iduka->tanggal_awal = $request->tanggal_awal;
+        $iduka->tanggal_akhir = $request->tanggal_akhir;
+        $iduka->save();
+
+        return redirect()->back()->with('success', 'Tanggal batas usulan berhasil diperbarui.');
+    }
+
 
 
     public function edit()
@@ -368,12 +432,11 @@ class IdukaController extends Controller
     }
 
     public function downloadAtpIduka($id)
-{
-    $iduka = Iduka::with(['atps.konke', 'atps.cp', 'atps.atp'])
-                  ->findOrFail($id);
-    
-    return Pdf::loadView('persuratan.suratPengajuan.kaprogatp', compact('iduka'))
-              ->download('Data_ATP_' . $iduka->nama . '.pdf');
-}
+    {
+        $iduka = Iduka::with(['atps.konke', 'atps.cp', 'atps.atp'])
+            ->findOrFail($id);
 
+        return Pdf::loadView('persuratan.suratPengajuan.kaprogatp', compact('iduka'))
+            ->download('Data_ATP_' . $iduka->nama . '.pdf');
+    }
 }

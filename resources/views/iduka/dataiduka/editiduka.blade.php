@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="{{ route('iduka.update', $iduka->id) }}" method="POST">
+            <form action="{{ route('updateiduka.update', $iduka->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 

@@ -156,10 +156,11 @@ class  UsulanIdukaController extends Controller
 
     public function dataIdukaUsulan()
     {
-
         $iduka = Iduka::orderBy('created_at', 'desc')->get();
-        return view('siswa.usulan.dataIdukaUsulan', compact('iduka'));
+        $today = now()->format('Y-m-d');
+        return view('siswa.usulan.dataIdukaUsulan', compact('iduka', 'today'));
     }
+    
 
     public function detailIdukaUsulan($id)
     {

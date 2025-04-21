@@ -135,10 +135,12 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="{{ route('iduka.edit', $iduka->id) }}" class="dropdown-item">
-                                                    <i class="bi bi-pencil-square text-warning"></i> <span class="text-warning">Edit</span>
+                                                <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModal">
+                                                    <i class="bi bi-pencil-square text-warning"></i>
+                                                    <span class="text-warning">Edit</span>
                                                 </a>
                                             </li>
+
                                         </ul>
                                     </div>
                                 </div>
