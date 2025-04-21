@@ -376,20 +376,21 @@ class KaprogController extends Controller
         $jumlahTerkirim = 0;
     
         foreach ($cetak as $pengajuan) {
+            
+            $siswaId = $pengajuan->siswa_id;
+
+    
             // Cek apakah sudah ada di pengajuan_pkl
-            $sudahAda = PengajuanPkl::where('siswa_id', $pengajuan->user_id)
+            $sudahAda = PengajuanPkl::where('siswa_id', $siswaId)
                 ->where('iduka_id', $iduka_id)
                 ->exists();
     
             if (!$sudahAda) {
-                // Update status (kalau perlu)
-                $pengajuan->update(['status' => 'sudah']); // <- mungkin redundant kalau statusnya memang sudah 'sudah'
-    
                 // Tambahkan ke tabel pengajuan_pkl
                 PengajuanPkl::create([
-                    'siswa_id' => $pengajuan->siswa_id,
+                    'siswa_id' => $siswaId,
                     'iduka_id' => $iduka_id,
-                    'status' => 'diterima',
+                    'status' => 'proses',
                 ]);
     
                 $jumlahTerkirim++;
@@ -402,4 +403,5 @@ class KaprogController extends Controller
             return redirect()->back()->with('info', "Semua pengajuan sudah pernah dikirim.");
         }
     }
+    
 }

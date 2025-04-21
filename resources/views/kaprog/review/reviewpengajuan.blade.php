@@ -13,49 +13,49 @@
 
                 <div class="col-md-12 mt-3">
                     @if($pengajuanUsulans->isEmpty())
-                        <p class="text-center">Tidak ada pengajuan yang tersedia.</p>
+                    <p class="text-center">Tidak ada pengajuan yang tersedia.</p>
                     @else
                     @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
 
-@if(session('info'))
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        {{ session('info') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+                    @if(session('info'))
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {{ session('info') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
 
-@if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+                    @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
 
-                        @foreach($pengajuanUsulans as $iduka_id => $pengajuanGroup)
-                        <div class="card mb-3 shadow-sm" style="padding: 30px; border-radius: 10px;">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
-                                    <small class="text-muted">{{ $pengajuanGroup->count() }} siswa mengajukan ke sini</small>
-                                </div>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <a href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}" class="btn btn-primary rounded-pill">Detail</a>
-                                    <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim semua pengajuan ke IDUKA ini?');">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success">
-                                            Kirim Semua Pengajuan
-                                        </button>
-                                    </form>
-                                    
-                                </div>
+                    @foreach($pengajuanUsulans as $iduka_id => $pengajuanGroup)
+                    <div class="card mb-3 shadow-sm" style="padding: 30px; border-radius: 10px;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
+                                <small class="text-muted">{{ $pengajuanGroup->count() }} siswa mengajukan ke sini</small>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <a href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}" class="btn btn-primary rounded-pill">Detail</a>
+                                <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim semua pengajuan ke IDUKA ini?');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">
+                                        Kirim Semua Pengajuan
+                                    </button>
+                                </form>
+
                             </div>
                         </div>
-                        @endforeach
+                    </div>
+                    @endforeach
                     @endif
                 </div>
             </div>
