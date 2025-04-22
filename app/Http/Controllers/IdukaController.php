@@ -155,24 +155,31 @@ class IdukaController extends Controller
 
             // Update atau buat data Pembimbing
             if ($pembimbing) {
-                $pembimbing->update([
+                $updateData = [
                     'name' => $request->nama_pembimbing,
                     'nip' => $request->nip_pembimbing,
                     'no_hp' => $request->no_hp_pembimbing,
-                    'password' => $request->password,
-                ]);
+                ];
+            
+                // Update password hanya jika diisi
+                if ($request->filled('password')) {
+                    $updateData['password'] = $request->password;
+                }
+            
+                $pembimbing->update($updateData);
             } else {
                 Pembimbing::create([
                     'user_id' => $iduka->user_id,
                     'name' => $request->nama_pembimbing,
                     'nip' => $request->nip_pembimbing,
                     'no_hp' => $request->no_hp_pembimbing,
-                    'password' => $request->password,
+                    'password' => $request->password ?? 'defaultpassword', // atau generate random password
                 ]);
             }
+            
         });
 
-        return redirect()->route('iduka.data-pribadi')->with('success', 'Data berhasil diperbarui.');
+        return redirect()->route('iduka.pribadi')->with('success', 'Data berhasil diperbarui.');
     }
 
 

@@ -49,6 +49,12 @@
         .card-hover:hover .dropdown-btn {
             color: white !important;
         }
+
+        .btn-warning {
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+            color: black !important;
+        }
     </style>
 </head>
 
@@ -145,7 +151,11 @@
                         </div>
                         @endif
                         @foreach ($iduka as $i)
-                        <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;">
+                        @php
+                        $kuota = $i->kuota_pkl; // Pastikan kolom ini ada di tabel iduka
+                        @endphp
+
+                        <div class="card mb-3 shadow-sm card-hover p-3 {{ $kuota <= 0 ? 'bg-light text-muted' : '' }}" style="border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div style="min-width: 0;">
                                     <!-- Nama Iduka dengan batas 2 baris -->
@@ -167,14 +177,24 @@
                                     $awal = $i->tanggal_awal;
                                     $akhir = $i->tanggal_akhir;
                                     @endphp
-                                    <button
-                                        class="btn btn-hover rounded-pill btn-sm btn-detail"
-                                        data-id="{{ $i->id }}"
-                                        data-url="{{ route('detail.datausulan', $i->id) }}"
-                                        data-awal="{{ $awal }}"
-                                        data-akhir="{{ $akhir }}">
-                                        Detail
-                                    </button>
+                                    @if ($kuota <= 0)
+                                        <button
+                                        class="btn btn-warning rounded-pill btn-sm detail-disabled"
+                                        data-nama="{{ $i->nama }}">
+                                        Kuota Penuh
+                                        </button>
+                                        @else
+                                        <button
+                                            class="btn btn-hover rounded-pill btn-sm btn-detail"
+                                            data-id="{{ $i->id }}"
+                                            data-url="{{ route('detail.datausulan', $i->id) }}"
+                                            data-awal="{{ $awal }}"
+                                            data-akhir="{{ $akhir }}">
+                                            Detail
+                                        </button>
+                                        @endif
+
+
 
 
                                 </div>
@@ -220,7 +240,7 @@
                 Swal.fire({
                     icon: 'info',
                     title: 'IDUKA Ditutup',
-                    text: 'Pendaftaran ke IDUKA "' + nama + '" sudah ditutup.',
+                    text: 'Kuota PKL ke IDUKA "' + nama + '" sudah penuh.',
                     confirmButtonColor: '#7e7dfb'
                 });
             });
@@ -261,7 +281,7 @@
         filterSelect.addEventListener("change", filterData);
 
         detailButtons.forEach(button => {
-            button.addEventListener("click", function () {
+            button.addEventListener("click", function() {
                 const awal = this.dataset.awal;
                 const akhir = this.dataset.akhir;
                 const url = this.dataset.url;
@@ -286,9 +306,9 @@
                 } else {
                     // Di luar rentang waktu
                     Swal.fire({
-                        icon: 'warning',
+                        icon: 'info',
                         title: 'IDUKA Ditutup',
-                        text: 'Maaf, IDUKA ini sudah tidak dapat diajukan!',
+                        text: 'Maaf, Waktu Pendaftaran belum dimulai atau sudah melebihi tenggat waktu',
                         confirmButtonColor: '#7e7dfb'
                     });
                 }
