@@ -60,24 +60,27 @@
 <body>
     <div class="container-fluid">
         <div class="content-wrapper">
-            <div class="container-xxl flex-grow-1 container-p-y">            
+            <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
                     <div class="card mb-3">
                         <div class="card-body d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Review Pengajuan Institusi / Perusahaan</h5>
-                    
+                            <div class="mb-2">
+                                <h5 class="mb-1">Review Pengajuan Institusi / Perusahaan</h5>
+                                <p class="mb-0">JUMLAH KUOTA TERSEDIA: <strong>{{ $iduka->kuota_pkl }}</strong></p>
+                                <!-- <p class="mb-0">SISA KUOTA: <strong>{{ $sisa_kuota }}</strong></p> -->
+                            </div>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('review.pengajuanditerima') }}" class="btn btn-success btn-status btn-sm">
-                                    <i class="bi bi-check-circle"></i> 
+                                    <i class="bi bi-check-circle"></i>
                                     <span class="d-none d-md-inline">History Diterima</span>
                                 </a>
                                 <a href="{{ route('review.pengajuanditolak') }}" class="btn btn-danger btn-status btn-sm">
-                                    <i class="bi bi-x-circle"></i> 
+                                    <i class="bi bi-x-circle"></i>
                                     <span class="d-none d-md-inline">History Ditolak</span>
                                 </a>
                             </div>
                         </div>
-                    </div>    
+                    </div>
                     <div class="col-md-12 mt-3">
 
                         {{-- Jika tidak ada pengajuan --}}
@@ -91,15 +94,15 @@
                         @foreach($pengajuans as $pengajuan)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             @if(session()->has('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif   
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            @endif
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="mb-0" style="font-size: 18px">
-                                    @if($pengajuan->dataPribadi)
+                                        @if($pengajuan->dataPribadi)
                                         <strong>{{ $pengajuan->dataPribadi->user->name ?? 'Nama Tidak Tersedia' }}</strong>
                                         @else
                                         <p class="text-danger">Data pribadi tidak ditemukan untuk siswa ini.</p>
@@ -111,13 +114,29 @@
                                 </div>
 
                                 <div class="d-flex align-items-center">
-                                    {{-- Tombol Detail --}}
-                                    <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info">
+                                    @if($iduka->kuota_pkl > 0)
+                                    {{-- Tombol Lihat Detail --}}
+                                    <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info me-2">
                                         Lihat Detail
                                     </a>
+                                    @else
+                                    {{-- Tombol Lihat Detail Nonaktif (SweetAlert) --}}
+                                    <button type="button" class="btn btn-info me-2" onclick="showKuotaAlert()">
+                                        Lihat Detail
+                                    </button>
+
+                                    {{-- Tombol Tolak --}}
+                                    <form id="form-tolak-{{ $pengajuan->id }}" action="{{ route('pengajuan.tolak', $pengajuan->id) }}" method="POST" style="display: none;">
+                                        @csrf
+                                        @method('PATCH')
+                                    </form>
+
+                                    <button type="button" class="btn btn-danger me-2" onclick="confirmTolak('{{ $pengajuan->id }}')">Tolak</button>
+
+                                    @endif
 
                                     {{-- Dropdown Menu --}}
-                                    <div class="dropdown ms-2">
+                                    <!-- <div class="dropdown ms-2">
                                         <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             ⋮
                                         </button>
@@ -130,7 +149,7 @@
                                                 </form>
                                             </li>
                                         </ul>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -145,6 +164,36 @@
     </div>
 
     @include('iduka.dataiduka.createiduka')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showKuotaAlert() {
+            Swal.fire({
+                icon: 'info',
+                title: 'Kuota Tidak Tersedia',
+                text: 'Maaf, kuota PKL sudah habis. Tambah kuota PKL terlebih dahulu',
+                confirmButtonColor: '#7e7dfb',
+            });
+        }
+
+        function confirmTolak(id) {
+        Swal.fire({
+            title: 'Tolak Pengajuan?',
+            text: "Pengajuan ini akan ditolak. Lanjutkan?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, Tolak',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-tolak-' + id).submit();
+            }
+        });
+    }
+    
+    </script>
+
 </body>
 
 </html>

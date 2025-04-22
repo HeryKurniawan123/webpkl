@@ -12,29 +12,28 @@ class PengajuanPklController extends Controller
     public function ajukan(Request $request, $iduka_id)
     {
         $siswa = auth()->user();
-    
+
         // Cek apakah siswa sudah pernah diterima di IDUKA manapun
         if (PengajuanPkl::where('siswa_id', $siswa->id)->where('status', 'diterima')->exists()) {
             return back()->with('error', 'Anda sudah diterima PKL di IDUKA, tidak dapat mengajukan ulang.');
         }
-    
+
         // Cek apakah siswa sudah mengajukan ke IDUKA ini sebelumnya
         if (PengajuanPkl::where('siswa_id', $siswa->id)->where('iduka_id', $iduka_id)->exists()) {
             return back()->with('error', 'Anda sudah mengajukan PKL ke IDUKA ini.');
         }
-    
+
         // Simpan pengajuan baru
         PengajuanPkl::create([
             'siswa_id' => $siswa->id,
             'iduka_id' => $iduka_id,
             'status' => 'proses',
         ]);
-    
+
 
         return redirect()->route('siswa.dashboard')->with('success', 'Pengajuan PKL berhasil diajukan.');
-
     }
-    
+
 
     // IDUKA menerima atau menolak pengajuan
     public function verifikasi(Request $request, $id)
@@ -70,17 +69,22 @@ class PengajuanPklController extends Controller
     public function reviewPengajuan()
     {
         $iduka_id = auth()->user()->iduka_id;
-    
+        $iduka = Iduka::findOrFail($iduka_id);
+        $sisa_kuota = $iduka->kuota_pkl - PengajuanPkl::where('iduka_id', $iduka_id)
+            ->where('status', 'diterima')
+            ->count();
+
+
         // Ambil hanya pengajuan yang statusnya "proses"
         $pengajuans = PengajuanPkl::with(['dataPribadi.user', 'dataPribadi.kelas'])
             ->where('iduka_id', $iduka_id)
             ->where('status', 'proses')
             ->get();
-            
-    
-        return view('pengajuan.review', compact('pengajuans'));
+
+
+        return view('pengajuan.review', compact('pengajuans', 'iduka', 'sisa_kuota'));
     }
-    
+
 
 
 
@@ -95,60 +99,59 @@ class PengajuanPklController extends Controller
 
 
     public function reviewPengajuanDiterima()
-{
-    $iduka_id = auth()->user()->iduka_id;
+    {
+        $iduka_id = auth()->user()->iduka_id;
 
-    $pengajuans = PengajuanPkl::with(['dataPribadi.user', 'dataPribadi.kelas'])
-        ->where('iduka_id', $iduka_id)
-        ->where('status', 'diterima') // Hanya ambil yang diterima
-        ->get();
+        $pengajuans = PengajuanPkl::with(['dataPribadi.user', 'dataPribadi.kelas'])
+            ->where('iduka_id', $iduka_id)
+            ->where('status', 'diterima') // Hanya ambil yang diterima
+            ->get();
 
-    return view('pengajuan.historyditerima', compact('pengajuans'));
-}
-
-public function reviewPengajuanDitolak()
-{
-    $iduka_id = auth()->user()->iduka_id;
-
-    $pengajuans = PengajuanPkl::with(['dataPribadi.user', 'dataPribadi.kelas'])
-        ->where('iduka_id', $iduka_id)
-        ->where('status', 'ditolak') // Hanya ambil yang ditolak
-        ->get();
-
-    return view('pengajuan.historyditolak', compact('pengajuans'));
-}
-
-public function terima($id)
-{
-    $pengajuan = PengajuanPkl::findOrFail($id);
-
-    // Pastikan hanya memproses jika belum diterima sebelumnya
-    if ($pengajuan->status !== 'diterima') {
-        $iduka = Iduka::findOrFail($pengajuan->iduka_id);
-
-        // Cek apakah kuota tersedia
-        if ($iduka->kuota_pkl > 0) {
-            $iduka->decrement('kuota_pkl');
-            $pengajuan->update(['status' => 'diterima']);
-
-            return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
-        } else {
-            // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
-            return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
-        }
+        return view('pengajuan.historyditerima', compact('pengajuans'));
     }
 
-    return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
-}
+    public function reviewPengajuanDitolak()
+    {
+        $iduka_id = auth()->user()->iduka_id;
+
+        $pengajuans = PengajuanPkl::with(['dataPribadi.user', 'dataPribadi.kelas'])
+            ->where('iduka_id', $iduka_id)
+            ->where('status', 'ditolak') // Hanya ambil yang ditolak
+            ->get();
+
+        return view('pengajuan.historyditolak', compact('pengajuans'));
+    }
+
+    public function terima($id)
+    {
+        $pengajuan = PengajuanPkl::findOrFail($id);
+
+        // Pastikan hanya memproses jika belum diterima sebelumnya
+        if ($pengajuan->status !== 'diterima') {
+            $iduka = Iduka::findOrFail($pengajuan->iduka_id);
+
+            // Cek apakah kuota tersedia
+            if ($iduka->kuota_pkl > 0) {
+                $iduka->decrement('kuota_pkl');
+                $pengajuan->update(['status' => 'diterima']);
+
+                return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
+            } else {
+                // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
+                return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
+            }
+        }
+
+        return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
+    }
 
 
 
-public function tolak($id)
-{
-    $pengajuan = PengajuanPkl::findOrFail($id);
-    $pengajuan->update(['status' => 'ditolak']);
+    public function tolak($id)
+    {
+        $pengajuan = PengajuanPkl::findOrFail($id);
+        $pengajuan->update(['status' => 'ditolak']);
 
-    return redirect()->route('review.pengajuan')->with('error', 'Pengajuan PKL telah ditolak.');
-}
-
+        return redirect()->route('pengajuan.review')->with('error', 'Pengajuan PKL telah ditolak.');
+    }
 }

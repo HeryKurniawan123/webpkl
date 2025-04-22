@@ -35,7 +35,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Riwayat Pengajuan Diterima</h5>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('review.pengajuan') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
+                                    <a href="{{ route('pengajuan.review') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
