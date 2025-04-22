@@ -120,10 +120,20 @@
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
-                                    <a href="{{ route('kaprog.download.atp', $iduka->id) }}" class="btn btn-danger">
-                                        Download PDF ATP
-                                    </a>
-
+                                    @if(auth()->user()->role === 'kaprog')
+                                    <li>
+                                        <a href="{{ route('kaprog.download.atp', $iduka->id) }}" class="btn btn-danger">
+                                            Download PDF ATP 
+                                        </a>
+                                    </li>
+                                    @elseif(auth()->user()->role === 'hubin')
+                                    <li>
+                                        <a href="{{ route('hubin.download.atp', $iduka->id) }}" class="btn btn-danger">
+                                            Download PDF ATP 
+                                        </a>
+                                    </li>
+                                    @endif
+                                   
                                     <div class="dropdown">
                                         <button class="btn btn-light p-1 rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical"></i>
@@ -134,12 +144,22 @@
                                                     <i class="bi bi-filetype-pdf text-danger"></i> <span class="text-danger">Export PDF</span>
                                                 </a>
                                             </li>
+                                            @if(auth()->user()->role == 'kaprog')
                                             <li>
-                                                <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModal">
+                                                <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModalKaprog">
                                                     <i class="bi bi-pencil-square text-warning"></i>
-                                                    <span class="text-warning">Edit</span>
+                                                    <span class="text-warning">Edit </span>
                                                 </a>
                                             </li>
+                                            @elseif(auth()->user()->role == 'hubin')
+                                            <li>
+                                                <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModalHubin">
+                                                    <i class="bi bi-pencil-square text-primary"></i>
+                                                    <span class="text-primary">Edit</span>
+                                                </a>
+                                            </li>
+                                            @endif
+
 
                                         </ul>
                                     </div>

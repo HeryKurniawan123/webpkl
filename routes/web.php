@@ -24,6 +24,7 @@ use App\Http\Controllers\UsulanIdukaController;
 use App\Http\Controllers\PengajuanPklController;
 use App\Http\Controllers\TenagaKependidikanController;
 use App\Http\Controllers\DataPribadiPersuratanController;
+use App\Http\Controllers\KaprogIdukaController;
 use App\Http\Controllers\PusatbantuanController;
 use App\Http\Controllers\SuratPengantarController;
 
@@ -142,6 +143,19 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/pusat-bantuan', [SuratPengantarController::class, 'index'])->name('pusatbantuan.index');
     Route::post('/pusat-bantuan/store', [SuratPengantarController::class, 'store'])->name('surat.store');
     Route::post('/pusat-bantuan/update/{id}', [SuratPengantarController::class, 'update'])->name('surat.update');
+
+     //data daftar iduka
+     Route::get('/daftar/iduka', [KaprogIdukaController::class, 'index'])->name('hubin.iduka.index');
+     Route::get('/daftar/iduka/detail/{id}', [KaprogIdukaController::class, 'show'])->name('hubin.detail.iduka');
+     Route::post('/iduka/store', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
+     Route::get('/create/data-iduka', [KaprogIdukaController::class, 'create'])->name('hubin.iduka.create');
+     Route::post('/', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
+     Route::get('/iduka/{id}/edit', [KaprogIdukaController::class, 'edit'])->name('hubin.iduka.edit');
+     Route::put('/update/{id}', [KaprogIdukaController::class, 'update'])->name('hubin.iduka.update');
+     Route::delete('/hapus-iduka/{id}', [KaprogIdukaController::class, 'destroy'])->name('hubin.iduka.destroy');
+     Route::get('/hubin/download-atp-iduka/{id}', [KaprogIdukaController::class, 'downloadAtpIduka'])
+     ->name('hubin.download.atp');
+     Route::put('/setting/iduka/{id}/tanggal', [KaprogIdukaController::class, 'updateTanggal'])->name('hubin.tanggal.update');
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -271,8 +285,10 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
     Route::put('/iduka-update/{id}', [IdukaController::class, 'updateiduka'])->name('updateiduka.update');
-    Route::put('/iduka/{id}/tanggal', [IdukaController::class, 'updateTanggal'])->name('iduka.tanggal.update');
+    Route::put('/iduka/{id}/tanggal', [IdukaController::class, 'updateTanggal'])->name('kaprog.tanggal.update');
     //--------
+
+   
 });
 
 

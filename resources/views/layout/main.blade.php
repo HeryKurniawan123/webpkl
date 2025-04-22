@@ -175,8 +175,8 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="menu-item {{ Request::routeIs('data.iduka') ? 'active' : '' }}">
-                        <a href="/data-iduka" class="menu-link">
+                    <li class="menu-item {{ Request::routeIs('hubin.iduka.index') ? 'active' : '' }}">
+                        <a href="{{route('hubin.iduka.index')}}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
                             <div data-i18n="Basic">Data Iduka</div>
                         </a>
