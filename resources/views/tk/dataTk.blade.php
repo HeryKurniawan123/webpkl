@@ -242,7 +242,7 @@
         </div>
     </div>
 </div>
-@include('tk.detailTK')
+@include('tk.detailTk')
 {{-- alert hapus --}}
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

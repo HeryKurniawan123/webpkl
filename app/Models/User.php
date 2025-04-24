@@ -80,7 +80,7 @@ class User extends Authenticatable
 
     public function pembimbingpkl()
 {
-    return $this->hasOne(pembimbing::class, 'user_id', 'id');
+    return $this->hasOne(Pembimbing::class, 'user_id', 'id');
 }
 
     /**
