@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Data Siswa Kelas XII RPL 2</title>
+        <title>Data Siswa Kelas</title>
     </head>
 
     <body>
@@ -26,7 +26,7 @@
                                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
                                     <div class="d-md-flex d-block">
                                         <h5 class="mb-0">Data Siswa </h5>
-                                        <h5 class="mb-0 d-md-inline d-block">XII RPL 2</h5>
+                                      
                                     </div>
                                     <div class="d-flex gap-2 ms-auto">
                                         <!-- Tombol Kembali -->
@@ -109,7 +109,7 @@
                                                         <td>{{ $index + 1 }}</td>
                                                         <td>{{ $s->name }}</td>
                                                         <td>{{ $s->nip }}</td>
-                                                        <td>{{ optional($s->kelas)->name_kelas ?? '-' }}</td>
+                                                        <td>{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}</td>
                                                         <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
                                                         <td></td>
                                                         <td>
@@ -234,14 +234,14 @@
                       
                         <div class="mb-3">
                             <label class="form-label">Kelas</label>
-                            <input type="text" class="form-control" value="{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}" readonly>
-                            <input type="hidden" name="kelas_id" value="{{ $s->kelas_id }}">
+                            <input type="text" class="form-control" value="{{ $s->kelas->kelas ?? ''}} {{ optional($s->kelas ?? '')->name_kelas ?? '-' }}" readonly>
+                            <input type="hidden" name="kelas_id" value="{{ $s->kelas_id ?? ''}}">
                         </div>
                                             
                         <div class="mb-3">
                             <label class="form-label">Konsentrasi Keahlian</label>
-                            <input type="text" class="form-control" value="{{ $s->konke->name_konke }}" readonly>
-                            <input type="hidden" name="konke_id" value="{{ $s->konke_id }}">
+                            <input type="text" class="form-control" value="{{ $s->konke->name_konke ?? ''}}" readonly>
+                            <input type="hidden" name="konke_id" value="{{ $s->konke_id ?? '' }}">
                         </div>
                       
                         <div class="mb-3">

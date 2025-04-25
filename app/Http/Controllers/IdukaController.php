@@ -19,6 +19,7 @@ class IdukaController extends Controller
 {
     public function index()
     {
+        
 
         $iduka = Iduka::orderBy('created_at', 'desc')->get(); // Urutkan berdasarkan created_at descending
         return view('iduka.dataiduka.dataiduka', compact('iduka'));
@@ -113,9 +114,10 @@ class IdukaController extends Controller
     public function updatePribadi(Request $request, $id)
     {
         $iduka = Iduka::findOrFail($id);
-        $pembimbing = Pembimbing::where('user_id', $iduka->user_id)->first(); // Ambil data pembimbing
-
-        $request->validate([
+        $pembimbing = Pembimbing::where('user_id', $iduka->user_id)->first();
+        $user = User::where('iduka_id', $iduka->id)->first();
+    
+        $validationRules = [
             'nama' => 'required|string|max:255',
             'nama_pimpinan' => 'required|string|max:255',
             'nip_pimpinan' => 'required|string|max:50',
@@ -129,10 +131,15 @@ class IdukaController extends Controller
             'kerjasama' => 'required|string',
             'kerjasama_lainnya' => 'nullable|required_if:kerjasama,Lainnya|string|max:255',
             'kuota_pkl' => 'required|numeric',
-            'no_hp_pimpinan' =>  'required|numeric',
-        ]);
-
-        DB::transaction(function () use ($request, $iduka, $pembimbing) {
+            'no_hp_pimpinan' => 'required|numeric',
+            'nama_pembimbing' => 'required|string',
+            'nip_pembimbing' => 'required|string',
+            'no_hp_pembimbing' => 'required|numeric',
+        ];
+    
+        $request->validate($validationRules);
+    
+        DB::transaction(function () use ($request, $iduka, $pembimbing, $user) {
             // Update Iduka
             $iduka->update([
                 'nama' => $request->nama,
@@ -143,42 +150,46 @@ class IdukaController extends Controller
                 'kode_pos' => $request->kode_pos,
                 'telepon' => $request->telepon,
                 'email' => $request->email,
-
                 'bidang_industri' => $request->bidang_industri,
                 'kerjasama' => $request->kerjasama,
                 'kerjasama_lainnya' => $request->kerjasama_lainnya,
                 'kuota_pkl' => $request->kuota_pkl,
                 'no_hp_pimpinan' => $request->no_hp_pimpinan,
-
-
             ]);
-
-            // Update atau buat data Pembimbing
+    
+            // Update Pembimbing
             if ($pembimbing) {
-                $updateData = [
+                $pembimbing->update([
                     'name' => $request->nama_pembimbing,
                     'nip' => $request->nip_pembimbing,
                     'no_hp' => $request->no_hp_pembimbing,
-                ];
-            
-                // Update password hanya jika diisi
-                if ($request->filled('password')) {
-                    $updateData['password'] = $request->password;
-                }
-            
-                $pembimbing->update($updateData);
+                ]);
+    
+                // Update User
+                $user->update([
+                    'name' => $request->nama_pembimbing,
+                    'nip' => $request->nip_pembimbing,
+                    'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,
+                ]);
             } else {
+                User::create([
+                    'iduka_id' => $iduka->id,
+                    'name' => $request->nama_pembimbing,
+                    'nip' => $request->nip_pembimbing,
+                    'password' => Hash::make($request->password),
+                    'role' => 'ppkl',
+                ]);
+    
                 Pembimbing::create([
                     'user_id' => $iduka->user_id,
                     'name' => $request->nama_pembimbing,
                     'nip' => $request->nip_pembimbing,
                     'no_hp' => $request->no_hp_pembimbing,
-                    'password' => $request->password ?? 'defaultpassword', // atau generate random password
                 ]);
             }
-            
         });
-
+        
+    
         return redirect()->route('iduka.pribadi')->with('success', 'Data berhasil diperbarui.');
     }
 

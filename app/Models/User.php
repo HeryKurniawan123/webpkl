@@ -26,6 +26,7 @@ class User extends Authenticatable
         'password',
         'role',
         'iduka_id',
+         'profile_photo'
     ];
 
     // Relasi ke tabel gurus (One to One)

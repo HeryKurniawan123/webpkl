@@ -39,7 +39,12 @@
                                         aria-label="Close"></button>
                                 </div>
                             @endif
-
+                            @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Error!</strong> {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            @endif
                             @foreach ($pengajuans as $pengajuan)
                                 <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
                                     <div class="d-flex justify-content-between align-items-center">

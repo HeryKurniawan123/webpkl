@@ -294,6 +294,20 @@
             }
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.querySelector("input[name='search']");
+        const tableRows = document.querySelectorAll("tbody tr");
+
+        searchInput.addEventListener("keyup", function() {
+            const searchValue = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? "" : "none";
+            });
+        });
+    });
 </script>
 
 @endsection

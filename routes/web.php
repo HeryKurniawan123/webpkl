@@ -15,18 +15,19 @@ use App\Http\Controllers\KonkeController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\KaprogController;
 use App\Http\Controllers\ProkerController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HakAksesController;
 use App\Http\Controllers\IdukaAtpController;
 use App\Http\Controllers\PembimbingController;
 use App\Http\Controllers\PersuratanController;
 use App\Http\Controllers\DataPribadiController;
+use App\Http\Controllers\KaprogIdukaController;
 use App\Http\Controllers\UsulanIdukaController;
 use App\Http\Controllers\PengajuanPklController;
-use App\Http\Controllers\TenagaKependidikanController;
-use App\Http\Controllers\DataPribadiPersuratanController;
-use App\Http\Controllers\KaprogIdukaController;
 use App\Http\Controllers\PusatbantuanController;
 use App\Http\Controllers\SuratPengantarController;
+use App\Http\Controllers\TenagaKependidikanController;
+use App\Http\Controllers\DataPribadiPersuratanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -268,6 +269,7 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     //pengajuan iduka
     Route::get('/kaprog/review-pengajuan', [KaprogController::class, 'reviewPengajuan'])->name('kaprog.review.pengajuan');
     Route::get('/kaprog/review-pengajuan/{iduka_id}/detail', [KaprogController::class, 'detailUsulanPkl'])->name('kaprog.review.reviewdetail');
+    
 
 
     Route::post('/review/pengajuan/{id}', [KaprogController::class, 'prosesPengajuan'])->name('kaprog.pengajuan.prosesPengajuan');
@@ -297,7 +299,7 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::put('/iduka/{id}/tanggal', [IdukaController::class, 'updateTanggal'])->name('kaprog.tanggal.update');
     //--------
 
-   
+    Route::get('/kaprog/histori-pengajuan', [KaprogController::class, 'historiPengajuan'])->name('kaprog.review.histori');
 });
 
 
@@ -339,6 +341,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
+
+    //profill
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update.password');
 
 });
 

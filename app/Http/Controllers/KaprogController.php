@@ -125,10 +125,9 @@ class KaprogController extends Controller
     
         // Simpan ke tabel pengajuan_pkl
         PengajuanPkl::create([
-           'siswa_id' => $cetak->siswa_id, // jika kolom ini yang benar
-            'iduka_id'   => $request->iduka_id,
-            'status'     => 'proses',
-            // Jika tabel pengajuan_pkl punya kolom lain seperti created_at/updated_at, akan di-handle otomatis
+            'siswa_id' => $cetak->siswa_id, // pastikan ini sesuai dengan struktur
+            'iduka_id' => $request->iduka_id,
+            'status' => 'proses', // default status ketika baru dibuat
         ]);
     
         return redirect()->back()->with('success', 'Pengajuan berhasil dikirim.');
@@ -271,6 +270,8 @@ class KaprogController extends Controller
             ->with(['user.dataPribadi.kelas']) // eager load user, data pribadi, dan kelas
             ->get();
 
+           
+
 
         return view('kaprog.review.detailpengajuaniduka', compact('iduka', 'pengajuans'));
     }
@@ -404,5 +405,18 @@ class KaprogController extends Controller
             return redirect()->back()->with('info', "Semua pengajuan sudah pernah dikirim.");
         }
     }
+
+    public function historiPengajuan()
+    {
+        // Ambil semua data pengajuan yang sudah diproses (status bukan 'proses')
+        $historiPengajuan = PengajuanPkl::with('iduka', 'siswa')
+            ->where('status', 'diterima')
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->groupBy('iduka_id');
+        
+        return view('kaprog.review.histori', compact('historiPengajuan'));
+    }
     
+ 
 }

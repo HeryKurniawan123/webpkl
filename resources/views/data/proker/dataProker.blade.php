@@ -29,6 +29,7 @@
                                     <span class="d-none d-md-inline">Cari</span>
                                 </button>
                 
+                
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahProkerModal">
                                     <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
                                 </button>
@@ -171,19 +172,19 @@
 </div>
 
 <script>
-document.getElementById("searchInput").addEventListener("keyup", function () {
-    let filter = this.value.toLowerCase();
-    let rows = document.querySelectorAll("#tableBody tr");
-    
-    rows.forEach(row => {
-        let nameCell = row.cells[1]; // Kolom "Program Keahlian"
-        
-        if (nameCell) {
-            let nameText = nameCell.textContent.toLowerCase();
-            row.style.display = nameText.includes(filter) ? "" : "none";
-        }
+  document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.querySelector("input[name='search']");
+        const tableRows = document.querySelectorAll("tbody tr");
+
+        searchInput.addEventListener("keyup", function() {
+            const searchValue = this.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchValue) ? "" : "none";
+            });
+        });
     });
-});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {{-- alert hapus --}}

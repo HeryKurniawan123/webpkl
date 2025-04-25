@@ -13,9 +13,7 @@
         .card-hover:hover {
             transform: scale(1.03);
             background-color: #7e7dfb !important;
-            /* Warna diperbaiki */
             color: white !important;
-            /* Agar teks berubah saat hover */
         }
 
         .card-hover:hover .btn-hover {
@@ -114,18 +112,18 @@
                                     </div>
                                     <div class="modal-body">
                                         <form action="#">
-                                            <input type="text" name="search" class="form-control" placeholder="Cari Institusi / Perusahaan...">
+                                            <input type="text" id="searchInput" name="search" class="form-control" placeholder="Cari Institusi / Perusahaan...">
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                                        <button type="button" class="btn btn-primary btn-sm" id="searchButton">Cari</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-12 mt-3">
+                    <div class="col-md-12 mt-3" id="idukaContainer">
                         @if ($iduka->isEmpty())
                         <div class="alert alert-warning">
                             Belum ada data Iduka yang tersedia.
@@ -138,7 +136,7 @@
                         </div>
                         @endif
                         @foreach ($iduka as $i)
-                        <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;">
+                        <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;" data-rekomendasi="{{ $i->rekomendasi ? 'rekomendasi' : 'ajuan' }}">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div style="min-width: 0;">
                                     <!-- Nama Iduka dengan batas 2 baris -->
@@ -186,14 +184,11 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                {{-- alert hapus --}}
-
                                                 <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
                                                 </form>
-
                                             </li>
                                         </ul>
                                     </div>
@@ -268,10 +263,8 @@
             </div>
         </div>
     </div>
-    {{-- alert hapus --}}
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{-- alert hapus --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -297,7 +290,7 @@
                 });
             });
 
-            // Notifikasi SweetAlert setelah aksi sukses (hapus, tambah, dll)
+            // Notifikasi SweetAlert setelah aksi sukses
             @if(session('success'))
             Swal.fire({
                 icon: 'success',
@@ -307,45 +300,58 @@
                 showConfirmButton: false
             });
             @endif
+
+            // Filter functionality
+            const filterSelect = document.getElementById('filterIduka');
+            const filterSelectMobile = document.getElementById('filterIdukaMobile');
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+            const idukaCards = document.querySelectorAll('#idukaContainer .card-hover');
+
+            function filterIduka() {
+                const filterValue = filterSelect.value;
+                const searchValue = searchInput.value.toLowerCase();
+                
+                idukaCards.forEach(card => {
+                    const rekomendasiStatus = card.getAttribute('data-rekomendasi');
+                    const nama = card.querySelector('.fw-bold').textContent.toLowerCase();
+                    const alamat = card.querySelector('.text-muted').textContent.toLowerCase();
+                    
+                    // Filter by rekomendasi/ajuan status
+                    const matchesFilter = filterValue === 'all' || rekomendasiStatus === filterValue;
+                    
+                    // Filter by search term
+                    const matchesSearch = searchValue === '' || 
+                                         nama.includes(searchValue) || 
+                                         alamat.includes(searchValue);
+                    
+                    // Show/hide card based on both filters
+                    if (matchesFilter && matchesSearch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Event listeners
+            filterSelect.addEventListener('change', filterIduka);
+            filterSelectMobile.addEventListener('change', function() {
+                filterSelect.value = this.value;
+                filterIduka();
+            });
+            
+            searchButton.addEventListener('click', filterIduka);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    filterIduka();
+                }
+            });
         });
     </script>
-
 
     @include('iduka.dataiduka.createiduka')
 </body>
 
 </html>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const searchInput = document.querySelector('input[name="search"]');
-        const filterSelect = document.getElementById("filterIduka");
-        const idukaCards = document.querySelectorAll(".card-hover");
-
-        function filterData() {
-            const searchValue = searchInput.value.toLowerCase();
-            const filterValue = filterSelect.value;
-
-            idukaCards.forEach(card => {
-                const nama = card.querySelector(".mb-0").textContent.toLowerCase(); // Ambil nama Iduka
-                const alamat = card.querySelector(".text-muted")?.textContent.toLowerCase() || ''; // Ambil alamat Iduka
-                const isRekomendasi = card.querySelector(".text-success") !== null; // Cek apakah ada label rekomendasi
-
-                let matchesSearch = nama.includes(searchValue) || alamat.includes(searchValue);
-                let matchesFilter =
-                    filterValue === "all" ||
-                    (filterValue === "rekomendasi" && isRekomendasi) ||
-                    (filterValue === "ajuan" && !isRekomendasi);
-
-                // Tampilkan atau sembunyikan kartu berdasarkan filter
-                card.style.display = (matchesSearch && matchesFilter) ? "block" : "none";
-            });
-        }
-
-        searchInput.addEventListener("input", filterData);
-        filterSelect.addEventListener("change", filterData);
-    });
-</script>
-
-
-
 @endsection
