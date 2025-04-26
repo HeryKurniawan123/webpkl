@@ -167,7 +167,7 @@
         <th style="text-align: center;  width: 30%;">NAMA</th>
         <th style="text-align: center">KELAS</th>
         <th style="text-align: center; width:15%">NIS</th>
-        <th style="text-align: center; width: 25%%;">KONSENTRASI KEAHLIAN</th>
+        <th style="text-align: center; width: 25%;">KONSENTRASI KEAHLIAN</th>
     </tr>
     <tr>
         <td style="width: 5%; text-align: center;">1</td>

@@ -189,6 +189,10 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::post('/review/pengajuan/proses/{id}', [PersuratanController::class, 'prosesPengajuan'])->name('persuratan.pengajuan.proses');
     Route::post('/review/pengajuan/kirim-semua/{iduka_id}', [PersuratanController::class, 'kirimSemua'])->name('review.pengajuan.kirimSemua');
 
+    Route::post('/surat-pengantar/cetak-pilihan', [SuratPengantarController::class, 'cetakPilihan'])->name('persuratan.suratPengantar.cetakPilihan');
+
+    
+
 
 });
 

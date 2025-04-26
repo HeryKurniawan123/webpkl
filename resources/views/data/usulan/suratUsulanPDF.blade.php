@@ -188,7 +188,7 @@
 
     <table class="sign-table">
         <tr>
-            <td>Mengetahui,<br>Orang Tua/Wali<br>
+            <td>Menyetujui,<br>Orang Tua/Wali<br>
                 <div class="space"></div>
                 <strong>{{ $dataPribadi->name_ayh ?? '-' }}</strong>
             </td>
@@ -198,7 +198,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">Disetujui,<br>Kaprog<br>
+            <td colspan="2">Menyetujui,<br>Ketua KK {{ $singkatanJurusan }}<br>
                 <div class="space"></div>
                 @if(isset($kaprog))
                 <strong>{{ $kaprog->name }}</strong><br>

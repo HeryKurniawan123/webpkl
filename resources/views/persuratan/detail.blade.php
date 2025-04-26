@@ -8,6 +8,13 @@
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detail Pengajuan PKL</h5>
+                        <button id="btn-select-mode" class="btn btn-warning me-2">Pilih Siswa</button>
+
+                        <form id="form-cetak" action="{{ route('persuratan.suratPengantar.cetakPilihan') }}" method="POST" target="_blank">
+                            @csrf
+                            <input type="hidden" name="iduka_id" value="{{ $iduka_id }}">
+                            <button id="btn-cetak" type="submit" class="btn btn-success" style="display: none;">Cetak Surat Pilihan</button>
+                        </form>
 
                         @if($pengajuanUsulans->isNotEmpty())
                         <a href="{{ route('semua.surat.pdf', $iduka_id) }}" class="btn btn-success">
@@ -26,21 +33,22 @@
                 @foreach($pengajuanUsulans as $pengajuan)
                 <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="mb-0" style="font-size: 18px">
-                                <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
-                            </div>
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox" name="selected_siswa[]" value="{{ $pengajuan->id }}" class="form-check-input me-3 checkbox-siswa" style="display: none;">
                             <div>
-                                Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
-                            </div>
-
-                            <div>
-                                Status: {{ ucfirst($pengajuan->status) }}
+                                <div class="mb-0" style="font-size: 18px">
+                                    <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
+                                </div>
+                                <div>
+                                    Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
+                                </div>
+                                <div>
+                                    Status: {{ ucfirst($pengajuan->status) }}
+                                </div>
                             </div>
                         </div>
 
                         <div>
-                            {{-- Tombol untuk melihat detail --}}
                             <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-info">
                                 Lihat Detail
                             </a>
@@ -49,9 +57,7 @@
                             @else
                             <button class="btn btn-primary btn-proses" data-id="{{ $pengajuan->id }}">Kirim</button>
                             @endif
-
                         </div>
-
                     </div>
                 </div>
                 @endforeach
@@ -69,6 +75,55 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const buttons = document.querySelectorAll('.btn-proses');
+        const selectButton = document.getElementById('btn-select-mode');
+        const cetakButton = document.getElementById('btn-cetak');
+        const checkboxes = document.querySelectorAll('.checkbox-siswa');
+        const formCetak = document.getElementById('form-cetak');
+        let selectModeActive = false; // Tambah variabel untuk mode
+
+        selectButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectModeActive = !selectModeActive; // Toggle mode
+
+            if (selectModeActive) {
+                checkboxes.forEach(cb => cb.style.display = 'block');
+                cetakButton.style.display = 'inline-block';
+                selectButton.textContent = 'Batal Pilih'; // Ganti teks tombol
+                selectButton.classList.remove('btn-warning');
+                selectButton.classList.add('btn-secondary');
+            } else {
+                checkboxes.forEach(cb => {
+                    cb.style.display = 'none';
+                    cb.checked = false; // Uncheck semua saat batal
+                });
+                cetakButton.style.display = 'none';
+                selectButton.textContent = 'Pilih Siswa'; // Balik teks tombol
+                selectButton.classList.remove('btn-secondary');
+                selectButton.classList.add('btn-warning');
+            }
+        });
+
+        formCetak.addEventListener('submit', function(e) {
+            // Hapus input hidden lama (kalau ada)
+            formCetak.querySelectorAll('input[name="ids[]"]').forEach(el => el.remove());
+
+            // Ambil semua checkbox yang dicentang
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'ids[]';
+                    hiddenInput.value = cb.value;
+                    formCetak.appendChild(hiddenInput);
+                }
+            });
+
+            // Kalau tidak ada yang dipilih, cancel submit
+            if (formCetak.querySelectorAll('input[name="ids[]"]').length === 0) {
+                e.preventDefault();
+                Swal.fire('Pilih minimal satu siswa!', '', 'warning');
+            }
+        });
 
         buttons.forEach(button => {
             button.addEventListener('click', function() {

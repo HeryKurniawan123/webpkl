@@ -83,7 +83,7 @@ class SuratPengantarController extends Controller
 
         $data = [
             'pengajuans' => $pengajuans,
-            'tanggal' => now()->format('d F Y'),
+            'tanggal' => now()->translatedFormat('d F Y'), // Format tanggal lokal
             'suratPengantar' => $suratPengantar,
             'iduka' => $iduka, // Mengirimkan IDUKA ke view
         ];
@@ -93,4 +93,46 @@ class SuratPengantarController extends Controller
 
         return $pdf->download('surat-pengantar.pdf');
     }
+
+    public function cetakPilihan(Request $request)
+{
+    $ids = $request->input('ids');
+    $iduka_id = $request->input('iduka_id');
+    $suratPengantar = SuratPengantar::first();
+
+    if (empty($ids)) {
+        return redirect()->back()->with('error', 'Tidak ada siswa yang dipilih.');
+    }
+
+    $pengajuans = CetakUsulan::with([
+        'dataPribadi.kelas',
+        'dataPribadi.konkes',
+        'iduka.user.pembimbingpkl',
+        'iduka.konkes',
+        'iduka.cp',
+        'iduka.atps',
+    ])
+    ->where('iduka_id', $iduka_id)
+    ->whereIn('id', $ids)
+    ->get();
+
+    if ($pengajuans->isEmpty()) {
+        return redirect()->back()->with('error', 'Tidak ada pengajuan sesuai pilihan.');
+    }
+
+    $iduka = optional($pengajuans->first())->iduka;
+
+    $data = [
+        'pengajuans' => $pengajuans,
+        'tanggal' => now()->translatedFormat('d F Y'),
+        'suratPengantar' => $suratPengantar,
+        'iduka' => $iduka,
+    ];
+
+    $pdf = Pdf::loadView('surat_pengantar.surat_pengantarsemua', $data)
+        ->setPaper('F4', 'portrait');
+
+    return $pdf->download('surat-pengantar-pilihan.pdf');
+}
+
 }

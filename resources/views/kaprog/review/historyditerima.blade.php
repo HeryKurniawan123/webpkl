@@ -115,7 +115,7 @@
 
                                 @foreach ($usulanDiterimaPkl as $usul)
                                 <tr>
-                                    <td>{{ $index + 2 }}</td>
+                                <td>{{ $loop->iteration + count($usulanDiterima) }}</td>
                                     <td>{{ $usul->user->name }}</td>
                                     <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
                                     <td>{{ $usul->iduka->nama ?? '-' }}</td>

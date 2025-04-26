@@ -16,14 +16,14 @@ class PdfController extends Controller
     {
         $user = Auth::user();
         $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
-    
+
         // Mencari data dari usulan_idukas
         $usulanIduka = UsulanIduka::where('user_id', $user->id)->latest()->first();
-    
+
         // Jika tidak ditemukan di usulan_idukas, cari di pengajuan_usulans
         if (!$usulanIduka) {
             $pengajuan = DB::table('pengajuan_usulans')->where('user_id', $user->id)->latest()->first();
-            
+
             if ($pengajuan && $pengajuan->iduka_id) {
                 $usulanIduka = DB::table('idukas')->where('id', $pengajuan->iduka_id)->first();
             }
@@ -31,49 +31,61 @@ class PdfController extends Controller
             // Jika ditemukan di usulan_idukas, ambil iduka_id dari situ
             $usulanIduka = DB::table('idukas')->where('id', $usulanIduka->iduka_id)->first();
         }
-    
+
         // Jika usulanIduka masih kosong, tampilkan error
         if (!$usulanIduka) {
             return back()->with('error', 'Data IDUKA tidak ditemukan.');
         }
-    
-        // Mencari kaprog berdasarkan konke_id
-        $kaprog = DB::table('users')
-        ->where('role', 'kaprog') // Memastikan role adalah kaprog
-        ->where('konke_id', $dataPribadi->konke_id) // Menyesuaikan dengan konke_id siswa
-        ->first();
 
-    // Jika Kaprog tidak ditemukan, tampilkan error
-    if (!$kaprog) {
-        return back()->with('error', 'Kaprog tidak ditemukan.');
-    }
-    
+        // Mencari kaprog berdasarkan konke_id
+        // Gunakan model User agar bisa akses relasi 'konke'
+        $kaprog = \App\Models\User::with('konke')
+            ->where('role', 'kaprog')
+            ->where('konke_id', $dataPribadi->konke_id)
+            ->first();
+
+
+        // Jika Kaprog tidak ditemukan, tampilkan error
+        if (!$kaprog) {
+            return back()->with('error', 'Kaprog tidak ditemukan.');
+        }
+        // Mapping singkatan jurusan
+        $singkatan = [
+            'PENGEMBANGAN PERANGKAT LUNAK DAN GIM' => 'PPLG',
+            'MANAGEMEN PERKANTORAN DAN LEMBAGA BISNIS' => 'MPLB',
+            'DESAIN PEMODELAN DAN INFORMASI BANGUNAN' => 'DPIB',
+            'Akuntansi Keuangan' => 'AK',
+            'Teknik Jaringan Komputer dan Telekomunikasi' => 'TJKT',
+            'Teknik Otomotif' => 'TO',
+            'Seni Pertunjukan' => 'SP',
+        ];
+        $namaJurusan = strtoupper($kaprog->konke->name_konke ?? 'Tidak diketahui');
+        $singkatanJurusan = $singkatan[$namaJurusan] ?? $namaJurusan;
+
+
         // Generate PDF
-        $pdf = Pdf::loadView('data.usulan.suratUsulanPDF', compact('dataPribadi', 'usulanIduka', 'kaprog'));
+        $pdf = Pdf::loadView('data.usulan.suratUsulanPDF', compact('dataPribadi', 'usulanIduka', 'kaprog', 'singkatanJurusan'));
         return $pdf->download('surat_usulan_iduka_baru.pdf');
     }
-    
+
     public function siswaUsulanPdf()
     {
         $user = Auth::user();
-        
+
         // Ambil data siswa yang sedang login
         $dataPribadi = DataPribadi::with(['kelas', 'konkes'])->where('user_id', $user->id)->first();
-        
+
         // Ambil data usulan IDUKA terbaru berdasarkan user
         $usulanIduka = UsulanIduka::where('user_id', $user->id)->latest()->first();
-    
+
         // Validasi jika data tidak ditemukan
         if (!$dataPribadi || !$usulanIduka) {
             return redirect()->back()->with('error', 'Data tidak ditemukan!');
         }
-    
+
         // Generate PDF menggunakan template suratUsulanSiswaPDF.blade.php
         $pdf = Pdf::loadView('data.usulan.siswaUsulanPdf', compact('dataPribadi', 'usulanIduka'));
-        
+
         return $pdf->download('siswa_usulan_iduka.pdf');
     }
-
-
-    
 }

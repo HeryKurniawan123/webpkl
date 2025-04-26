@@ -130,7 +130,6 @@
 </head>
 
 <body>
-
     <div class="kop-surat">
         <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/jawabarat.png'))) }}" alt="Logo Jawa Barat" />
         <div class="teks">
@@ -142,32 +141,35 @@
             <p>Kawali – Kabupaten Ciamis 46253</p>
         </div>
         <hr>
-        <p style="text-align: right;"> {{ $suratPengantar->tempat ?? '-'}}, {{ \Carbon\Carbon::parse($suratPengantar->tanggalbuat ?? '')->translatedFormat('d F Y') }}
+        <p style="text-align: right;"> Kawali, {{ $tanggal }}
 
     </div>
 
     <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
         <tr>
             <td style="padding: 0px; width: 10%; vertical-align: top;">Nomor</td>
-            <td style="padding: 2px; width: 60%;">: {{ $suratPengantar->nomor ?? '-' }} </td>
+            <!-- <td style="padding: 2px; width: 60%;">: {{ $suratPengantar->nomor ?? '-' }} </td> -->
+            <td style="padding: 2px; width: 60%;">: </td>
             <td style="padding: 2px; width: 40%;">Kepada :</td>
         </tr>
         <tr>
             <td style="padding: 0px; width: 10%; vertical-align: top;">Lampiran</td>
-            <td style="padding: 2px; width: 60%;">: -</td>
+            <td style="padding: 2px; width: 60%;">: </td>
             @if ($pengajuans->isNotEmpty())
             <td style="padding: 2px; width: 40%;">Yth. Pimpinan {{ $pengajuans->first()->iduka->nama ?? '-' }} </td>
             @endif
         </tr>
         <tr>
             <td style="padding: 0px; width: 10%; vertical-align: top;">Perihal</td>
-            <td style="padding: 2px; width: 60%;">: {{ $suratPengantar->perihal ?? '-' }}</td>
+            <!-- <td style="padding: 2px; width: 60%;">: {{ $suratPengantar->perihal ?? '-' }}</td> -->
+            <td style="padding: 2px; width: 60%;">: Permohonan Praktik Kerja Lapangan (PKL)</td>
             <td style="padding: 2px; width: 40%;">Di<br>Tempat </td>
         </tr>
     </table>
     <br>
 
-    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Menindaklanjuti surat balasan perihal penerimaan siswa–siswi kami untuk melaksanakan Praktik Kerja Lapangan (PKL) di Institusi / Perusahaan Saudara, kami tugaskan siswa sebagai berikut :</p>
+    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Sehubungan dengan pelaksanaan kegiatan Praktik Kerja Lapangan (PKL), dengan ini kami bermaksud mengajukan Permohonan Praktik Kerja Lapangan (PKL) yang akan dimulai pada tanggal 13 Oktober 2025 sampai dengan 14 Februari 2026 di Perusahaan/ Instansi Bapak/Ibu bagi peserta didik SMKN 1 Kawali atas nama:</p>
+
 
     <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 12px;">
         <tr style="text-align: center;">
@@ -194,16 +196,18 @@
     <br>
 
     <p style="margin-bottom:20px; font-size: 12px; text-align: justify;">
-        {{ $suratPengantar->deskripsi ?? '-' }}
+        <!-- {{ $suratPengantar->deskripsi ?? '-' }} -->
+        Tanpa mengurangi rasa hormat, kami berharap Bapak/ Ibu Pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai format yang telah kami lampirkan. <br>
+        Atas perhatian dan kerjasamanya kami ucapkan terima kasih.
     </p>
 
-    @if(file_exists(public_path('images/ttd.png')))
+    <!-- @if(file_exists(public_path('images/ttd.png')))
     <div class="ttd">
         <img src="{{ public_path('images/ttd.png') }}" alt="Tanda Tangan" width="150">
     </div>
     @else
     <p>Tanda tangan belum tersedia</p>
-    @endif
+    @endif -->
 
 
 
@@ -212,16 +216,16 @@
     <table width="100%" style="font-size: 14px;">
         <tr>
             <td style="vertical-align: top; width: 60%;">
-                <p><strong>Nomor</strong> : {{ $suratPengantar->nomor ?? '-' }}</p>
-    <p><strong>Lampiran</strong> : -</p>
-    <p><strong>Perihal</strong> :{{ $suratPengantar->perihal?? '-' }}<br>
+                <p><strong>Nomor</strong> : </p>
+    <p><strong>Lampiran</strong> : </p>
+    <p><strong>Perihal</strong> : Permohonan Praktik Kerja Lapangan (PKL)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kerja Lapangan (PKL)</p>
     </td>
     <td style="vertical-align: top; width: 40%; text-align: right;">
         <p>Kepada :</p>
         <p>Yth. Pimpinan {{ $pengajuan->iduka->nama ?? '-' }} <br>
-            Di<br>
-            Tempat </p>
+    Di<br>
+    Tempat </p>
     </td>
     </tr>
     </table> --}}
