@@ -139,144 +139,156 @@
 
                     <div class="col-md-12 mt-3" id="idukaContainer">
                         @if ($iduka->isEmpty())
-                        <div class="alert alert-warning">
-                            Belum ada data institusi / perusahaan yang tersedia.
-                        </div>
+                            <div class="alert alert-warning">
+                                Belum ada data institusi / perusahaan yang tersedia.
+                            </div>
                         @else
-                        @if(session()->has('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        @endif
-                        @foreach ($iduka as $i)
-                        <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;" data-rekomendasi="{{ $i->rekomendasi ? 'rekomendasi' : 'ajuan' }}">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div style="min-width: 0;">
-                                    <!-- Nama Iduka dengan batas 2 baris -->
-                                    <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
-                                        {{ $i->nama }}
-                                    </div>
-                                    <!-- Alamat dengan text-truncate -->
-                                    <div class="text-muted text-truncate w-100" style="font-size: 14px;">
-                                        {{ $i->alamat }}
-                                    </div>
-                                    @if ($i->rekomendasi == 1)
-                                    <div class="text-success mt-1" style="font-size: 13px;">
-                                        <strong>Rekomendasi:</strong> INSTITUSI ini direkomendasikan
-                                    </div>
-                                    @endif
+                            @if(session()->has('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
-                                <div class="d-flex align-items-center">
-                                    @if(auth()->user()->role == 'kaprog')
-                                    <a href="{{ route('detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
-                                    @elseif(auth()->user()->role == 'hubin')
-                                    <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
-                                    @endif
-
-                                    @if(auth()->user()->role === 'kaprog')
-                                    <button
-                                        type="button"
-                                        class="btn btn-hover rounded-pill btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#aturTanggalModalKaprog{{ $i->id }}">
-                                        <i class="bi bi-calendar-event"></i>
-                                    </button>
-                                    @elseif(auth()->user()->role === 'hubin')
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline-primary btn-sm ms-2"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#aturTanggalModalHubin{{ $i->id }}">
-                                        <i class="bi bi-calendar-event"></i>
-                                    </button>
-                                    @endif
-
-                                    <div class="dropdown ms-2">
-                                        <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            ⋮
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
-                                                </form>
-                                            </li>
-                                        </ul>
+                            @endif
+                    
+                            @foreach ($iduka as $i)
+                                <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;" data-rekomendasi="{{ $i->rekomendasi ? 'rekomendasi' : 'ajuan' }}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div style="min-width: 0;">
+                                            <!-- Nama Iduka dengan batas 2 baris -->
+                                            <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
+                                                {{ $i->nama }}
+                                            </div>
+                                            <!-- Alamat dengan text-truncate -->
+                                            <div class="text-muted text-truncate w-100" style="font-size: 14px;">
+                                                {{ $i->alamat }}
+                                            </div>
+                                            @if ($i->rekomendasi == 1)
+                                                <div class="text-success mt-1" style="font-size: 13px;">
+                                                    <strong>Rekomendasi:</strong> INSTITUSI ini direkomendasikan
+                                                </div>
+                                            @endif
+                                        </div>
+                    
+                                        <div class="d-flex align-items-center">
+                                            <!-- Tombol Detail (disembunyikan di mobile) -->
+                                            @if(auth()->user()->role == 'kaprog')
+                                                <a href="{{ route('detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm ms-2 d-none d-md-block">Detail</a>
+                                            @elseif(auth()->user()->role == 'hubin')
+                                                <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm ms-2 d-none d-md-block">Detail</a>
+                                            @endif
+                                            
+                                            <!-- Tombol Icon Tanggal -->
+                                            @if(auth()->user()->role === 'kaprog')
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-hover rounded-pill btn-sm ms-2"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#aturTanggalModalKaprog{{ $i->id }}">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                </button>
+                                            @elseif(auth()->user()->role === 'hubin')
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline-primary btn-sm ms-2"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#aturTanggalModalHubin{{ $i->id }}">
+                                                    <i class="bi bi-calendar-event"></i>
+                                                </button>
+                                            @endif
+                                        
+                                            <!-- Dropdown untuk mobile -->
+                                            <div class="dropdown ms-2 d-md-none">
+                                                <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    ⋮
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        @if(auth()->user()->role == 'kaprog')
+                                                            <a href="{{ route('detail.iduka', $i->id) }}" class="dropdown-item">Detail</a>
+                                                        @elseif(auth()->user()->role == 'hubin')
+                                                            <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="dropdown-item">Detail</a>
+                                                        @endif
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>                                        
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        @if(auth()->user()->role === 'kaprog')
-                        <!-- Modal Atur Tanggal Kaprog -->
-                        <div class="modal fade" id="aturTanggalModalKaprog{{ $i->id }}" tabindex="-1" aria-labelledby="aturTanggalLabelKaprog{{ $i->id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <form action="{{ route('kaprog.tanggal.update', $i->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="aturTanggalLabelKaprog{{ $i->id }}">Atur Batas Waktu Usulan (Kaprog)</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="tanggal_awalKaprog{{ $i->id }}" class="form-label">Tanggal Awal</label>
-                                                <input type="date" class="form-control" id="tanggal_awalKaprog{{ $i->id }}" name="tanggal_awal" value="{{ $i->tanggal_awal }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="tanggal_akhirKaprog{{ $i->id }}" class="form-label">Tanggal Akhir</label>
-                                                <input type="date" class="form-control" id="tanggal_akhirKaprog{{ $i->id }}" name="tanggal_akhir" value="{{ $i->tanggal_akhir }}">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        @elseif(auth()->user()->role === 'hubin')
-                        <!-- Modal Atur Tanggal Hubin -->
-                        <div class="modal fade" id="aturTanggalModalHubin{{ $i->id }}" tabindex="-1" aria-labelledby="aturTanggalLabelHubin{{ $i->id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <form action="{{ route('hubin.tanggal.update', $i->id) }}" method="POST">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="aturTanggalLabelHubin{{ $i->id }}">Atur Batas Waktu Usulan (Hubin)</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label for="tanggal_awalHubin{{ $i->id }}" class="form-label">Tanggal Awal</label>
-                                                <input type="date" class="form-control" id="tanggal_awalHubin{{ $i->id }}" name="tanggal_awal" value="{{ $i->tanggal_awal }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="tanggal_akhirHubin{{ $i->id }}" class="form-label">Tanggal Akhir</label>
-                                                <input type="date" class="form-control" id="tanggal_akhirHubin{{ $i->id }}" name="tanggal_akhir" value="{{ $i->tanggal_akhir }}">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                    
+                                @if(auth()->user()->role === 'kaprog')
+                                    <!-- Modal Atur Tanggal Kaprog -->
+                                    <div class="modal fade" id="aturTanggalModalKaprog{{ $i->id }}" tabindex="-1" aria-labelledby="aturTanggalLabelKaprog{{ $i->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form action="{{ route('kaprog.tanggal.update', $i->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="aturTanggalLabelKaprog{{ $i->id }}">Atur Batas Waktu Usulan (Kaprog)</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_awalKaprog{{ $i->id }}" class="form-label">Tanggal Awal</label>
+                                                            <input type="date" class="form-control" id="tanggal_awalKaprog{{ $i->id }}" name="tanggal_awal" value="{{ $i->tanggal_awal }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_akhirKaprog{{ $i->id }}" class="form-label">Tanggal Akhir</label>
+                                                            <input type="date" class="form-control" id="tanggal_akhirKaprog{{ $i->id }}" name="tanggal_akhir" value="{{ $i->tanggal_akhir }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
+                                @elseif(auth()->user()->role === 'hubin')
+                                    <!-- Modal Atur Tanggal Hubin -->
+                                    <div class="modal fade" id="aturTanggalModalHubin{{ $i->id }}" tabindex="-1" aria-labelledby="aturTanggalLabelHubin{{ $i->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <form action="{{ route('hubin.tanggal.update', $i->id) }}" method="POST">
+                                                @csrf
+                                                @method('PUT')
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="aturTanggalLabelHubin{{ $i->id }}">Atur Batas Waktu Usulan (Hubin)</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_awalHubin{{ $i->id }}" class="form-label">Tanggal Awal</label>
+                                                            <input type="date" class="form-control" id="tanggal_awalHubin{{ $i->id }}" name="tanggal_awal" value="{{ $i->tanggal_awal }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="tanggal_akhirHubin{{ $i->id }}" class="form-label">Tanggal Akhir</label>
+                                                            <input type="date" class="form-control" id="tanggal_akhirHubin{{ $i->id }}" name="tanggal_akhir" value="{{ $i->tanggal_akhir }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
                         @endif
-
-                        @endforeach
-                        @endif
-                    </div>
-                    <div class="card">
+                    </div>                    
+                    {{-- <div class="card">
                         <div class="d-flex justify-content-end mt-3">
                             {{ $iduka->links('pagination::bootstrap-5') }}
                         </div>
-                    </div>
+                    </div>                     --}}
                 </div>
             </div>
         </div>

@@ -87,19 +87,25 @@
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
+                                    <div class="mb-0" style="font-size: 18px">
+                                        <strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong>
+                                    </div>
                                     <small class="text-muted">{{ $pengajuanGroup->count() }} siswa mengajukan ke sini</small>
                                 </div>
                                 <div>
-                                    <a href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    <button
-                                        class="btn btn-hover rounded-pill btn-kirim"
-                                        data-iduka="{{ $iduka_id }}"
-                                        data-nama="{{ htmlspecialchars($pengajuanGroup->first()->iduka->nama, ENT_QUOTES) }}">
+                                    {{-- Tombol hanya tampil di desktop --}}
+                                    <a href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}"
+                                       class="btn btn-hover rounded-pill d-none d-md-inline-block">
+                                        Detail
+                                    </a>
+                                    <button class="btn btn-hover rounded-pill btn-kirim d-none d-md-inline-block"
+                                            data-iduka="{{ $iduka_id }}"
+                                            data-nama="{{ htmlspecialchars($pengajuanGroup->first()->iduka->nama, ENT_QUOTES) }}">
                                         Kirim
                                     </button>
                                 </div>
-
+                        
+                                {{-- Dropdown hanya muncul di mobile --}}
                                 <div class="dropdown d-md-none ms-2">
                                     <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         ⋮
@@ -107,23 +113,21 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <a class="dropdown-item text-warning" 
-                                            href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}">
-                                            Detail
+                                               href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}">
+                                                Detail
                                             </a>
                                         </li>
                                         <li>
-                                            <button 
-                                                class="dropdown-item text-success btn-kirim"
-                                                data-iduka="{{ $iduka_id }}"
-                                                data-nama="{{ htmlspecialchars($pengajuanGroup->first()->iduka->nama, ENT_QUOTES) }}">
+                                            <button class="dropdown-item text-success btn-kirim"
+                                                    data-iduka="{{ $iduka_id }}"
+                                                    data-nama="{{ htmlspecialchars($pengajuanGroup->first()->iduka->nama, ENT_QUOTES) }}">
                                                 Kirim
                                             </button>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                        </div>
-
+                        </div>                        
                         @endforeach
 
 
@@ -131,11 +135,11 @@
 
                     </div>
                 </div>
-                <div class="card">
+                {{-- <div class="card">
                     <div class="d-flex justify-content-end mt-3">
                         {{ $pengajuanUsulans->links('pagination::bootstrap-5') }}
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

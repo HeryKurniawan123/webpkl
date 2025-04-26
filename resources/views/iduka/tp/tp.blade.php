@@ -107,7 +107,7 @@
 
     <!-- Modal Tambah -->
     <div class="modal fade" id="tambahTpModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah dan Edit Tujuan Pembelajaran Institusi</h5>
@@ -115,21 +115,27 @@
                 </div>
                 <form action="{{ route('iduka_atp.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="iduka_id" id="iduka_id" value="{{ $iduka->id ?? '' }}"><input type="hidden" name="iduka_id" id="iduka_id" value="{{ auth()->user()->iduka_id }}">
+                    <input type="hidden" name="iduka_id" id="iduka_id" value="{{ $iduka->id ?? '' }}">
+                    <input type="hidden" name="iduka_id" id="iduka_id" value="{{ auth()->user()->iduka_id }}">
                     <input type="hidden" name="konke_id" id="konke_id">
-
+    
                     <div class="modal-body">
                         <div class="d-flex justify-content-center mb-3">
-                            @foreach($konkes as $konke)
-                            <button type="button" class="btn btn-primary m-1 jurusan-btn" data-konke-id="{{ $konke->id }}">
-                                {{ $konke->name_konke }}
-                            </button>
-                            @endforeach
+                            <!-- Wrapper for sliding konke buttons -->
+                            <div class="d-flex flex-nowrap overflow-auto">
+                                @foreach($konkes as $konke)
+                                <button type="button" class="btn btn-primary m-1 jurusan-btn" data-konke-id="{{ $konke->id }}">
+                                    {{ $konke->name_konke }}
+                                </button>
+                                @endforeach
+                            </div>
                         </div>
-
+    
                         <div id="cpTpContainer">
-                            <label class="d-flex justify-content-end me-2">Check All<input type="checkbox" id="checkAllTambah"></label>
-                            <table class="table">
+                            <label class="d-flex justify-content-end me-2">Check All
+                                <input type="checkbox" id="checkAllTambah">
+                            </label>
+                            <table class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th>Nama Tujuan Pembelajaran</th>
@@ -138,13 +144,13 @@
                                 </thead>
                                 <tbody id="tp-tambah-body">
                                     <tr>
-                                        <td colspan='2' class='text-center text-muted'>Silakan pilih kompetensi keahlian</td>
+                                        <td colspan="2" class="text-center text-muted">Silakan pilih kompetensi keahlian</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
+    
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary btn-sm">Simpan Data</button>
@@ -153,6 +159,7 @@
             </div>
         </div>
     </div>
+    
 </body>
 
 <script>

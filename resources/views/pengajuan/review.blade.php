@@ -101,13 +101,13 @@
                             @endif
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <div class="mb-0" style="font-size: 18px">
+                                    <div class="mb-0" style="font-size: 18px; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                         @if($pengajuan->dataPribadi)
                                         <strong>{{ $pengajuan->dataPribadi->user->name ?? 'Nama Tidak Tersedia' }}</strong>
                                         @else
                                         <p class="text-danger">Data pribadi tidak ditemukan untuk siswa ini.</p>
                                         @endif
-                                    </div>
+                                    </div>                                                                     
                                     <div class="">
                                         Kelas: {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
                                     </div>

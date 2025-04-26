@@ -113,27 +113,27 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Detail Data Institusi / Perusahaan</h5>
-
-                                <!-- Tombol Titik Tiga -->
-                                <div class="d-flex gap-2 ms-auto">
+                    
+                                <!-- Tombol dan Dropdown -->
+                                <div class="d-flex gap-2 ms-auto align-items-center">
+                                    {{-- Tombol Kembali --}}
                                     <a href="{{ route('data.iduka') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
+                    
+                                    {{-- Tombol Download ATP (Hanya Desktop) --}}
                                     @if(auth()->user()->role === 'kaprog')
-                                    <li>
-                                        <a href="{{ route('kaprog.download.atp', $iduka->id) }}" class="btn btn-danger">
-                                            Download PDF ATP 
+                                        <a href="{{ route('kaprog.download.atp', $iduka->id) }}" class="btn btn-danger btn-sm d-none d-md-inline">
+                                            Download PDF ATP
                                         </a>
-                                    </li>
-                                    @elseif(auth()->user()->role === 'hubin')
-                                    <li>
-                                        <a href="{{ route('hubin.download.atp', $iduka->id) }}" class="btn btn-danger">
-                                            Download PDF ATP 
+                                    @elseif(auth()->user()->role === 'persuratan')
+                                        <a href="{{ route('hubin.download.atp', $iduka->id) }}" class="btn btn-danger btn-sm d-none d-md-inline">
+                                            Download PDF ATP
                                         </a>
-                                    </li>
                                     @endif
-                                   
+                    
+                                    {{-- Dropdown Titik Tiga --}}
                                     <div class="dropdown">
                                         <button class="btn btn-light p-1 rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="bi bi-three-dots-vertical"></i>
@@ -141,42 +141,42 @@
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
                                                 <a href="{{ route('data.iduka') }}" class="dropdown-item">
-                                                   <span class="text-primary">Kembali</span>
+                                                    <span class="text-primary">Kembali</span>
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#" class="dropdown-item">
-                                                   <span class="text-danger">Export PDF</span>
+                                                    <span class="text-danger">Export PDF</span>
                                                 </a>
                                             </li>
+                                            {{-- Download PDF ATP (Tersedia di Dropdown untuk semua ukuran layar) --}}
                                             <li>
-                                                <a href="{{ route('kaprog.download.atp', $iduka->id) }}" class="dropdown-item">
-                                                   <span class="text-success">Download PDF ATP</span>
+                                                <a href="{{ auth()->user()->role === 'kaprog' ? route('kaprog.download.atp', $iduka->id) : route('hubin.download.atp', $iduka->id) }}" class="dropdown-item">
+                                                    <span class="text-success">Download PDF ATP</span>
                                                 </a>
                                             </li>
                                             @if(auth()->user()->role == 'kaprog')
-                                            <li>
-                                                <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModalKaprog">
-                                                    <i class="bi bi-pencil-square text-warning"></i>
-                                                    <span class="text-warning">Edit </span>
-                                                </a>
-                                            </li>
+                                                <li>
+                                                    <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModalKaprog">
+                                                        <i class="bi bi-pencil-square text-warning"></i>
+                                                        <span class="text-warning">Edit </span>
+                                                    </a>
+                                                </li>
                                             @elseif(auth()->user()->role == 'hubin')
-                                            <li>
-                                                <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModalHubin">
-                                                    <i class="bi bi-pencil-square text-primary"></i>
-                                                    <span class="text-primary">Edit</span>
-                                                </a>
-                                            </li>
+                                                <li>
+                                                    <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editIdukaModalHubin">
+                                                        <i class="bi bi-pencil-square text-primary"></i>
+                                                        <span class="text-primary">Edit</span>
+                                                    </a>
+                                                </li>
                                             @endif
-
-
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
 
                     <div class="card">
                         <div class="card-body">
