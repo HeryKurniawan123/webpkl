@@ -138,7 +138,6 @@
                                 </table>
                             </div>
 
-<<<<<<< Updated upstream
                             <h5 class="mt-4">Data Institusi / Perusahaan</h5>
                             <div class="table-responsive">
                                 <table class="table table-striped">
