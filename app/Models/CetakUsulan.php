@@ -13,6 +13,7 @@ class CetakUsulan extends Model
         'siswa_id',
         'iduka_id',
         'status',
+        'dikirim',
     ];
 
     public function dataPribadi()

@@ -58,7 +58,7 @@ class KaprogController extends Controller
     public function show($id)
     {
         $usulan = UsulanIduka::with(['user.dataPribadi.konkes', 'user.dataPribadi.kelas', 'iduka'])
-   ->findOrFail($id);
+            ->findOrFail($id);
 
         return view('kaprog.review.detailusulanpkl', compact('usulan'));
     }
@@ -98,7 +98,7 @@ class KaprogController extends Controller
     //             'iduka_id' => $request->iduka_id,
     //             'status' => 'proses',
     //         ]);
-   
+
 
 
     //     return response()->json(['message' => 'Pengajuan berhasil dikirim ke IDUKA.']);
@@ -110,32 +110,38 @@ class KaprogController extends Controller
         $request->validate([
             'iduka_id' => 'required|exists:idukas,id',
         ]);
-    
+
         // Ambil data cetak_usulan berdasarkan ID
         $cetak = CetakUsulan::findOrFail($id);
-    
+
         // Cek duplikat: pastikan siswa + iduka belum pernah di-push ke pengajuan_pkl
         $duplikat = PengajuanPkl::where('siswa_id', $cetak->data_pribadi_id)
             ->where('iduka_id', $request->iduka_id)
             ->exists();
-    
+
         if ($duplikat) {
             return redirect()->back()->with('info', 'Data sudah dikirim sebelumnya.');
         }
-    
+
         // Simpan ke tabel pengajuan_pkl
         PengajuanPkl::create([
             'siswa_id' => $cetak->siswa_id, // pastikan ini sesuai dengan struktur
             'iduka_id' => $request->iduka_id,
             'status' => 'proses', // default status ketika baru dibuat
         ]);
-    
+
+        // Update kolom dikirim di cetak_usulans
+        $cetak->update([
+            'dikirim' => 'sudah',
+        ]);
+
         return redirect()->back()->with('success', 'Pengajuan berhasil dikirim.');
     }
-    
 
-    
-    
+
+
+
+
 
 
     public function diterima($id, Request $request)
@@ -270,7 +276,7 @@ class KaprogController extends Controller
             ->with(['user.dataPribadi.kelas']) // eager load user, data pribadi, dan kelas
             ->get();
 
-           
+
 
 
         return view('kaprog.review.detailpengajuaniduka', compact('iduka', 'pengajuans'));
@@ -336,7 +342,7 @@ class KaprogController extends Controller
     public function reviewPengajuan()
     {
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
-            ->where('status', 'sudah')
+            ->where('dikirim', 'belum')
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('iduka_id');
@@ -350,7 +356,7 @@ class KaprogController extends Controller
 
         $pengajuans = CetakUsulan::with(['dataPribadi.kelas'])
             ->where('iduka_id', $iduka_id)
-            ->where('status', 'sudah') // Atau status yang kamu inginkan
+            ->where('dikirim', 'belum') // Atau status yang kamu inginkan
             ->get();
 
         return view('kaprog.review.reviewdetail', compact('iduka', 'pengajuans'));
@@ -368,25 +374,26 @@ class KaprogController extends Controller
 
         return view('kaprog.review.detailusulan', compact('pengajuanUsulans'));
     }
+
     public function kirimSemua($iduka_id)
     {
         // Ambil semua pengajuan untuk IDUKA tersebut yang statusnya sudah 'sudah'
         $cetak = CetakUsulan::where('iduka_id', $iduka_id)
             ->where('status', 'sudah')
             ->get();
-    
+
         $jumlahTerkirim = 0;
-    
+
         foreach ($cetak as $pengajuan) {
-            
+
             $siswaId = $pengajuan->siswa_id;
 
-    
+
             // Cek apakah sudah ada di pengajuan_pkl
             $sudahAda = PengajuanPkl::where('siswa_id', $siswaId)
                 ->where('iduka_id', $iduka_id)
                 ->exists();
-    
+
             if (!$sudahAda) {
                 // Tambahkan ke tabel pengajuan_pkl
                 PengajuanPkl::create([
@@ -394,11 +401,14 @@ class KaprogController extends Controller
                     'iduka_id' => $iduka_id,
                     'status' => 'proses',
                 ]);
-    
+                // Update status dikirim di cetak_usulans menjadi 'sudah'
+                $pengajuan->update([
+                    'dikirim' => 'sudah'
+                ]);
                 $jumlahTerkirim++;
             }
         }
-    
+
         if ($jumlahTerkirim > 0) {
             return redirect()->back()->with('success', "$jumlahTerkirim pengajuan berhasil dikirim.");
         } else {
@@ -414,9 +424,7 @@ class KaprogController extends Controller
             ->orderBy('updated_at', 'desc')
             ->get()
             ->groupBy('iduka_id');
-        
+
         return view('kaprog.review.histori', compact('historiPengajuan'));
     }
-    
- 
 }
