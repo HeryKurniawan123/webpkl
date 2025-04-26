@@ -153,13 +153,13 @@
         </tr>
         <tr>
             <td style="padding: 0px; width: 10%; vertical-align: top;">Perihal</td>
-            <td style="padding: 2px; width: 60%;">: Pengantar Pelaksanaan Praktik</td>
+            <td style="padding: 2px; width: 60%;">: Pengantar Pelaksanaan Praktik Kerja Lapangan (PKL)</td>
             <td style="padding: 2px; width: 40%;">Di<br>Bandung</td>
         </tr>
     </table>
     <br>
 
-    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Menindaklanjuti surat balasan perihal penerimaan siswa–siswi kami untuk melaksanakan Praktik Kerja Lapangan (PKL) di Institusi Saudara, kami tugaskan siswa sebagai berikut :</p>
+    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Sehubungan dengan pelaksanaan kegiatan Praktik Kerja Lapangan (PKL), dengan ini kami bermaksud mengajukan permohonan Praktik Kerja Lapangan (PKL) yang akan dimulai pada tanggal 13 Oktober 2025 sampai dengan 14 Februari 2026 di Perusahaan / Instansi Bapak/Ibu bagi peserta didik SMKN 1 Kawali atas nama :</p>
 
 <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 12px;">
     <tr style="text-align: center;">
@@ -168,7 +168,6 @@
         <th style="text-align: center">KELAS</th>
         <th style="text-align: center; width:15%">NIS</th>
         <th style="text-align: center; width: 25%%;">KONSENTRASI KEAHLIAN</th>
-        <th style="text-align: center">KET</th>
     </tr>
     <tr>
         <td style="width: 5%; text-align: center;">1</td>
@@ -176,23 +175,15 @@
         <td align="center">XII RPL 1</td>
         <td align="center; width:15%">222310217</td>
         <td style="text-align: center;  width: 25%;">Rekayasa Perangkat Lunak</td>
-        <td></td>
     </tr>
     
 </table>
 <br>
 
 <p style="margin-bottom:20px; font-size: 12px; text-align: justify;">
-    Untuk melaksanakan Praktik Kerja Lapangan dalam rangka Pendidikan Sistem Ganda (PSG) pada Institusi / Perusahaan saudara selama 5 (lima) bulan, dengan waktu pelaksanaan dari tanggal 08 Juli s.d 15 November 2024. Pada akhir kegiatan Praktik Kerja Lapangan, siswa diwajibkan menyerahkan Jurnal Kegiatan PKL yang telah diketahui dan disetujui oleh pihak Institusi, sebagai salah satu acuan dalam menilai kegiatan PKL siswa.
-    Sehubungan dengan hal tersebut kami mohon bantuan Saudara untuk membantu dalam pengisian dokumen (Jurnal dan Sertifikat) untuk keperluan administrasi kami.
-    Atas perhatian, bantuan dan kerjasama Saudara, kami ucapkan terima kasih.
+    Tanpa mengurangi rasa hormat,  kami berharap Bapak/Ibu pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai format yang telah kami lampirkan.
+    Atas perhatian dan kerjasamanya kami ucapkan terima kasih.
 </p>
-
-<div class="ttd">
-    <img src="{{ asset('images/ttd.png') }}" alt="" width="150">
-
-</div>
-
 </body>
 
 </html>
