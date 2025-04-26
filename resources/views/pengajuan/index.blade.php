@@ -7,7 +7,7 @@
         <thead>
             <tr>
                 <th>Siswa</th>
-                <th>IDUKA</th>
+                <th>Institusi</th>
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>

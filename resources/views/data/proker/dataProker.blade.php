@@ -1,4 +1,4 @@
-@extends('layout.main')
+ @extends('layout.main')
 @section('content')
 
 <style>
@@ -89,7 +89,7 @@
                                 <tbody id="tableBody">
                                     @foreach ($proker as $index => $item)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $proker->firstItem() + $loop->index }}</td>
                                         <td>{{ $item->name }}</td>
                                         <td>
                                             <div class="d-flex gap-1 justify-content-center flex-nowrap">
@@ -137,6 +137,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            {{ $proker->links('pagination::bootstrap-5') }}
+                        </div>
                     </div>
                 </div>
 
@@ -170,7 +173,6 @@
         </div>
     </div>
 </div>
-
 <script>
   document.addEventListener("DOMContentLoaded", function() {
         const searchInput = document.querySelector("input[name='search']");

@@ -102,7 +102,7 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="rekomendasi" name="rekomendasi" value="1">
                             <label class="form-check-label" for="rekomendasi">
-                                Saya merekomendasikan IDUKA ini
+                                Saya merekomendasikan INSTITUSI ini
                             </label>
                         </div>
                     </div>

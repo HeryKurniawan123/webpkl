@@ -14,7 +14,7 @@ class GuruController extends Controller
     public function dataguru()
     {
         $user = User::where('role', 'guru')->with('konke')->get();
-        $guru = Guru::orderBy('created_at', 'desc')->get(); // Urutkan berdasarkan created_at descending
+        $guru = Guru::orderBy('created_at', 'desc')->paginate(10); // Urutkan berdasarkan created_at descending
         $konkes = Konke::all(); // Ambil data konsentrasi keahlian
         return view('hubin.dataguru.dataguru', compact('guru', 'konkes')); 
     }

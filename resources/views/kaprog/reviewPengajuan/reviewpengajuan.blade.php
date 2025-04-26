@@ -67,7 +67,7 @@
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-                <h4 class="mb-4">Review Pengajuan IDUKA</h4>
+                <h4 class="mb-4">Review Pengajuan INSTITUSI</h4>
                 <div class="row">
                     <div class="col-md-12 mt-3">
                         <div class="button-group">

@@ -165,7 +165,7 @@
     </table>
     <br>
 
-    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Menindaklanjuti surat balasan perihal penerimaan siswa–siswi kami untuk melaksanakan Praktik Kerja Lapangan (PKL) di IDUKA Saudara, kami tugaskan siswa sebagai berikut :</p>
+    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Menindaklanjuti surat balasan perihal penerimaan siswa–siswi kami untuk melaksanakan Praktik Kerja Lapangan (PKL) di Institusi / Perusahaan Saudara, kami tugaskan siswa sebagai berikut :</p>
 
     <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 12px;">
         <tr style="text-align: center;">

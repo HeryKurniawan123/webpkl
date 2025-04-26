@@ -18,7 +18,7 @@ class SiswaController extends Controller
         $siswa = User::where('role', 'siswa')
                 ->with(['kelas', 'konke'])
                 ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at descending
-                ->get();
+                ->paginate(10);
         $konke = Konke::all();
         $kelas = Kelas::all();
     

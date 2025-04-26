@@ -154,12 +154,12 @@
                                     </tr>
                                 </table>
 
-                                <h5 class="mt-4">Data IDUKA yang Diajukan</h5>
+                                <h5 class="mt-4">Data Institusi / Perusahaan yang Diajukan</h5>
                                 <table class="table table-striped">
                                     <tr>
-                                        <td>Nama IDUKA</td>
+                                        <td>Nama Institusi</td>
                                         <td>:</td>
-                                        <td>Contoh IDUKA</td>
+                                        <td>Contoh Institusi</td>
                                     </tr>
                                     <tr>
                                         <td>Alamat Lengkap</td>

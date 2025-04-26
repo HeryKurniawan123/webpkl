@@ -141,13 +141,13 @@
                         </div>
                     @endif
                     @if(request('kelas') || request('konsentrasi'))
-    <div class="alert alert-info">
-        Menampilkan hasil untuk: 
-        @if(request('kelas')) <strong>Kelas {{ request('kelas') }}</strong> @endif
-        @if(request('konsentrasi')) <strong>Konsentrasi {{ request('konsentrasi') }}</strong> @endif
-        <a href="{{ route('kelas.index') }}" class="btn btn-sm btn-link">Reset Filter</a>
-    </div>
-@endif
+                        <div class="alert alert-info">
+                            Menampilkan hasil untuk: 
+                            @if(request('kelas')) <strong>Kelas {{ request('kelas') }}</strong> @endif
+                            @if(request('konsentrasi')) <strong>Konsentrasi {{ request('konsentrasi') }}</strong> @endif
+                            <a href="{{ route('kelas.index') }}" class="btn btn-sm btn-link">Reset Filter</a>
+                        </div>
+                    @endif
 
                     @forelse ($kelas as $item)
                     <div class="col-md-4">
@@ -178,56 +178,60 @@
                         </div>
                     </div>
                     <!-- Modal Edit Kelas (diletakkan di dalam loop) -->
-    <div class="modal fade" id="editKelasModal{{ $item->id }}" tabindex="-1" aria-labelledby="editKelasModalLabel{{ $item->id }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="editKelasModalLabel{{ $item->id }}">Form Edit Kelas</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('kelas.update', $item->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Kelas*</label>
-                            <select class="form-control" name="kelas" required>
-                                <option value="">Pilih Kelas</option>
-                                <option value="X" {{ $item->kelas == 'X' ? 'selected' : '' }}>X</option>
-                                <option value="XI" {{ $item->kelas == 'XI' ? 'selected' : '' }}>XI</option>
-                                <option value="XII" {{ $item->kelas == 'XII' ? 'selected' : '' }}>XII</option>
-                            </select>
-                        </div>
+                    <div class="modal fade" id="editKelasModal{{ $item->id }}" tabindex="-1" aria-labelledby="editKelasModalLabel{{ $item->id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="editKelasModalLabel{{ $item->id }}">Form Edit Kelas</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="{{ route('kelas.update', $item->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Kelas*</label>
+                                            <select class="form-control" name="kelas" required>
+                                                <option value="">Pilih Kelas</option>
+                                                <option value="X" {{ $item->kelas == 'X' ? 'selected' : '' }}>X</option>
+                                                <option value="XI" {{ $item->kelas == 'XI' ? 'selected' : '' }}>XI</option>
+                                                <option value="XII" {{ $item->kelas == 'XII' ? 'selected' : '' }}>XII</option>
+                                            </select>
+                                        </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Konsentrasi Keahlian*</label>
-                            <select class="form-control" name="konke_id" required>
-                                <option value="">Pilih Konsentrasi Keahlian</option>
-                                @foreach($konke as $k)
-                                    <option value="{{ $k->id }}" {{ $item->konke_id == $k->id ? 'selected' : '' }}>
-                                        {{ $k->konke }} {{ $k->name_konke }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Konsentrasi Keahlian*</label>
+                                            <select class="form-control" name="konke_id" required>
+                                                <option value="">Pilih Konsentrasi Keahlian</option>
+                                                @foreach($konke as $k)
+                                                    <option value="{{ $k->id }}" {{ $item->konke_id == $k->id ? 'selected' : '' }}>
+                                                        {{ $k->konke }} {{ $k->name_konke }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
-                        <div class="mb-3">
-                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
-                            <input type="text" class="form-control" id="name_kelas{{ $item->id }}" name="name_kelas" value="{{ $item->name_kelas }}" placeholder="Masukkan Nama Kelas" required>
+                                        <div class="mb-3">
+                                            <label for="nama_kelas" class="form-label">Nama Kelas*</label>
+                                            <input type="text" class="form-control" id="name_kelas{{ $item->id }}" name="name_kelas" value="{{ $item->name_kelas }}" placeholder="Masukkan Nama Kelas" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                        <button type="submit" class="btn btn-primary">Simpan Data</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary">Simpan Data</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
                     @empty
                     <p class="text-center">Tidak ada data kelas yang tersedia.</p>
                     @endforelse
-                    
+                    <div class="card">
+                        <div class="d-flex justify-content-end mt-3">
+                            {{ $kelas->links('pagination::bootstrap-5') }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -277,6 +281,8 @@
             </div>
         </div>
     </div>
+
+
 
    
 

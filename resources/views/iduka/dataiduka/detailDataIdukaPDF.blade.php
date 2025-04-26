@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Data Iduka</title>
+    <title>Detail Data Institusi / Perusahaan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,10 +49,10 @@
 </head>
 <body>
 
-    <h3>Detail Data IDUKA</h3>
+    <h3>Detail Data Institusi / Perusahaan</h3>
     <table class="table">
         <tr>
-            <td>Nama IDUKA</td>
+            <td>Nama Institusi / Perusahaan</td>
             <td>:</td>
             <td>Malvaa</td>
         </tr>

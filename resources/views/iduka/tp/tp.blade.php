@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Tujuan Pembelajaran Iduka</title>
+    <title>Tujuan Pembelajaran Institusi</title>
     <style>
         .card-content {
             transition: transform 0.3s ease-in-out;
@@ -110,7 +110,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah dan Edit Tujuan Pembelajaran Iduka</h5>
+                    <h5 class="modal-title">Tambah dan Edit Tujuan Pembelajaran Institusi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form action="{{ route('iduka_atp.store') }}" method="POST">

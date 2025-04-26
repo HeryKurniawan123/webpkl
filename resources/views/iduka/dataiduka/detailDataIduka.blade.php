@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Detail Iduka</title>
+    <title>Detail INSTITUSI</title>
     <style>
         html,
         body {
@@ -140,8 +140,18 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
+                                                <a href="{{ route('data.iduka') }}" class="dropdown-item">
+                                                   <span class="text-primary">Kembali</span>
+                                                </a>
+                                            </li>
+                                            <li>
                                                 <a href="#" class="dropdown-item">
-                                                    <i class="bi bi-filetype-pdf text-danger"></i> <span class="text-danger">Export PDF</span>
+                                                   <span class="text-danger">Export PDF</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('kaprog.download.atp', $iduka->id) }}" class="dropdown-item">
+                                                   <span class="text-success">Download PDF ATP</span>
                                                 </a>
                                             </li>
                                             @if(auth()->user()->role == 'kaprog')
@@ -173,7 +183,7 @@
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <tr>
-                                        <td><i class="bi bi-building"></i> Nama IDUKA</td>
+                                        <td><i class="bi bi-building"></i> Nama INSTITUSI</td>
                                         <td>: {{ $iduka->nama }}</td>
                                     </tr>
                                     <tr>

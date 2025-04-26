@@ -117,11 +117,6 @@
                                     <div data-i18n="Without menu">Data Siswa</div>
                                 </a>
                             </li>
-                            <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                                <a href="{{ route('kelas.index') }}" class="menu-link">
-                                    <div data-i18n="Without menu">TKR</div>
-                                </a>
-                            </li>
                             <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
                                 <a href="{{ route('kelas.index') }}" class="menu-link">
                                     <div data-i18n="Without menu">TKJ</div>
@@ -178,7 +173,7 @@
                     <li class="menu-item {{ Request::routeIs('hubin.iduka.index') ? 'active' : '' }}">
                         <a href="{{route('hubin.iduka.index')}}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Data Iduka</div>
+                            <div data-i18n="Basic">Data Institusi</div>
                         </a>
                     </li>
                     @endif
@@ -186,7 +181,7 @@
                     <li class="menu-item {{ Request::routeIs('iduka.pribadi') ? 'active' : '' }}">
                         <a href="{{ route('iduka.pribadi')}}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Data Pribadi Iduka</div>
+                            <div data-i18n="Basic">Data Pribadi Institusi</div>
                         </a>
                     </li>
                     <li class="menu-item {{ Request::routeIs('data.institusi') ? 'active' : '' }}">
@@ -264,7 +259,7 @@
                     <li class="menu-item {{ Request::routeIs('data.iduka') ? 'active' : '' }}">
                         <a href="/data-iduka" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Data Iduka</div>
+                            <div data-i18n="Basic">Data Institusi</div>
                         </a>
                     </li>
                     <li class="menu-item {{ Request::routeIs('cp.index') ? 'active' : '' }}">
@@ -311,12 +306,6 @@
                         </ul>
                     </li>
 
-                    {{-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                    <a href="#" class="menu-link">
-                        <i class="menu-icon tf-icons bx bx-collection"></i>
-                        <div data-i18n="Basic">Laporan</div>
-                    </a>
-                    </li> --}}
                     <li class="menu-item {{ Request::routeIs('pusatbantuan.index') ? 'active' : '' }}">
                         <a href="{{ route('pusatbantuan.index') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>

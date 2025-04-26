@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Detail Iduka</title>
+        <title>Detail Institusi / Perusahaan</title>
         <style>
             .table td {
                 vertical-align: middle;
@@ -115,7 +115,7 @@
                             </div>
                         @endif
                         <div class="card-header" style="background-color: #7e7dfb">
-                            <h5 style="color: white;">DATA PRIBADI IDUKA - nama iduka</h5>
+                            <h5 style="color: white;">DATA PRIBADI Institusi / Perusahaan</h5>
                         </div>
                         <div class="card">
                             <div class="card-body">
@@ -130,7 +130,7 @@
                                     <table class="table table-hover">
                                         @if($iduka)
                                             <tr>
-                                                <td><i class="bi bi-building"></i> Nama IDUKA</td>
+                                                <td><i class="bi bi-building"></i> Nama Institusi / Perusahaan</td>
                                                 <td>:</td>
                                                 <td>{{ $iduka->nama }}</td>
                                             </tr>
@@ -145,7 +145,7 @@
                                                 <td>{{ $iduka->kode_pos }}</td>
                                             </tr>
                                             <tr>
-                                                <td><i class="bi bi-telephone"></i> Nomor Telepon IDUKA</td>
+                                                <td><i class="bi bi-telephone"></i> Nomor Telepon Institusi</td>
                                                 <td>:</td>
                                                 <td>{{ $iduka->telepon }}</td>
                                             </tr>
@@ -186,7 +186,7 @@
 
                     <div class="row mt-4">
                         <div class="card-header" style="background-color: #7e7dfb">
-                            <h5 style="color: white;">DATA PIMPINAN IDUKA - nama iduka</h5>
+                            <h5 style="color: white;">DATA PIMPINAN INSTITUSI</h5>
                         </div>
                         <div class="card">
                             <div class="card-body">
@@ -224,7 +224,7 @@
 
                     <div class="row mt-4">
                         <div class="card-header" style="background-color: #7e7dfb">
-                            <h5 style="color: white;">DATA PEMBIMBING IDUKA - nama iduka</h5>
+                            <h5 style="color: white;">DATA PEMBIMBING INSTITUSI</h5>
                         </div>
                         <div class="card">
                             <div class="card-body">

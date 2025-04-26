@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <div class="card mb-3">
         <div class="card-body d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">History Dikirim ke IDUKA</h5>
+            <h5 class="mb-0">History Dikirim ke Institusi</h5>
             <a href="{{ route('persuratan.review.historyDikirim') }}" class="btn btn-sm btn-outline-secondary">Refresh</a>
         </div>
     </div>
@@ -20,7 +20,7 @@
                         <tr>
                             <th class="text-center">No</th>
                             <th>Nama Siswa</th>
-                            <th>Nama IDUKA</th>
+                            <th>Nama Institusi</th>
                             <th>Tanggal Kirim</th>
                         </tr>
                     </thead>

@@ -116,7 +116,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="rekomendasi" value="1" id="rekomendasiCheckbox"
                                     {{ $iduka->rekomendasi == 1 ? 'checked' : '' }}>
-                                <label class="form-check-label" for="rekomendasiCheckbox">IDUKA ini direkomendasikan</label>
+                                <label class="form-check-label" for="rekomendasiCheckbox">INSTITUSI ini direkomendasikan</label>
                             </div>
                         </div>
 

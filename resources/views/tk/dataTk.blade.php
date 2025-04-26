@@ -61,7 +61,7 @@
                                 <tbody>
                                     @foreach ($kependik as $index => $item)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $kependik->firstItem() + $loop->index }}</td>
                                         <td>{{ $item->nama }}</td>
                                         <td>{{ $item->nik }}</td>
                                         <td>{{ $item->nip_nuptk ?? '-' }}</td>
@@ -162,6 +162,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            {{ $kependik->links('pagination::bootstrap-5') }}
+                        </div>
                     </div>
                 </div>
 
@@ -236,8 +239,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>

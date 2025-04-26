@@ -2,7 +2,7 @@
 @section('content')
 
 <div class="container-fluid">
-    <h5 class="mb-3">Tujuan Pembelajaran untuk IDUKA: <b>{{ $iduka->name }}</b></h5>
+    <h5 class="mb-3">Tujuan Pembelajaran untuk INSTITUSI: <b>{{ $iduka->name }}</b></h5>
 
     <div class="card">
         <div class="card-body">

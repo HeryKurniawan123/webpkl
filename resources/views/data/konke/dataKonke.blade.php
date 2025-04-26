@@ -106,7 +106,7 @@
                                 <tbody>
                                     @foreach ($konke as $index => $k)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $konke->firstItem() + $loop->index }}</td>
                                         <td>{{ $k->name_konke }}</td>
                                         <td>{{ $k->proker->name }}</td>
                                         <td>
@@ -127,6 +127,9 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            {{ $konke->links('pagination::bootstrap-5') }}
                         </div>
                     </div>
                 </div>

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Detail Usulan Iduka Baru</title>
+    <title>Detail Usulan Institusi / Perusahaan Baru</title>
     <style>
         .table td {
             vertical-align: middle;
@@ -130,13 +130,13 @@
 
                 <div class="row mt-4">
                     <div class="card-header" style="background-color: #7e7dfb">
-                        <h5 style="color: white;">Detail Data Iduka Baru</h5>
+                        <h5 style="color: white;">Detail Data Institusi / Perusahaan Baru</h5>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <table class="table table-hover">
                                 <tr>
-                                    <td>Nama IDUKA</td>
+                                    <td>Nama Institusi / Perusahaan</td>
                                     <td>:</td>
                                     <td>malvaa</td>
                                 </tr>
@@ -156,7 +156,7 @@
                                     <td>1111</td>
                                 </tr>
                                 <tr>
-                                    <td>Alamat Lengkap IDUKA</td>
+                                    <td>Alamat Lengkap Institusi / Perusahaan</td>
                                     <td>:</td>
                                     <td>malvaa</td>
                                 </tr>

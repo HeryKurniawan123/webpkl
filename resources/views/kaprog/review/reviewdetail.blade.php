@@ -16,7 +16,7 @@
 
                     <div class="col-md-12 mt-3">
                         @if ($pengajuans->isEmpty())
-                            <p class="text-center">Tidak ada pengajuan yang tersedia untuk IDUKA ini.</p>
+                            <p class="text-center">Tidak ada pengajuan yang tersedia untuk Institusi ini.</p>
                         @else
                             @if (session('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">

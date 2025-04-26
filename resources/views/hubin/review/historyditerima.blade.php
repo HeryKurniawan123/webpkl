@@ -63,7 +63,7 @@
                                         <th>No</th>
                                         <th>Nama Siswa</th>
                                         <th>Kelas</th>
-                                        <th>Nama IDUKA</th>
+                                        <th>Nama Institusi</th>
                                         <th>Tanggal Pengajuan</th>
                                         <th>Status</th>
                                         <th>Aksi</th>

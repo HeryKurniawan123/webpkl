@@ -10,7 +10,7 @@ class KonkeController extends Controller
 {
     public function index()
     {
-        $konke = Konke::all(); // Urutkan berdasarkan created_at descending
+        $konke = Konke::paginate(10); // Urutkan berdasarkan created_at descending
         $proker = Proker::all();
 
         return view('data.konke.dataKonke', compact('konke', 'proker'));

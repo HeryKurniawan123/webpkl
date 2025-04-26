@@ -25,7 +25,7 @@ class KelasController extends Controller
             });
         }
     
-        $kelas = $query->orderBy('created_at', 'desc')->get();
+        $kelas = $query->orderBy('created_at', 'desc')->paginate(10);
         $konke = Konke::all();
     
         return view('data.kelas.dataKelas', compact('kelas', 'konke'));

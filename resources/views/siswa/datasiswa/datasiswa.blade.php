@@ -134,8 +134,7 @@
                                         <tbody style="text-align: center">
                                             @foreach ($siswa as $index => $s)
                                                 <tr>
-                                                    <td>{{ $index + 1 }}</td>
-                                                    <td>{{ $s->name }}</td>
+                                                    <td>{{ $siswa->firstItem() + $loop->index }}</td>                                                    <td>{{ $s->name }}</td>
                                                     <td>{{ $s->nip }}</td>
                                                     <td>{{ optional($s->kelas)->kelas ?? '-' }} {{ optional($s->kelas)->name_kelas ?? '-' }}</td>
                                                     <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
@@ -159,6 +158,8 @@
                                                         </div>
                                                     </td>                                                                                                        
                                                 </tr>
+
+                                                
                                                 {{-- Modal Edit Siswa --}}
                                                 <div class="modal fade" id="editSiswaModal{{ $s->id }}"
                                                     tabindex="-1" aria-labelledby="editSiswaModalLabel"
@@ -239,6 +240,9 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="d-flex justify-content-end mt-3">
+                                    {{ $siswa->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>

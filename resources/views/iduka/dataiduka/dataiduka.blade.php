@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-    <title>Data Iduka</title>
+    <title>Data Institusi / Perusahaan</title>
     <style>
         .card-hover {
             transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
@@ -77,32 +77,46 @@
                                     </button>
                                     @endif
                                 </div>
-
-                                <!-- Mobile Layout -->
-                                <div class="d-flex d-md-none flex-column align-items-end">
-                                    <!-- Search & Tambah -->
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
-                                            <i class="bi bi-search"></i>
+                                <div class="d-flex d-md-none justify-content-end">
+                                    <div class="dropdown">
+                                        <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            ⋮
                                         </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a href="{{ route('siswa.dashboard') }}" class="dropdown-item text-primary">
+                                                    <i class="bi bi-arrow-left-circle me-2"></i> Kembali
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                                    <i class="bi bi-search me-2"></i> Cari
+                                                </button>
+                                            </li>
 
-                                        @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
-                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
-                                            <i class="bi bi-plus-lg"></i>
-                                        </button>
-                                        @endif
+                                            @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
+                                            <li>
+                                                <button type="button" class="dropdown-item text-primary" data-bs-toggle="modal" data-bs-target="#tambahIdukaModal">
+                                                    <i class="bi bi-plus-lg me-2"></i> Tambah INSTITUSI
+                                                </button>
+                                            </li>
+                                            @endif
+
+                                            <li>
+                                                <div class="px-3 pt-2">
+                                                    <select class="form-select form-select-sm" id="filterIdukaMobile">
+                                                        <option value="all">Semua</option>
+                                                        <option value="rekomendasi">Rekomendasi</option>
+                                                        <option value="ajuan">Ajuan</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+
+                                        </ul>
                                     </div>
-
-                                    <!-- Dropdown filter di bawah, tetap ke kanan -->
-                                    <select class="form-select form-select-sm w-auto mt-2" id="filterIdukaMobile">
-                                        <option value="all">Semua</option>
-                                        <option value="rekomendasi">Rekomendasi</option>
-                                        <option value="ajuan">Ajuan</option>
-                                    </select>
                                 </div>
-                            </div>
+                            </div>                                                                                                               
                         </div>
-
                         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -126,7 +140,7 @@
                     <div class="col-md-12 mt-3" id="idukaContainer">
                         @if ($iduka->isEmpty())
                         <div class="alert alert-warning">
-                            Belum ada data Iduka yang tersedia.
+                            Belum ada data institusi / perusahaan yang tersedia.
                         </div>
                         @else
                         @if(session()->has('success'))
@@ -149,7 +163,7 @@
                                     </div>
                                     @if ($i->rekomendasi == 1)
                                     <div class="text-success mt-1" style="font-size: 13px;">
-                                        <strong>Rekomendasi:</strong> IDUKA ini direkomendasikan
+                                        <strong>Rekomendasi:</strong> INSTITUSI ini direkomendasikan
                                     </div>
                                     @endif
                                 </div>
@@ -163,7 +177,7 @@
                                     @if(auth()->user()->role === 'kaprog')
                                     <button
                                         type="button"
-                                        class="btn btn-outline-secondary btn-sm ms-2"
+                                        class="btn btn-hover rounded-pill btn-sm"
                                         data-bs-toggle="modal"
                                         data-bs-target="#aturTanggalModalKaprog{{ $i->id }}">
                                         <i class="bi bi-calendar-event"></i>
@@ -258,7 +272,11 @@
                         @endforeach
                         @endif
                     </div>
-
+                    <div class="card">
+                        <div class="d-flex justify-content-end mt-3">
+                            {{ $iduka->links('pagination::bootstrap-5') }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

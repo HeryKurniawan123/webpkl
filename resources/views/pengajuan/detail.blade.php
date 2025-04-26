@@ -120,13 +120,13 @@
 
                 <div class="row mt-4">
                     <div class="card-header" style="background-color: #7e7dfb">
-                        <h5 style="color: white;">Detail IDUKA</h5>
+                        <h5 style="color: white;">Detail Institusi / Perusahaan</h5>
                     </div>
                     <div class="card">
                         <div class="card-body">
                             <table class="table table-hover">
                                 <tr>
-                                    <td>Nama IDUKA</td>
+                                    <td>Nama Institusi</td>
                                     <td>:</td>
                                     <td>{{ $pengajuan->iduka->nama ?? '-' }}</td>
                                 </tr>
@@ -146,7 +146,7 @@
                                     <td>{{ $pengajuan->iduka->jabatan ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Alamat IDUKA</td>
+                                    <td>Alamat Institusi</td>
                                     <td>:</td>
                                     <td>{{ $pengajuan->iduka->alamat ?? '-' }}</td>
                                 </tr>
@@ -156,7 +156,7 @@
                                     <td>{{ $pengajuan->iduka->kode_pos ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <td>No Telepon Iduka</td>
+                                    <td>No Telepon Institusi</td>
                                     <td>:</td>
                                     <td>{{ $pengajuan->iduka->telepon ?? '-' }}</td>
                                 </tr>

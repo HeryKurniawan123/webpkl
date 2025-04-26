@@ -166,10 +166,10 @@
                                 </tr>
                             </table>
 
-                            <h5 class="mt-4">Data IDUKA yang Diajukan</h5>
+                            <h5 class="mt-4">Data Institusi / Perusahaan yang Diajukan</h5>
                             <table class="table table-striped">
                             <tr>
-                                    <td>Nama IDUKA</td>
+                                    <td>Nama INSTITUSI</td>
                                     <td>:</td>
                                     <td>{{ $usulan->iduka->nama ?? '-' }}</td>
                                 </tr>
@@ -189,7 +189,7 @@
                                     <td>{{ $usulan->iduka->jabatan ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Alamat Lengkap IDUKA</td>
+                                    <td>Alamat Lengkap INSTITUSI</td>
                                     <td>:</td>
                                     <td>{{ $usulan->iduka->alamat ?? '-' }}</td>
                                 </tr>

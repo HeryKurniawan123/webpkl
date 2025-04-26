@@ -12,7 +12,7 @@ class TenagaKependidikanController extends Controller
 {
     public function tenagaKependidikan()
     {
-        $kependik = Kependik::all();
+        $kependik = Kependik::paginate(10);
         return view('tk.dataTk', compact('kependik'));
     }
 

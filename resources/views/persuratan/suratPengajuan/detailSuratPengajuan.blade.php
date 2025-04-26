@@ -138,11 +138,12 @@
                                 </table>
                             </div>
 
-                            <h5 class="mt-4">Data IDUKA</h5>
+<<<<<<< Updated upstream
+                            <h5 class="mt-4">Data Institusi / Perusahaan</h5>
                             <div class="table-responsive">
                                 <table class="table table-striped">
                                     <tr>
-                                        <td>Nama IDUKA</td>
+                                        <td>Nama Institusi</td>
                                         <td>:</td>
                                         <td>{{ $pengajuan->iduka->nama ?? 'Tidak ada data' }}</td>
                                     </tr>

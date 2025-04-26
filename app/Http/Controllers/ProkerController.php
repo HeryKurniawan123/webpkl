@@ -9,7 +9,7 @@ class ProkerController extends Controller
 {
     public function index(Request $request)
     {
-        $proker = Proker::all(); // Urutkan berdasarkan created_at descending
+        $proker = Proker::paginate(10); // Urutkan berdasarkan created_at descending
         return view('data.proker.dataProker', compact('proker'));
     }
 

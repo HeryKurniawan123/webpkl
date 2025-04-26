@@ -73,7 +73,7 @@
                                 <tbody>
                                     @foreach ($guru as $g)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $guru->firstItem() + $loop->index }}</td>
                                         <td>{{ $g->nama }}</td>
                                         <td>{{ $g->nik }}</td>
                                         <td>{{ $g->nip }}</td>
@@ -192,6 +192,9 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            {{ $guru->links('pagination::bootstrap-5') }}
                         </div>
                     </div>
                 </div>

@@ -19,9 +19,8 @@
                 </div>
             </div>
             <div class="col-md-12 mt-3">
-                {{-- Jika tidak ada pengajuan untuk IDUKA --}}
                 @if($pengajuanUsulans->isEmpty())
-                <p class="text-center">Tidak ada pengajuan yang tersedia untuk IDUKA ini.</p>
+                <p class="text-center">Tidak ada pengajuan yang tersedia untuk Institusi ini.</p>
                 @else
                 {{-- Looping Daftar Siswa --}}
                 @foreach($pengajuanUsulans as $pengajuan)

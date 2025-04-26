@@ -87,11 +87,12 @@
         <div class="card">
           <div class="card-body">
             <h5>Riwayat Usulan</h5>
+            <div class="table-responsive">
             <table class="table table-hover" style="text-align: center">
               <thead>
                 <tr>
                   <td>#</td>
-                  <td>Nama Iduka</td>
+                  <td>Nama Institusi</td>
                   <td>Tanggal Usulan</td>
                   <td>Status</td>
                   <td>Aksi</td>
@@ -161,6 +162,7 @@
                 @endforelse
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </div>
@@ -169,49 +171,51 @@
         <div class="card">
           <div class="card-body">
             <h5>Riwayat Pengajuan</h5>
-            <table class="table table-hover" style="text-align: center">
-              <thead>
-                <tr>
-                  <td>#</td>
-                  <td>Nama IDUKA</td>
-                  <td>Tanggal Pengajuan</td>
-                  <td>Status</td>
-                  <td>Aksi</td>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse($pengajuanSiswa as $index => $pengajuan)
-                <tr>
-                  <td>{{ $index + 1 }}.</td>
-                  <td>{{ $pengajuan->iduka->nama }}</td>
-                  <td>{{ \Carbon\Carbon::parse($pengajuan->created_at)->format('d/m/Y') }}</td>
-                  <td>
-                    @if($pengajuan->status == 'proses')
-                    <span class="badge bg-warning">Menunggu Verifikasi</span>
-                    @elseif($pengajuan->status == 'diterima')
-                    <span class="badge bg-success">Diterima</span>
-                    @else
-                    <span class="badge bg-danger">Ditolak</span>
-                    @endif
-                  </td>
-                  <td>
-                    <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info btn-sm">
-                      <i class="bi bi-eye"></i>
-                    </a>
-                    <!-- @if($pengajuan->status == 'diterima')
-                            <a href="" class="btn btn-danger btn-sm">
-                                <i class="bi bi-filetype-pdf"></i>
-                            </a>
-                            @endif -->
-                  </td>
-                </tr>
-                @empty
-                <tr>
-                  <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
-                </tr>
-                @endforelse
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="table table-hover" style="text-align: center">
+                <thead>
+                  <tr>
+                    <td>#</td>
+                    <td>Nama Institusi</td>
+                    <td>Tanggal Pengajuan</td>
+                    <td>Status</td>
+                    <td>Aksi</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse($pengajuanSiswa as $index => $pengajuan)
+                  <tr>
+                    <td>{{ $index + 1 }}.</td>
+                    <td>{{ $pengajuan->iduka->nama }}</td>
+                    <td>{{ \Carbon\Carbon::parse($pengajuan->created_at)->format('d/m/Y') }}</td>
+                    <td>
+                      @if($pengajuan->status == 'proses')
+                      <span class="badge bg-warning">Menunggu Verifikasi</span>
+                      @elseif($pengajuan->status == 'diterima')
+                      <span class="badge bg-success">Diterima</span>
+                      @else
+                      <span class="badge bg-danger">Ditolak</span>
+                      @endif
+                    </td>
+                    <td>
+                      <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <!-- @if($pengajuan->status == 'diterima')
+                              <a href="" class="btn btn-danger btn-sm">
+                                  <i class="bi bi-filetype-pdf"></i>
+                              </a>
+                              @endif -->
+                    </td>
+                  </tr>
+                  @empty
+                  <tr>
+                    <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
+                  </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

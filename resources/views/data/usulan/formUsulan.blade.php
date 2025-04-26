@@ -5,7 +5,7 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row">
                 <div class="card-header" style="background-color: #7e7dfb">
-                    <h5 style="color: white;">Form Usulan Iduka Baru</h5>
+                    <h5 style="color: white;">Form Usulan Institusi / Perusahaan Baru</h5>
                 </div>
                 <div class="card">
                     <div class="card-body">
@@ -59,7 +59,7 @@
                                 <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password untuk Akun IDUKA*</label>
+                                <label for="password" class="form-label">Password untuk Akun Institusi / Perusahaan*</label>
                                 <input type="password" name="password" id="password" class="form-control" required minlength="6">
                                 <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                             </div>

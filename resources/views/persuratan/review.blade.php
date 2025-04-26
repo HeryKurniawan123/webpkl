@@ -92,29 +92,48 @@
                                 </div>
                                 <div>
                                     <a href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    <!-- @foreach($pengajuanUsulans as $idukaId => $pengajuans)
-                                        <div class="card-header d-flex justify-content-between align-items-center">
-                                            <h5 class="mb-0">{{ $pengajuans[0]->iduka->nama_perusahaan }}</h5>
-                                            <a href="{{ route('semua.surat.pdf', $idukaId) }}" class="btn btn-hover rounded-pill">
-                                                Unduh Surat Pengantar
-                                            </a>
-                                        </div>
-                                    @endforeach -->
                                     <button
-                                        class="btn btn-primary btn-kirim"
+                                        class="btn btn-hover rounded-pill btn-kirim"
                                         data-iduka="{{ $iduka_id }}"
                                         data-nama="{{ htmlspecialchars($pengajuanGroup->first()->iduka->nama, ENT_QUOTES) }}">
                                         Kirim
                                     </button>
+                                </div>
 
+                                <div class="dropdown d-md-none ms-2">
+                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ⋮
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item text-warning" 
+                                            href="{{ route('persuratan.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}">
+                                            Detail
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button 
+                                                class="dropdown-item text-success btn-kirim"
+                                                data-iduka="{{ $iduka_id }}"
+                                                data-nama="{{ htmlspecialchars($pengajuanGroup->first()->iduka->nama, ENT_QUOTES) }}">
+                                                Kirim
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
+
                         @endforeach
 
 
                         @endif
 
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="d-flex justify-content-end mt-3">
+                        {{ $pengajuanUsulans->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
             </div>

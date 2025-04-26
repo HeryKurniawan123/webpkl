@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-    <title>Data Iduka</title>
+    <title>Data Institusi / Perusahaan</title>
     <style>
         .card-hover {
             transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
@@ -98,24 +98,36 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Mobile Layout -->
-                                <div class="d-flex d-md-none flex-column align-items-end">
-                                    <!-- Search & Tambah -->
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
-                                            <i class="bi bi-search"></i>
+                            
+                                <div class="d-flex d-md-none justify-content-end">
+                                <div class="dropdown">
+                                    <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ⋮
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a href="{{ route('siswa.dashboard') }}" class="dropdown-item text-primary">
+                                        <i class="bi bi-arrow-left-circle me-2"></i> Kembali
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <button type="button" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                        <i class="bi bi-search me-2"></i> Cari
                                         </button>
-                                    </div>
-
-                                    <!-- Dropdown filter di bawah, tetap ke kanan -->
-                                    <select class="form-select form-select-sm w-auto mt-2" id="filterIdukaMobile">
-                                        <option value="all">Semua</option>
-                                        <option value="rekomendasi">Rekomendasi</option>
-                                        <option value="ajuan">Ajuan</option>
-                                    </select>
+                                    </li>
+                                    <li>
+                                        <div class="px-3 pt-2">
+                                        <select class="form-select form-select-sm" id="filterIdukaMobile">
+                                            <option value="all">Semua</option>
+                                            <option value="rekomendasi">Rekomendasi</option>
+                                            <option value="ajuan">Ajuan</option>
+                                        </select>
+                                        </div>
+                                    </li>
+                                    </ul>
                                 </div>
-                            </div>
+                                </div>
+                            </div>                                                                                                               
                         </div>
 
                         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
@@ -141,7 +153,7 @@
                     <div class="col-md-12 mt-3">
                         @if ($iduka->isEmpty())
                         <div class="alert alert-warning">
-                            Belum ada data Iduka yang tersedia.
+                            Belum ada data institusi / perusahaan yang tersedia.
                         </div>
                         @else
                         @if(session()->has('success'))
@@ -158,7 +170,6 @@
                         <div class="card mb-3 shadow-sm card-hover p-3 {{ $kuota <= 0 ? 'bg-light text-muted' : '' }}" style="border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div style="min-width: 0;">
-                                    <!-- Nama Iduka dengan batas 2 baris -->
                                     <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
                                         {{ $i->nama }}
                                     </div>
@@ -168,7 +179,7 @@
                                     </div>
                                     @if ($i->rekomendasi == 1)
                                     <div class="text-success mt-1" style="font-size: 13px;">
-                                        <strong>Rekomendasi:</strong> IDUKA ini direkomendasikan
+                                        <strong>Rekomendasi:</strong> Institusi ini direkomendasikan
                                     </div>
                                     @endif
                                 </div>
@@ -193,10 +204,6 @@
                                             Detail
                                         </button>
                                         @endif
-
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -239,8 +246,8 @@
                 let nama = this.getAttribute('data-nama');
                 Swal.fire({
                     icon: 'info',
-                    title: 'IDUKA Ditutup',
-                    text: 'Kuota PKL ke IDUKA "' + nama + '" sudah penuh.',
+                    title: 'Institusi Ditutup',
+                    text: 'Pendaftaran ke Institusi / Perusahaan "' + nama + '" sudah ditutup.',
                     confirmButtonColor: '#7e7dfb'
                 });
             });
@@ -306,8 +313,8 @@
                 } else {
                     // Di luar rentang waktu
                     Swal.fire({
-                        icon: 'info',
-                        title: 'IDUKA Ditutup',
+                        icon: 'warning',
+                        title: 'Institusi Ditutup',
                         text: 'Maaf, Waktu Pendaftaran belum dimulai atau sudah melebihi tenggat waktu',
                         confirmButtonColor: '#7e7dfb'
                     });

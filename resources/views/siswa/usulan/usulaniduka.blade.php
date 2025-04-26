@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Detail Iduka</title>
+    <title>Detail Institusi / Perusahaan</title>
     <style>
         html, body {
             max-width: 100%;
@@ -143,7 +143,7 @@
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <tr>
-                                        <td><i class="bi bi-building"></i> Nama IDUKA</td>
+                                        <td><i class="bi bi-building"></i> Nama Institusi</td>
                                         <td>: {{ $iduka->nama }}</td>
                                     </tr>
                                     <tr>
@@ -234,12 +234,12 @@
         
                 Swal.fire({
                     title: "Apakah kamu yakin?",
-                    text: "Ingin mengajukan Institusi ini?",
+                    text: "Ingin mengusulkan Institusi ini?",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Ya, Ajukan!"
+                    confirmButtonText: "Ya, Usulkan!"
                 }).then((result) => {
                     if (result.isConfirmed) {
                         this.closest('.ajukan-form').submit();

@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container mt-4">
-    <h4 class="mb-3">Detail Pengajuan ke IDUKA: {{ $iduka->nama }}</h4>
+    <h4 class="mb-3">Detail Pengajuan ke INSTITUSI: {{ $iduka->nama }}</h4>
 
     @if($pengajuans->isEmpty())
-        <div class="alert alert-info">Belum ada siswa yang mengajukan PKL ke IDUKA ini.</div>
+        <div class="alert alert-info">Belum ada siswa yang mengajukan PKL ke institusi ini.</div>
     @else
         <div class="table-responsive">
             <table class="table table-bordered align-middle">

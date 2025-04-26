@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-    <title>Review Usulan IDUKA</title>
+    <title>Review Usulan INSTITUSI</title>
     <style>
         .card-hover {
             transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
@@ -61,6 +61,18 @@
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
+                <h4 class="mb-4">Review Formulir Usulan INSTITUSI</h4>
+
+                @if(session()->has('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+                @if(session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+
                 <div class="row">
                     <div class="card mb-3">
                         <div class="card-body d-flex justify-content-between align-items-center">
@@ -106,7 +118,7 @@
                         </div>
                         @endforeach
                         @if($usulanIdukas->isEmpty())
-                        <p class="text-muted">Belum ada usulan IDUKA.</p>
+                        <p class="text-muted">Belum ada usulan INSTITUSI.</p>
                         @endif
 
 
@@ -114,7 +126,7 @@
                         @if(isset($pengajuanUsulans) && !$pengajuanUsulans->isEmpty())
                         <hr>
 
-                        <h4 class="mb-4">Review Ajuan Usulan IDUKA</h4>
+                        <h4 class="mb-4">Review Ajuan Usulan INSTITUSI</h4>
                         @foreach($pengajuanUsulans as $iduka_id => $pengajuanGroup)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             <div class="d-flex justify-content-between align-items-center">
@@ -131,8 +143,9 @@
                         @endforeach
                         @endif
 
+                    </div>  
                 </div>
-                    </div>
+            </div>
         </div>
     </div>
 </body>

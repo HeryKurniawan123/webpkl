@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Laporan Pridasi Iduka</title>
+    <title>Laporan Pridasi Institusi / Perusahaan</title>
     <style>
         body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; }
         .header { text-align: center; }
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Judul Surat -->
-    <h3 style="text-align: center; text-decoration: underline;">LAPORAN PRIDASI IDUKA</h3>
+    <h3 style="text-align: center; text-decoration: underline;">LAPORAN PRIDASI INSTITUSI</h3>
     <p style="text-align: center;">Tanggal: {{ now()->format('d-m-Y') }}</p>
 
     <!-- Tabel Data Pridasi Iduka -->

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Usulan Iduka Baru</title>
+    <title>Detail Usulan Institusi / Perusahaan Baru</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,7 +49,7 @@
 </head>
 <body>
 
-    <h2>Detail Usulan Iduka Baru</h2>
+    <h2>Detail Usulan Institusi / Perusahaan Baru</h2>
 
     <h3>Detail Data Siswa</h3>
     <table class="table">
@@ -105,10 +105,10 @@
         </tr>
     </table>
 
-    <h3>Detail Data Iduka Baru</h3>
+    <h3>Detail Data Institusi / Perusahaan Baru</h3>
     <table class="table">
     <tr>
-            <td>Nama IDUKA</td>
+            <td>Nama Institusi / Perusahaan</td>
             <td>:</td>
             <td>{{ $usulanIduka->nama ?? '-' }}</td>
         </tr>

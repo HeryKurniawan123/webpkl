@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Review Pengajuan IDUKA</h5>
+                        <h5 class="mb-0">Review Pengajuan Institusi / Perusahaan</h5>
                         <a class="nav-link btn btn-success" href="{{ route('kaprog.review.histori') }}">
                             <i class="fas fa-history me-2"></i> Histori Pengajuan
                         </a>

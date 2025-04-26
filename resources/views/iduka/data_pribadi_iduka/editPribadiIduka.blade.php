@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="editDataPribadiIdukaModalLabel">Form Edit Data Iduka</h1>
+                <h1 class="modal-title fs-5" id="editDataPribadiIdukaModalLabel">Form Edit Data Institusi / Perusahaan</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -12,9 +12,9 @@
                 @method('PUT')
 
                 <div class="modal-body">
-                    <h5>Data Pribadi Iduka</h5>
+                    <h5>Data Pribadi Institusi</h5>
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Iduka</label>
+                        <label for="nama" class="form-label">Nama Institusi</label>
                         <input type="text" class="form-control" name="nama" value="{{ $iduka->nama }}" required>
                     </div>
 
@@ -91,7 +91,7 @@
                         <input type="number" class="form-control" name="kuota_pkl" value="{{  $iduka->kuota_pkl }}" required>
                     </div>
                     
-                    <h5>Data Pimpinan Iduka</h5>
+                    <h5>Data Pimpinan Institusi</h5>
                     
                     <div class="mb-3">
                         <label for="nama_pimpinan" class="form-label">Nama Pimpinan</label>
@@ -114,7 +114,7 @@
                     </div>
                     
 
-                    <h5>Data Pembimbing Iduka</h5>
+                    <h5>Data Pembimbing Institusi</h5>
                     <div class="mb-3">
                         <label class="form-label">Nama Pembimbing</label>
                         <input type="text" name="nama_pembimbing" class="form-control"

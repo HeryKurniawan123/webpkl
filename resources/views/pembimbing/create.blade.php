@@ -1,6 +1,6 @@
 @extends('layout.main')
 
-@section('title', 'Tambah Pembimbing Iduka')
+@section('title', 'Tambah Pembimbing Institusi')
 
 @section('content')
 

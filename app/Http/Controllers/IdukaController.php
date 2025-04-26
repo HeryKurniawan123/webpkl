@@ -21,7 +21,7 @@ class IdukaController extends Controller
     {
         
 
-        $iduka = Iduka::orderBy('created_at', 'desc')->get(); // Urutkan berdasarkan created_at descending
+        $iduka = Iduka::orderBy('created_at', 'desc')->paginate(10); // Urutkan berdasarkan created_at descending
         return view('iduka.dataiduka.dataiduka', compact('iduka'));
     }
 
@@ -82,7 +82,7 @@ class IdukaController extends Controller
 
         $iduka->save();
 
-        return redirect()->back()->with('success', 'Data IDUKA berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Data Institusi berhasil diperbarui.');
     }
 
     public function updateTanggal(Request $request, $id)
@@ -338,7 +338,7 @@ class IdukaController extends Controller
             $user->update(['iduka_id' => $iduka->id]);
         });
 
-        return redirect()->back()->with('success', 'Data Iduka berhasil ditambahkan dan User berhasil dibuat.');
+        return redirect()->back()->with('success', 'Data Institusi berhasil ditambahkan dan User berhasil dibuat.');
     }
 
 
@@ -398,7 +398,7 @@ class IdukaController extends Controller
             ]);
         });
 
-        return redirect(url()->previous())->with('success', 'Data IDUKA berhasil diperbarui!');
+        return redirect(url()->previous())->with('success', 'Data Institusi berhasil diperbarui!');
     }
 
 
@@ -427,7 +427,7 @@ class IdukaController extends Controller
         });
 
 
-        return redirect()->route('data.iduka')->with('success', 'Data Iduka berhasil dihapus.');
+        return redirect()->route('data.iduka')->with('success', 'Data Institusi berhasil dihapus.');
     }
 
     public function downloadPDF($id)
