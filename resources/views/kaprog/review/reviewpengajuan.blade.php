@@ -54,9 +54,33 @@
                                     <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
                                     <small class="text-muted">{{ $filteredPengajuan->count() }} siswa mengajukan ke sini</small>
                                 </div>
-                                <div style="display: flex; gap: 10px; align-items: center;">
+                        
+                                {{-- Mobile View: Dropdown --}}
+                                <div class="dropdown d-block d-md-none">
+                                    <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ⋮
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item text-primary" href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}">
+                                                Detail
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim semua pengajuan ke IDUKA ini?');">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-success">
+                                                    Kirim Semua Pengajuan
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                        
+                                {{-- Desktop View: Inline Buttons --}}
+                                <div class="d-none d-md-flex" style="gap: 10px; align-items: center;">
                                     <a href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}" class="btn btn-primary rounded-pill">Detail</a>
-                                    <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim semua pengajuan ke IDUKA ini?');">
+                                    <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim semua pengajuan ke INSTITUSI ini?');">
                                         @csrf
                                         <button type="submit" class="btn btn-success">
                                             Kirim Semua Pengajuan
@@ -67,10 +91,11 @@
                         </div>
                         @endif
                     @endforeach
-                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @endsection
+

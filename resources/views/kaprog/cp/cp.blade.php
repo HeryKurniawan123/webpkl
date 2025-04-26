@@ -6,17 +6,37 @@
     {{-- Form Pencarian dan Tombol Tambah --}}
     <div class="card">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
+            <!-- 💻 Desktop Layout -->
+            <div class="d-none d-md-flex justify-content-between align-items-center mb-2">
                 <form action="{{ route('cp.index') }}" method="GET" class="d-flex" style="width: 100%; max-width: 500px;">
-                    <input type="text" name="search" class="form-control me-2" placeholder="Cari Tujuan Pembelajaran..." value="{{ request('search') }}" style="flex: 1; min-width: 250px;">
+                    <input type="text" name="search" class="form-control me-2" placeholder="Cari Tujuan Pembelajaran..." value="{{ request('search') }}">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-search"></i>
                     </button>
                 </form>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahCpTpModal">Tambah CP & ATP</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahCpTpModal">
+                    Tambah CP & ATP
+                </button>
+            </div>
+    
+            <!-- 📱 Mobile Layout -->
+            <div class="d-block d-md-none">
+                <form action="{{ route('cp.index') }}" method="GET" class="mb-2">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Cari Tujuan Pembelajaran..." value="{{ request('search') }}">
+                        <button class="btn btn-outline-primary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#tambahCpTpModal">
+                    Tambah CP & ATP
+                </button>
             </div>
         </div>
     </div>
+      
+    
 
     @if(session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -33,14 +33,35 @@
                             </div>
 
                             <div>
-                                @if($pengajuan->status !== 'proses')
-                                <span class="badge bg-success">{{ ucfirst($pengajuan->status) }}</span>
+                                @if ($pengajuan->status !== 'proses')
+                                    <span class="badge bg-success">{{ ucfirst($pengajuan->status) }}</span>
                                 @else
-                                <button class="btn btn-success btn-update-status" data-id="{{ $pengajuan->id }}" data-status="diterima">Terima</button>
-                                <button class="btn btn-danger btn-update-status" data-id="{{ $pengajuan->id }}" data-status="ditolak">Tolak</button>
+                                    <!-- Button untuk Desktop -->
+                                    <div class="d-none d-md-flex gap-2">
+                                        <button class="btn btn-success btn-update-status" data-id="{{ $pengajuan->id }}" data-status="diterima">Terima</button>
+                                        <button class="btn btn-danger btn-update-status" data-id="{{ $pengajuan->id }}" data-status="ditolak">Tolak</button>
+                                    </div>
+                            
+                                    <!-- Dropdown untuk Mobile -->
+                                    <div class="dropdown d-md-none">
+                                        <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            ⋮
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <button class="dropdown-item text-success btn-update-status" data-id="{{ $pengajuan->id }}" data-status="diterima">
+                                                    Terima
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item text-danger btn-update-status" data-id="{{ $pengajuan->id }}" data-status="ditolak">
+                                                    Tolak
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 @endif
-
-                            </div>
+                            </div>                            
 
                         </div>
                     </div>

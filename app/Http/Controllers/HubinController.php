@@ -16,13 +16,12 @@ class HubinController extends Controller
 
     public function diterima()
     {
-
         return view('hubin.review.historyditerima');
     }
 
     public function ditolak()
     {
-        
         return view('hubin.review.historyditolak');
     }
+
 }

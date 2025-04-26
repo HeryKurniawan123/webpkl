@@ -8,7 +8,9 @@
                     <div class="card mb-3">
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Detail Pengajuan PKL ke: {{ $iduka->nama }}</h5>
-                            <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">← Kembali</a>
+                            <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">
+                                ← <span class="d-none d-sm-inline">Kembali</span>
+                            </a>
                         </div>
                     </div>
 
@@ -60,27 +62,59 @@
                                                 Status: {{ ucfirst($pengajuan->status) }}
                                             </div>
                                         </div>
-                                        <div>
-                                            {{-- Tombol untuk melihat detail --}}
-                                            <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}"
-                                                class="btn btn-info">
-                                                Lihat Detail
-                                            </a>
-                                            @if ($pengajuan->status === 'diterima') 
-                                                <button class="btn btn-success" disabled>Sudah Dikirim</button>
-                                            @else
-                                                <form
-                                                    action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}"
-                                                    method="POST" style="display: inline;">
-                                                    @csrf
-                                                    <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                                    <button type="submit" class="btn btn-primary"
-                                                        onclick="return confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?')">
-                                                        Kirim
-                                                    </button>
-                                                </form>
-                                            @endif
+                                        <div class="d-inline-block position-relative">
+                                            <!-- Desktop: Tombol langsung -->
+                                            <div class="d-none d-md-flex gap-2">
+                                                <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}"
+                                                    class="btn btn-success">
+                                                    Lihat Detail
+                                                </a>
+                                        
+                                                @if ($pengajuan->status === 'diterima')
+                                                    <button class="btn btn-success" disabled>Sudah Dikirim</button>
+                                                @else
+                                                    <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
+                                                        <button type="submit" class="btn btn-primary"
+                                                            onclick="return confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?')">
+                                                            Kirim
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        
+                                            <!-- Mobile: Dropdown tiga titik -->
+                                            <div class="dropdown d-md-none">
+                                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    ⋮
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}"
+                                                            class="dropdown-item text-success">
+                                                            Lihat Detail
+                                                        </a>
+                                                    </li>
+                                                    @if ($pengajuan->status === 'diterima')
+                                                        <li>
+                                                            <button class="dropdown-item text-muted" disabled>Sudah Dikirim</button>
+                                                        </li>
+                                                    @else
+                                                        <li>
+                                                            <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?');">
+                                                                @csrf
+                                                                <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
+                                                                <button type="submit" class="dropdown-item text-primary">
+                                                                    Kirim
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                            </div>
                                         </div>
+                                        
                                     </div>
                                 </div>
                             @endforeach

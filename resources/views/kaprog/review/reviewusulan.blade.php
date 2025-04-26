@@ -37,6 +37,23 @@
         .button-group {
             margin-bottom: 18px;
         }
+        .btn-status {
+            width: auto; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+         }
+                        
+        @media (max-width: 767px) {
+            .button-group {
+                display: flex;
+                flex-direction: row; 
+                justify-content: space-between;
+            }
+            .btn-status {
+                flex: 1; 
+                margin: 5px 0; 
+            }
+        }
     </style>
 </head>
 
@@ -44,24 +61,36 @@
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-                <h4 class="mb-4">Review Formulir Usulan IDUKA</h4>
-
-                @if(session()->has('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                @endif
-                @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-                @endif
-
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="button-group">
-                            <a href="{{ route('review.historyditerima') }}" class="btn btn-success btn-status">History Diterima</a>
-                            <a href="{{ route('review.historyditolak') }}" class="btn btn-danger btn-status">History Ditolak</a>
+                    <div class="card mb-3">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                         <h4 class="mb-4">Review Formulir Usulan IDUKA</h4>
+
+                            @if(session()->has('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            @endif
+                            @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                            @endif
+
+                            <div class="d-flex gap-2">
+                            <a href="{{ route('review.historyditerima') }}" class="btn btn-success btn-status btn-sm">
+                                <i class="bi bi-check-circle"></i>
+                                    <span class="d-none d-md-inline">History Diterima</span>
+                            </a>
+                            <a href="{{ route('review.historyditolak') }}" class="btn btn-danger btn-status btn-sm">
+                                <i class="bi bi-x-circle"></i>
+                                    <span class="d-none d-md-inline">History Ditolak</span>
+                            </a>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 mt-3">
 
                         @foreach($usulanIdukas as $usulan)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
@@ -97,17 +126,13 @@
                                 <div>
                                     <a href="{{ route('kaprog.review.detailUsulanPkl', ['iduka_id' => $iduka_id]) }}" class="btn btn-hover rounded-pill">Detail</a>
                                 </div>
-
                             </div>
-
                         </div>
                         @endforeach
                         @endif
 
-
-                    </div>
                 </div>
-            </div>
+                    </div>
         </div>
     </div>
 </body>

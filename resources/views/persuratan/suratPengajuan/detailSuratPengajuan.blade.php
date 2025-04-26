@@ -113,64 +113,69 @@
                     <div class="card">
                         <div class="card-body">
                             <h5>Data Siswa</h5>
-                            <table class="table table-striped">
-                                <tr>
-                                    <td>Nama Siswa</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->name ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Kelas</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->kelas->kelas ?? 'Tidak ada data' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Jurusan</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->konkes->name_konke ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Status Pengajuan</td>
-                                    <td>:</td>
-                                    <td>{{ ucfirst($pengajuan->status) }}</td>
-                                </tr>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td>Nama Siswa</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->name ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kelas</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->kelas->kelas ?? 'Tidak ada data' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jurusan</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->konkes->name_konke ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Status Pengajuan</td>
+                                        <td>:</td>
+                                        <td>{{ ucfirst($pengajuan->status) }}</td>
+                                    </tr>
+                                </table>
+                            </div>
 
                             <h5 class="mt-4">Data IDUKA</h5>
-                            <table class="table table-striped">
-                                <tr>
-                                    <td>Nama IDUKA</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->nama ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Alamat Lengkap</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->alamat ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Bidang Industri</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->bidang_industri ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Nomor Telpon</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->telepon ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Email</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->email ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Jumlah Kuota PKL</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->kuota_pkl ?? 'Tidak ada data' }}</td>
-                                </tr>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td>Nama IDUKA</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->nama ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Alamat Lengkap</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->alamat ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bidang Industri</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->bidang_industri ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nomor Telpon</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->telepon ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->email ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jumlah Kuota PKL</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->kuota_pkl ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                </table>
+                            </div>
 
                             <h5 class="mt-4">Data Pimpinan</h5>
+                           <div class="table-responsive">
                             <table class="table table-striped">
                                 <tr>
                                     <td>Nama Pimpinan</td>
@@ -193,32 +198,35 @@
                                     <td>{{ $pengajuan->iduka->no_hp_pimpinan ?? 'Tidak ada data' }}</td>
                                 </tr>
                             </table>
+                           </div>
 
                             <h5 class="mt-4">Data Pembimbing</h5>
-                            <table class="table table-striped">
-                                <tr>
-                                    <td>Nama Pembimbing</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->user->pembimbingpkl->name ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>NIP/NIK Pembimbing</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->user->pembimbingpkl->nip ?? 'Tidak ada data' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Nomor Telpon Pembimbing</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->user->pembimbingpkl->no_hp ?? 'Tidak ada data' }}</td>
-                                </tr>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td>Nama Pembimbing</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->user->pembimbingpkl->name ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>NIP/NIK Pembimbing</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->user->pembimbingpkl->nip ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nomor Telpon Pembimbing</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->user->pembimbingpkl->no_hp ?? 'Tidak ada data' }}</td>
+                                    </tr>
+                                </table>
+                            </div>
 
                             <div class="d-flex justify-content-between mt-3 mb-2">
                                 <a href="{{ route('persuratan.review') }}" class="btn btn-secondary">
                                     <i class="bi bi-arrow-left"></i> Kembali
                                 </a>
-                                <a href="{{ route('persuratan.download', $pengajuan->id) }}" class="btn btn-primary">
-                                    Download PDF
+                                <a href="{{ route('persuratan.download', $pengajuan->id) }}" class="btn btn-danger">
+                                    <i class="bi bi-filetype-pdf"></i><span class="d-none d-sm-inline">Download PDF
                                 </a>
                                
 

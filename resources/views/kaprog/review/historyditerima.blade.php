@@ -59,7 +59,8 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         @endif
-                        <table class="table table-bordered table-striped">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">                        
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -145,6 +146,7 @@
                                 <!-- Add more rows here -->
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content mt-3 mb-2">
