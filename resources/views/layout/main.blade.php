@@ -104,52 +104,13 @@
 
                     <!-- Layouts -->
                     @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
-                    <li
-                        class="menu-item {{ Request::routeIs('admin.tkr', 'admin.tkj', 'admin.pemantauan', 'admin.dpib', 'admin.akl', 'admin.mp', 'admin.sk') ? 'active open' : '' }}">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons bx bx-user"></i>
-                            <div data-i18n="Layouts">Siswa</div>
+                    <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
+                        <a href="{{ route('kelas.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Siswa</div>
                         </a>
-
-                        <ul class="menu-sub">
-                            <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                                <a href="{{ route('data.siswa') }}" class="menu-link">
-                                    <div data-i18n="Without menu">Data Siswa</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                <a href="{{ route('kelas.index') }}" class="menu-link">
-                                    <div data-i18n="Without menu">TKJ</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                <a href="{{ route('kelas.index') }}" class="menu-link">
-                                    <div data-i18n="Without menu">RPL</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                <a href="{{ route('kelas.index') }}" class="menu-link">
-                                    <div data-i18n="Without menu">DPIB</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                <a href="{{ route('kelas.index') }}" class="menu-link">
-                                    <div data-i18n="Without menu">AKL</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                <a href="{{ route('kelas.index') }}" class="menu-link">
-                                    <div data-i18n="Without menu">MP</div>
-                                </a>
-                            </li>
-                            <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
-                                <a href="{{ route('kelas.index') }}" class="menu-link">
-
-                                    <div data-i18n="Without menu">SK</div>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
+                    
                     <li
                         class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
