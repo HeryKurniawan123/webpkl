@@ -200,14 +200,8 @@
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li>
-                                                            <a href="{{ route('detail.iduka', $i->id) }}" class="dropdown-item">Detail</a>
-                                                    </li>
-                                                    <li>
-                                                        <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
-                                                        </form>
+                                                            <a href="{{ route('cetak.iduka', $i->id) }}" class="dropdown-item">Detail</a>
+                                                           
                                                     </li>
                                                 </ul>
                                             </div>

@@ -69,7 +69,7 @@
                         <span class="app-brand-logo demo">
                             <img src="{{ asset('images/logo.png') }}" width="40px" height="40px" alt="">
                         </span>
-                        <span class="app-brand-text demo fw-bolder ms-2">STUDYFY</span>
+                        <span class="app-brand-text demo fw-bolder ms-2">SMKN 1 KAWALI</span>
                     </a>
 
                     <a href="javascript:void(0);"
@@ -207,22 +207,19 @@
                             <div data-i18n="Basic">Review Pengajuan</div>
                         </a>
                     </li>
-<<<<<<< Updated upstream
                     <li class="menu-item {{ Request::routeIs('cetak.iduka.index') ? 'active' : '' }}">
                         <a href="{{ route('cetak.iduka.index') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Data Institusi</div>
+                            <div data-i18n="Basic">Review Data CP ATP</div>
                         </a>
                     </li>
 
-=======
                     <li class="menu-item {{ Request::routeIs('persuratan.suratBalasan') ? 'active' : '' }}">
                         <a href="{{ route('persuratan.suratBalasan') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
                             <div data-i18n="Basic">Review Surat Balasan</div>
                         </a>
                     </li>
->>>>>>> Stashed changes
                     @endif
                     @if(in_array(auth()->user()->role, ['iduka']))
                     <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
