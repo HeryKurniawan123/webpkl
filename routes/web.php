@@ -28,6 +28,7 @@ use App\Http\Controllers\PusatbantuanController;
 use App\Http\Controllers\SuratPengantarController;
 use App\Http\Controllers\TenagaKependidikanController;
 use App\Http\Controllers\DataPribadiPersuratanController;
+use App\Http\Controllers\PercetakanAtpController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -194,8 +195,10 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::post('/surat-pengantar/cetak-pilihan', [SuratPengantarController::class, 'cetakPilihan'])->name('persuratan.suratPengantar.cetakPilihan');
 
     
-
-
+    Route::get('/data-iduka/atp', [PercetakanAtpController::class, 'index'])->name('cetak.iduka.index');
+    Route::get('/iduka/atp/detail/{id}', [PercetakanAtpController::class, 'show'])->name('cetak.iduka');
+    Route::get('/persuratan/download-atp-iduka/{id}', [PercetakanAtpController::class, 'downloadAtpIduka'])
+    ->name('persuratan.download.atp');
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {

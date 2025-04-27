@@ -110,7 +110,7 @@
                             <div data-i18n="Basic">Data Siswa</div>
                         </a>
                     </li>
-                    
+
                     <li
                         class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -207,6 +207,13 @@
                             <div data-i18n="Basic">Review Pengajuan</div>
                         </a>
                     </li>
+                    <li class="menu-item {{ Request::routeIs('cetak.iduka.index') ? 'active' : '' }}">
+                        <a href="{{ route('cetak.iduka.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Institusi</div>
+                        </a>
+                    </li>
+
                     @endif
                     @if(in_array(auth()->user()->role, ['iduka']))
                     <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
@@ -308,13 +315,13 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default.jpg') }}" 
-                                        alt="Foto Profil" 
-                                        class="rounded-circle" 
-                                        width="50" 
-                                        height="50">
-                                   
-                                   
+                                        <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default.jpg') }}"
+                                            alt="Foto Profil"
+                                            class="rounded-circle"
+                                            width="50"
+                                            height="50">
+
+
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
@@ -323,15 +330,15 @@
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default.jpg') }}" 
-                                                        alt="Foto Profil" 
-                                                        class="rounded-circle" 
-                                                        width="50" 
-                                                        height="50">
-                                                   
-                                                    
+                                                        <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default.jpg') }}"
+                                                            alt="Foto Profil"
+                                                            class="rounded-circle"
+                                                            width="50"
+                                                            height="50">
 
-                                                   
+
+
+
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
