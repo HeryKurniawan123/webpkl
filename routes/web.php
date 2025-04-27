@@ -194,11 +194,25 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
     Route::post('/surat-pengantar/cetak-pilihan', [SuratPengantarController::class, 'cetakPilihan'])->name('persuratan.suratPengantar.cetakPilihan');
 
+    //Surat Balasan
+    Route::get('/persuratan/suratBalasan', [PersuratanController::class, 'suratBalasan'])->name('persuratan.suratBalasan');
+    Route::get('/persuratan/suratBalasan/{iduka_id}/detailbalasan', [PersuratanController::class, 'detailbalasan'])->name('persuratan.suratBalasan.detailbalasan');
+    Route::get('/surat-balasan/download/{id}', [PersuratanController::class, 'downloadSuratBalasan'])
+    ->name('persuratan.surat-balasan.download');
+    Route::get('/surat-balasan/history', [PersuratanController::class, 'historyBalasan'])->name('persuratan.suratBalasan.history');
     
     Route::get('/data-iduka/atp', [PercetakanAtpController::class, 'index'])->name('cetak.iduka.index');
     Route::get('/iduka/atp/detail/{id}', [PercetakanAtpController::class, 'show'])->name('cetak.iduka');
     Route::get('/persuratan/download-atp-iduka/{id}', [PercetakanAtpController::class, 'downloadAtpIduka'])
     ->name('persuratan.download.atp');
+    // Single download
+Route::get('/surat-balasan/download/{id}', [App\Http\Controllers\PersuratanController::class, 'downloadSuratBalasan'])
+->name('persuratan.suratBalasan.download');
+
+// Multiple download
+Route::post('/surat-balasan/download-multiple', [App\Http\Controllers\PersuratanController::class, 'downloadMultipleBalasan'])
+->name('persuratan.suratBalasan.downloadMultiple');
+Route::post('/update-status-surat', [App\Http\Controllers\PersuratanController::class, 'updateStatusSurat'])->name('persuratan.updateStatusSurat');
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
