@@ -207,6 +207,7 @@
                             <div data-i18n="Basic">Review Pengajuan</div>
                         </a>
                     </li>
+<<<<<<< Updated upstream
                     <li class="menu-item {{ Request::routeIs('cetak.iduka.index') ? 'active' : '' }}">
                         <a href="{{ route('cetak.iduka.index') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -214,6 +215,14 @@
                         </a>
                     </li>
 
+=======
+                    <li class="menu-item {{ Request::routeIs('persuratan.suratBalasan') ? 'active' : '' }}">
+                        <a href="{{ route('persuratan.suratBalasan') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Review Surat Balasan</div>
+                        </a>
+                    </li>
+>>>>>>> Stashed changes
                     @endif
                     @if(in_array(auth()->user()->role, ['iduka']))
                     <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
@@ -439,6 +448,7 @@
         {{-- sweetAlert2 --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
 
         @stack('scripts')
 
