@@ -152,6 +152,19 @@
                     /* Alternatif buat jaga-jaga */
                 }
             }
+            .img-thumbnail {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s ease;
+}
+
+.img-thumbnail:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.16), 0 4px 8px rgba(0,0,0,0.23);
+    transform: scale(1.02);
+}
         </style>
     </head>
 
@@ -281,50 +294,45 @@
                                             <td><span>d) No Hp / Telepon</span></td>
                                             <td colspan="2">{{ $pembimbing->no_hp ?? '-' }}</td>
                                         </tr>
-                                        <form action="{{ route('iduka.storeInstitusi', $iduka->id) }}" method="POST">
-                                            @csrf
+                                       
 
+                                        <tr>
+                                            <td>6.</td>
+                                            <td>Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat dicetak oleh perusahaan atau dibantu pihak sekolah?</td>
+                                            <td>{{ $iduka->kolom6 == 'Ya' ? 'Cetak oleh perusahaan' : 'Dibantu pihak sekolah' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>7.</td>
+                                            <td>Apakah di institusi / perusahaan ada SOP / Aturan Kerja / Tata Tertib?</td>
+                                            <td>{{ $iduka->kolom7 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>8.</td>
+                                            <td>Apakah institusi / perusahaan menerapkan K3LH (kesehatan, keselamatan kerja, dan lingkungan hidup)?</td>
+                                            <td>{{ $iduka->kolom8 }}</td>
+                                        </tr>
+                                        
                                             <tr>
-                                                <td>6.</td>
-                                                <td>Apakah institusi / perusahaan akan menerbitkan surat keterangan atau
-                                                    sertifikat di cetak oleh perusahaan atau dibantu pihak sekolah?</td>
+                                                <td>9.</td>
+                                                <td>Logo Perusahaan( Opsional )</td>
                                                 <td>
-                                                    <input type="radio" name="kolom6" value="Ya" required
-                                                        {{ $iduka->kolom6 === 'Ya' ? 'checked' : '' }}> Cetak oleh
-                                                    perusahaan <br>
-                                                    <input type="radio" name="kolom6" value="Tidak" required
-                                                        {{ $iduka->kolom6 === 'Tidak' ? 'checked' : '' }}> Dibantu pihak
-                                                    sekolah
+                                                    @if($iduka->foto)
+                                                        <img src="{{ asset('storage/' . $iduka->foto) }}" 
+                                                             alt="Foto Institusi" 
+                                                             class="img-thumbnail" 
+                                                             style="max-width: 200px; max-height: 200px;">
+                                                        <div class="mt-2">
+                                                            <a href="{{ asset('storage/' . $iduka->foto) }}" 
+                                                               target="_blank" 
+                                                               class="btn btn-sm btn-info">
+                                                               Lihat Full Size
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <span class="text-muted">Tidak ada foto</span>
+                                                    @endif
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>7.</td>
-                                                <td>Apakah di institusi / perusahaan ada SOP (Standar Operasional Prosedur)
-                                                    / Aturan Kerja / Tata Tertib?</td>
-                                                <td>
-                                                    <input type="radio" name="kolom7" value="Ya" required
-                                                        {{ $iduka->kolom7 === 'Ya' ? 'checked' : '' }}> Ya<br>
-                                                    <input type="radio" name="kolom7" value="Tidak" required
-                                                        {{ $iduka->kolom7 === 'Tidak' ? 'checked' : '' }}> Tidak
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>8.</td>
-                                                <td>Apakah di institusi / perusahaan menerapkan K3LH (kesehatan, keselamatan
-                                                    kerja, dan lingkungan hidup)?</td>
-                                                <td>
-                                                    <input type="radio" name="kolom8" value="Ya" required
-                                                        {{ $iduka->kolom8 === 'Ya' ? 'checked' : '' }}> Ya<br>
-                                                    <input type="radio" name="kolom8" value="Tidak" required
-                                                        {{ $iduka->kolom8 === 'Tidak' ? 'checked' : '' }}> Tidak
-                                                       
-                                                </td>
-                                                
-                                            </tr>
-                                         <td>  <button type="submit" class="btn btn-primary btn-sm">Simpan</button></td>
-
-                                          
-                                        </form>
 
                                     </table>
 
@@ -385,7 +393,7 @@
                 <h1 class="modal-title fs-5" id="editDataModalLabel">Form Edit Data Institusi / Perusahaan Tempat PKL</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('iduka.updateInstitusi', $iduka->id) }}" method="POST">
+            <form action="{{ route('iduka.updateInstitusi', $iduka->id) }}" enctype="multipart/form-data" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
@@ -458,62 +466,75 @@
                         <label for="" class="form-label">No HP</label>
                         <input type="text" class="form-control" name="no_hp" value="{{ $pembimbing->no_hp ?? '' }}" required>
                     </div>
+<!-- kolom6 -->
+<div class="mb-3 d-flex align-items-center border-bottom pb-3">
+    <div class="col-md-6">
+        <p class="mb-0">
+            Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat dicetak oleh perusahaan atau dibantu pihak sekolah?
+        </p>
+    </div>
+    <div class="col-md-6 d-flex flex-column ms-4">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="kolom6" value="Ya" id="kolom6-ya" {{ $iduka->kolom6 === 'Ya' ? 'checked' : '' }} required>
+            <label class="form-check-label" for="kolom6-ya">Cetak oleh perusahaan</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="kolom6" value="Tidak" id="kolom6-tidak" {{ $iduka->kolom6 === 'Tidak' ? 'checked' : '' }} required>
+            <label class="form-check-label" for="kolom6-tidak">Dibantu pihak sekolah</label>
+        </div>
+    </div>
+</div>
 
-                    <div class="mb-3 d-flex align-items-center border-bottom pb-3">
-                        <div class="col-md-6">
-                            <p class="mb-0">
-                                Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat dicetak oleh perusahaan atau dibantu pihak sekolah?
-                            </p>
-                        </div>
-                        <div class="col-md-6 d-flex flex-column ms-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kolom6" value="Ya" id="kolom6_ya" {{ $iduka->kolom6 === 'Ya' ? 'checked' : '' }} required>
-                                <label class="form-check-label" for="kolom6_ya">Cetak oleh perusahaan</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kolom6" value="Tidak" id="kolom6_tidak" {{ $iduka->kolom6 === 'Tidak' ? 'checked' : '' }} required>
-                                <label class="form-check-label" for="kolom6_tidak">Dibantu pihak sekolah</label>
-                            </div>
-                        </div>
+<!-- kolom7 -->
+<div class="mb-3 d-flex align-items-center border-bottom pb-3">
+    <div class="col-md-6">
+        <p class="mb-0">
+            Apakah di institusi / perusahaan ada SOP (Standar Operasional Prosedur) / Aturan Kerja / Tata Tertib?
+        </p>
+    </div>
+    <div class="col-md-6 d-flex flex-column ms-4">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="kolom7" value="Ya" id="kolom7-ya" {{ $iduka->kolom7 === 'Ya' ? 'checked' : '' }} required>
+            <label class="form-check-label" for="kolom7-ya">Ya</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="kolom7" value="Tidak" id="kolom7-tidak" {{ $iduka->kolom7 === 'Tidak' ? 'checked' : '' }} required>
+            <label class="form-check-label" for="kolom7-tidak">Tidak</label>
+        </div>
+    </div>
+</div>
+
+<!-- kolom8 -->
+<div class="mb-3 d-flex align-items-center border-bottom pb-3">
+    <div class="col-md-6">
+        <p class="mb-0">
+            Apakah di institusi / perusahaan menerapkan K3LH (kesehatan, keselamatan kerja, dan lingkungan hidup)?
+        </p>
+    </div>
+    <div class="col-md-6 d-flex flex-column ms-4">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="kolom8" value="Ya" id="kolom8-ya" {{ $iduka->kolom8 === 'Ya' ? 'checked' : '' }} required>
+            <label class="form-check-label" for="kolom8-ya">Ya</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="kolom8" value="Tidak" id="kolom8-tidak" {{ $iduka->kolom8 === 'Tidak' ? 'checked' : '' }} required>
+            <label class="form-check-label" for="kolom8-tidak">Tidak</label>
+        </div>
+    </div>
+</div>
+
+                    <div class="mb-3">
+                        <label for="foto">Logo Perusahaan ( Opsional )</label><br>
+                        
+                        @if ($iduka->foto)
+                            <img src="{{ asset('storage/' . $iduka->foto) }}" width="100"  alt="Foto Profil"><br>
+                        @else
+                            <p class="text-muted">Belum ada foto</p>
+                        @endif
+                    
+                        <input type="file" name="foto" class="form-control" accept="image/*">
                     </div>
-
-
-                    <div class="mb-3 d-flex align-items-center border-bottom pb-3">
-                        <div class="col-md-6">
-                            <p class="mb-0">
-                                Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat dicetak oleh perusahaan atau dibantu pihak sekolah?
-                            </p>
-                        </div>
-                        <div class="col-md-6 d-flex flex-column ms-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kolom7" value="Ya" id="kolom7_ya" {{ $iduka->kolom7 === 'Ya' ? 'checked' : '' }} required>
-                                <label class="form-check-label" for="kolom7_ya">Cetak oleh perusahaan</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kolom7" value="Tidak" id="kolom7_tidak" {{ $iduka->kolom7 === 'Tidak' ? 'checked' : '' }} required>
-                                <label class="form-check-label" for="kolom7_tidak">Dibantu pihak sekolah</label>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="mb-3 d-flex align-items-center border-bottom pb-3">
-                        <div class="col-md-6">
-                            <p class="mb-0">
-                                Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat dicetak oleh perusahaan atau dibantu pihak sekolah?
-                            </p>
-                        </div>
-                        <div class="col-md-6 d-flex flex-column ms-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kolom8" value="Ya" id="kolom8_ya" {{ $iduka->kolom8 === 'Ya' ? 'checked' : '' }} required>
-                                <label class="form-check-label" for="kolom8_ya">Cetak oleh perusahaan</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="kolom8" value="Tidak" id="kolom8_tidak" {{ $iduka->kolom8 === 'Tidak' ? 'checked' : '' }} required>
-                                <label class="form-check-label" for="kolom8_tidak">Dibantu pihak sekolah</label>
-                            </div>
-                        </div>
-                    </div>
+                    
 
                     {{-- Ulangi struktur yang sama untuk kolom7 dan kolom8 --}}
                 </div>

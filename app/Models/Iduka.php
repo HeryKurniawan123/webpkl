@@ -25,6 +25,13 @@ class Iduka extends Model
         'kuota_pkl',
         'rekomendasi',
         'no_hp_pimpinan',
+        'kolom6',
+        'kolom7',
+        'kolom8',
+        'foto',
+        'nip',
+        'name',
+        'mo_hp',
     ];
 
 

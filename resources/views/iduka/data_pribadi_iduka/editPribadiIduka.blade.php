@@ -136,7 +136,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Password Pembimbing (Opsional)</label>
-                        <input type="password" class="form-control" name="password" placeholder="Isi jika ingin mengganti">
+                        <input type="password" class="form-control" name="password_pembimbing" placeholder="Isi jika ingin mengganti">
                     </div>
                 </div>
 

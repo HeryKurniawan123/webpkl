@@ -82,7 +82,7 @@ class PengajuanPklController extends Controller
             ->get();
 
 
-        return view('pengajuan.review', compact('pengajuans', 'iduka', 'sisa_kuota'));
+        return view('pengajuan.review', compact('pengajuans', 'iduka', 'sisa_kuota', 'iduka_id'));
     }
 
 

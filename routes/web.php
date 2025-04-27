@@ -157,6 +157,9 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
      Route::get('/hubin/download-atp-iduka/{id}', [KaprogIdukaController::class, 'downloadAtpIduka'])
      ->name('hubin.download.atp');
      Route::put('/setting/iduka/{id}/tanggal', [KaprogIdukaController::class, 'updateTanggal'])->name('hubin.tanggal.update');
+
+     //import data siswa
+     Route::get('/siswa/download-template', [SiswaController::class, 'downloadTemplate'])->name('siswa.download-template');
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -184,7 +187,7 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::get('/review-pengajuan/iduka', [PersuratanController::class, 'reviewPengajuan'])->name('persuratan.review');
     Route::get('/review/persuratan/pengajuan/detail/{iduka_id}', [PersuratanController::class, 'detailUsulan'])->name('persuratan.review.detailUsulanPkl');
     Route::get('/review/pengajuan/history-dikirim', [PersuratanController::class, 'historykirim'])->name('persuratan.review.historyDikirim');
-    Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
+
     //konfirmasi persuratan
     Route::post('/review/pengajuan/proses/{id}', [PersuratanController::class, 'prosesPengajuan'])->name('persuratan.pengajuan.proses');
     Route::post('/review/pengajuan/kirim-semua/{iduka_id}', [PersuratanController::class, 'kirimSemua'])->name('review.pengajuan.kirimSemua');
@@ -243,6 +246,9 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
 
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
+
+    //sementara
+    Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
 
     //USULAN KAPROG
     Route::get('/review-usulan', [KaprogController::class, 'reviewUsulan'])->name('review.usulan');

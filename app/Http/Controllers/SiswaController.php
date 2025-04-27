@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SiswaController extends Controller
 {
@@ -130,4 +131,31 @@ class SiswaController extends Controller
         return view('admin.datasiswa.detailSiswa', compact('siswa', 'kelas', 'konke'));
     }
     
+
+    public function downloadTemplate(): BinaryFileResponse
+{
+    $templatePath = public_path('templates/template_siswa.xlsx');
+    
+    // Jika file belum ada, buat secara dinamis
+    if (!file_exists($templatePath)) {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        
+        // Contoh data (baris 2)
+        $sheet->setCellValue('A2', 'John Doe');
+        $sheet->setCellValue('B2', '123456');
+        $sheet->setCellValue('C2', 'X IPA 1');
+        $sheet->setCellValue('D2', 'A');
+        $sheet->setCellValue('E2', 'john@example.com');
+        $sheet->setCellValue('F2', 'password123');
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save($templatePath);
+    }
+
+    return response()->download($templatePath, 'template_import_siswa.xlsx');
+}
+
+
 }

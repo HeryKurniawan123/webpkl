@@ -109,8 +109,12 @@
                                                         <td>{{ $index + 1 }}</td>
                                                         <td>{{ $s->name }}</td>
                                                         <td>{{ $s->nip }}</td>
-                                                        <td>{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}</td>
-                                                        <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
+                                                        <td>{{ $s->kelas->kelas }} {{ optional($s->kelas)->name_kelas ?? '-' }}
+                                                            <small class="text-muted d-block">ID : {{ $s->kelas_id ?? '-' }}</small>
+                                                        </td>
+                                                        <td>{{ optional($s->konke)->name_konke ?? '-' }}
+                                                            <small class="text-muted d-block">ID : {{ $s->konke_id ?? '-' }}</small>
+                                                        </td>
                                                         <td></td>
                                                         <td>
                                                             <div class="d-flex gap-1 justify-content-center flex-nowrap">

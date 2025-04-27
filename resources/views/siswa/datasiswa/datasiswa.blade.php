@@ -44,6 +44,9 @@
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="mb-0">Data Siswa</h5>
                                     <div class="d-flex gap-2">
+                                        <a href="{{ route('siswa.download-template') }}" class="btn btn-success btn-sm d-flex align-items-center">
+                                            Download Template Excel
+                                        </a>
                                         <button type="button" class="btn btn-warning btn-sm d-flex align-items-center"
                                             data-bs-toggle="modal" data-bs-target="#searchModal">
                                             <i class="bi bi-search"></i>
@@ -136,8 +139,13 @@
                                                 <tr>
                                                     <td>{{ $siswa->firstItem() + $loop->index }}</td>                                                    <td>{{ $s->name }}</td>
                                                     <td>{{ $s->nip }}</td>
-                                                    <td>{{ optional($s->kelas)->kelas ?? '-' }} {{ optional($s->kelas)->name_kelas ?? '-' }}</td>
-                                                    <td>{{ optional($s->konke)->name_konke ?? '-' }}</td>
+                                                    <td>
+                                                        {{ optional($s->kelas)->kelas ?? '-' }} {{ optional($s->kelas)->name_kelas ?? '-' }}
+                                                        <small class="text-muted d-block">ID : {{ $s->kelas_id ?? '-' }}</small>
+                                                    </td>
+                                                    <td>{{ optional($s->konke)->name_konke ?? '-' }}
+                                                        <small class="text-muted d-block">ID : {{ $s->konke_id ?? '-' }}</small>
+                                                    </td>
                                                     <td></td>
                                                     <td>
                                                         <div class="d-flex gap-1 justify-content-center flex-nowrap">
