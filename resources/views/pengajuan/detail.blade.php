@@ -181,24 +181,22 @@
                 </div>
 
                 <div class="mt-3 d-flex justify-content-end mb-4">
-                    <a href="" class="btn btn-primary me-2">
+                    <a href="{{ route('pengajuan.review') }}" class="btn btn-primary me-2">
                         Kembali
                     </a>
                     @if(Auth::user()->role == 'iduka' && $pengajuan->status == 'proses')
-                    <form action="{{ route('pengajuan.terima', $pengajuan->id) }}" method="POST" class="me-2">
+                    <form id="terima-form" action="{{ route('pengajuan.terima', $pengajuan->id) }}" method="POST" class="me-2">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn btn-success">Terima</button>
                     </form>
 
-                    <form action="{{ route('pengajuan.tolak', $pengajuan->id) }}" method="POST">
+                    <form id="tolak-form" action="{{ route('pengajuan.tolak', $pengajuan->id) }}" method="POST">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn btn-danger">Tolak</button>
                     </form>
                     @endif
-
-                   
                 </div>
             </div>
         </div>
@@ -206,4 +204,44 @@
 </body>
 
 </html>
+
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Fungsi untuk handle tombol "Terima"
+    document.getElementById('terima-form').addEventListener('submit', function (e) {
+        e.preventDefault(); // Mencegah form submit secara langsung
+        Swal.fire({
+            title: 'Apakah kamu yakin?',
+            text: "Kamu akan menerima pengajuan ini!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Terima',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit(); // Kirim form jika pengguna klik "Terima"
+            }
+        });
+    });
+
+    // Fungsi untuk handle tombol "Tolak"
+    document.getElementById('tolak-form').addEventListener('submit', function (e) {
+        e.preventDefault(); // Mencegah form submit secara langsung
+        Swal.fire({
+            title: 'Apakah kamu yakin?',
+            text: "Kamu akan menolak pengajuan ini!",
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Tolak',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit(); // Kirim form jika pengguna klik "Tolak"
+            }
+        });
+    });
+</script>
+@endpush

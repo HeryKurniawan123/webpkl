@@ -20,12 +20,6 @@
                         🎉 Semua pengajuan sudah berhasil dikirim ke Iduka, dan tidak ada pengajuan yang tersedia.
                     </div>
                     @else
-                    @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    @endif
 
                     @if(session('info'))
                     <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -57,7 +51,7 @@
                             </div>
 
                             {{-- Mobile View: Dropdown --}}
-                            <div class="dropdown d-block d-md-none">
+                            {{-- <div class="dropdown d-block d-md-none">
                                 <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     ⋮
                                 </button>
@@ -76,16 +70,15 @@
                                         </form>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> --}}
 
                             {{-- Desktop View: Inline Buttons --}}
                             <div class="d-none d-md-flex" style="gap: 10px; align-items: center;">
                                 <a href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}" class="btn btn-primary rounded-pill">Detail</a>
-                                <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim semua pengajuan ke INSTITUSI ini?');">
+                            
+                                <form id="kirimSemuaForm" action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" style="align-items: center;">
                                     @csrf
-                                    <button type="submit" class="btn btn-success">
-                                        Kirim Semua Pengajuan
-                                    </button>
+                                    <button type="button" class="btn btn-success" onclick="konfirmasiKirim()">Kirim Semua Pengajuan</button>
                                 </form>
                             </div>
                         </div>
@@ -99,3 +92,37 @@
     </div>
 </div>
 @endsection
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function konfirmasiKirim() {
+        Swal.fire({
+            title: 'Yakin?',
+            text: "Ingin mengirim semua pengajuan ke INSTITUSI ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Kirim!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit form langsung TANPA tampilkan berhasil dulu
+                document.getElementById('kirimSemuaForm').submit();
+            }
+        });
+    }
+    </script>
+    
+    @if(session('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        Swal.fire({
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+        });
+    </script>
+@endif
+

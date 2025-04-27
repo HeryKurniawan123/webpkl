@@ -1,169 +1,164 @@
 @extends('layout.main')
 
 @section('content')
-    <div class="container-fluid">
-        <div class="content-wrapper">
-            <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row">
-                    <div class="card mb-3">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">Detail Pengajuan PKL ke: {{ $iduka->nama }}</h5>
-                            <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">
-                                ← <span class="d-none d-sm-inline">Kembali</span>
-                            </a>
-                        </div>
+<div class="container-fluid">
+    <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="row">
+                <div class="card mb-3">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Detail Pengajuan PKL ke: {{ $iduka->nama }}</h5>
+                        <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">
+                            ← <span class="d-none d-sm-inline">Kembali</span>
+                        </a>
                     </div>
+                </div>
 
-                    <div class="col-md-12 mt-3">
-                        @if ($pengajuans->isEmpty())
-                            <p class="text-center">Tidak ada pengajuan yang tersedia untuk Institusi ini.</p>
-                        @else
-                            @if (session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-
-                            @if (session('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ session('error') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-
-                            @if (session('info'))
-                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                    {{ session('info') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                        aria-label="Close"></button>
-                                </div>
-                            @endif
-                            @if(session('error'))
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <strong>Error!</strong> {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                            @endif
-                            @foreach ($pengajuans as $pengajuan)
-                                <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
-                                    <div class="d-flex justify-content-between align-items-center">
+                <div class="col-md-12 mt-3">
+                    @if ($pengajuans->isEmpty())
+                        <p class="text-center">Tidak ada pengajuan yang tersedia untuk Institusi ini.</p>
+                    @else
+                        @foreach ($pengajuans as $pengajuan)
+                            <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="mb-0" style="font-size: 18px">
+                                            <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
+                                        </div>
                                         <div>
-                                            <div class="mb-0" style="font-size: 18px">
-                                                <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
-                                            </div>
-                                            <div>
-                                                Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }}
-                                                {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
-                                            </div>
-                                            <div>
-                                                Status: {{ ucfirst($pengajuan->status) }}
-                                            </div>
+                                            Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }}
+                                            {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
                                         </div>
-                                        <div class="d-inline-block position-relative">
-                                            <!-- Desktop: Tombol langsung -->
-                                            <div class="d-none d-md-flex gap-2">
-                                                <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}"
-                                                    class="btn btn-success">
-                                                    Lihat Detail
-                                                </a>
-                                        
+                                        <div>
+                                            Status: {{ ucfirst($pengajuan->status) }}
+                                        </div>
+                                    </div>
+                                    <div class="d-inline-block position-relative">
+                                        <!-- Desktop: Tombol langsung -->
+                                        <div class="d-none d-md-flex gap-2">
+                                            <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-success">
+                                                Lihat Detail
+                                            </a>
+
+                                            @if ($pengajuan->status === 'diterima')
+                                                <button class="btn btn-success" disabled>Sudah Dikirim</button>
+                                            @else
+                                                <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-{{ $pengajuan->id }}">
+                                                    @csrf
+                                                    <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
+                                                    <button type="button" class="btn btn-primary" onclick="confirmKirim('{{ $pengajuan->id }}')">
+                                                        Kirim
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+
+                                        <!-- Mobile: Dropdown tiga titik -->
+                                        <div class="dropdown d-md-none">
+                                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                ⋮
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="dropdown-item text-success">
+                                                        Lihat Detail
+                                                    </a>
+                                                </li>
                                                 @if ($pengajuan->status === 'diterima')
-                                                    <button class="btn btn-success" disabled>Sudah Dikirim</button>
-                                                @else
-                                                    <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                                        <button type="submit" class="btn btn-primary"
-                                                            onclick="return confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?')">
-                                                            Kirim
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        
-                                            <!-- Mobile: Dropdown tiga titik -->
-                                            <div class="dropdown d-md-none">
-                                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    ⋮
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end">
                                                     <li>
-                                                        <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}"
-                                                            class="dropdown-item text-success">
-                                                            Lihat Detail
-                                                        </a>
+                                                        <button class="dropdown-item text-muted" disabled>Sudah Dikirim</button>
                                                     </li>
-                                                    @if ($pengajuan->status === 'diterima')
-                                                        <li>
-                                                            <button class="dropdown-item text-muted" disabled>Sudah Dikirim</button>
-                                                        </li>
-                                                    @else
-                                                        <li>
-                                                            <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?');">
-                                                                @csrf
-                                                                <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                                                <button type="submit" class="dropdown-item text-primary">
-                                                                    Kirim
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                    @endif
-                                                </ul>
-                                            </div>
+                                                @else
+                                                    <li>
+                                                        <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-mobile-{{ $pengajuan->id }}">
+                                                            @csrf
+                                                            <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
+                                                            <button type="button" class="dropdown-item text-primary" onclick="confirmKirimMobile('{{ $pengajuan->id }}')">
+                                                                Kirim
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endif
+                                            </ul>
                                         </div>
-                                        
                                     </div>
                                 </div>
-                            @endforeach
-                        @endif
-                    </div>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
-{{-- @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+@push('scripts')
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const buttons = document.querySelectorAll('.btn-proses');
-
-        buttons.forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const iduka_id = this.dataset.iduka_id; // Pastikan iduka_id ada dalam data tombol
-
-                if (!iduka_id) {
-                    alert('IDUKA ID tidak valid.');
-                    return;
-                }
-
-                if (confirm('Yakin ingin mengirim pengajuan ini ke IDUKA?')) {
-                    axios.post(`/review/pengajuan/proses/${id}`, {
-                            iduka_id: iduka_id
-                        })
-                        .then(response => {
-                            alert(response.data.message);
-                            this.textContent = 'Sudah';
-                            this.disabled = true;
-                            this.classList.remove('btn-primary');
-                            this.classList.add('btn-success');
-                        })
-                        .catch(error => {
-                            if (error.response.status === 409) {
-                                alert('Data sudah dikirim sebelumnya.');
-                            } else {
-                                alert('Terjadi kesalahan saat mengirim.');
-                            }
-                        });
-                }
-            });
-        });
+function confirmKirim(id) {
+    Swal.fire({
+        title: 'Yakin?',
+        text: "Ingin mengirim pengajuan ini ke IDUKA?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Kirim!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('form-' + id).submit();
+        }
     });
-</script>
+}
 
-@endpush --}}
+function confirmKirimMobile(id) {
+    Swal.fire({
+        title: 'Yakin?',
+        text: "Ingin mengirim pengajuan ini ke IDUKA?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Kirim!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('form-mobile-' + id).submit();
+        }
+    });
+}
+
+// Jika ada flash message dari server, tampilkan
+@if(session('success'))
+Swal.fire({
+    title: 'Berhasil!',
+    text: '{{ session('success') }}',
+    icon: 'success',
+    timer: 1500,
+    showConfirmButton: false
+});
+@endif
+
+@if(session('error'))
+Swal.fire({
+    title: 'Gagal!',
+    text: '{{ session('error') }}',
+    icon: 'error',
+    showConfirmButton: true
+});
+@endif
+
+@if(session('info'))
+Swal.fire({
+    title: 'Info!',
+    text: '{{ session('info') }}',
+    icon: 'info',
+    showConfirmButton: true
+});
+@endif
+</script>
+@endpush

@@ -187,13 +187,6 @@
                         </div>
                         <div class="card mb-3">
                             <div class="card-body">
-                                @if (session()->has('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                @endif
                                 @if ($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -546,6 +539,20 @@
         </div>
     </div>
 </div>
+@if (session()->has('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            showConfirmButton: false,
+            timer: 1500,
+            willClose: () => {
+                // Bisa ditambahkan kode lain jika ingin melakukan aksi setelah animasi selesai
+            }
+        });
+    </script>
+@endif
     </body>
 
     </html>

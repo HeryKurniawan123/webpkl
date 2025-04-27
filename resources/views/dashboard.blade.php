@@ -225,3 +225,34 @@
   </div>
 </div>
 @endsection
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: "{{ session('success') }}",
+        showConfirmButton: false,
+        timer: 2000,
+        customClass: {
+            popup: 'animate__animated animate__fadeInDown'
+        }
+    });
+</script>
+@endif
+
+@if(session('error'))
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops!',
+        text: "{{ session('error') }}",
+        showConfirmButton: false,
+        timer: 2500,
+        customClass: {
+            popup: 'animate__animated animate__shakeX'
+        }
+    });
+</script>
+@endif
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>

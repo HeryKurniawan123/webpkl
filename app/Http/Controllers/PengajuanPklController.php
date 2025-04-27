@@ -123,35 +123,34 @@ class PengajuanPklController extends Controller
     }
 
     public function terima($id)
-    {
-        $pengajuan = PengajuanPkl::findOrFail($id);
+{
+    $pengajuan = PengajuanPkl::findOrFail($id);
 
-        // Pastikan hanya memproses jika belum diterima sebelumnya
-        if ($pengajuan->status !== 'diterima') {
-            $iduka = Iduka::findOrFail($pengajuan->iduka_id);
+    // Pastikan hanya memproses jika belum diterima sebelumnya
+    if ($pengajuan->status !== 'diterima') {
+        $iduka = Iduka::findOrFail($pengajuan->iduka_id);
 
-            // Cek apakah kuota tersedia
-            if ($iduka->kuota_pkl > 0) {
-                $iduka->decrement('kuota_pkl');
-                $pengajuan->update(['status' => 'diterima']);
+        // Cek apakah kuota tersedia
+        if ($iduka->kuota_pkl > 0) {
+            $iduka->decrement('kuota_pkl');
+            $pengajuan->update(['status' => 'diterima']);
 
-                return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
-            } else {
-                // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
-                return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
-            }
+            return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
+        } else {
+            // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
+            return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
         }
-
-        return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
     }
 
+    return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
+}
 
+public function tolak($id)
+{
+    $pengajuan = PengajuanPkl::findOrFail($id);
+    $pengajuan->update(['status' => 'ditolak']);
 
-    public function tolak($id)
-    {
-        $pengajuan = PengajuanPkl::findOrFail($id);
-        $pengajuan->update(['status' => 'ditolak']);
+    return redirect()->route('pengajuan.review')->with('error', 'Pengajuan PKL telah ditolak.');
+}
 
-        return redirect()->route('pengajuan.review')->with('error', 'Pengajuan PKL telah ditolak.');
-    }
 }

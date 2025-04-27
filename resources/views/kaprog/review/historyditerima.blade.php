@@ -60,7 +60,7 @@
                         </div>
                         @endif
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">                        
+                            <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -96,14 +96,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-
+                                        <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usulan->id }}" data-tipe="usulan">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -134,13 +129,10 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usul->id }}" data-tipe="pkl">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 @endforeach
                                 <!-- Add more rows here -->
@@ -162,8 +154,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Handle Surat Izin Update
         const buttons = document.querySelectorAll('.btn-surat-izin');
-
         buttons.forEach(button => {
             button.addEventListener('click', function() {
                 const form = this.closest('.form-surat-izin');
@@ -171,53 +163,108 @@
                 const tipe = form.getAttribute('data-tipe');
                 const csrfToken = form.querySelector('input[name="_token"]').value;
 
-                fetch(`/kaprog/update-surat-izin/${id}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            tipe: tipe
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Surat izin akan diperbarui dan dikirim ke Persuratan.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, perbarui!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/kaprog/update-surat-izin/${id}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ tipe: tipe })
                         })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('HTTP status ' + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Response:', data);
-                        if (data.success) {
-                            form.outerHTML = '<span class="badge bg-success">Sudah</span>';
-                            Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Surat izin berhasil diperbarui, dan dikirim ke Persuratan',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                        } else {
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                form.outerHTML = '<span class="badge bg-success">Sudah</span>';
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: 'Surat izin berhasil diperbarui, dan dikirim ke Persuratan',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: data.message || 'Terjadi kesalahan!',
+                                });
+                            }
+                        })
+                        .catch(error => {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Oops...',
-                                text: data.message || 'Terjadi kesalahan!',
+                                title: 'Gagal!',
+                                text: 'Gagal memperbarui surat izin. Silakan coba lagi.',
                             });
-
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Gagal memperbarui surat izin. Silakan coba lagi.',
                         });
+                    }
+                });
+            });
+        });
 
-                    });
+        // Handle Hapus Data
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const tipe = this.getAttribute('data-tipe');
 
-
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data ini akan dihapus permanen.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/kaprog/delete-data/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: 'Data berhasil dihapus.',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                this.closest('tr').remove(); // Hapus baris data yang dihapus
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: data.message || 'Terjadi kesalahan!',
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: 'Gagal menghapus data. Silakan coba lagi.',
+                            });
+                        });
+                    }
+                });
             });
         });
     });

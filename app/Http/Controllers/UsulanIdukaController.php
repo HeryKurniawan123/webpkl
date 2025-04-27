@@ -77,45 +77,44 @@ class  UsulanIdukaController extends Controller
     }
 
     public function storeAjukanPkl(Request $request, $iduka_id)
-    {
-        $user = Auth::user();
-        $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
-        $iduka = Iduka::findOrFail($iduka_id);
+{
+    $user = Auth::user();
+    $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
+    $iduka = Iduka::findOrFail($iduka_id);
 
-        if (!$dataPribadi) {
-            return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
-        }
-        // Cek apakah siswa sudah punya pengajuan PKL yang aktif (proses/diterima)
-        $cekPengajuanAktif = PengajuanUsulan::where('user_id', $user->id)
-            ->whereIn('status', ['proses', 'diterima'])
-            ->exists();
-
-        if ($cekPengajuanAktif) {
-            return redirect()->back()->with('error', 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.');
-        }
-
-        // Cek apakah siswa sudah mengajukan PKL ke IDUKA ini sebelumnya
-        $cekUsulan = PengajuanUsulan::where('user_id', $user->id)
-            ->where('iduka_id', $iduka_id)
-            ->first();
-
-        if ($cekUsulan) {
-            return redirect()->back()->with('error', 'Kamu sudah mengajukan PKL ke IDUKA ini.');
-        }
-
-        // Simpan data ke tabel pengajuan_pkls, bukan usulan_idukas
-        PengajuanUsulan::create([
-            'user_id' => $user->id,
-            'konke_id' => $dataPribadi->konke_id,
-            'iduka_id' => $iduka_id,
-            'status' => 'proses', // Status awal adalah "proses"
-        ]);
-
-
-       
-        return redirect()->route('siswa.dashboard')->with('success', 'Usulan berhasil diajukan.');
-
+    if (!$dataPribadi) {
+        return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
     }
+
+    // Cek apakah siswa sudah punya pengajuan PKL yang aktif (proses/diterima)
+    $cekPengajuanAktif = PengajuanUsulan::where('user_id', $user->id)
+        ->whereIn('status', ['proses', 'diterima'])
+        ->exists();
+
+    if ($cekPengajuanAktif) {
+        return redirect()->back()->with('error', 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.');
+    }
+
+    // Cek apakah siswa sudah mengajukan PKL ke IDUKA ini sebelumnya
+    $cekUsulan = PengajuanUsulan::where('user_id', $user->id)
+        ->where('iduka_id', $iduka_id)
+        ->first();
+
+    if ($cekUsulan) {
+        return redirect()->back()->with('error', 'Kamu sudah mengajukan PKL ke IDUKA ini.');
+    }
+
+    // Simpan data ke tabel pengajuan_pkls
+    PengajuanUsulan::create([
+        'user_id' => $user->id,
+        'konke_id' => $dataPribadi->konke_id,
+        'iduka_id' => $iduka_id,
+        'status' => 'proses',
+    ]);
+
+    return redirect()->route('siswa.dashboard')->with('success', 'Usulan PKL berhasil diajukan!');
+}
+
 
 
     public function approvePengajuanUsulan($id)

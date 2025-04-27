@@ -75,30 +75,73 @@
 @endsection
 
 @push('scripts')
+<!-- Axios & SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
         const buttons = document.querySelectorAll('.btn-update-status');
 
         buttons.forEach(button => {
             button.addEventListener('click', function () {
                 const id = this.dataset.id;
                 const status = this.dataset.status;
+                const statusText = status === 'diterima' ? 'Terima' : 'Tolak';
+                const iconType = status === 'diterima' ? 'success' : 'warning';
 
-                if (confirm(`Yakin ingin ${status} pengajuan ini?`)) {
-                    axios.put(`/kaprog/review/usulan-pkl/status/${id}`, {
-                        status: status
-                    })
-                    .then(response => {
-                        // Reload halaman atau tampilkan notifikasi
-                        location.reload();
-                    })
-                    .catch(error => {
-                        alert('Terjadi kesalahan saat memperbarui status.');
-                    });
-                }
+                Swal.fire({
+                    title: `${statusText} Pengajuan?`,
+                    text: `Apakah kamu yakin ingin ${statusText.toLowerCase()} pengajuan ini?`,
+                    icon: iconType,
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, lanjutkan!',
+                    cancelButtonText: 'Batal',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.showLoading();
+
+                        axios.put(`/kaprog/review/usulan-pkl/status/${id}`, {
+                            status: status
+                        })
+                        .then(response => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: `Pengajuan berhasil ${statusText.toLowerCase()}.`,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = "{{ route('review.usulan') }}";
+                            });
+                        })
+                        .catch(error => {
+    if (error.response) {
+        console.error('Server responded with error:', error.response.data);
+    } else if (error.request) {
+        console.error('Request was made but no response:', error.request);
+    } else {
+        console.error('Something happened:', error.message);
+    }
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: error.response?.data?.message || 'Terjadi kesalahan saat memperbarui status.',
+    });
+});
+                    }
+                });
             });
         });
     });
 </script>
+
+
 @endpush

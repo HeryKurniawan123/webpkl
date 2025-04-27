@@ -117,21 +117,43 @@
 </div>
 @endsection
 
-@section('scripts')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let radios = document.querySelectorAll('.kerjasama-radio');
-        let lainnyaInput = document.getElementById('kerjasama-lainnya');
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        radios.forEach(radio => {
-            radio.addEventListener('change', function () {
-                if (this.value === "Lainnya") {
-                    lainnyaInput.style.display = "block";
-                } else {
-                    lainnyaInput.style.display = "none";
-                }
-            });
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // ---- Toggle input "Lainnya" ----
+    const radios = document.querySelectorAll('.kerjasama-radio');
+    const lainnyaInput = document.getElementById('kerjasama-lainnya');
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            lainnyaInput.style.display = (radio.value === "Lainnya") ? "block" : "none";
         });
     });
+
+    // ---- SweetAlert Konfirmasi ----
+    const form = document.querySelector('form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    submitBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Kirim Data?',
+            text: "Pastikan semua data yang diisi sudah benar!",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Kirim!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
 </script>
-@endsection
+@endpush
+
+

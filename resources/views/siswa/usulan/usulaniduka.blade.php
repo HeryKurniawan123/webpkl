@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Detail Institusi / Perusahaan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
     <style>
         html, body {
             max-width: 100%;
@@ -248,15 +250,33 @@
             });
         });
         
-        @if(session('success'))
-            Swal.fire("Berhasil!", "{{ session('success') }}", "success");
-        @endif
+        if (result.isConfirmed) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Usulan berhasil dikirim!',
+                text: 'Data kamu sudah terkirim ke sistem.',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                this.closest('.ajukan-form').submit();
+            });
+        }
+
         
-        @if(session('error'))
-            Swal.fire("Gagal!", "{{ session('error') }}", "error");
-        @endif
+        if (result.isConfirmed) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Usulan berhasil dikirim!',
+                text: 'Data kamu sudah terkirim ke sistem.',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                this.closest('.ajukan-form').submit();
+            });
+        }
         </script>
         
+
 
     @include('iduka.dataiduka.editiduka')
 </body>

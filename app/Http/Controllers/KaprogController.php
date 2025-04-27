@@ -145,46 +145,45 @@ class KaprogController extends Controller
 
 
     public function diterima($id, Request $request)
-    {
-        $usulan = UsulanIduka::findOrFail($id);
+{
+    $usulan = UsulanIduka::findOrFail($id);
 
+    // Buat akun user untuk IDUKA
+    $user = User::create([
+        'name' => $usulan->nama,
+        'nip' => $usulan->email,
+        'password' => $usulan->password, // sudah hash
+        'role' => 'iduka',
+    ]);
 
-        // Buat akun user untuk IDUKA terlebih dahulu
-        $user = User::create([
-            'name' => $usulan->nama,
-            'nip' => $usulan->email,
-            'password' => $usulan->password, // sudah di-hash dari awal
-            'role' => 'iduka',
-        ]);
+    // Buat data IDUKA
+    $iduka = Iduka::create([
+        'user_id' => $user->id,
+        'nama' => $usulan->nama,
+        'nama_pimpinan' => $usulan->nama_pimpinan,
+        'nip_pimpinan' => $usulan->nip_pimpinan,
+        'jabatan' => $usulan->jabatan,
+        'alamat' => $usulan->alamat,
+        'kode_pos' => $usulan->kode_pos,
+        'telepon' => $usulan->telepon,
+        'email' => $usulan->email,
+        'bidang_industri' => $usulan->bidang_industri,
+        'kerjasama' => $usulan->kerjasama,
+        'password' => $usulan->password,
+        'kuota_pkl' => $usulan->kuota_pkl ?? 0,
+    ]);
 
+    // Update relasi
+    $user->update(['iduka_id' => $iduka->id]);
+    $usulan->update(['status' => 'diterima', 'iduka_id' => $iduka->id]);
 
-        // Buat data di tabel idukas dan arahkan ke user_id dari akun IDUKA
-        $iduka = Iduka::create([
-            'user_id' => $user->id, // <- ini sekarang menunjuk ke user ID dari akun IDUKA
-            'nama' => $usulan->nama,
-            'nama_pimpinan' => $usulan->nama_pimpinan,
-            'nip_pimpinan' => $usulan->nip_pimpinan,
-            'jabatan' => $usulan->jabatan,
-            'alamat' => $usulan->alamat,
-            'kode_pos' => $usulan->kode_pos,
-            'telepon' => $usulan->telepon,
-            'email' => $usulan->email,
-            'bidang_industri' => $usulan->bidang_industri,
-            'kerjasama' => $usulan->kerjasama,
-            'password' => $usulan->password,
-            'kuota_pkl' => $usulan->kuota_pkl ?? 0,
-        ]);
+    // Balikin JSON (Bukan redirect)
+    return response()->json([
+        'success' => true,
+        'message' => 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.'
+    ]);
+}
 
-
-
-        // Tambahkan iduka_id ke user agar relasi lengkap (jika pakai relasi ke iduka)
-        $user->update(['iduka_id' => $iduka->id]);
-
-        // Update status usulan
-        $usulan->update(['status' => 'diterima', 'iduka_id' => $iduka->id]);
-
-        return redirect()->route('review.usulan')->with('success', 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.');
-    }
 
 
 
@@ -193,25 +192,29 @@ class KaprogController extends Controller
         $usulan = UsulanIduka::findOrFail($id);
         $usulan->update(['status' => 'ditolak']);
 
-        return redirect()->route('review.usulan')->with('error', 'Usulan IDUKA ditolak.');
-    }
+        return response()->json([
+            'success' => true,
+            'message' => 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.'
+        ]);    }
 
-    public function diterimaUsulan(Request $request, $id)
-    {
-        $request->validate(['status' => 'required|in:diterima,ditolak']);
-
-        $usulan = PengajuanUsulan::findOrFail($id);
-
-        $usulan->update(['status' => $request->status]);
-
-
-        $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
-        $type = $request->status === 'diterima' ? 'success' : 'error';
-
-        return redirect()->route('kaprog.review.reviewusulan', $usulan->iduka_id)
-
-            ->with($type, $msg);
-    }
+        public function diterimaUsulan(Request $request, $id)
+        {
+            $request->validate(['status' => 'required|in:diterima,ditolak']);
+        
+            $usulan = PengajuanUsulan::findOrFail($id);
+            $usulan->update(['status' => $request->status]);
+        
+            $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
+            $type = $request->status === 'diterima' ? 'success' : 'error';
+        
+            // Balikin JSON, bukan redirect
+            return response()->json([
+                'success' => true,
+                'type' => $type,
+                'message' => $msg,
+            ]);
+        }
+        
 
     public function historyDiterima()
     {

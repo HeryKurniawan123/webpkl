@@ -219,7 +219,6 @@ public function updateInstitusi(Request $request, $id)
         'telepon' => 'required|numeric',
         'bidang_industri' => 'required|string',
         'no_hp_pimpinan' => 'required|numeric',
-       
         'kolom6' => 'required|string|in:Ya,Tidak',
         'kolom7' => 'required|string|in:Ya,Tidak',
         'kolom8' => 'required|string|in:Ya,Tidak',
