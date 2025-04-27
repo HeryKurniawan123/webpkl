@@ -278,6 +278,12 @@ class KaprogIdukaController extends Controller
             'kuota_pkl' => 'required|integer|min:1',
             'rekomendasi' => 'nullable|boolean',
             'no_hp_pimpinan' => 'required|string|max:15',
+            'kolom6' => 'nullable|string|max:255', // Kolom baru
+            'kolom7' => 'nullable|string|max:255', // Kolom baru
+            'kolom8' => 'nullable|string|max:255', // Kolom baru
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Kolom foto
+            'tanggal_awal' => 'nullable|date', // Kolom tanggal_awal
+            'tanggal_akhir' => 'nullable|date', // Kolom tanggal_akhir
         ]);
 
         DB::transaction(function () use ($request) {
@@ -307,6 +313,12 @@ class KaprogIdukaController extends Controller
                 'kuota_pkl' => $request->kuota_pkl,
                 'rekomendasi' => $request->rekomendasi ?? 0,
                 'no_hp_pimpinan' => $request->no_hp_pimpinan,
+                'kolom6' => $request->kolom6,
+                'kolom7' => $request->kolom7,
+                'kolom8' => $request->kolom8,
+                'foto' => $request->foto ? $request->foto->store('public/foto_iduka') : null, // Simpan foto jika ada
+                'tanggal_awal' => $request->tanggal_awal,
+                'tanggal_akhir' => $request->tanggal_akhir,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

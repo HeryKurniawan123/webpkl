@@ -29,9 +29,8 @@ class Iduka extends Model
         'kolom7',
         'kolom8',
         'foto',
-        'nip',
-        'name',
-        'mo_hp',
+        'tanggal_awal',
+        'tanggal_akhir',
     ];
 
 

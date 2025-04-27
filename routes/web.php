@@ -148,9 +148,8 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
      //data daftar iduka
      Route::get('/daftar/iduka', [KaprogIdukaController::class, 'index'])->name('hubin.iduka.index');
      Route::get('/daftar/iduka/detail/{id}', [KaprogIdukaController::class, 'show'])->name('hubin.detail.iduka');
-     Route::post('/iduka/store', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
+     Route::post('/iduka/hubin/store', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
      Route::get('/create/data-iduka', [KaprogIdukaController::class, 'create'])->name('hubin.iduka.create');
-     Route::post('/', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
      Route::get('/iduka/{id}/edit', [KaprogIdukaController::class, 'edit'])->name('hubin.iduka.edit');
      Route::put('/update/{id}', [KaprogIdukaController::class, 'update'])->name('hubin.iduka.update');
      Route::delete('/hapus-iduka/{id}', [KaprogIdukaController::class, 'destroy'])->name('hubin.iduka.destroy');
