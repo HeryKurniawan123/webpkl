@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 class ProkerController extends Controller
 {
     public function index(Request $request)
-    {
-        $proker = Proker::paginate(10); // Urutkan berdasarkan created_at descending
-        return view('data.proker.dataProker', compact('proker'));
-    }
+{
+    $proker = Proker::when($request->search, function($query, $search) {
+                    $query->where('name', 'like', "%$search%");
+                })
+                ->paginate(10)
+                ->withQueryString();
+
+    return view('data.proker.dataProker', compact('proker'));
+}
 
     public function store(Request $request)
     {

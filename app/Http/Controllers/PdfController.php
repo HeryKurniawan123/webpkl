@@ -51,10 +51,10 @@ class PdfController extends Controller
         }
         // Mapping singkatan jurusan
         $singkatan = [
-            'PENGEMBANGAN PERANGKAT LUNAK DAN GIM' => 'PPLG',
-            'MANAGEMEN PERKANTORAN DAN LEMBAGA BISNIS' => 'MPLB',
-            'DESAIN PEMODELAN DAN INFORMASI BANGUNAN' => 'DPIB',
-            'Akuntansi Keuangan' => 'AK',
+            'Pengembangan Perangkat Lunak dan Gim' => 'PPLG',
+            'Manajemen  Perkantoran dan  Layanan Bisnis' => 'MPLB',
+            'Desain Pemodelan  dan Informasi  Bangunan' => 'DPIB',
+            'Akuntansi dan  Keuangan  Lembaga' => 'AKL',
             'Teknik Jaringan Komputer dan Telekomunikasi' => 'TJKT',
             'Teknik Otomotif' => 'TO',
             'Seni Pertunjukan' => 'SP',
