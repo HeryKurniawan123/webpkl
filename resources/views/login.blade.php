@@ -71,21 +71,36 @@
 
     <!--------------------------- Left Box ----------------------------->
 
-       <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #5656f0;">
-           <div class="featured-image mb-3">
-            <img src="href="{{ asset('images/1.png') }}"" class="img-fluid" style="width: 250px;">
-           </div>
-           <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">Be Verified</p>
-           <small class="text-white text-wrap text-center" style="width: 17rem;font-family: 'Courier New', Courier, monospace;">Join experienced Designers on this platform.</small>
-       </div> 
+    <div class="col-md-6 d-flex justify-content-center align-items-center flex-column p-5 rounded-4 shadow" style="background: #5656f0; position: relative; overflow: hidden;">
+        <!-- Decorative Elements -->
+        <div style="position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+        <div style="position: absolute; bottom: -40px; left: -40px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+    
+        <div class="featured-image mb-4">
+            <img src="{{ asset('images/smk1.JPG') }}" 
+                 class="img-fluid rounded-4 shadow-lg" 
+                 style="width: 320px; transition: all 0.4s ease;" 
+                 onmouseover="this.style.transform='scale(1.03)'" 
+                 onmouseout="this.style.transform='scale(1)'">
+        </div>
+        <p class="text-white fs-6 fw-bold mb-2" style="font-family: 'Poppins', sans-serif; letter-spacing: 1px;">PKL K-ONE</p>
+        <small class="text-white text-center d-block" style="max-width: 18rem; font-family: 'Poppins', sans-serif; font-size: 0.9rem; line-height: 1.6;">
+            Siap berkarir dengan pengalaman magang terbaik.
+        </small>
+    </div>
+    
+    
+    
+    
+    
 
     <!-------------------- ------ Right Box ---------------------------->
         
        <div class="col-md-6 right-box">
           <div class="row align-items-center">
                 <div class="header-text mb-4">
-                     <h2>Hallo</h2>
-                     <p>Kami senang menyambut anda kembali.</p>
+                     <h2>Selamat Datang !</h2>
+                     <p>Masuk untuk mulai pengalaman PKL-mu</p>
                 </div>
                 @if ($errors->any())
                     <div class="alert alert-danger">

@@ -170,42 +170,46 @@
                                         </div>
                     
                                         <div class="d-flex align-items-center">
-                                            <!-- Tombol Detail (disembunyikan di mobile) -->
-                                           
-                                                <a href="{{ route('cetak.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm ms-2 d-none d-md-block">Detail</a>
-                                          
+                                            <!-- Tombol Detail untuk desktop -->
+                                            <a href="{{ route('cetak.iduka', $i->id) }}" 
+                                               class="btn btn-hover rounded-pill btn-sm ms-2 d-none d-md-block">Detail</a>
+                                        
                                             <!-- Tombol Icon Tanggal -->
                                             @if(auth()->user()->role === 'kaprog')
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-hover rounded-pill btn-sm ms-2"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#aturTanggalModalKaprog{{ $i->id }}">
+                                                <button type="button" 
+                                                        class="btn btn-hover rounded-pill btn-sm ms-2" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#aturTanggalModalKaprog{{ $i->id }}">
                                                     <i class="bi bi-calendar-event"></i>
                                                 </button>
                                             @elseif(auth()->user()->role === 'hubin')
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-outline-primary btn-sm ms-2"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#aturTanggalModalHubin{{ $i->id }}">
+                                                <button type="button" 
+                                                        class="btn btn-outline-primary btn-sm ms-2" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#aturTanggalModalHubin{{ $i->id }}">
                                                     <i class="bi bi-calendar-event"></i>
                                                 </button>
                                             @endif
                                         
-                                            <!-- Dropdown untuk mobile -->
-                                            <div class="dropdown ms-2 d-md-none">
-                                                <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    ⋮
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
+                                            <!-- Mobile Handling -->
+                                            @if(auth()->user()->role === 'kaprog')
+                                                <!-- Dropdown di Mobile khusus kaprog -->
+                                                <div class="dropdown ms-2 d-md-none">
+                                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        ⋮
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li>
                                                             <a href="{{ route('cetak.iduka', $i->id) }}" class="dropdown-item">Detail</a>
-                                                           
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>                                        
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            @elseif(auth()->user()->role === 'persuratan')
+                                                <!-- Tombol langsung untuk persuratan di mobile -->
+                                                <a href="{{ route('cetak.iduka', $i->id) }}" 
+                                                   class="btn btn-hover rounded-pill btn-sm ms-2 d-md-none">Detail</a>
+                                            @endif
+                                        </div>                                                                               
                                     </div>
                                 </div>
                     
