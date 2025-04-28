@@ -48,15 +48,39 @@
               <li>
                 @if($sudahAjukan)
                 @if($statusAjukan === 'proses')
-                <a href="#" class="dropdown-item" onclick="alert('Kamu sudah mengajukan usulan atau pengajuan PKL dan sedang diproses.')">
+                <a href="#" class="dropdown-item" onclick="Swal.fire({
+                    icon: 'warning',
+                    title: 'Pengajuan Sedang Diproses',
+                    text: 'Kamu sudah mengajukan usulan PKL dan sedang diproses.',
+                    showConfirmButton: true,
+                    customClass: {
+                        popup: 'animate__animated animate__bounce'
+                    }
+                })">
                   Buat Usulan
                 </a>
                 @elseif($statusAjukan === 'diterima')
-                <a href="#" class="dropdown-item" onclick="alert('Kamu sudah mengajukan dan pengajuan telah diterima.')">
+                <a href="#" class="dropdown-item" onclick="Swal.fire({
+                    icon: 'success',
+                    title: 'Pengajuan Diterima',
+                    text: 'Kamu sudah mengajukan dan pengajuan telah diterima.',
+                    showConfirmButton: true,
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                })">
                   Buat Usulan
                 </a>
                 @else
-                <a href="#" class="dropdown-item" onclick="alert('Pengajuan sedang diproses atau telah diterima.')">
+                <a href="#" class="dropdown-item" onclick="Swal.fire({
+                    icon: 'info',
+                    title: 'Pengajuan Tidak Diterima',
+                    text: 'Pengajuan sedang diproses atau telah diterima.',
+                    showConfirmButton: true,
+                    customClass: {
+                        popup: 'animate__animated animate__fadeIn'
+                    }
+                })">
                   Buat Usulan
                 </a>
                 @endif
@@ -69,7 +93,15 @@
 
               <li>
                 @if($sudahDiterima)
-                <a href="#" class="dropdown-item" onclick="alert('Kamu sudah diterima di tempat PKL. Tidak bisa mengajukan lagi.')">
+                <a href="#" class="dropdown-item" onclick="Swal.fire({
+                    icon: 'error',
+                    title: 'Sudah Diterima',
+                    text: 'Kamu sudah diterima di tempat PKL. Tidak bisa mengajukan lagi.',
+                    showConfirmButton: true,
+                    customClass: {
+                        popup: 'animate__animated animate__shakeX'
+                    }
+                })">
                   Buat Pengajuan
                 </a>
                 @else
@@ -201,11 +233,6 @@
                       <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info btn-sm">
                         <i class="bi bi-eye"></i>
                       </a>
-                      <!-- @if($pengajuan->status == 'diterima')
-                              <a href="" class="btn btn-danger btn-sm">
-                                  <i class="bi bi-filetype-pdf"></i>
-                              </a>
-                              @endif -->
                     </td>
                   </tr>
                   @empty
@@ -225,6 +252,7 @@
   </div>
 </div>
 @endsection
+
 @if(session('success'))
 <script>
     Swal.fire({
@@ -254,5 +282,6 @@
     });
 </script>
 @endif
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>

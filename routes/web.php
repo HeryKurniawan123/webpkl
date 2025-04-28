@@ -279,6 +279,7 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::post('/kaprog/review/pengajuan-iduka/{id}', [KaprogController::class, 'verifikasiPengajuan'])->name('kaprog.review.verifikasiPengajuan');
     Route::get('/detail-pengajuan/{id}', [KaprogController::class, 'show'])->name('detail.pengajuan');
     Route::put('/usulan-diterimaUsulan/{id}', [KaprogController::class, 'diterimaUsulan'])->name('usulan.diterimaUsulan');
+    Route::put('/usulan-diterimaUsulanIduka/{id}', [KaprogController::class, 'diterimaUsulanIduka'])->name('usulan.diterimaUsulanIduka');
     //cek
     Route::get('/review/pengajuan/kaprog/detail/{iduka_id}', [KaprogController::class, 'detailusulan'])->name('kaprog.review.detailUsulanPkl');
     Route::put('/usulan-diterima/{id}', [KaprogController::class, 'diterima'])->name('usulan.diterima');

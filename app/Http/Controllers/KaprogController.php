@@ -198,22 +198,38 @@ class KaprogController extends Controller
         ]);    }
 
         public function diterimaUsulan(Request $request, $id)
-        {
-            $request->validate(['status' => 'required|in:diterima,ditolak']);
-        
-            $usulan = PengajuanUsulan::findOrFail($id);
-            $usulan->update(['status' => $request->status]);
-        
-            $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
-            $type = $request->status === 'diterima' ? 'success' : 'error';
-        
-            // Balikin JSON, bukan redirect
-            return response()->json([
-                'success' => true,
-                'type' => $type,
-                'message' => $msg,
-            ]);
-        }
+{
+    $request->validate(['status' => 'required|in:diterima,ditolak']);
+
+    $usulan = PengajuanUsulan::findOrFail($id);
+    $usulan->update(['status' => $request->status]);
+
+    $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
+    $type = $request->status === 'diterima' ? 'success' : 'error';
+
+    return response()->json([
+        'success' => true,
+        'type' => $type,
+        'message' => $msg,
+    ]);
+}
+        public function diterimaUsulanIduka(Request $request, $id)
+{
+    $request->validate(['status' => 'required|in:diterima,ditolak']);
+
+    $usulan = UsulanIduka::findOrFail($id);
+    $usulan->update(['status' => $request->status]);
+
+    $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
+    $type = $request->status === 'diterima' ? 'success' : 'error';
+
+    return response()->json([
+        'success' => true,
+        'type' => $type,
+        'message' => $msg,
+    ]);
+}   
+
         
 
     public function historyDiterima()
