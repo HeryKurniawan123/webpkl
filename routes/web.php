@@ -30,9 +30,14 @@ use App\Http\Controllers\TenagaKependidikanController;
 use App\Http\Controllers\DataPribadiPersuratanController;
 use App\Http\Controllers\PercetakanAtpController;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/PKL K-One', function () {
+    return view('landing.landing');
 });
+
+Route::get('/', function () {
+    return redirect('/PKL K-One');
+});
+
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [HakAksesController::class, 'index'])->name('login');
     Route::post('/login', [HakAksesController::class, 'login']);
@@ -42,9 +47,6 @@ Route::get('/home', function () {
     return redirect('/logout');
 });
 
-Route::get('/landing-page', function () {
-    return view('landing.landing');
-});
 
 // Siswa biodata
 Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
