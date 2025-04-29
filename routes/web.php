@@ -362,10 +362,10 @@ Route::middleware(['auth'])->group(function () {
 
 //Pendamping
 Route::middleware(['auth', 'hakakses:pendamping'])->group(function () {
-    Route::get('/data-iduka/pendamping', [PendampingController::class, 'dataIdukaPendamping'])->name('hubin.iduka.index');
-    Route::get('/data-siswa/pendamping', [PendampingController::class, 'dataSiswaPendamping'])->name('kelas.index');
-    Route::get('/data-guru/pendamping', [PendampingController::class, 'dataGuruPendamping'])->name('guru.index');
-    Route::get('/data-tenaga-kependidikan/pendamping', [PendampingController::class, 'dataTKPembimbing'])->name('tk.index');
+    Route::get('/data-iduka/pendamping', [PendampingController::class, 'dataIdukaPendamping'])->name('pendamping.iduka.index');
+    Route::get('/data-siswa/pendamping', [PendampingController::class, 'dataSiswaPendamping'])->name('pendamping.kelas.index');
+    Route::get('/data-guru/pendamping', [PendampingController::class, 'dataGuruPendamping'])->name('pendamping.guru.index');
+    Route::get('/data-tenaga-kependidikan/pendamping', [PendampingController::class, 'dataTKPembimbing'])->name('pendamping.tk.index');
 });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');

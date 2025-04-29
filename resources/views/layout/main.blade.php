@@ -105,7 +105,7 @@
                     </li>
 
                     <!-- Layouts -->
-                    @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah', 'pendamping']))
+                    @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah']))
                     <li class="menu-item {{ Request::routeIs('hubin.iduka.index') ? 'active' : '' }}">
                         <a href="{{route('hubin.iduka.index')}}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -289,7 +289,40 @@
                         </a>
                     </li>
                     @endif
+                    @if(auth()->user()->role == 'pendamping')
+                    <li class="menu-item {{ Request::routeIs('pendamping.iduka.index') ? 'active' : '' }}">
+                        <a href="{{ route('pendamping.iduka.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Institusi</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ Request::routeIs('pendamping.kelas.index') ? 'active' : '' }}">
+                        <a href="{{ route('pendamping.kelas.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Siswa</div>
+                        </a>
+                    </li>
+                    <li
+                        class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-user"></i>
+                            <div data-i18n="Layouts">GTK</div>
+                        </a>
 
+                        <ul class="menu-sub">
+                            <li class="menu-item {{ Request::routeIs('pendamping.guru.index') ? 'active' : '' }}">
+                                <a href="{{route('pendamping.guru.index')}}" class="menu-link">
+                                    <div data-i18n="Without menu">Guru</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('pendamping.tk.index') ? 'active' : '' }}">
+                                <a href="{{route('pendamping.tk.index')}}" class="menu-link">
+                                    <div data-i18n="Without menu">Tenaga Kependidikan</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    @endif
                 </ul>
             </aside>
             <div class="layout-page">

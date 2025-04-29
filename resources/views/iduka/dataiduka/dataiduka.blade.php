@@ -118,7 +118,7 @@
                                     @endif
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    @if(in_array(auth()->user()->role, ['kaprog', 'pendamping']))
+                                    @if(auth()->user()->role === 'kaprog')
                                     <a href="{{ route('detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
                                     @elseif(auth()->user()->role == 'hubin')
                                     <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
