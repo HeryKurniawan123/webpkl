@@ -74,6 +74,14 @@ class HakAksesController extends Controller
     {
         return view('dashboard');
     }
+    function kepsek()
+    {
+        return view('dashboard');
+    }
+    function pendamping()
+    {
+        return view('dashboard');
+    }
     public function index()
     {
         return view('login');
@@ -112,6 +120,10 @@ class HakAksesController extends Controller
                 return redirect()->route('orangtua.dashboard');
             } elseif (Auth::user()->role == 'persuratan') {
                 return redirect()->route('persuratan.dashboard');
+            }elseif (Auth::user()->role == 'kepsek') {
+                return redirect()->route('kepsek.dashboard');
+            }elseif (Auth::user()->role == 'pendamping') {
+                return redirect()->route('pendamping.dashboard');
             }
         } else {
             return redirect('/login')->withErrors('Username dan Password yang dimasukkan tidak sesuai')->withInput();

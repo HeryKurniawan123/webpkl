@@ -16,13 +16,13 @@ class HakAkses
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         if (auth()->check() && $request->is('login')) {
-            return redirect()->route('dashboard.'.auth()->user()->role);
+            return redirect()->route('dashboard.' . auth()->user()->role);
         }
-    
+
         if (in_array(auth()->user()->role, $roles)) {
             return $next($request);
         }
-    
+
         // Redirect berdasarkan role jika user tidak punya akses
         switch (auth()->user()->role) {
             case 'hubin':
@@ -43,6 +43,10 @@ class HakAkses
                 return redirect('/dashboard/orangtua');
             case 'psekolah':
                 return redirect('/dashboard/psekolah');
+            case 'kepsek':
+                return redirect('/dashboard/kepsek');
+            case 'pendamping':
+                return redirect('/dashboard/pendamping');
             default:
                 return redirect('/');
         }
