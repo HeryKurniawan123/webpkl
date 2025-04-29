@@ -13,14 +13,14 @@
                                     <i class="bi bi-search"></i>
                                     <span class="d-none d-md-inline">Search</span>
                                 </button>
-                
+
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahTkModal">
                                     <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
                                 </button>
                             </div>
                         </div>
                     </div>
-                
+
                     <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -55,32 +55,32 @@
                                 <tbody>
                                     @foreach ($kependik as $index => $item)
                                     <tr>
-                                        <td>{{ $kependik->firstItem() + $loop->index }}</td>
+                                        <td>{{ ($kependik->firstItem() ?? 1) + $loop->index }}</td>
                                         <td>{{ $item->nama }}</td>
                                         <td>{{ $item->nik }}</td>
                                         <td>{{ $item->nip_nuptk ?? '-' }}</td>
                                         <td>{{ $item->email }}</td>
                                         <td>
-                                           <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                            <div class="d-flex gap-1 justify-content-center flex-nowrap">
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editTkModal{{ $item->id }}">
                                                     <i class="bi bi-pen"></i>
                                                 </button>
-        
+
                                                 <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailTkModal{{ $item->id }}">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
-            
+
                                                 <form action="{{ route('kependik.destroy', $item->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="delete-btn btn btn-danger btn-sm">
                                                         <i class="bi bi-trash3"></i>
                                                     </button>
-                                                </form>                                                
-                                           </div>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
-    
+
                                     <!-- Modal Edit -->
                                     <div class="modal fade" id="editTkModal{{ $item->id }}" tabindex="-1" aria-labelledby="editTkModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
@@ -156,9 +156,11 @@
                                 </tbody>
                             </table>
                         </div>
+                        @if ($kependik instanceof \Illuminate\Pagination\LengthAwarePaginator)
                         <div class="d-flex justify-content-end mt-3">
                             {{ $kependik->links('pagination::bootstrap-5') }}
                         </div>
+                        @endif
                     </div>
                 </div>
 
@@ -243,9 +245,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function (event) {
+            button.addEventListener('click', function(event) {
                 event.preventDefault(); // Mencegah submit langsung
 
                 Swal.fire({
@@ -265,7 +267,7 @@
             });
         });
 
-        @if (session('success'))
+        @if(session('success'))
         Swal.fire({
             icon: 'success',
             title: 'Berhasil!',

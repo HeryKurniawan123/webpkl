@@ -169,11 +169,11 @@
 
         <div class="row position-relative">
 
-          <div class="col-lg-7 about-img" data-aos="zoom-out" data-aos-delay="200"><img src="{{ asset('images/bljrr.png')}}" style=" border-radius: 25px;"></div>
+          <div class="col-lg-7 about-img" data-aos="zoom-out" data-aos-delay="200"><img src="{{ asset('images/bljrr.png')}}"></div>
 
           <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
             <h2 class="inner-title">Tentang PKL K-One</h2>
-            <div class="our-story rounded-container" style="border-radius:20px;">
+            <div class="our-story rounded-container">
               <h4>Sejak 2025</h4>
               <h3>Cerita Kita</h3>
               <p><b>PKL K-One</b> hadir untuk membantu siswa memulai perjalanan PKL mereka dengan mudah dan lancar.Kami memahami pentingnya pengalaman PKL yang tepat untuk membangun keterampilan dan pengetahuan di dunia profesional. Kami bekerja sama dengan berbagai perusahaan terkemuka untuk memberikan kesempatan terbaik bagi setiap siswa.</p>
@@ -209,46 +209,46 @@
   
       <div class="container">
   
-          <div class="row gy-4 justify-content-between">
-              <div class="features-image col-lg-4 d-flex align-items-center" data-aos="fade-up">
-                  <img src="{{ asset('tmp_landing/assets/img/features.png')}}" class="img-fluid" alt="">
-              </div>
-              <div class="col-lg-7 d-flex flex-column justify-content-center">
-  
-                  <div class="features-item d-flex" data-aos="fade-up" data-aos-delay="200">
-                      <i class="bi bi-person-check flex-shrink-0"></i>
-                      <div>
-                          <h4>Pendaftaran PKL Tanpa Ribet</h4>
-                          <p>Proses pendaftaran yang mudah dan cepat untuk siswa SMK, memungkinkan kamu untuk segera mendapatkan kesempatan PKL yang sesuai dengan jurusanmu.</p>
-                      </div>
-                  </div><!-- End Features Item-->
-  
-                  <div class="features-item d-flex mt-5" data-aos="fade-up" data-aos-delay="300">
-                      <i class="bi bi-building flex-shrink-0"></i>
-                      <div>
-                          <h4>Terhubung dengan Perusahaan Terbaik</h4>
-                          <p>Kami bekerja sama dengan berbagai perusahaan terkemuka untuk memberikan peluang PKL di bidang yang sesuai dengan keahlianmu, sehingga kamu bisa belajar langsung di dunia industri.</p>
-                      </div>
-                  </div><!-- End Features Item-->
-  
-                  <div class="features-item d-flex mt-5" data-aos="fade-up" data-aos-delay="400">
-                      <i class="bi bi-clipboard-check flex-shrink-0"></i>
-                      <div>
-                          <h4>Proses Seleksi yang Jelas</h4>
-                          <p>Dengan sistem seleksi yang transparan dan terstruktur, kamu bisa mengetahui persyaratan dan tahapan PKL dengan jelas, serta mendapatkan feedback yang membangun.</p>
-                      </div>
-                  </div><!-- End Features Item-->
-  
-                  <div class="features-item d-flex mt-5 " data-aos="fade-up" data-aos-delay="500">
-                      <i class="bi bi-person-lines-fill flex-shrink-0"></i>
-                      <div>
-                          <h4>Persiapan Karier Masa Depan</h4>
-                          <p>Melalui program PKL ini, kamu mendapatkan pengalaman yang berharga untuk mempersiapkan karier di industri yang relevan dengan jurusanmu, serta memperluas jaringan profesional.</p>
-                      </div>
-                  </div><!-- End Features Item-->
-  
-              </div>
+        <div class="row gy-4 justify-content-between">
+          <div class="features-image col-lg-4 d-flex align-items-center" data-aos="fade-up">
+            <img src="{{ asset('tmp_landing/assets/img/features.png')}}" class="img-fluid" alt="">
           </div>
+          <div class="col-lg-7 d-flex flex-column justify-content-center">
+        
+            <div class="features-item d-flex" data-aos="fade-up" data-aos-delay="200">
+              <i class="bi bi-person-check flex-shrink-0"></i>
+              <div>
+                <h4>Mulai PKL Tanpa Ribet</h4>
+                <p>Proses pendaftaran yang sederhana membantumu langsung terjun ke dunia kerja nyata, sesuai dengan jurusan dan keahlianmu.</p>
+              </div>
+            </div>
+        
+            <div class="features-item d-flex mt-5" data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-building flex-shrink-0"></i>
+              <div>
+                <h4>Belajar Langsung di Perusahaan Pilihan</h4>
+                <p>Selama PKL, kamu ditempatkan di perusahaan-perusahaan terbaik yang akan mengasah skill-mu di bidang industri yang kamu tekuni.</p>
+              </div>
+            </div>
+        
+            <div class="features-item d-flex mt-5" data-aos="fade-up" data-aos-delay="400">
+              <i class="bi bi-clipboard-check flex-shrink-0"></i>
+              <div>
+                <h4>Progres PKL yang Terpantau Jelas</h4>
+                <p>Dengan sistem monitoring yang transparan, kamu bisa mengikuti perkembangan PKL-mu, mengetahui apa yang sudah dicapai, dan apa yang perlu ditingkatkan.</p>
+              </div>
+            </div>
+        
+            <div class="features-item d-flex mt-5" data-aos="fade-up" data-aos-delay="500">
+              <i class="bi bi-person-lines-fill flex-shrink-0"></i>
+              <div>
+                <h4>Bekal Nyata untuk Dunia Kerja</h4>
+                <p>Pengalaman PKL ini bukan sekadar tugas sekolah tapi juga bekal penting untuk membangun karier masa depanmu di dunia industri.</p>
+              </div>
+            </div>
+        
+          </div>
+        </div>        
   
       </div>
   
@@ -262,27 +262,55 @@
       <div class="row gy-4">
 
         <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('tmp_landing/assets/img/clients/client-1.png')}}" class="img-fluid" alt="">
+          <img src="{{ asset('images/daihatsu.jpg')}}" class="img-fluid" alt="">
         </div><!-- End Client Item -->
 
         <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('tmp_landing/assets/img/clients/client-2.png')}}" class="img-fluid" alt="">
+          <img src="{{ asset('images/inovindo.png')}}" class="img-fluid" alt="">
         </div><!-- End Client Item -->
 
         <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('tmp_landing/assets/img/clients/client-3.png')}}" class="img-fluid" alt="">
+          <img src="{{ asset('images/oracle.png')}}" class="img-fluid" alt="">
         </div><!-- End Client Item -->
 
         <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('tmp_landing/assets/img/clients/client-4.png')}}" class="img-fluid" alt="">
+          <img src="{{ asset('images/skyline.png')}}" class="img-fluid" alt="">
         </div><!-- End Client Item -->
 
         <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('tmp_landing/assets/img/clients/client-5.png')}}" class="img-fluid" alt="">
+          <img src="{{ asset('images/pptik itb.png')}}" class="img-fluid" alt="">
         </div><!-- End Client Item -->
 
         <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('tmp_landing/assets/img/clients/client-6.png')}}" class="img-fluid" alt="">
+          <img src="{{ asset('images/logopupr.png')}}" class="img-fluid" alt="">
+        </div><!-- End Client Item -->
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="{{ asset('images/mikrotikjpeg.jpeg')}}" class="img-fluid" alt="">
+        </div><!-- End Client Item -->
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="{{ asset('images/isi.png')}}" class="img-fluid" alt="">
+        </div><!-- End Client Item -->
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="{{ asset('images/pixy.png')}}" class="img-fluid" alt="">
+        </div><!-- End Client Item -->
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="{{ asset('images/balai budaya.jpeg')}}" class="img-fluid" alt="">
+        </div><!-- End Client Item -->
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="{{ asset('images/asn.png')}}" class="img-fluid" alt="">
+        </div><!-- End Client Item -->
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="{{ asset('images/UNY.png')}}" class="img-fluid" alt="">
+        </div><!-- End Client Item -->
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="{{ asset('images/sanggarseni.jpeg')}}" class="img-fluid" alt="">
         </div><!-- End Client Item -->
 
       </div>

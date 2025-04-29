@@ -12,7 +12,7 @@ class TenagaKependidikanController extends Controller
 {
     public function tenagaKependidikan()
     {
-        $kependik = Kependik::paginate(10);
+        $kependik = Kependik::query()->paginate(10); // Gunakan query builder agar tetap LengthAwarePaginator
         return view('tk.dataTk', compact('kependik'));
     }
 
