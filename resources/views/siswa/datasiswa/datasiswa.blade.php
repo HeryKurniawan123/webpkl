@@ -53,6 +53,7 @@
                                             <span class="d-none d-md-inline ms-1">Search</span>
                                         </button>
                                 
+                                        @if(in_array(auth()->user()->role, ['hubin', 'guru']))
                                         <div class="dropdown">
                                             <button class="btn btn-sm dropdown-toggle d-flex align-items-center"
                                                 style="background-color: #7e7dfb; color: white;"
@@ -81,6 +82,7 @@
                                                 </li>
                                             </ul>
                                         </div>
+                                        @endif
                                     </div>
                                 </div>                                
                             </div>
@@ -143,20 +145,24 @@
                                                     <td></td>
                                                     <td>
                                                         <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                            @if(in_array(auth()->user()->role, ['hubin', 'guru', 'kaprog']))
                                                             <button class="btn btn-warning btn-sm d-flex align-items-center"
                                                                 data-bs-toggle="modal" data-bs-target="#editSiswaModal{{ $s->id }}">
                                                                 <i class="bi bi-pen"></i>
                                                             </button>
+                                                            @endif
                                                             <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
+                                                            @if(in_array(auth()->user()->role, ['hubin', 'guru']))
                                                             <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" class="form-hapus-siswa">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
                                                                     <i class="bi bi-trash3"></i>
                                                                 </button>
-                                                            </form>                                                            
+                                                            </form>           
+                                                            @endif                                                 
                                                         </div>
                                                     </td>                                                                                                        
                                                 </tr>

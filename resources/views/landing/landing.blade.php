@@ -16,6 +16,7 @@
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="{{ asset('tmp_landing/assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
@@ -35,6 +36,54 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  <style>
+    .clients-slider {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+    
+    .clients-track {
+      display: flex;
+      width: calc(250px * 26); /* 250px dikali jumlah logo yang total (13x2 = 26) */
+      animation: scroll 60s linear infinite;
+    }
+    
+    .client-logo {
+      width: 250px; /* Besar ukuran logo per item */
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    
+    .client-logo img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+    
+    @keyframes scroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    
+    /* Hilangkan scrollbar (kalau ada backup browser) */
+    .clients-slider::-webkit-scrollbar {
+      display: none;
+    }
+    .clients-slider {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+    </style>
+    
+
 </head>
 
 <body class="index-page">
@@ -256,68 +305,43 @@
 
    <!-- Clients Section -->
    <section id="clients" class="clients section light-background">
-
     <div class="container" data-aos="fade-up">
-
-      <div class="row gy-4">
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/daihatsu.jpg')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/inovindo.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/oracle.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/skyline.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/pptik itb.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/logopupr.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/mikrotikjpeg.jpeg')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/isi.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/pixy.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/balai budaya.jpeg')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/asn.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/UNY.png')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
-        <div class="col-xl-2 col-md-3 col-6 client-logo">
-          <img src="{{ asset('images/sanggarseni.jpeg')}}" class="img-fluid" alt="">
-        </div><!-- End Client Item -->
-
+      <div class="clients-slider">
+        <div class="clients-track">
+          <!-- LOGO LOGO -->
+          <div class="client-logo"><img src="{{ asset('images/daihatsu.jpg')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/inovindo.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/oracle.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/skyline.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/pptik itb.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/logopupr.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/mikrotikjpeg.jpeg')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/isi.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/pixy.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/balai budaya.jpeg')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/asn.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/UNY.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/sanggarseni.jpeg')}}" alt=""></div>
+  
+          <!-- DUPLIKAT supaya infinite tanpa putus -->
+          <div class="client-logo"><img src="{{ asset('images/daihatsu.jpg')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/inovindo.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/oracle.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/skyline.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/pptik itb.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/logopupr.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/mikrotikjpeg.jpeg')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/isi.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/pixy.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/balai budaya.jpeg')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/asn.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/UNY.png')}}" alt=""></div>
+          <div class="client-logo"><img src="{{ asset('images/sanggarseni.jpeg')}}" alt=""></div>
+        </div>
       </div>
-
     </div>
-
-  </section><!-- /Clients Section -->
+  </section>
+  
 
     <!-- Services Section -->
     <section id="data" class="services section">

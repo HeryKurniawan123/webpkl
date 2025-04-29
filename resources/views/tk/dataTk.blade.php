@@ -14,9 +14,11 @@
                                     <span class="d-none d-md-inline">Search</span>
                                 </button>
 
+                                @if(in_array(auth()->user()->role, ['hubin']))
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahTkModal">
                                     <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
                                 </button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -62,14 +64,17 @@
                                         <td>{{ $item->email }}</td>
                                         <td>
                                             <div class="d-flex gap-1 justify-content-center flex-nowrap">
+                                                @if(in_array(auth()->user()->role, ['hubin']))
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editTkModal{{ $item->id }}">
                                                     <i class="bi bi-pen"></i>
                                                 </button>
+                                                @endif
 
                                                 <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailTkModal{{ $item->id }}">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
 
+                                                @if(in_array(auth()->user()->role, ['hubin']))
                                                 <form action="{{ route('kependik.destroy', $item->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
@@ -77,6 +82,7 @@
                                                         <i class="bi bi-trash3"></i>
                                                     </button>
                                                 </form>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>

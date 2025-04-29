@@ -93,6 +93,8 @@
                                 @elseif(auth()->user()->role == 'iduka') /dashboard/iduka 
                                 @elseif(auth()->user()->role == 'orangtua') /dashboard/orangtua 
                                 @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan 
+                                @elseif(auth()->user()->role == 'kepsek') /dashboard/kepsek 
+                                @elseif(auth()->user()->role == 'pendamping') /dashboard/pendamping 
                                 @endif" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Dashboard</div>
@@ -103,7 +105,13 @@
                     </li>
 
                     <!-- Layouts -->
-                    @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah',]))
+                    @if(in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah', 'pendamping']))
+                    <li class="menu-item {{ Request::routeIs('hubin.iduka.index') ? 'active' : '' }}">
+                        <a href="{{route('hubin.iduka.index')}}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Institusi</div>
+                        </a>
+                    </li>
                     <li class="menu-item {{ Request::routeIs('kelas.index') ? 'active' : '' }}">
                         <a href="{{ route('kelas.index') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -130,12 +138,6 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
-                    <li class="menu-item {{ Request::routeIs('hubin.iduka.index') ? 'active' : '' }}">
-                        <a href="{{route('hubin.iduka.index')}}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Data Institusi</div>
-                        </a>
                     </li>
                     @endif
                     @if(auth()->user()->role == 'iduka')

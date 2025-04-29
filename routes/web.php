@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\PendampingController;
 use App\Models\Cp;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
@@ -340,31 +341,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/kepsek', [HakAksesController::class, 'kepsek'])->name('kepsek.dashboard');
     Route::get('/dashboard/pendamping', [HakAksesController::class, 'pendamping'])->name('pendamping.dashboard');
 
-
-    
-
     //mengajukan pkl
     Route::post('/pengajuan/{iduka}', [PengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');
     Route::get('/pengajuan', [PengajuanPklController::class, 'index'])->name('pengajuan.index');
 
-    
-    
-   
-
-
-
-
     //ORTU
     Route::get('/data-ortu-create', [OrtuController::class])->name('ortu.create');
-
-
-
     Route::get('/persuratan/download/{id}', [PersuratanController::class, 'downloadPdf'])
         ->name('persuratan.download');
 
-
-    // membuat data persuratan    
-
+        // membuat data persuratan    
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
 
@@ -372,13 +358,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update.password');
-
 });
 
-// // HAK AKSES : HUBIN
-// Route::middleware(['auth', 'hakakses:hubin'])->group(function(){
-
-
-// });
+//Pendamping
+Route::middleware(['auth', 'hakakses:pendamping'])->group(function () {
+    Route::get('/data-iduka/pendamping', [PendampingController::class, 'dataIdukaPendamping'])->name('hubin.iduka.index');
+    Route::get('/data-siswa/pendamping', [PendampingController::class, 'dataSiswaPendamping'])->name('kelas.index');
+    Route::get('/data-guru/pendamping', [PendampingController::class, 'dataGuruPendamping'])->name('guru.index');
+    Route::get('/data-tenaga-kependidikan/pendamping', [PendampingController::class, 'dataTKPembimbing'])->name('tk.index');
+});
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');

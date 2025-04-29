@@ -118,7 +118,7 @@
                                     @endif
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    @if(auth()->user()->role == 'kaprog')
+                                    @if(in_array(auth()->user()->role, ['kaprog', 'pendamping']))
                                     <a href="{{ route('detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
                                     @elseif(auth()->user()->role == 'hubin')
                                     <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="btn btn-hover rounded-pill btn-sm">Detail</a>
@@ -142,6 +142,7 @@
                                     </button>
                                     @endif
 
+                                    @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
                                     <div class="dropdown ms-2">
                                         <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             ⋮
@@ -156,6 +157,7 @@
                                             </li>
                                         </ul>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

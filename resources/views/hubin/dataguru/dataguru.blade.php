@@ -15,9 +15,11 @@
                                     <span class="d-none d-md-inline">Search</span>
                                 </button>
                 
+                                @if(in_array(auth()->user()->role, ['hubin']))
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahGuruModal">
                                     <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
                                 </button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -61,7 +63,9 @@
                                         <th>NIK</th>
                                         <th>NIP/NUPTK</th>
                                         <th>Email</th>
+                                        @if(in_array(auth()->user()->role, ['hubin']))
                                         <th>Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,6 +76,7 @@
                                         <td>{{ $g->nik }}</td>
                                         <td>{{ $g->nip }}</td>
                                         <td>{{ $g->email }}</td>
+                                        @if(in_array(auth()->user()->role, ['hubin']))
                                         <td>
                                             <div class="d-flex gap-1 justify-content-center flex-nowrap">
                                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
@@ -90,6 +95,7 @@
                                             </div>
 
                                         </td>
+                                        @endif
                                     </tr>
     
                                     {{-- Modal Edit --}}
