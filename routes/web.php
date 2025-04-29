@@ -29,6 +29,7 @@ use App\Http\Controllers\PusatbantuanController;
 use App\Http\Controllers\SuratPengantarController;
 use App\Http\Controllers\TenagaKependidikanController;
 use App\Http\Controllers\DataPribadiPersuratanController;
+use App\Http\Controllers\KepsekController;
 use App\Http\Controllers\PercetakanAtpController;
 
 Route::get('/PKL K-One', function () {
@@ -362,10 +363,19 @@ Route::middleware(['auth'])->group(function () {
 
 //Pendamping
 Route::middleware(['auth', 'hakakses:pendamping'])->group(function () {
+
     Route::get('/data-iduka/pendamping', [PendampingController::class, 'dataIdukaPendamping'])->name('pendamping.iduka.index');
     Route::get('/data-siswa/pendamping', [PendampingController::class, 'dataSiswaPendamping'])->name('pendamping.kelas.index');
     Route::get('/data-guru/pendamping', [PendampingController::class, 'dataGuruPendamping'])->name('pendamping.guru.index');
     Route::get('/data-tenaga-kependidikan/pendamping', [PendampingController::class, 'dataTKPembimbing'])->name('pendamping.tk.index');
+});
+
+//Kepsek
+Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
+    Route::get('/data-iduka/kepsek', [KepsekController::class, 'dataIdukaKepsek'])->name('kepsek.hubin.iduka.index');
+    Route::get('/data-siswa/kepsek', [KepsekController::class, 'dataSiswaKepsek'])->name('kepsek.kelas.index');
+    Route::get('/data-guru/kepsek', [KepsekController::class, 'dataGuruKepsek'])->name('kepsek.guru.index');
+    Route::get('/data-tenaga-kependidikan/kepsek', [KepsekController::class, 'dataTKKepsek'])->name('kepsek.tk.index');
 });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
