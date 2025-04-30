@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Iduka;
 use App\Models\IdukaAtp;
 use App\Models\CetakUsulan;
@@ -68,51 +69,8 @@ class PersuratanController extends Controller
         return view('persuratan.review', compact('pengajuanUsulans'));
     }
 
-    public function suratBalasan()
-    {
-        $pengajuanUsulans = PengajuanPkl::with(['dataPribadi.kelas', 'iduka'])
-            ->where('status', 'diterima')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('iduka_id');
+  
 
-        return view('persuratan.suratBalasan.suratbalasan', compact('pengajuanUsulans'));
-    }
-
-    public function detailBalasan($iduka_id)
-    {
-        $iduka = Iduka::findOrFail($iduka_id);
-
-        $pengajuans = CetakUsulan::with(['dataPribadi.kelas'])
-            ->where('iduka_id', $iduka_id)
-            ->where('status', 'sudah') // Atau status yang kamu inginkan
-            ->get();
-
-        return view('persuratan.suratBalasan.detailbalasan', compact('iduka', 'pengajuans'));
-    }
-
-
-//     public function downloadSuratBalasan($id)
-// {
-//     // Gunakan model CetakUsulan karena sesuai dengan struktur database Anda
-//     $pengajuan = CetakUsulan::with(['dataPribadi', 'iduka'])
-//         ->findOrFail($id);
-
-//     // Pastikan data pribadi dan iduka tersedia
-//     if (!$pengajuan->dataPribadi || !$pengajuan->iduka) {
-//         return redirect()->back()->with('error', 'Data siswa atau IDUKA tidak ditemukan');
-//     }
-
-//     // Load view surat balasan
-//     $pdf = Pdf::loadView('persuratan.suratBalasan.suratbalasan-pdf', [
-//         'pengajuan' => $pengajuan,
-//         'siswa' => $pengajuan->dataPribadi,
-//         'iduka' => $pengajuan->iduka
-//     ]);
-
-//     // Download PDF dengan nama file yang sesuai
-//     return $pdf->download('Surat_Balasan_' . $pengajuan->dataPribadi->name . '.pdf');
-// }
     public function detailUsulan($iduka_id)
     {
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
@@ -185,56 +143,89 @@ class PersuratanController extends Controller
     return $pdf->download('Surat_Pengajuan_Kelompok_' . $iduka->nama . '.pdf');
 }
 
+// Menampilkan semua surat balasan berdasarkan PengajuanPkl (yang BELUM di-download)
+public function suratBalasan()
+{
+    $pengajuanUsulans = PengajuanPkl::with(['dataPribadi.kelas', 'iduka'])
+        ->whereIn('status', ['diterima', 'ditolak'])
+        ->whereDoesntHave('historiDownload') // hanya yang BELUM ada histori download
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->groupBy('iduka_id');
+
+    return view('persuratan.suratBalasan.suratbalasan', compact('pengajuanUsulans'));
+}
+
+// Menampilkan detail balasan untuk satu IDUKA (yang BELUM di-download)
+public function detailBalasan($iduka_id)
+{
+    $iduka = Iduka::findOrFail($iduka_id);
+
+    $pengajuans = PengajuanPkl::with(['dataPribadi.kelas'])
+        ->where('iduka_id', $iduka_id)
+        ->whereIn('status', ['diterima', 'ditolak'])
+        ->whereDoesntHave('historiDownload') // hanya yang BELUM ada histori download
+        ->get();
+
+    return view('persuratan.suratBalasan.detailbalasan', compact('iduka', 'pengajuans'));
+}
+
+// Menampilkan histori surat balasan (yang SUDAH di-download)
+public function historyBalasan()
+{
+    $histori = SuratBalasanHistory::with(['pengajuanPkl.dataPribadi', 'pengajuanPkl.iduka'])
+        ->whereHas('pengajuanPkl', function($query) {
+            $query->whereIn('status', ['diterima', 'ditolak']);
+        })
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->groupBy(function($item) {
+            return $item->pengajuanPkl->iduka_id;
+        });
+
+    return view('persuratan.suratBalasan.history', compact('histori'));
+}
+
+// Download surat balasan
+ // Pastikan di atas file controllermu ada ini
+
 public function downloadSuratBalasan($id)
 {
-    $pengajuan = CetakUsulan::with(['dataPribadi', 'iduka'])
+    $pengajuan = PengajuanPkl::with(['dataPribadi', 'iduka'])
         ->findOrFail($id);
 
     if (!$pengajuan->dataPribadi || !$pengajuan->iduka) {
         return redirect()->back()->with('error', 'Data siswa atau IDUKA tidak ditemukan');
     }
 
-    // Cek apakah sudah ada histori download
-    $historyExists = SuratBalasanHistory::where('cetak_usulan_id', $pengajuan->id)
+    $historyExists = SuratBalasanHistory::where('pengajuan_pkl_id', $pengajuan->id)
         ->where('downloaded_by', auth()->user()->name)
         ->exists();
 
-        if ($historyExists) {
-            session()->flash('info', 'Histori download sudah ada.');
-        } else {
-            SuratBalasanHistory::create([
-                'cetak_usulan_id' => $pengajuan->id,
-                'downloaded_by' => auth()->user()->name
-            ]);
-            session()->flash('success', 'Histori download berhasil disimpan.');
-        }
-        
-        
+    if (!$historyExists) {
+        SuratBalasanHistory::create([
+            'pengajuan_pkl_id' => $pengajuan->id,
+            'downloaded_by' => auth()->user()->name
+        ]);
+        session()->flash('success', 'Histori download berhasil disimpan.');
+    } else {
+        session()->flash('info', 'Histori download sudah ada.');
+    }
+
+    $tanggalHariIni = Carbon::now()->translatedFormat('d F Y'); // Contoh: 28 April 2025
 
     $pdf = Pdf::loadView('persuratan.suratBalasan.suratbalasan-pdf', [
         'pengajuan' => $pengajuan,
         'siswa' => $pengajuan->dataPribadi,
-        'iduka' => $pengajuan->iduka
+        'iduka' => $pengajuan->iduka,
+        'tanggalHariIni' => $tanggalHariIni
     ]);
 
     return $pdf->download('Surat_Balasan_' . $pengajuan->dataPribadi->nama . '.pdf');
 }
 
-public function historyBalasan()
-{
-    $histori = SuratBalasanHistory::with(['cetakUsulan.dataPribadi', 'cetakUsulan.iduka'])
-        ->whereHas('cetakUsulan', function($query) {
-            $query->where('status', 'sudah');
-        })
-        ->orderBy('created_at', 'desc')
-        ->get()
-        ->groupBy(function($item) {
-            return $item->cetakUsulan->iduka_id;
-        });
 
-    return view('persuratan.suratBalasan.history', compact('histori'));
-}
-
+// Update status surat balasan
 public function updateStatusSurat(Request $request)
 {
     $request->validate([
@@ -249,5 +240,40 @@ public function updateStatusSurat(Request $request)
         'success' => true,
         'message' => 'Status surat berhasil diubah'
     ]);
+}
+
+public function massDownload(Request $request)
+{
+    $request->validate([
+        'pengajuan_ids' => 'required|array|min:1',
+    ]);
+
+    $ids = $request->pengajuan_ids;
+
+    $pengajuans = PengajuanPkl::with(['dataPribadi', 'iduka'])->whereIn('id', $ids)->get();
+
+    $tanggalHariIni = Carbon::now()->translatedFormat('d F Y');
+
+    foreach ($pengajuans as $pengajuan) {
+        // Cek dan simpan histori
+        $historyExists = SuratBalasanHistory::where('pengajuan_pkl_id', $pengajuan->id)
+            ->where('downloaded_by', auth()->user()->name)
+            ->exists();
+
+        if (!$historyExists) {
+            SuratBalasanHistory::create([
+                'pengajuan_pkl_id' => $pengajuan->id,
+                'downloaded_by' => auth()->user()->name
+            ]);
+        }
+    }
+
+    // Generate PDF gabungan
+    $pdf = PDF::loadView('persuratan.suratBalasan.suratbalasan-pdf-massal', [
+        'pengajuans' => $pengajuans,
+        'tanggalHariIni' => $tanggalHariIni
+    ]);
+
+    return $pdf->download('Surat_Balasan_Massal.pdf');
 }
 }

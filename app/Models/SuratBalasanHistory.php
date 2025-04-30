@@ -10,7 +10,7 @@ class SuratBalasanHistory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'cetak_usulan_id',
+        'pengajuan_pkl_id',
         'downloaded_by',
           'status_surat',
     ];
@@ -22,6 +22,7 @@ class SuratBalasanHistory extends Model
 
     public function pengajuanPkl()
     {
-        return $this->belongsTo(PengajuanPkl::class);
+        return $this->belongsTo(PengajuanPkl::class, 'pengajuan_pkl_id');
     }
+    
 }

@@ -217,6 +217,9 @@ Route::get('/surat-balasan/download/{id}', [App\Http\Controllers\PersuratanContr
 Route::post('/surat-balasan/download-multiple', [App\Http\Controllers\PersuratanController::class, 'downloadMultipleBalasan'])
 ->name('persuratan.suratBalasan.downloadMultiple');
 Route::post('/update-status-surat', [App\Http\Controllers\PersuratanController::class, 'updateStatusSurat'])->name('persuratan.updateStatusSurat');
+
+Route::post('/surat-balasan/download-massal', [PersuratanController::class, 'massDownload'])->name('persuratan.suratBalasan.massDownload');
+
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
@@ -319,9 +322,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/iduka/detail/{id}', [IdukaController::class, 'show'])->name('detail.iduka');
     Route::post('/iduka/store', [IdukaController::class, 'store'])->name('iduka.store');
     Route::get('/data-iduka/{id}/edit', [IdukaController::class, 'editiduka'])->name('iduka.edit');
-    Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
+
     Route::put('/iduka/{id}', [IdukaController::class, 'update'])->name('iduka.update');
-    Route::put('/iduka-update/{id}', [IdukaController::class, 'updateiduka'])->name('updateiduka.update');
+
     Route::put('/iduka/{id}/tanggal', [IdukaController::class, 'updateTanggal'])->name('kaprog.tanggal.update');
     //--------
 
@@ -331,6 +334,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
 
+    //update data iduka yang ada di hubin dan kaprog
+    Route::put('/iduka-update/{id}', [IdukaController::class, 'updateiduka'])->name('updateiduka.update');
+    Route::delete('/iduka/{id}', [IdukaController::class, 'destroy'])->name('iduka.destroy');
 
     Route::get('/dashboard/kaprog', [HakAksesController::class, 'kaprog'])->name('kaprog.dashboard');
     Route::get('/dashboard/iduka', [HakAksesController::class, 'iduka'])->name('iduka.dashboard');

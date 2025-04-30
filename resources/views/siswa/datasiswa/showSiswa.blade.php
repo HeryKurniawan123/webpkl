@@ -34,7 +34,9 @@
                                             <i class="bi bi-search"></i>
                                             <span class="d-none d-md-inline">Search</span>
                                         </button>
-                                
+                                        <a href="{{ route('siswa.download-template') }}" class="btn btn-success btn-sm d-flex align-items-center">
+                                            Download Template Excel
+                                        </a>
                                         <!-- Dropdown Tambah -->
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

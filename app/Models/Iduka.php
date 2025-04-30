@@ -81,4 +81,6 @@ public function atp()
     {
         return $this->hasMany(PengajuanUsulan::class, 'iduka_id');
     }
+
+    
 }

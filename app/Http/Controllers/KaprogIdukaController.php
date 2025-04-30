@@ -40,7 +40,7 @@ class KaprogIdukaController extends Controller
     public function updateiduka(Request $request, $id)
     {
         $iduka = Iduka::findOrFail($id);
-
+    
         $validated = $request->validate([
             'nama' => 'required',
             'nama_pimpinan' => 'required',
@@ -55,28 +55,53 @@ class KaprogIdukaController extends Controller
             'kerjasama' => 'required',
             'kuota_pkl' => 'required|integer',
         ]);
-
-        // Update data
-        $iduka->fill($validated);
-
-        // Jika password diisi, update password juga
-        if ($request->filled('password')) {
-            $iduka->password = bcrypt($request->password);
+    
+        DB::beginTransaction();
+    
+        try {
+            // Update data iduka
+            $iduka->update([
+                'nama' => $request->nama,
+                'nama_pimpinan' => $request->nama_pimpinan,
+                'nip_pimpinan' => $request->nip_pimpinan,
+                'no_hp_pimpinan' => $request->no_hp_pimpinan,
+                'jabatan' => $request->jabatan,
+                'alamat' => $request->alamat,
+                'kode_pos' => $request->kode_pos,
+                'telepon' => $request->telepon,
+                'email' => $request->email,
+                'bidang_industri' => $request->bidang_industri,
+                'kerjasama' => $request->kerjasama,
+                'kuota_pkl' => $request->kuota_pkl,
+                'rekomendasi' => $request->has('rekomendasi') ? 1 : 0,
+                'kerjasama_lainnya' => $request->kerjasama === 'Lainnya' ? $request->kerjasama_lainnya : null
+            ]);
+    
+            // Update user terkait
+            $user = User::where('iduka_id', $iduka->id)->first();
+            if ($user) {
+                $userData = [
+                    'name' => $request->nama,
+                    'nip' => $request->email,
+                ];
+    
+                if ($request->filled('password')) {
+                    $userData['password'] = Hash::make($request->password);
+                }
+    
+                $user->update($userData);
+            }
+    
+            DB::commit();
+    
+            return redirect()->back()->with('success', 'Data IDUKA berhasil diperbarui.');
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Gagal memperbarui data: ' . $e->getMessage())
+                ->withInput();
         }
-
-        // Cek rekomendasi (karena checkbox)
-        $iduka->rekomendasi = $request->has('rekomendasi') ? 1 : 0;
-
-        // Cek kerjasama_lainnya
-        if ($request->kerjasama === 'Lainnya') {
-            $iduka->kerjasama_lainnya = $request->kerjasama_lainnya;
-        } else {
-            $iduka->kerjasama_lainnya = null;
-        }
-
-        $iduka->save();
-
-        return redirect()->back()->with('success', 'Data IDUKA berhasil diperbarui.');
     }
 
     public function updateTanggal(Request $request, $id)

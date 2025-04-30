@@ -155,6 +155,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
                                     <div class="mb-0" style="font-size: 18px">{{ $item->kelas ?? '-'  }} {{ $item->name_kelas ?? '-' }}</div>
+                                    <small class="text-muted d-block">ID : {{ $item->id ?? '-' }}</small>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a href="{{ route('siswa.kelas', ['id' => $item->id]) }}" class="btn btn-hover rounded-pill">Detail</a>

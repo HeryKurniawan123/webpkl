@@ -107,7 +107,9 @@
                                     @foreach ($konke as $index => $k)
                                     <tr>
                                         <td>{{ $konke->firstItem() + $loop->index }}</td>
-                                        <td>{{ $k->name_konke }}</td>
+                                        <td>{{ $k->name_konke }}
+                                            <small class="text-muted d-block">ID : {{ $k->id ?? '-' }}</small>
+                                        </td>
                                         <td>{{ $k->proker->name }}</td>
                                         <td>
                                             <div class="d-flex gap-1 justify-content-center flex-nowrap">

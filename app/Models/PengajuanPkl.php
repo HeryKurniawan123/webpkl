@@ -40,4 +40,10 @@ public function pengajuanUsulan()
 {
     return $this->belongsTo(PengajuanUsulan::class, 'user_id', 'id');
 }
+
+public function historiDownload()
+{
+    return $this->hasOne(SuratBalasanHistory::class, 'pengajuan_pkl_id');
+}
+
 }

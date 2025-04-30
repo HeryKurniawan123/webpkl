@@ -27,38 +27,37 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif   
-                            <form action="{{ !isset($pembimbing->id) ? route('iduka.pembimbing.store') : route('iduka.pembimbing.update', $pembimbing->id) }}" method="POST">
+                            <form action="{{ route('iduka.pembimbing.store') }}" method="POST">
                                 @csrf
-                                @if(isset($pembimbing->id)) 
-                                    @method('PUT') {{-- Gunakan PUT hanya untuk update --}}
-                                @endif
                             
-                                
                                 <div class="mb-3">
                                     <label class="form-label">Nama Lengkap</label>
                                     <input type="text" name="name" class="form-control"
-                                    value="{{ old('name', $pembimbing->name ?? '') }}" required>
+                                        value="{{ old('name', $pembimbing->name ?? '') }}" required>
                                 </div>
-            
+                            
                                 <div class="mb-3">
                                     <label class="form-label">NIP</label>
                                     <input type="text" name="nip" class="form-control"
                                         value="{{ old('nip', $pembimbing->nip ?? '') }}" required>
                                 </div>
-            
+                            
                                 <div class="mb-3">
                                     <label class="form-label">No Telepon</label>
                                     <input type="text" name="no_hp" class="form-control"
-                                    value="{{ old('no_hp', $pembimbing->no_hp ?? '') }}" required>
+                                        value="{{ old('no_hp', $pembimbing->no_hp ?? '') }}" required>
                                 </div>
-                    
+                            
                                 <div class="mb-3">
-                                    <label class="form-label">Password </label>
-                                    <input type="password" class="form-control" name="password" placeholder="Password">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="password" placeholder="{{ $pembimbing->id ? 'Kosongkan jika tidak diubah' : 'Password baru' }}">
                                 </div>
-            
-                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            
+                                <button type="submit" class="btn btn-primary">
+                                    {{ $pembimbing->id ? 'Perbarui' : 'Simpan' }}
+                                </button>
                             </form>
+                            
                         </div>
                     </div>
                 </div>

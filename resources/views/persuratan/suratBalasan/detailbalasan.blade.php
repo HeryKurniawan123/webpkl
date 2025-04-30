@@ -48,37 +48,41 @@
                             </div>
                             @endif
                             
-                            @foreach ($pengajuans as $pengajuan)
-                                <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <div class="mb-0" style="font-size: 18px">
-                                                <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
+                            <form action="{{ route('persuratan.suratBalasan.massDownload') }}" method="POST">
+                                @csrf
+                                @foreach ($pengajuans as $pengajuan)
+                                    <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-start gap-3">
+                                                <div class="form-check mt-1">
+                                                    <input class="form-check-input" type="checkbox" name="pengajuan_ids[]" value="{{ $pengajuan->id }}">
+                                                </div>
+                                                <div>
+                                                    <div class="mb-0" style="font-size: 18px">
+                                                        <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
+                                                    </div>
+                                                    <div>
+                                                        Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
+                                                    </div>
+                                                    <div> Status : {{ $pengajuan->status ?? '' }}</div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }}
-                                                {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
-                                            </div>
-                                          
-                                        </div>
-                                        <div class="d-inline-block position-relative">
-                                            <!-- Desktop: Tombol langsung -->
                                             <div class="d-none d-md-flex gap-2">
                                                 <a href="{{ route('persuratan.suratBalasan.download', $pengajuan->id) }}" 
-                                                    class="btn btn-success"
-                                                    {{ $pengajuan->status !== 'diterima' ? 'disabled' : '' }}>
+                                                   class="btn btn-success"
+                                                   {{ $pengajuan->status !== 'diterima' ? 'disabled' : '' }}>
                                                     <i class="fas fa-download"></i> Download Surat Balasan
-                                                 </a>
-                                        
-                                               
+                                                </a>
                                             </div>
-                                        
-                                          
                                         </div>
-                                        
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            
+                                <button type="submit" class="btn btn-primary mt-3">
+                                    <i class="fas fa-file-pdf"></i> Download Semua PDF Terpilih
+                                </button>
+                            </form>
+                            
                         @endif
                     </div>
                 </div>

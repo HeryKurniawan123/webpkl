@@ -22,7 +22,7 @@
                     @else
                     @foreach($histori as $iduka_id => $historyGroup)
                     @php
-                    $iduka = $historyGroup->first()->cetakUsulan->iduka;
+                    $iduka = $historyGroup->first()->pengajuanPkl->iduka;
                     @endphp
 
                     <div class="card mb-4 shadow-sm">
@@ -45,13 +45,13 @@
                                             <th>Tanggal Download</th>
                                             <th>Status</th>
                                             <th>Status Surat</th>
-                                           
+                                           <th>PDF</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($historyGroup as $index => $history)
                                         @php
-                                        $pengajuan = $history->cetakUsulan;
+                                        $pengajuan = $history->pengajuanPkl;
                                         $siswa = $pengajuan->dataPribadi;
                                         @endphp
                                         <tr>
@@ -68,13 +68,9 @@
                                                 <span class="badge bg-success">Sudah</span>
                                                 @endif
                                             </td>
-                                            {{-- <td>
-                                                <a href="{{ route('persuratan.suratBalasan.download', ['id' => $pengajuan->id]) }}" 
-                                                   class="btn btn-sm btn-outline-primary" 
-                                                   title="Download Ulang">
-                                                    <i class="fas fa-download"></i>
-                                                </a>
-                                            </td> --}}
+                                            <td><a href="{{ route('persuratan.suratBalasan.download', $pengajuan->id) }}" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-filetype-pdf"></i>
+                                              </a></td>
                                         </tr>
                                         @endforeach
                                     </tbody>
