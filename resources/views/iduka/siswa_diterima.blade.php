@@ -5,6 +5,17 @@
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
+
+                    {{-- Cek jika tidak ada data sama sekali --}}
+                    @if ($pengajuanByYear->isEmpty())
+                        <div class="col-12">
+                            <div class="alert alert-warning text-center">
+                                Belum ada siswa diterima PKL.
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Loop jika ada data --}}
                     @foreach ($pengajuanByYear as $year => $pengajuans)
                         <div class="col-12">
                             <div class="card mb-3">
@@ -50,6 +61,7 @@
                             </div>
                         </div>
                     @endforeach
+
                 </div>
             </div>
         </div>

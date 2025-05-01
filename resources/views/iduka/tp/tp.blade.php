@@ -16,35 +16,38 @@
         .card-content:hover {
             transform: scale(1.02);
         }
+
         .custom-checkbox {
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        border: 2px solid #ccc;
-        border-radius: 4px;
-        background-color: white;
-        cursor: not-allowed;
-        display: inline-block;
-        position: relative;
-    }
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            cursor: not-allowed;
+            display: inline-block;
+            position: relative;
+        }
 
-    /* Warna hijau jika checkbox tercentang */
-    .custom-checkbox:checked {
-        background-color: #28a745; /* Warna hijau */
-        border-color: #28a745;
-    }
+        /* Warna hijau jika checkbox tercentang */
+        .custom-checkbox:checked {
+            background-color: #28a745;
+            /* Warna hijau */
+            border-color: #28a745;
+        }
 
-    /* Tambahkan centang */
-    .custom-checkbox:checked::after {
-        content: '\2713'; /* Unicode untuk tanda centang ✓ */
-        font-size: 14px;
-        color: white;
-        font-weight: bold;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
+        /* Tambahkan centang */
+        .custom-checkbox:checked::after {
+            content: '\2713';
+            /* Unicode untuk tanda centang ✓ */
+            font-size: 14px;
+            color: white;
+            font-weight: bold;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 
@@ -69,6 +72,13 @@
                             </div>
                         </div>
                     </div>
+                    @if($idukaAtps->isEmpty())
+                    <div class="alert alert-warning mt-3 d-flex justify-content-center align-items-center text-center">
+                        <span style="text-align: center">Belum mengisi CP & ATP</span>
+                    </div>
+                    @else
+                    
+
 
                     @foreach($idukaAtps->groupBy('konke_id') as $konke_id => $konke_items)
                     <div class="card card-content mt-3">
@@ -79,27 +89,28 @@
                             @foreach($konke_items->groupBy('cp.cp') as $cp_name => $items)
                             <div class="mb-3">
                                 <b>{{ $loop->iteration }}. {{ $cp_name }}</b>
-                                
-                                    @foreach($items as $item)
-                                   
-                                        <div class="d-flex justify-content-between align-items-center ms-3">
-                                        <span><b>{{ $item->atp->kode_atp }}</b> {{ $item->atp->atp }}</span>
-                                            <input type="checkbox"
-                                                name="tp_check[]"
-                                                value="{{ $item->atp->id }}"
-                                                class="tp-check custom-checkbox"
-                                                {{ $item->is_selected ? 'checked' : '' }}
-                                                disabled>
-                                        </div>
-                                    
-                                    @endforeach
 
-                               
+                                @foreach($items as $item)
+
+                                <div class="d-flex justify-content-between align-items-center ms-3">
+                                    <span><b>{{ $item->atp->kode_atp }}</b> {{ $item->atp->atp }}</span>
+                                    <input type="checkbox"
+                                        name="tp_check[]"
+                                        value="{{ $item->atp->id }}"
+                                        class="tp-check custom-checkbox"
+                                        {{ $item->is_selected ? 'checked' : '' }}
+                                        disabled>
+                                </div>
+
+                                @endforeach
+
+
                             </div>
                             @endforeach
                         </div>
                     </div>
                     @endforeach
+                    @endif
                 </div>
             </div>
         </div>
@@ -118,7 +129,7 @@
                     <input type="hidden" name="iduka_id" id="iduka_id" value="{{ $iduka->id ?? '' }}">
                     <input type="hidden" name="iduka_id" id="iduka_id" value="{{ auth()->user()->iduka_id }}">
                     <input type="hidden" name="konke_id" id="konke_id">
-    
+
                     <div class="modal-body">
                         <div class="d-flex justify-content-center mb-3">
                             <!-- Wrapper for sliding konke buttons -->
@@ -130,7 +141,7 @@
                                 @endforeach
                             </div>
                         </div>
-    
+
                         <div id="cpTpContainer">
                             <label class="d-flex justify-content-end me-2">Check All
                                 <input type="checkbox" id="checkAllTambah">
@@ -150,7 +161,7 @@
                             </table>
                         </div>
                     </div>
-    
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary btn-sm">Simpan Data</button>
@@ -159,15 +170,16 @@
             </div>
         </div>
     </div>
-    
+
 </body>
 @if(session('success'))
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         Swal.fire({
             icon: 'success',
             title: 'Berhasil!',
-            text: '{{ session('success') }}',
+            text: '{{ session('
+            success ') }}',
             showConfirmButton: false,
             timer: 2000
         });
@@ -184,60 +196,60 @@
         });
 
         // Event delegation untuk menangani klik jurusan/konke
-    document.addEventListener("click", function(event) {
-        if (event.target.classList.contains("jurusan-btn")) {
-            event.preventDefault();
-            
-            const konke_id = event.target.getAttribute("data-konke-id");
-            document.getElementById("konke_id").value = konke_id;
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("jurusan-btn")) {
+                event.preventDefault();
 
-            console.log("Konke diklik! ID:", konke_id); // Debug log
+                const konke_id = event.target.getAttribute("data-konke-id");
+                document.getElementById("konke_id").value = konke_id;
 
-            const tpTambahBody = document.getElementById("tp-tambah-body");
+                console.log("Konke diklik! ID:", konke_id); // Debug log
 
-            // Tampilkan loading sementara
-            tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
+                const tpTambahBody = document.getElementById("tp-tambah-body");
 
-            // Fetch data dari server
-            fetch(`/get-cp-atp/${konke_id}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Data diterima:", data); // Debug respons dari server
+                // Tampilkan loading sementara
+                tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
 
-                    tpTambahBody.innerHTML = ""; // Kosongkan data sebelumnya
+                // Fetch data dari server
+                fetch(`/get-cp-atp/${konke_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Data diterima:", data); // Debug respons dari server
 
-                    // Jika tidak ada data, tampilkan pesan
-                    if (data.length === 0) {
-                        tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Tidak ada data CP & ATP.</td></tr>";
-                        return;
-                    }
+                        tpTambahBody.innerHTML = ""; // Kosongkan data sebelumnya
 
-                    // Looping data CP
-                    data.forEach(cp => {
-                        // Tambahkan baris CP
-                        let cpRow = `<tr><td><b>${cp.cp}</b></td><td></td></tr>`;
-                        tpTambahBody.innerHTML += cpRow;
+                        // Jika tidak ada data, tampilkan pesan
+                        if (data.length === 0) {
+                            tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Tidak ada data CP & ATP.</td></tr>";
+                            return;
+                        }
 
-                        // Looping data ATP di dalam CP
-                        cp.atp.forEach(atp => {
-                            let atpRow = `
+                        // Looping data CP
+                        data.forEach(cp => {
+                            // Tambahkan baris CP
+                            let cpRow = `<tr><td><b>${cp.cp}</b></td><td></td></tr>`;
+                            tpTambahBody.innerHTML += cpRow;
+
+                            // Looping data ATP di dalam CP
+                            cp.atp.forEach(atp => {
+                                let atpRow = `
                             <tr>
                                 <td style='padding-left: 20px;'><b>${atp.kode_atp}</b> ${atp.atp}</td>
                                 <td class="text-end">
                                     <input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}' ${atp.is_selected ? 'checked' : ''}>
                                 </td>
                             </tr>`;
-                            tpTambahBody.innerHTML += atpRow;
+                                tpTambahBody.innerHTML += atpRow;
+                            });
                         });
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                        tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-danger'>Gagal memuat data.</td></tr>";
                     });
-                })
-                .catch(error => {
-                    console.error("Error fetching data:", error);
-                    tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-danger'>Gagal memuat data.</td></tr>";
-                });
-        }
-    });
-        
+            }
+        });
+
     });
 </script>
 

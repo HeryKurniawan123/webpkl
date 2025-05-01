@@ -86,7 +86,7 @@
                         {{-- Jika tidak ada pengajuan --}}
                         @if($pengajuans->isEmpty())
                         <div class="alert alert-warning d-flex justify-content-center align-items-center text-center">
-                            <span style="text-align: center">Belum ada Tujuan Pembelajaran untuk Institusi ini.</span>
+                            <span style="text-align: center">Belum ada siswa yang mengajukan.</span>
                         </div>
                         @else
 
