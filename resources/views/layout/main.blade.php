@@ -159,12 +159,19 @@
                             <div data-i18n="Basic">TP</div>
                         </a>
                     </li>
-                    <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
+                    <li class="menu-item {{ Request::routeIs('iduka.siswa.diterima') ? 'active' : '' }}">
+                        <a href="{{ route('iduka.siswa.diterima') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Daftar Siswa</div>
+                        </a>
+                    </li>
+
+                    <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
                         <a href="{{ route('iduka.pembimbing.create')}}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
                             <div data-i18n="Basic">Pembimbing</div>
                         </a>
-                    </li>
+                    </li> -->
                     @endif
                     @if(auth()->user()->role == 'siswa')
                     <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">
@@ -480,7 +487,7 @@
         {{-- sweetAlert2 --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        
+
 
         @stack('scripts')
 

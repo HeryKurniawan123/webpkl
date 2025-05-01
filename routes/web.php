@@ -265,6 +265,9 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/review/pengajuan/diterima', [PengajuanPklController::class, 'reviewPengajuanDiterima'])->name('review.pengajuanditerima');
     Route::get('/review/pengajuan/ditolak', [PengajuanPklController::class, 'reviewPengajuanDitolak'])->name('review.pengajuanditolak');
 
+    Route::get('/iduka/daftar/siswa-diterima', [IdukaController::class, 'siswaDiterima'])->name('iduka.siswa.diterima');
+
+
 });
 
 

@@ -8,6 +8,7 @@ use App\Models\Pembimbing;
 use App\Models\CetakUsulan;
 use Illuminate\Http\Request;
 use App\Models\PembimbingIduka;
+use App\Models\PengajuanPkl;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +25,7 @@ class IdukaController extends Controller
 
         return view('iduka.dataiduka.dataiduka', compact('iduka'));
     }
-    
+
     public function dataPribadiIduka()
     {
         // Ambil user yang sedang login
@@ -46,7 +47,7 @@ class IdukaController extends Controller
     public function updateiduka(Request $request, $id)
     {
         $iduka = Iduka::findOrFail($id);
-    
+
         $validated = $request->validate([
             'nama' => 'required',
             'nama_pimpinan' => 'required',
@@ -61,9 +62,9 @@ class IdukaController extends Controller
             'kerjasama' => 'required',
             'kuota_pkl' => 'required|integer',
         ]);
-    
+
         DB::beginTransaction();
-    
+
         try {
             // Update data iduka
             $iduka->update([
@@ -82,7 +83,7 @@ class IdukaController extends Controller
                 'rekomendasi' => $request->has('rekomendasi') ? 1 : 0,
                 'kerjasama_lainnya' => $request->kerjasama === 'Lainnya' ? $request->kerjasama_lainnya : null
             ]);
-    
+
             // Update user terkait
             $user = User::where('iduka_id', $iduka->id)->first();
             if ($user) {
@@ -90,18 +91,17 @@ class IdukaController extends Controller
                     'name' => $request->nama,
                     'nip' => $request->email,
                 ];
-    
+
                 if ($request->filled('password')) {
                     $userData['password'] = Hash::make($request->password);
                 }
-    
+
                 $user->update($userData);
             }
-    
+
             DB::commit();
-    
+
             return redirect()->back()->with('success', 'Data IDUKA berhasil diperbarui.');
-    
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -211,7 +211,7 @@ class IdukaController extends Controller
                     'name' => $request->nama_pembimbing,
                     'nip' => $request->nip_pembimbing,
                     'no_hp' => $request->no_hp_pembimbing,
-                    'password' => Hash::make($request->password), 
+                    'password' => Hash::make($request->password),
                 ]);
             }
         });
@@ -233,74 +233,74 @@ class IdukaController extends Controller
     }
 
 
-    
 
-public function updateInstitusi(Request $request, $id)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'nama_pimpinan' => 'required|string|max:255',
-        'nip_pimpinan' => 'required|string|max:50',
-        'jabatan' => 'required|string|max:255',
-        'alamat' => 'required|string',
-        'telepon' => 'required|numeric',
-        'bidang_industri' => 'required|string',
-        'no_hp_pimpinan' => 'required|numeric',
-        'kolom6' => 'required|string|in:Ya,Tidak',
-        'kolom7' => 'required|string|in:Ya,Tidak',
-        'kolom8' => 'required|string|in:Ya,Tidak',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
 
-    $iduka = Iduka::findOrFail($id);
-
-    // Simpan foto baru jika ada, dan hapus yang lama
-    $path = $iduka->foto; // Default: tetap pakai foto lama
-    if ($request->hasFile('foto')) {
-        if ($iduka->foto) {
-            Storage::disk('public')->delete($iduka->foto);
-        }
-        $path = $request->file('foto')->store('iduka_fotos', 'public');
-    }
-
-    DB::transaction(function () use ($request, $iduka, $path) {
-        // Update tabel idukas
-        $iduka->update([
-            'nama' => $request->nama,
-            'nama_pimpinan' => $request->nama_pimpinan,
-            'nip_pimpinan' => $request->nip_pimpinan,
-            'jabatan' => $request->jabatan,
-            'alamat' => $request->alamat,
-            'telepon' => $request->telepon,
-            'bidang_industri' => $request->bidang_industri,
-            'no_hp_pimpinan' => $request->no_hp_pimpinan,
-
-            'kolom6' => $request->kolom6,
-            'kolom7' => $request->kolom7,
-            'kolom8' => $request->kolom8,
-            'foto' => $path,
+    public function updateInstitusi(Request $request, $id)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'nama_pimpinan' => 'required|string|max:255',
+            'nip_pimpinan' => 'required|string|max:50',
+            'jabatan' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'telepon' => 'required|numeric',
+            'bidang_industri' => 'required|string',
+            'no_hp_pimpinan' => 'required|numeric',
+            'kolom6' => 'required|string|in:Ya,Tidak',
+            'kolom7' => 'required|string|in:Ya,Tidak',
+            'kolom8' => 'required|string|in:Ya,Tidak',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Update nama user jika ada
-        if ($iduka->user) {
-            $iduka->user->update([
-                'name' => $request->nama,
-            ]);
+        $iduka = Iduka::findOrFail($id);
+
+        // Simpan foto baru jika ada, dan hapus yang lama
+        $path = $iduka->foto; // Default: tetap pakai foto lama
+        if ($request->hasFile('foto')) {
+            if ($iduka->foto) {
+                Storage::disk('public')->delete($iduka->foto);
+            }
+            $path = $request->file('foto')->store('iduka_fotos', 'public');
         }
 
-        // Update data pembimbing jika ada
-        $pembimbing = Pembimbing::where('user_id', $iduka->user_id)->first();
-        if ($pembimbing) {
-            $pembimbing->update([
-                'name' => $request->name,
-                'nip' => $request->nip,
-                'no_hp' => $request->no_hp,
-            ]);
-        }
-    });
+        DB::transaction(function () use ($request, $iduka, $path) {
+            // Update tabel idukas
+            $iduka->update([
+                'nama' => $request->nama,
+                'nama_pimpinan' => $request->nama_pimpinan,
+                'nip_pimpinan' => $request->nip_pimpinan,
+                'jabatan' => $request->jabatan,
+                'alamat' => $request->alamat,
+                'telepon' => $request->telepon,
+                'bidang_industri' => $request->bidang_industri,
+                'no_hp_pimpinan' => $request->no_hp_pimpinan,
 
-    return redirect()->back()->with('success', 'Data institusi berhasil diperbarui!');
-}
+                'kolom6' => $request->kolom6,
+                'kolom7' => $request->kolom7,
+                'kolom8' => $request->kolom8,
+                'foto' => $path,
+            ]);
+
+            // Update nama user jika ada
+            if ($iduka->user) {
+                $iduka->user->update([
+                    'name' => $request->nama,
+                ]);
+            }
+
+            // Update data pembimbing jika ada
+            $pembimbing = Pembimbing::where('user_id', $iduka->user_id)->first();
+            if ($pembimbing) {
+                $pembimbing->update([
+                    'name' => $request->name,
+                    'nip' => $request->nip,
+                    'no_hp' => $request->no_hp,
+                ]);
+            }
+        });
+
+        return redirect()->back()->with('success', 'Data institusi berhasil diperbarui!');
+    }
 
 
     public function store(Request $request)
@@ -478,5 +478,23 @@ public function updateInstitusi(Request $request, $id)
 
         return Pdf::loadView('persuratan.suratPengajuan.kaprogatp', compact('iduka'))
             ->download('Data_ATP_' . $iduka->nama . '.pdf');
+    }
+
+    public function siswaDiterima()
+    {
+        $user = auth()->user();
+
+        $pengajuanDiterima = PengajuanPkl::with('siswa')
+            ->where('iduka_id', $user->iduka->id) // relasi user ke iduka
+            ->where('status', 'diterima')
+            ->latest()
+            ->get();
+
+        // Mengelompokkan pengajuan berdasarkan tahun
+        $pengajuanByYear = $pengajuanDiterima->groupBy(function ($item) {
+            return $item->created_at->format('Y'); // Mengambil tahun dari created_at
+        });
+
+        return view('iduka.siswa_diterima', compact('pengajuanDiterima', 'pengajuanByYear'));
     }
 }

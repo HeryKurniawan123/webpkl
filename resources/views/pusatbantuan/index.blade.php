@@ -28,6 +28,14 @@
                 <label>Tanggal Buat</label>
                 <input type="date" name="tanggalbuat" value="{{ old('tanggalbuat', $data->tanggalbuat ?? '') }}" class="form-control" required>
             </div>
+            <div class="col-md-6 mb-3">
+                <label>Tanggal Awal</label>
+                <input type="date" name="tanggal_awal" value="{{ old('tanggal_awal', $data->tanggal_awal ?? '') }}" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label>Tanggal Akhir</label>
+                <input type="date" name="tanggal_akhir" value="{{ old('tanggal_akhir', $data->tanggal_akhir ?? '') }}" class="form-control">
+            </div>
             <div class="col-md-12 mb-3">
                 <label>Deskripsi</label>
                 <textarea name="deskripsi" class="form-control" rows="3" required>{{ old('deskripsi', $data->deskripsi ?? '') }}</textarea>
@@ -43,8 +51,6 @@
         </div>
         <button type="submit" class="btn btn-success">{{ $data ? 'Update' : 'Simpan' }}</button>
     </form>
-
-
 
 </div>
 @endsection

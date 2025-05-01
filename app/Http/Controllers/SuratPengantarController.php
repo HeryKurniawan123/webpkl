@@ -25,6 +25,8 @@ class SuratPengantarController extends Controller
             'deskripsi' => 'required',
             'nama_instansi' => 'required',
             'nama_kepsek' => 'required',
+            'tanggal_awal' => 'nullable|date',
+            'tanggal_akhir' => 'nullable|date',
         ]);
 
         $surat = SuratPengantar::first();
