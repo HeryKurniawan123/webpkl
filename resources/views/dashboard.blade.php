@@ -102,12 +102,6 @@
                         popup: 'animate__animated animate__shakeX'
                     }
                 })">
-                  Buat Pengajuan
-                </a>
-                @else
-                <a href="{{ route('data.iduka') }}" class="dropdown-item">
-                  Buat Pengajuan
-                </a>
                 @endif
               </li>
 

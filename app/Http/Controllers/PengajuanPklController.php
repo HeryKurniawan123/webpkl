@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Iduka;
 use App\Models\PengajuanPkl;
+use App\Models\PengajuanUsulan;
+use App\Models\UsulanIduka;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PengajuanPklController extends Controller
 {
@@ -123,34 +127,86 @@ class PengajuanPklController extends Controller
     }
 
     public function terima($id)
-{
-    $pengajuan = PengajuanPkl::findOrFail($id);
+    {
+        $pengajuan = PengajuanPkl::findOrFail($id);
 
-    // Pastikan hanya memproses jika belum diterima sebelumnya
-    if ($pengajuan->status !== 'diterima') {
-        $iduka = Iduka::findOrFail($pengajuan->iduka_id);
+        // Pastikan hanya memproses jika belum diterima sebelumnya
+        if ($pengajuan->status !== 'diterima') {
+            $iduka = Iduka::findOrFail($pengajuan->iduka_id);
 
-        // Cek apakah kuota tersedia
-        if ($iduka->kuota_pkl > 0) {
-            $iduka->decrement('kuota_pkl');
-            $pengajuan->update(['status' => 'diterima']);
+            // Cek apakah kuota tersedia
+            if ($iduka->kuota_pkl > 0) {
+                $iduka->decrement('kuota_pkl');
+                $pengajuan->update(['status' => 'diterima']);
+                // Cek dan update status di pengajuan_usulans atau usulan_idukas
+                $updated = false;
 
-            return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
-        } else {
-            // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
-            return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
+                $usulan = \App\Models\PengajuanUsulan::where('user_id', $pengajuan->siswa_id)
+                    ->where('iduka_id', $pengajuan->iduka_id)
+                    ->first();
+
+                if ($usulan) {
+                    $usulan->status = 'diterima';
+                    $usulan->save();
+                    $updated = true;
+                    Log::info('Status usulan_iduka updated', ['id' => $usulan->id, 'status' => $usulan->status]);
+                } else {
+                    $usulanIduka = \App\Models\UsulanIduka::where('user_id', $pengajuan->siswa_id)
+                        ->latest() // Ambil yang terbaru
+                        ->first();
+
+                    if ($usulanIduka) {
+                        $usulanIduka->status = 'diterima';
+                        $usulanIduka->save();
+                        $updated = true;
+
+                        Log::info('Status usulan_iduka updated', ['id' => $usulanIduka->id, 'status' => $usulanIduka->status]);
+                    }
+                }
+                return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
+            } else {
+                // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
+                return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
+            }
         }
+
+        return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
     }
 
-    return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
-}
-
-public function tolak($id)
-{
-    $pengajuan = PengajuanPkl::findOrFail($id);
-    $pengajuan->update(['status' => 'ditolak']);
-
-    return redirect()->route('pengajuan.review')->with('error', 'Pengajuan PKL telah ditolak.');
-}
-
+    public function tolak($id)
+    {
+        $pengajuan = PengajuanPkl::findOrFail($id);
+    
+        if ($pengajuan->status !== 'ditolak') {
+            $pengajuan->update(['status' => 'ditolak']);
+    
+            // Cek dan update status di pengajuan_usulans atau usulan_idukas
+            $updated = false;
+    
+            $usulan = \App\Models\PengajuanUsulan::where('user_id', $pengajuan->siswa_id)
+                ->where('iduka_id', $pengajuan->iduka_id)
+                ->first();
+    
+            if ($usulan) {
+                $usulan->status = 'ditolak';
+                $usulan->save();
+                $updated = true;
+            } else {
+                $usulanIduka = \App\Models\UsulanIduka::where('user_id', $pengajuan->siswa_id)
+                    ->where('iduka_id', $pengajuan->iduka_id)
+                    ->first();
+    
+                if ($usulanIduka) {
+                    $usulanIduka->status = 'ditolak';
+                    $usulanIduka->save();
+                    $updated = true;
+                }
+            }
+    
+            return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah ditolak.');
+        }
+    
+        return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah ditolak sebelumnya.');
+    }
+    
 }
