@@ -57,6 +57,37 @@
             will-change: transform;
         }
 
+        .card-hover {
+            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: scale(1.03);
+            background-color: #7e7dfb !important;
+            color: white !important;
+        }
+
+        .card-hover:hover .btn-hover {
+            background-color: white;
+            color: #7e7dfb;
+        }
+
+        .btn-hover {
+            background-color: #7e7dfb;
+            color: white;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .dropdown-btn {
+            color: #7e7dfb;
+            font-size: 24px;
+        }
+
+        .card-hover:hover .dropdown-btn {
+            color: white;
+        }
+
 </style>
 <div class="container-fluid">
     <div class="content-wrapper">
@@ -93,7 +124,7 @@
                                 <div class="dropdown">
                                     <button class="btn" type="button" data-bs-toggle="dropdown"
                                         aria-expanded="false">
-                                        ⋮
+                                        <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
@@ -186,52 +217,56 @@
                                             @endif
                                         </div>
                                         <div class="d-flex align-items-center">
+                                            {{-- Tombol Detail (Desktop) --}}
                                             @if (auth()->user()->role == 'kaprog')
                                                 <a href="{{ route('detail.iduka', $i->id) }}"
-                                                    class="btn btn-hover rounded-pill btn-sm">Detail</a>
+                                                    class="btn btn-hover rounded-pill btn-sm d-none d-md-block">Detail</a>
                                             @elseif(auth()->user()->role == 'hubin')
                                                 <a href="{{ route('hubin.detail.iduka', $i->id) }}"
-                                                    class="btn btn-hover rounded-pill btn-sm">Detail</a>
+                                                    class="btn btn-hover rounded-pill btn-sm d-none d-md-block">Detail</a>
                                             @endif
-
-                                            @if (auth()->user()->role === 'kaprog')
-                                                <button type="button" class="btn btn-hover rounded-pill btn-sm"
-                                                    data-bs-toggle="modal"
+                                        
+                                            {{-- Tombol Kalender --}}
+                                            @if(auth()->user()->role === 'kaprog')
+                                                <button type="button" class="btn btn-hover rounded-pill btn-sm ms-2" data-bs-toggle="modal"
                                                     data-bs-target="#aturTanggalModalKaprog{{ $i->id }}">
                                                     <i class="bi bi-calendar-event"></i>
                                                 </button>
                                             @elseif(auth()->user()->role === 'hubin')
-                                                <button type="button" class="btn btn-outline-primary btn-sm ms-2"
-                                                    data-bs-toggle="modal"
+                                                <button type="button" class="btn btn-hover rounded-pill btn-sm ms-2" data-bs-toggle="modal"
                                                     data-bs-target="#aturTanggalModalHubin{{ $i->id }}">
                                                     <i class="bi bi-calendar-event"></i>
                                                 </button>
                                             @endif
-
-                                            <div class="dropdown ms-2">
-                                                
-                                                <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">⋮</button>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
-                                                        <form action="{{ route('iduka.destroy', $i->id) }}" method="POST"
-                                                            class="delete-form">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="dropdown-item text-danger">Hapus</button>
-                                                        </form>
-                                                    </li>
-                                                    <!-- Tombol Edit -->
-                                                    <li>
-                                                       
-                                                    </li>  <li>
-                                                        <button class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#editKelasModal{{ $i->id }}">
-                                                            Edit
-                                                        </button>
-                                                    </li>
-
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        
+                                            {{-- Dropdown (Mobile) --}}
+                                            @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
+                                                <div class="dropdown ms-2">
+                                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        {{-- Tombol Detail (Mobile) --}}
+                                                        <li class="d-block d-md-none">
+                                                            @if (auth()->user()->role == 'kaprog')
+                                                                <a href="{{ route('detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
+                                                            @elseif(auth()->user()->role == 'hubin')
+                                                                <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
+                                                            @endif
+                                                        </li>
+                                        
+                                                        {{-- Tombol Hapus --}}
+                                                        <li>
+                                                            <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            @endif
+                                        </div>                                        
                                     </div>
                                 </div>
                                 @if (auth()->user()->role === 'kaprog')
@@ -462,38 +497,36 @@
 
     {{-- Script --}}
     <script>
-        <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle kerjasama lainnya
-    @foreach($iduka as $i)
-    document.getElementById('kerjasama{{ $i->id }}').addEventListener('change', function() {
-        const container = document.getElementById('kerjasama_lainnya_container{{ $i->id }}');
-        if (this.value === 'Lainnya') {
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
-        }
-    });
-    @endforeach
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle kerjasama lainnya
+        @foreach($iduka as $i)
+        document.getElementById('kerjasama{{ $i->id }}').addEventListener('change', function() {
+            const container = document.getElementById('kerjasama_lainnya_container{{ $i->id }}');
+            if (this.value === 'Lainnya') {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        });
+        @endforeach
 
-    // Validasi form
-    @foreach($iduka as $i)
-    document.querySelector('form[action="{{ route('iduka.update', $i->id) }}"]').addEventListener('submit', function(e) {
-        const kerjasama = document.getElementById('kerjasama{{ $i->id }}').value;
-        const lainnya = document.getElementById('kerjasama_lainnya{{ $i->id }}').value;
-        
-        if (kerjasama === 'Lainnya' && !lainnya) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Harap isi jenis kerjasama lainnya!'
-            });
-        }
+        // Validasi form
+        @foreach($iduka as $i)
+        document.querySelector('form[action="{{ route('iduka.update', $i->id) }}"]').addEventListener('submit', function(e) {
+            const kerjasama = document.getElementById('kerjasama{{ $i->id }}').value;
+            const lainnya = document.getElementById('kerjasama_lainnya{{ $i->id }}').value;
+            
+            if (kerjasama === 'Lainnya' && !lainnya) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Harap isi jenis kerjasama lainnya!'
+                });
+            }
+        });
+        @endforeach
     });
-    @endforeach
-});
-</script>
 
 
 
@@ -597,37 +630,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     </script>
 
-    {{-- CSS tambahan --}}
-    <style>
-        .card-hover {
-            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: scale(1.03);
-            background-color: #7e7dfb !important;
-            color: white !important;
-        }
-
-        .card-hover:hover .btn-hover {
-            background-color: white;
-            color: #7e7dfb;
-        }
-
-        .btn-hover {
-            background-color: #7e7dfb;
-            color: white;
-            border-radius: 50px;
-            transition: all 0.3s;
-        }
-
-        .dropdown-btn {
-            color: #7e7dfb;
-            font-size: 24px;
-        }
-
-        .card-hover:hover .dropdown-btn {
-            color: white;
-        }
-    </style>
 @endsection

@@ -83,7 +83,7 @@
                  onmouseover="this.style.transform='scale(1.03)'" 
                  onmouseout="this.style.transform='scale(1)'">
         </div>
-        <p class="text-white fs-6 fw-bold mb-2" style="font-family: 'Poppins', sans-serif; letter-spacing: 1px;">PKL K-ONE</p>
+        <p class="text-white fs-6 fw-bold mb-2" style="font-family: 'Poppins', sans-serif; letter-spacing: 1px;">PKL SMKN 1 Kawali</p>
         <small class="text-white text-center d-block" style="max-width: 18rem; font-family: 'Poppins', sans-serif; font-size: 0.9rem; line-height: 1.6;">
             Siap berkarir dengan pengalaman magang terbaik.
         </small>

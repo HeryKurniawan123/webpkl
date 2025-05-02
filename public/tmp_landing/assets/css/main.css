@@ -693,20 +693,20 @@ section,
   font-weight: bold;
 }
 
-/* Memberikan penekanan pada teks PKL K-One */
+/* Memberikan penekanan pada teks PKL SMKN 1 Kawali */
 .hero .highlighted-text {
   font-weight: bold;
 }
 
 @media (max-width: 768px) {
-  /* Untuk tampilan mobile, 'PKL K-One' berada di baris baru */
+  /* Untuk tampilan mobile, 'PKL SMKN 1 Kawali' berada di baris baru */
   .hero .carousel-container h2 {
     font-size: 28px;
     text-align: center;
   }
 
   .hero .carousel-container h2 .highlighted-text {
-    display: block; /* Menyusun 'PKL K-One' di baris baru */
+    display: block; /* Menyusun 'PKL SMKN 1 Kawali' di baris baru */
     margin-top: 10px; /* Menambahkan jarak atas jika perlu */
   }
 }

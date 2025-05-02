@@ -8,8 +8,8 @@
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Review Pengajuan Institusi / Perusahaan</h5>
-                        <a class="nav-link btn btn-success" href="{{ route('kaprog.review.histori') }}">
-                            <i class="fas fa-history me-2"></i> Histori Pengajuan
+                        <a class="nav-link btn btn-success btn-sm" href="{{ route('kaprog.review.histori') }}">
+                            <i class="fas fa-history me-2 "></i> History Pengajuan
                         </a>
                     </div>
                 </div>
@@ -50,35 +50,13 @@
                                 <small class="text-muted">{{ $filteredPengajuan->count() }} siswa mengajukan ke sini</small>
                             </div>
 
-                            {{-- Mobile View: Dropdown --}}
-                            {{-- <div class="dropdown d-block d-md-none">
-                                <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item text-primary" href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}">
-                                            Detail
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" onsubmit="return confirm('Yakin ingin mengirim semua pengajuan ke IDUKA ini?');">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item text-success">
-                                                Kirim Semua Pengajuan
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div> --}}
-
                             {{-- Desktop View: Inline Buttons --}}
-                            <div class="d-none d-md-flex" style="gap: 10px; align-items: center;">
+                            <div class="d-flex" style="gap: 10px; align-items: center; min-height: 100%; height: auto;">
                                 <a href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}" class="btn btn-primary rounded-pill">Detail</a>
                             
-                                <form id="kirimSemuaForm" action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" style="align-items: center;">
+                                <form id="kirimSemuaForm" action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST">
                                     @csrf
-                                    <button type="button" class="btn btn-success" onclick="konfirmasiKirim()">Kirim Semua Pengajuan</button>
+                                    <button type="button" class="btn btn-primary rounded-pill" onclick="konfirmasiKirim()">Kirim Semua</button>
                                 </form>
                             </div>
                         </div>
@@ -92,6 +70,7 @@
     </div>
 </div>
 @endsection
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function konfirmasiKirim() {
@@ -111,18 +90,16 @@
             }
         });
     }
-    </script>
-    
-    @if(session('success'))
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        Swal.fire({
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            icon: 'success',
-            timer: 1500,
-            showConfirmButton: false
-        });
-    </script>
-@endif
+</script>
 
+@if(session('success'))
+<script>
+    Swal.fire({
+        title: 'Berhasil!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+    });
+</script>
+@endif

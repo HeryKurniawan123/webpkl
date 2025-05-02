@@ -9,7 +9,7 @@
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Detail Pengajuan PKL ke: {{ $iduka->nama }}</h5>
                         <a href="{{ route('kaprog.review.pengajuan') }}" class="btn btn-secondary btn-sm">
-                            ← <span class="d-none d-sm-inline">Kembali</span>
+                            <span class="d-none d-sm-inline">Kembali</span>
                         </a>
                     </div>
                 </div>
@@ -36,17 +36,17 @@
                                     <div class="d-inline-block position-relative">
                                         <!-- Desktop: Tombol langsung -->
                                         <div class="d-none d-md-flex gap-2">
-                                            <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-success">
+                                            <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-primary rounded-pill">
                                                 Lihat Detail
                                             </a>
 
                                             @if ($pengajuan->status === 'diterima')
-                                                <button class="btn btn-success" disabled>Sudah Dikirim</button>
+                                                <button class="btn btn-primary rounded-pill" disabled>Sudah Dikirim</button>
                                             @else
                                                 <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-{{ $pengajuan->id }}">
                                                     @csrf
                                                     <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                                    <button type="button" class="btn btn-primary" onclick="confirmKirim('{{ $pengajuan->id }}')">
+                                                    <button type="button" class="btn btn-primary rounded-pill" onclick="confirmKirim('{{ $pengajuan->id }}')">
                                                         Kirim
                                                     </button>
                                                 </form>
@@ -56,7 +56,7 @@
                                         <!-- Mobile: Dropdown tiga titik -->
                                         <div class="dropdown d-md-none">
                                             <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                ⋮
+                                               <i class="bi bi-three-dots-vertical"></i>
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>

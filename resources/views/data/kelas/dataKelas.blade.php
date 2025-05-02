@@ -159,7 +159,9 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a href="{{ route('siswa.kelas', ['id' => $item->id]) }}" class="btn btn-hover rounded-pill">Detail</a>
-                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">⋮</button>
+                                    <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
                                             <form action="{{ route('kelas.destroy', $item->id) }}" method="POST" class="delete-form">
@@ -228,10 +230,13 @@
                     @empty
                     <p class="text-center">Tidak ada data kelas yang tersedia.</p>
                     @endforelse
+                    @if ($kelas->total() > 10)
                     <div class="card">
                         <div class="d-flex justify-content-end mt-3">
                             {{ $kelas->links('pagination::bootstrap-5') }}
                         </div>
+                    </div>
+                    @endif                
                     </div>
                 </div>
             </div>

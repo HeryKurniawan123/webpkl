@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CetakUsulan;
 use App\Models\DataPribadi;
+use App\Models\Iduka;
 use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -87,5 +88,12 @@ class PdfController extends Controller
         $pdf = Pdf::loadView('data.usulan.siswaUsulanPdf', compact('dataPribadi', 'usulanIduka'));
 
         return $pdf->download('siswa_usulan_iduka.pdf');
+    }
+
+    public function unduhDetailIdukaPDF($id)
+    {
+        $dataIduka = Iduka::findOrFail($id);
+        $pdf = Pdf::loadView('iduka.dataiduka.detailDataIdukaPDF', compact('dataIduka'));
+        return $pdf->download('data-iduka-' . $dataIduka->nama . '.pdf');
     }
 }

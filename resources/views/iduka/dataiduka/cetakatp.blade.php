@@ -80,8 +80,7 @@
                                 <div class="d-flex d-md-none justify-content-end">
                                     <div class="dropdown">
                                         <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            ⋮
-                                        </button>
+                                           <i class="bi bi-three-dots-vertical"></i>                                        </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
                                                 <a href="{{ route('siswa.dashboard') }}" class="dropdown-item text-primary">
@@ -196,8 +195,7 @@
                                                 <!-- Dropdown di Mobile khusus kaprog -->
                                                 <div class="dropdown ms-2 d-md-none">
                                                     <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        ⋮
-                                                    </button>
+                                                       <i class="bi bi-three-dots-vertical"></i>                                                    </button>
                                                     <ul class="dropdown-menu dropdown-menu-end">
                                                         <li>
                                                             <a href="{{ route('cetak.iduka', $i->id) }}" class="dropdown-item">Detail</a>

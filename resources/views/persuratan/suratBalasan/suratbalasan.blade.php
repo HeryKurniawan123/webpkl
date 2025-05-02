@@ -65,8 +65,7 @@
                             {{-- Mobile View: Dropdown --}}
                             <div class="dropdown d-block d-md-none">
                                 <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⋮
-                                </button>
+                                   <i class="bi bi-three-dots-vertical"></i>                                </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a class="dropdown-item text-primary" href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}">

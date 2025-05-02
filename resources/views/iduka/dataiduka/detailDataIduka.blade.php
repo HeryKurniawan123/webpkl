@@ -117,7 +117,7 @@
                                 <!-- Tombol dan Dropdown -->
                                 <div class="d-flex gap-2 ms-auto align-items-center">
                                     {{-- Tombol Kembali --}}
-                                    <a href="{{ route('data.iduka') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
+                                    <a href="{{ route('hubin.iduka.index') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
@@ -140,15 +140,15 @@
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a href="{{ route('data.iduka') }}" class="dropdown-item">
+                                                <a href="{{ route('hubin.iduka.index') }}" class="dropdown-item">
                                                     <span class="text-primary">Kembali</span>
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#" class="dropdown-item">
+                                                <a href="{{ route('detailIduka.pdf', $iduka->id) }}" class="dropdown-item">
                                                     <span class="text-danger">Export PDF</span>
                                                 </a>
-                                            </li>
+                                            </li>                                            
                                             {{-- Download PDF ATP (Tersedia di Dropdown untuk semua ukuran layar) --}}
                                             <li>
                                                 <a href="{{ auth()->user()->role === 'kaprog' ? route('kaprog.download.atp', $iduka->id) : route('hubin.download.atp', $iduka->id) }}" class="dropdown-item">

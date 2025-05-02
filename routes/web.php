@@ -32,12 +32,12 @@ use App\Http\Controllers\DataPribadiPersuratanController;
 use App\Http\Controllers\KepsekController;
 use App\Http\Controllers\PercetakanAtpController;
 
-Route::get('/PKL K-One', function () {
+Route::get('/PKL SMKN 1 Kawali', function () {
     return view('landing.landing');
 });
 
 Route::get('/', function () {
-    return redirect('/PKL K-One');
+    return redirect('/PKL SMKN 1 Kawali');
 });
 
 Route::middleware(['guest'])->group(function () {
@@ -153,6 +153,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
      //data daftar iduka
      Route::get('/daftar/iduka', [KaprogIdukaController::class, 'index'])->name('hubin.iduka.index');
      Route::get('/daftar/iduka/detail/{id}', [KaprogIdukaController::class, 'show'])->name('hubin.detail.iduka');
+     Route::get('/download/detail-iduka/PDF/{id}', [PdfController::class, 'unduhDetailIdukaPDF'])->name('detailIduka.pdf');
      Route::post('/iduka/hubin/store', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
      Route::get('/create/data-iduka', [KaprogIdukaController::class, 'create'])->name('hubin.iduka.create');
      Route::get('/iduka/{id}/edit', [KaprogIdukaController::class, 'edit'])->name('hubin.iduka.edit');

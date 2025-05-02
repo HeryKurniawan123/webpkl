@@ -55,6 +55,27 @@
             border-color: #ffc107 !important;
             color: black !important;
         }
+
+        .btn-kuota {
+            background-color: #ffc107;
+            color: black;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            border-radius: 50px;
+            border: 2px solid #ffc107;
+        }
+
+        .btn-kuota:hover {
+            background-color: white;
+            color: #ffc107;
+            border-color: white;
+        }
+
+        .card-hover:hover .btn-kuota {
+            background-color: white;
+            color: #ffbf00;
+            border-color: white;
+        }
+
     </style>
 </head>
 
@@ -102,8 +123,7 @@
                                 <div class="d-flex d-md-none justify-content-end">
                                 <div class="dropdown">
                                     <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        ⋮
-                                    </button>
+                                       <i class="bi bi-three-dots-vertical"></i>                                    </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
                                         <a href="{{ route('siswa.dashboard') }}" class="dropdown-item text-primary">
@@ -190,7 +210,7 @@
                                     @endphp
                                     @if ($kuota <= 0)
                                         <button
-                                        class="btn btn-warning rounded-pill btn-sm detail-disabled"
+                                        class="btn btn-kuota rounded-pill btn-sm btn-detail"
                                         data-nama="{{ $i->nama }}">
                                         Kuota Penuh
                                         </button>

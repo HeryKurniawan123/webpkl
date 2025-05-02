@@ -45,8 +45,7 @@
                                     <!-- Dropdown untuk Mobile -->
                                     <div class="dropdown d-md-none">
                                         <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            ⋮
-                                        </button>
+                                           <i class="bi bi-three-dots-vertical"></i>                                        </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
                                                 <button class="dropdown-item text-success btn-update-status" data-id="{{ $pengajuan->id }}" data-status="diterima">

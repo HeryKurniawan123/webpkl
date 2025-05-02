@@ -43,48 +43,81 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h5 class="mb-0">Data Siswa</h5>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ route('siswa.download-template') }}" class="btn btn-success btn-sm d-flex align-items-center">
-                                            Download Template Excel
+                                
+                                    {{-- Desktop View --}}
+                                    <div class="d-none d-md-flex gap-2">
+                                        <a href="{{ route('siswa.download-template') }}" class="btn btn-success btn-sm">
+                                            <i class="bi bi-download"></i>
                                         </a>
-                                        <button type="button" class="btn btn-warning btn-sm d-flex align-items-center"
+                                
+                                        <button type="button" class="btn btn-warning btn-sm"
                                             data-bs-toggle="modal" data-bs-target="#searchModal">
                                             <i class="bi bi-search"></i>
-                                            <span class="d-none d-md-inline ms-1">Search</span>
                                         </button>
                                 
                                         @if(in_array(auth()->user()->role, ['hubin', 'guru']))
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm dropdown-toggle d-flex align-items-center"
-                                                style="background-color: #7e7dfb; color: white;"
-                                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="bi bi-plus-lg"></i>
-                                                <span class="d-none d-md-inline ms-1">Tambah Data</span>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li>
-                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal"
-                                                        data-bs-target="#tambahSiswaModal">
-                                                        Tambah Data Manual
-                                                    </button>
-                                                    <button class="dropdown-item" type="button">
-                                                        <form action="{{ route('siswa.import') }}" method="POST"
-                                                            enctype="multipart/form-data">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-plus-lg"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li>
+                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">
+                                                            Tambah Data Manual
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('siswa.import') }}" method="POST" enctype="multipart/form-data">
                                                             @csrf
-                                                            <input type="file" name="file" class="d-none" id="fileInput"
-                                                                required onchange="this.form.submit()">
-                                                            <button type="button" class="dropdown-item"
-                                                                onclick="document.getElementById('fileInput').click();">
+                                                            <input type="file" name="file" class="d-none" id="fileInput" required onchange="this.form.submit()">
+                                                            <button type="button" class="dropdown-item" onclick="document.getElementById('fileInput').click();">
                                                                 Import Excel
                                                             </button>
                                                         </form>
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         @endif
                                     </div>
-                                </div>                                
+                                
+                                    {{-- Mobile View --}}
+                                    <div class="d-flex d-md-none">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <a href="{{ route('siswa.download-template') }}" class="dropdown-item text-success">
+                                                        <i class="bi bi-download me-1"></i> Download Template
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <button type="button" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                                        <i class="bi bi-search me-1"></i> Search
+                                                    </button>
+                                                </li>
+                                
+                                                @if(in_array(auth()->user()->role, ['hubin', 'guru']))
+                                                    <li>
+                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#tambahSiswaModal">
+                                                            <i class="bi bi-plus me-1"></i> Tambah Manual
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <form action="{{ route('siswa.import') }}" method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            <input type="file" name="file" class="d-none" id="fileInputMobile" required onchange="this.form.submit()">
+                                                            <button type="button" class="dropdown-item" onclick="document.getElementById('fileInputMobile').click();">
+                                                                <i class="bi bi-file-earmark-excel me-1"></i> Import Excel
+                                                            </button>
+                                                        </form>
+                                                    </li>
+                                                @endif
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>                                                              
                             </div>
                         </div>
 

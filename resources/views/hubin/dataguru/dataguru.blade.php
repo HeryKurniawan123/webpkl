@@ -85,6 +85,14 @@
                                                 </button>
                                                 {{-- alert hapus --}}
 
+                                                <!-- Tombol untuk membuka modal -->
+                                                <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailGuruModal">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+
+                                                <!-- Modal -->
+                                                
+                                                
                                                 <form action="{{ route('guru.destroy', $g->id) }}" method="POST" class="delete-form d-inline">
                                                     @csrf
                                                     @method('DELETE')
@@ -97,7 +105,7 @@
                                         </td>
                                         @endif
                                     </tr>
-    
+
                                     {{-- Modal Edit --}}
                                     <div class="modal fade" id="editGuruModal{{ $g->id }}" tabindex="-1" aria-labelledby="editGuruModalLabel{{ $g->id }}" aria-hidden="true">
                                         <div class="modal-dialog">
@@ -193,6 +201,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        @include('hubin.dataguru.detailGuru')
                         <div class="d-flex justify-content-end mt-3">
                             {{ $guru->links('pagination::bootstrap-5') }}
                         </div>

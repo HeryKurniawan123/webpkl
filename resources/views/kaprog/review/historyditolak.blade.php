@@ -46,9 +46,13 @@
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
                     <div class="col-md-12 mt-3">
-                        <div class="col-md-12 mt-3 d-flex justify-content-between align-items-center">
-                            <h4 class="mb-3">History Pengajuan Diterima</h4>
-                            <button class="btn btn-reset shadow-sm">Reset Data</button>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="col-md-12 mt-3 d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-3">History Pengajuan Diterima</h4>
+                                    <button class="btn btn-reset shadow-sm">Reset Data</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="card shadow-sm" style="padding: 20px;">
                             @if(session()->has('success'))
@@ -58,69 +62,71 @@
                                 </div>
                             @endif  
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped">                            
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Nama Siswa</th>
-                                        <th>Kelas</th>
-                                        <th>Nama Institusi</th>
-                                        <th>Tanggal Pengajuan</th>
-                                        <th>Status</th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Data History Diterima -->
-                                    @foreach($usulanDitolak as $index => $usulan)
-                                    <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $usulan->user->name }}</td>
-                                        <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                        <td>{{ $usulan->nama }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
-                                        <td><span class="badge bg-danger">Ditolak</span></td>
-                                        <td>
-                                            <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                            
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                    @if($usulanDitolak->isEmpty())
-                                    <tr>
-                                        <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
-                                    </tr>
-                                    @endif
-
-                                    @foreach ($usulanDitolakPkl as $usul)
-                                    <tr>
-                                    <td>{{ $loop->iteration + count($usulanDitolakPkl) }}</td>
-                                        <td>{{ $usul->user->name }}</td>
-                                        <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                        <td>{{ $usul->iduka->nama }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
-                                        <td><span class="badge bg-danger">Ditolak</span></td>
-                                        <td>
-                                            <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                            
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                    <!-- Add more rows here -->
-                                </tbody>
-                            </table>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">                            
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama Siswa</th>
+                                                <th>Kelas</th>
+                                                <th>Nama Institusi</th>
+                                                <th>Tanggal Pengajuan</th>
+                                                <th>Status</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Data History Diterima -->
+                                            @foreach($usulanDitolak as $index => $usulan)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $usulan->user->name }}</td>
+                                                <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                                <td>{{ $usulan->nama }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
+                                                <td><span class="badge bg-danger">Ditolak</span></td>
+                                                <td>
+                                                    <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                            @if($usulanDitolak->isEmpty())
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
+                                            </tr>
+                                            @endif
+        
+                                            @foreach ($usulanDitolakPkl as $usul)
+                                            <tr>
+                                            <td>{{ $loop->iteration + count($usulanDitolakPkl) }}</td>
+                                                <td>{{ $usul->user->name }}</td>
+                                                <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                                <td>{{ $usul->iduka->nama }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
+                                                <td><span class="badge bg-danger">Ditolak</span></td>
+                                                <td>
+                                                    <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                            <!-- Add more rows here -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -48,10 +48,14 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row">
                 <div class="col-md-12 mt-3">
-                    <div class="col-md-12 mt-3 d-flex justify-content-between align-items-center">
-                        <h4 class="mb-3">History Pengajuan Diterima</h4>
-                        <button class="btn btn-reset shadow-sm">Reset Data</button>
-                    </div>
+                   <div class="card">
+                        <div class="card-body">
+                            <div class="col-md-12 mt-3 d-flex justify-content-between align-items-center">
+                                <h4 class="mb-3">History Pengajuan Diterima</h4>
+                                <button class="btn btn-reset shadow-sm">Reset Data</button>
+                            </div>
+                        </div>
+                   </div>
                     <div class="card shadow-sm" style="padding: 20px;">
                         @if(session()->has('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -60,84 +64,86 @@
                         </div>
                         @endif
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Siswa</th>
-                                    <th>Kelas</th>
-                                    <th>Nama Institusi</th>
-                                    <th>Tanggal Pengajuan</th>
-                                    <th>Status</th>
-                                    <th>Surat Izin</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data History Diterima -->
-                                @foreach($usulanDiterima as $index => $usulan)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $usulan->user->name }}</td>
-                                    <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                    <td>{{ $usulan->nama }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
-                                    <td><span class="badge bg-success">Diterima</span></td>
-                                    <td>
-                                        @if($usulan->surat_izin == 'belum')
-                                        <form class="form-surat-izin" data-id="{{ $usulan->id }}" data-tipe="usulan">
-                                            @csrf
-                                            <button type="button" class="btn btn-warning btn-sm btn-surat-izin">
-                                                Belum
-                                            </button>
-                                        </form>
-                                        @else
-                                        <span class="badge bg-success">Sudah</span>
+                            <div class="table-reponsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Siswa</th>
+                                            <th>Kelas</th>
+                                            <th>Nama Institusi</th>
+                                            <th>Tanggal Pengajuan</th>
+                                            <th>Status</th>
+                                            <th>Surat Izin</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data History Diterima -->
+                                        @foreach($usulanDiterima as $index => $usulan)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $usulan->user->name }}</td>
+                                            <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                            <td>{{ $usulan->nama }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
+                                            <td><span class="badge bg-success">Diterima</span></td>
+                                            <td>
+                                                @if($usulan->surat_izin == 'belum')
+                                                <form class="form-surat-izin" data-id="{{ $usulan->id }}" data-tipe="usulan">
+                                                    @csrf
+                                                    <button type="button" class="btn btn-warning btn-sm btn-surat-izin">
+                                                        Belum
+                                                    </button>
+                                                </form>
+                                                @else
+                                                <span class="badge bg-success">Sudah</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usulan->id }}" data-tipe="usulan">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        @if($usulanDiterima->isEmpty())
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
+                                        </tr>
                                         @endif
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usulan->id }}" data-tipe="usulan">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                                @if($usulanDiterima->isEmpty())
-                                <tr>
-                                    <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
-                                </tr>
-                                @endif
-
-                                @foreach ($usulanDiterimaPkl as $usul)
-                                <tr>
-                                <td>{{ $loop->iteration + count($usulanDiterima) }}</td>
-                                    <td>{{ $usul->user->name }}</td>
-                                    <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                    <td>{{ $usul->iduka->nama ?? '-' }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
-                                    <td><span class="badge bg-success">Diterima</span></td>
-                                    <td>
-                                        @if($usul->surat_izin == 'belum')
-                                        <form class="form-surat-izin" data-id="{{ $usul->id }}" data-tipe="pkl">
-                                            @csrf
-                                            <button type="button" class="btn btn-warning btn-sm btn-surat-izin">
-                                                Belum
-                                            </button>
-                                        </form>
-                                        @else
-                                        <span class="badge bg-success">Sudah</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usul->id }}" data-tipe="pkl">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                                <!-- Add more rows here -->
-                            </tbody>
-                        </table>
+        
+                                        @foreach ($usulanDiterimaPkl as $usul)
+                                        <tr>
+                                        <td>{{ $loop->iteration + count($usulanDiterima) }}</td>
+                                            <td>{{ $usul->user->name }}</td>
+                                            <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                            <td>{{ $usul->iduka->nama ?? '-' }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
+                                            <td><span class="badge bg-success">Diterima</span></td>
+                                            <td>
+                                                @if($usul->surat_izin == 'belum')
+                                                <form class="form-surat-izin" data-id="{{ $usul->id }}" data-tipe="pkl">
+                                                    @csrf
+                                                    <button type="button" class="btn btn-warning btn-sm btn-surat-izin">
+                                                        Belum
+                                                    </button>
+                                                </form>
+                                                @else
+                                                <span class="badge bg-success">Sudah</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usul->id }}" data-tipe="pkl">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        <!-- Add more rows here -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
