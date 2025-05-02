@@ -2,12 +2,14 @@
 //anjay
 namespace App\Http\Controllers;
 
+use App\Models\CetakUsulan;
 use App\Models\Iduka;
 use App\Models\PengajuanPkl;
 use App\Models\PengajuanUsulan;
 use App\Models\UsulanIduka;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PengajuanPklController extends Controller
@@ -176,17 +178,17 @@ class PengajuanPklController extends Controller
     public function tolak($id)
     {
         $pengajuan = PengajuanPkl::findOrFail($id);
-    
+
         if ($pengajuan->status !== 'ditolak') {
             $pengajuan->update(['status' => 'ditolak']);
-    
+
             // Cek dan update status di pengajuan_usulans atau usulan_idukas
             $updated = false;
-    
+
             $usulan = \App\Models\PengajuanUsulan::where('user_id', $pengajuan->siswa_id)
                 ->where('iduka_id', $pengajuan->iduka_id)
                 ->first();
-    
+
             if ($usulan) {
                 $usulan->status = 'ditolak';
                 $usulan->save();
@@ -195,18 +197,117 @@ class PengajuanPklController extends Controller
                 $usulanIduka = \App\Models\UsulanIduka::where('user_id', $pengajuan->siswa_id)
                     ->where('iduka_id', $pengajuan->iduka_id)
                     ->first();
-    
+
                 if ($usulanIduka) {
                     $usulanIduka->status = 'ditolak';
                     $usulanIduka->save();
                     $updated = true;
                 }
             }
-    
+
             return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah ditolak.');
         }
-    
+
         return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah ditolak sebelumnya.');
     }
+
+    public function ajukanPembatalan($id)
+    {
+        Log::info("Memulai proses pengajuan pembatalan untuk ID: " . $id);
     
+        // Coba cari di pengajuan_usulans dulu
+        $pengajuan = PengajuanUsulan::find($id);
+        $tipe = 'pengajuan';
+    
+        // Jika tidak ada, cari di usulan_idukas
+        if (!$pengajuan) {
+            Log::info("Pengajuan tidak ditemukan di pengajuan_usulans, mencari di usulan_idukas.");
+            $pengajuan = UsulanIduka::find($id);
+            $tipe = 'usulan';
+        }
+    
+        if (!$pengajuan) {
+            Log::error("Data pengajuan dengan ID: " . $id . " tidak ditemukan di kedua tabel.");
+            return redirect()->back()->with('error', 'Pengajuan tidak ditemukan.');
+        }
+    
+        Log::info("Pengajuan ditemukan: " . json_encode($pengajuan));
+    
+        // Status pengajuan bisa jadi 'menunggu' dan tetap bisa mengajukan pembatalan
+        Log::info('Status pengajuan sebelum validasi: ' . $pengajuan->status);
+    
+        // Periksa jika statusnya dalam status 'proses' atau 'menunggu'
+        if (in_array($pengajuan->status, ['proses', 'menunggu'])) {
+            // Update status pengajuan
+            $pengajuan->status = 'menunggu';
+            if ($pengajuan->save()) {
+                Log::info('Status pengajuan berhasil diperbarui menjadi "menunggu".');
+            } else {
+                Log::error('Gagal memperbarui status pengajuan.');
+                return redirect()->back()->with('error', 'Gagal memperbarui status pengajuan.');
+            }
+    
+            // Update status cetak_usulans berdasarkan siswa dan iduka
+            $cetak = CetakUsulan::where('siswa_id', $pengajuan->siswa_id)
+                                ->where('iduka_id', $pengajuan->iduka_id)
+                                ->first();
+    
+            if ($cetak) {
+                Log::info("Data cetak_usulan ditemukan, memperbarui status.");
+    
+                $cetak->dikirim = 'menunggu';
+                if ($cetak->save()) {
+                    Log::info('Status cetak_usulans berhasil diperbarui menjadi "menunggu".');
+                } else {
+                    Log::error('Gagal memperbarui status cetak_usulans.');
+                    return redirect()->back()->with('error', 'Gagal memperbarui status cetak_usulans.');
+                }
+            } else {
+                Log::info("Data cetak_usulans tidak ditemukan untuk siswa_id: " . $pengajuan->siswa_id . " dan iduka_id: " . $pengajuan->iduka_id);
+            }
+    
+            return redirect()->back()->with('success', 'Permintaan pembatalan berhasil diajukan.');
+        }
+    
+        // Jika status sudah 'batal', beri tahu pengguna bahwa pengajuan sudah dibatalkan
+        if ($pengajuan->status == 'batal') {
+            Log::warning("Pengajuan sudah dibatalkan sebelumnya, tidak bisa dibatalkan lagi.");
+            return redirect()->back()->with('error', 'Pengajuan ini sudah dibatalkan.');
+        }
+    
+        Log::warning("Pengajuan tidak dapat dibatalkan karena statusnya bukan 'proses' atau 'menunggu'.");
+        return redirect()->back()->with('error', 'Pengajuan tidak dapat dibatalkan.');
+    }
+    
+    
+    
+
+    public function listPembatalan()
+    {
+        $pengajuans = PengajuanUsulan::where('status', 'menunggu pembatalan')->with('dataPribadi')->get();
+        return view('kaprog.pengajuan.pembatalan', compact('pengajuans'));
+    }
+
+    public function setujuiPembatalan($id)
+    {
+        $pengajuan = PengajuanUsulan::findOrFail($id);
+        $pengajuan->status = 'batal';
+        $pengajuan->save();
+
+        DB::table('cetak_usulans')->where('pengajuan_id', $id)->update(['kirim' => 'batal']);
+
+        return redirect()->back()->with('success', 'Pengajuan berhasil dibatalkan.');
+    }
+
+
+    public function tolakPembatalan($id)
+    {
+        $pengajuan = PengajuanUsulan::findOrFail($id);
+        $pengajuan->status = 'diterima'; // atau kembalikan ke sebelumnya
+        $pengajuan->save();
+
+        DB::table('cetak_usulans')->where('pengajuan_id', $id)->update(['kirim' => 'sudah']);
+
+        return redirect()->back()->with('info', 'Pembatalan ditolak, status dikembalikan.');
+    }
 }

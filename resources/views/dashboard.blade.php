@@ -50,31 +50,31 @@
             <ul class="dropdown-menu dropdown-menu-right">
               <li>
                 @if($sudahAjukan)
-                  @if($statusAjukan === 'proses')
-                  <a href="#" class="dropdown-item" onclick="Swal.fire({
+                @if($statusAjukan === 'proses')
+                <a href="#" class="dropdown-item" onclick="Swal.fire({
                       icon: 'warning',
                       title: 'Pengajuan Sedang Diproses',
                       text: 'Kamu sudah mengajukan usulan PKL dan sedang diproses.',
                       showConfirmButton: true,
                       customClass: { popup: 'animate__animated animate__bounce' }
                   })">Buat Usulan</a>
-                  @elseif($statusAjukan === 'diterima')
-                  <a href="#" class="dropdown-item" onclick="Swal.fire({
+                @elseif($statusAjukan === 'diterima')
+                <a href="#" class="dropdown-item" onclick="Swal.fire({
                       icon: 'success',
                       title: 'Pengajuan Diterima',
                       text: 'Kamu sudah mengajukan dan pengajuan telah diterima.',
                       showConfirmButton: true,
                       customClass: { popup: 'animate__animated animate__fadeInDown' }
                   })">Buat Usulan</a>
-                  @else
-                  <a href="#" class="dropdown-item" onclick="Swal.fire({
+                @else
+                <a href="#" class="dropdown-item" onclick="Swal.fire({
                       icon: 'info',
                       title: 'Pengajuan Tidak Diterima',
                       text: 'Pengajuan sedang diproses atau telah diterima.',
                       showConfirmButton: true,
                       customClass: { popup: 'animate__animated animate__fadeIn' }
                   })">Buat Usulan</a>
-                  @endif
+                @endif
                 @else
                 <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Buat Usulan</a>
                 @endif
@@ -102,20 +102,20 @@
           <div class="card-body">
             <h5>Riwayat Usulan</h5>
             <div class="table-responsive">
-              <table class="table table-hover text-center">
+              <table class="table table-hover" style="text-align: center">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Nama Institusi</th>
-                    <th>Tanggal Usulan</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                    <td>#</td>
+                    <td>Nama Institusi</td>
+                    <td>Tanggal Usulan</td>
+                    <td>Status</td>
+                    <td>Aksi</td>
                   </tr>
                 </thead>
                 <tbody>
                   @forelse($usulanSiswa as $index => $usulan)
                   <tr>
-                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $index + 1 }}.</td>
                     <td>{{ $usulan->nama }}</td>
                     <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d/m/Y') }}</td>
                     <td>
@@ -128,19 +128,34 @@
                       @endif
                     </td>
                     <td>
-                      <a href="{{ route('detail.usulan', $usulan->id) }}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i></a>
+                      <a href="{{ route('detail.usulan', $usulan->id) }}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i>
+                      </a>
                       @if($usulan->status == 'diterima')
-                      <a href="{{ route('usulan.pdf', $usulan->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-filetype-pdf"></i></a>
+                      <a href="{{ route('usulan.pdf', $usulan->id) }}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-filetype-pdf"></i>
+                      </a>
+                      @endif
+
+                      @if($usulan->status == 'proses')
+                      <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usulan->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
+                        @csrf
+                        <button type="submit" class="btn btn-warning btn-sm">
+                          <i class="bi bi-x-circle"></i> Batal
+                        </button>
+                      </form>
                       @endif
                     </td>
                   </tr>
                   @empty
-                  <tr><td colspan="5">Tidak ada data yang harus ditampilkan.</td></tr>
+                  <tr>
+                    <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
+                  </tr>
                   @endforelse
 
                   @forelse($usulanPkl as $index => $usul)
                   <tr>
-                    <td>{{ $loop->iteration + count($usulanSiswa) }}</td>
+                    <td>{{ $index + 2 }}.</td>
                     <td>{{ $usul->iduka->nama }}</td>
                     <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d/m/Y') }}</td>
                     <td>
@@ -153,14 +168,20 @@
                       @endif
                     </td>
                     <td>
-                      <a href="{{ route('detail.usulan', $usul->id) }}" class="btn btn-info btn-sm"><i class="bi bi-eye"></i></a>
+                      <a href="{{ route('detail.usulan', $usul->id) }}" class="btn btn-info btn-sm">
+                        <i class="bi bi-eye"></i>
+                      </a>
                       @if($usul->status == 'diterima')
-                      <a href="{{ route('usulan.pdf', $usul->id) }}" class="btn btn-danger btn-sm"><i class="bi bi-filetype-pdf"></i></a>
+                      <a href="{{ route('usulan.pdf', $usul->id) }}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-filetype-pdf"></i>
+                      </a>
                       @endif
                     </td>
                   </tr>
                   @empty
-                  <tr><td colspan="5">Tidak ada data yang harus ditampilkan.</td></tr>
+                  <tr>
+                    <td colspan="5" style="text-align: center">Tidak ada data yang harus ditampilkan.</td>
+                  </tr>
                   @endforelse
                 </tbody>
               </table>
@@ -205,7 +226,9 @@
                     </td>
                   </tr>
                   @empty
-                  <tr><td colspan="5">Tidak ada data yang harus ditampilkan.</td></tr>
+                  <tr>
+                    <td colspan="5">Tidak ada data yang harus ditampilkan.</td>
+                  </tr>
                   @endforelse
                 </tbody>
               </table>
@@ -251,4 +274,4 @@
 @endif
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
