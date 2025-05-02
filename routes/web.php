@@ -382,10 +382,12 @@ Route::middleware(['auth', 'hakakses:pendamping'])->group(function () {
 
 //Kepsek
 Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
-    Route::get('/data-iduka/kepsek', [KepsekController::class, 'dataIdukaKepsek'])->name('kepsek.hubin.iduka.index');
+    Route::get('/data-iduka/kepsek', [KepsekController::class, 'dataIdukaKepsek'])->name('kepsek.iduka.index');
     Route::get('/data-siswa/kepsek', [KepsekController::class, 'dataSiswaKepsek'])->name('kepsek.kelas.index');
     Route::get('/data-guru/kepsek', [KepsekController::class, 'dataGuruKepsek'])->name('kepsek.guru.index');
     Route::get('/data-tenaga-kependidikan/kepsek', [KepsekController::class, 'dataTKKepsek'])->name('kepsek.tk.index');
+    Route::get('/kepsek/daftar/iduka/detail/{id}', [KepsekController::class, 'show'])->name('kepsek.detail.iduka');
+
 });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');

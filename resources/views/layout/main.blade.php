@@ -330,6 +330,41 @@
                         </ul>
                     </li>
                     @endif
+
+                    @if(auth()->user()->role == 'kepsek')
+                    <li class="menu-item {{ Request::routeIs('kepsek.iduka.index') ? 'active' : '' }}">
+                        <a href="{{ route('kepsek.iduka.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Institusi</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ Request::routeIs('kepsek.kelas.index') ? 'active' : '' }}">
+                        <a href="{{ route('kepsek.kelas.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Siswa</div>
+                        </a>
+                    </li>
+                    <li
+                        class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-user"></i>
+                            <div data-i18n="Layouts">GTK</div>
+                        </a>
+
+                        <ul class="menu-sub">
+                            <li class="menu-item {{ Request::routeIs('kepsek.guru.index') ? 'active' : '' }}">
+                                <a href="{{route('kepsek.guru.index')}}" class="menu-link">
+                                    <div data-i18n="Without menu">Guru</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ Request::routeIs('kepsek.tk.index') ? 'active' : '' }}">
+                                <a href="{{route('kepsek.tk.index')}}" class="menu-link">
+                                    <div data-i18n="Without menu">Tenaga Kependidikan</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    @endif
                 </ul>
             </aside>
             <div class="layout-page">
