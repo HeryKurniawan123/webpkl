@@ -39,4 +39,11 @@ class KepsekController extends Controller
         $kependik = Kependik::query()->paginate(10); // Gunakan query builder agar tetap LengthAwarePaginator
         return view('tk.dataTk', compact('kependik'));
     }
+
+    public function show($id)
+    {
+        $iduka = Iduka::where('id', $id)->first();
+
+        return view('iduka.dataiduka.detailDataIduka', compact('iduka'));
+    }
 }
