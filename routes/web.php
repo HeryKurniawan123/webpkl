@@ -87,6 +87,9 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
     Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
 
+
+Route::put('/siswa/{id}/update-siswa', [SiswaController::class, 'updateSiswa'])->name('siswa.updateSiswa');
+
     //PENGAJUAN
     Route::get('/review-pengajuan', [HubinController::class, 'index'])->name('review.pengajuan');
     Route::get('/detail-pengajuan', [HubinController::class, 'show'])->name('detail.pengajuan');

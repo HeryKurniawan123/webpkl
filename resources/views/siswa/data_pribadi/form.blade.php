@@ -84,9 +84,31 @@
 
                     <div class="mb-3">
                         <label class="form-label">Agama*</label>
-                        <input type="text" name="agama" class="form-control"
-                            value="{{ old('agama', $dataPribadi->agama ?? '') }}" required>
+                        <select name="agama" class="form-control" id="agama-select" required>
+                            <option value="" disabled {{ old('agama', $dataPribadi->agama ?? '') == '' ? 'selected' : '' }}>-- Pilih Agama --</option>
+                            <option value="Islam" {{ old('agama', $dataPribadi->agama ?? '') == 'Islam' ? 'selected' : '' }}>Islam</option>
+                            <option value="Kristen Protestan" {{ old('agama', $dataPribadi->agama ?? '') == 'Kristen Protestan' ? 'selected' : '' }}>Kristen Protestan</option>
+                            <option value="Kristen Katolik" {{ old('agama', $dataPribadi->agama ?? '') == 'Kristen Katolik' ? 'selected' : '' }}>Kristen Katolik</option>
+                            <option value="Hindu" {{ old('agama', $dataPribadi->agama ?? '') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                            <option value="Buddha" {{ old('agama', $dataPribadi->agama ?? '') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                            <option value="Konghucu" {{ old('agama', $dataPribadi->agama ?? '') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
+                            <option value="Lainnya" 
+                                {{ !in_array(old('agama', $dataPribadi->agama ?? ''), ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu', '']) 
+                                && old('agama', $dataPribadi->agama ?? '') 
+                                ? 'selected' : '' }}>
+                                Lainnya
+                            </option>
+                        </select>
                     </div>
+                    
+                    <div class="mb-3" id="agama-lainnya-container" style="display: none;">
+                        <label class="form-label">Agama Lainnya*</label>
+                        <input type="text" class="form-control" name="agama_lainnya" id="agama-lainnya-input" 
+                               value="{{ !in_array(old('agama', $dataPribadi->agama ?? ''), ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu', '']) 
+                                      ? old('agama', $dataPribadi->agama ?? '') 
+                                      : '' }}">
+                    </div>
+                    
                     <div class="mb-3">
                         <label class="form-label">Tempat Lahir*</label>
                         <input type="text" name="tempat_lhr" class="form-control"
@@ -167,9 +189,9 @@
 
                     {{-- info ortu --}}
                     <div class="mb-3">
-                        <label class="form-label">Email Orang Tua*</label>
+                        <label class="form-label">Email Orang Tua</label>
                         <input type="email" name="email_ortu" class="form-control"
-                            value="{{ old('email_ortu', $dataPribadi->email_ortu ?? '') }}" required>
+                            value="{{ old('email_ortu', $dataPribadi->email_ortu ?? '') }}" >
                             <small class="form-text text-muted"><i>Pastikan alamat email yang dimasukkan benar dan aktif untuk keperluan komunikasi lebih lanjut.</i></small>
                     </div>
 
@@ -204,6 +226,59 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const agamaSelect = document.getElementById('agama-select');
+        const agamaLainnyaContainer = document.getElementById('agama-lainnya-container');
+        const agamaLainnyaInput = document.getElementById('agama-lainnya-input');
+        const form = agamaSelect.closest('form');
+    
+        // Fungsi untuk menampilkan/menyembunyikan input lainnya
+        function toggleAgamaLainnya() {
+            const selectedValue = agamaSelect.value;
+            const agamaStandar = ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu'];
+            
+            // Cek apakah nilai saat ini termasuk agama standar
+            const currentAgama = "{{ old('agama', $dataPribadi->agama ?? '') }}";
+            const isCustomAgama = currentAgama && !agamaStandar.includes(currentAgama);
+    
+            if (selectedValue === 'Lainnya' || isCustomAgama) {
+                agamaLainnyaContainer.style.display = 'block';
+                agamaLainnyaInput.required = true;
+                
+                if (isCustomAgama && selectedValue !== 'Lainnya') {
+                    // Jika data yang ada bukan agama standar, set select ke Lainnya
+                    agamaSelect.value = 'Lainnya';
+                    agamaLainnyaInput.value = currentAgama;
+                }
+            } else {
+                agamaLainnyaContainer.style.display = 'none';
+                agamaLainnyaInput.required = false;
+            }
+        }
+    
+        // Inisialisasi pertama kali
+        toggleAgamaLainnya();
+    
+        // Event listener untuk perubahan select
+        agamaSelect.addEventListener('change', toggleAgamaLainnya);
+    
+        // Handler sebelum form submit
+        form.addEventListener('submit', function(e) {
+            if (agamaSelect.value === 'Lainnya') {
+                // Buat hidden input untuk menyimpan nilai akhir
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'agama';
+                hiddenInput.value = agamaLainnyaInput.value.trim();
+                form.appendChild(hiddenInput);
+                
+                // Nonaktifkan select asli agar tidak ikut terkirim
+                agamaSelect.disabled = true;
+            }
+        });
+    });
+    </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @endif

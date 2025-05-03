@@ -85,6 +85,7 @@ class SiswaController extends Controller
             'konke_id' => 'required|exists:konkes,id',
             'email' => "required|email|unique:users,email,$id",
             'password' => 'nullable|min:6',
+            
         ]);
 
         $siswa = User::findOrFail($id);
@@ -157,5 +158,101 @@ class SiswaController extends Controller
     return response()->download($templatePath, 'template_import_siswa.xlsx');
 }
 
+public function updateSiswa(Request $request, $id)
+{
+    // Temukan siswa
+    $siswa = User::findOrFail($id);
+    
+    // Update berdasarkan tipe data yang dikirim
+    if ($request->has('name')) { // Jika ada field data pribadi
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'nip' => 'required|string|max:255',
+            'kelas_id' => 'required|exists:kelas,id',
+            'konke_id' => 'required|exists:konkes,id',
+            'alamat' => 'required|string|max:255',
+            'no_hp' => 'required|string|max:20',
+            'jk' => 'required|string|max:10',
+            'agama' => 'required|string|max:50',
+            'tempat_lhr' => 'required|string|max:255',
+            'tgl_lahir' => 'required|date',
+            'email' => 'required|string|email|max:255',
+        ]);
 
+        // Handle agama "Lainnya"
+        $agama = $request->agama === 'Lainnya' ? $request->agama_lainnya : $request->agama;
+
+        // Update data siswa utama
+        $siswaData = [
+            'name' => $request->name,
+            'nip' => $request->nip,
+            'kelas_id' => $request->kelas_id,
+            'konke_id' => $request->konke_id,
+            'email' => $request->email,
+        ];
+
+        if ($request->filled('password')) {
+            $siswaData['password'] = Hash::make($request->password);
+        }
+
+        $siswa->update($siswaData);
+
+        // Update data pribadi
+        $dataPribadi = [
+            'alamat_siswa' => $request->alamat,
+            'no_hp' => $request->no_hp,
+            'jk' => $request->jk,
+            'agama' => $agama,
+            'tempat_lhr' => $request->tempat_lhr,
+            'tgl_lahir' => $request->tgl_lahir,
+        ];
+
+        if ($siswa->dataPribadi) {
+            $siswa->dataPribadi->update($dataPribadi);
+        } else {
+            $siswa->dataPribadi()->create($dataPribadi);
+        }
+
+        return redirect()->back()->with('success', 'Data pribadi siswa berhasil diperbarui');
+    }
+    else { // Jika data orang tua
+        $request->validate([
+            'name_ayh' => 'required|string|max:255',
+            'nik_ayh' => 'required|string|max:20',
+            'tempat_lhr_ayh' => 'required|string|max:255',
+            'tgl_lahir_ayh' => 'required|date',
+            'pekerjaan_ayh' => 'required|string|max:255',
+            'name_ibu' => 'required|string|max:255',
+            'nik_ibu' => 'required|string|max:20',
+            'tempat_lhr_ibu' => 'required|string|max:255',
+            'tgl_lahir_ibu' => 'required|date',
+            'pekerjaan_ibu' => 'required|string|max:255',
+            'email_ortu' => 'required|string|email|max:255',
+            'no_tlp' => 'required|string|max:20',
+        ]);
+
+        $dataOrangTua = [
+            'name_ayh' => $request->name_ayh,
+            'nik_ayh' => $request->nik_ayh,
+            'tempat_lhr_ayh' => $request->tempat_lhr_ayh,
+            'tgl_lahir_ayh' => $request->tgl_lahir_ayh,
+            'pekerjaan_ayh' => $request->pekerjaan_ayh,
+            'name_ibu' => $request->name_ibu,
+            'nik_ibu' => $request->nik_ibu,
+            'tempat_lhr_ibu' => $request->tempat_lhr_ibu,
+            'tgl_lahir_ibu' => $request->tgl_lahir_ibu,
+            'pekerjaan_ibu' => $request->pekerjaan_ibu,
+            'email_ortu' => $request->email_ortu,
+            'no_tlp' => $request->no_tlp,
+        ];
+
+        if ($siswa->dataPribadi) {
+            $siswa->dataPribadi->update($dataOrangTua);
+        } else {
+            $siswa->dataPribadi()->create($dataOrangTua);
+        }
+
+        return redirect()->back()->with('success', 'Data orang tua siswa berhasil diperbarui');
+    }
+}
 }

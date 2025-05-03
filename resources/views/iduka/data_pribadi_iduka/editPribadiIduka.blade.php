@@ -90,6 +90,16 @@
                         <label for="jumlah_kuota_pkl" class="form-label">Jumlah Kuota PKL</label>
                         <input type="number" class="form-control" name="kuota_pkl" value="{{  $iduka->kuota_pkl }}" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="mulai_kerjasama" class="form-label">Mulai Kerjasama</label>
+                        <input type="date" class="form-control" id="mulai_kerjasama" name="mulai_kerjasama" value="{{ $iduka->mulai_kerjasama ?? '' }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="akhir_kerjasama" class="form-label">Akhir Kerjasama</label>
+                        <input type="date" class="form-control" id="akhir_kerjasama" name="akhir_kerjasama" value="{{ $iduka->akhir_kerjasama ?? '' }}">
+                    </div>
+        
                     
                     <h5>Data Pimpinan Institusi</h5>
                     

@@ -51,9 +51,15 @@ class DataPribadiController extends Controller
             'tanggal_lahir_ibu' => 'nullable|date',
             'pekerjaan_ibu' => 'nullable|string',
     
-            'email_ortu' => 'required|email|unique:data_pribadis,email_ortu,' . ($dataPribadi->id ?? 'null') . ',id',
+            // Modifikasi: email_ortu tidak wajib diisi
+            'email_ortu' => 'nullable|email|unique:data_pribadis,email_ortu,' . ($dataPribadi->id ?? 'null') . ',id',
             'no_tlp' => 'required|string|max:15|unique:data_pribadis,no_tlp,' . ($dataPribadi->id ?? 'null') . ',id',
         ]);
+    
+        // Jika agama adalah 'Lainnya', gunakan nilai dari input manual
+        if ($request->agama === 'Lainnya' && $request->has('agama_lainnya')) {
+            $validated['agama'] = $request->agama_lainnya;
+        }
     
         // Update atau buat user siswa (Auth user)
         $user = Auth::user();
@@ -65,23 +71,26 @@ class DataPribadiController extends Controller
             'konke_id' => $request->konke_id,
         ]);
     
-        // Coba cari user orang tua berdasarkan email lama atau baru
-        $userOrtu = User::where('email', $dataPribadi->email_ortu ?? $request->email_ortu)->first();
+        // Hanya buat/update user orang tua jika email_ortu diisi
+        if ($request->filled('email_ortu')) {
+            // Coba cari user orang tua berdasarkan email lama atau baru
+            $userOrtu = User::where('email', $dataPribadi->email_ortu ?? $request->email_ortu)->first();
     
-        if ($userOrtu) {
-            $userOrtu->update([
-                'name' => $request->name_ibu,
-                'nip' => $request->nik_ibu,
-                'email' => $request->email_ortu,
-            ]);
-        } else {
-            User::create([
-                'name' => $request->name_ibu,
-                'nip' => $request->nik_ibu,
-                'email' => $request->email_ortu,
-                'password' => Hash::make($request->password), // Ganti kalau perlu
-                'role' => 'orangtua',
-            ]);
+            if ($userOrtu) {
+                $userOrtu->update([
+                    'name' => $request->name_ibu,
+                    'nip' => $request->nik_ibu,
+                    'email' => $request->email_ortu,
+                ]);
+            } else {
+                User::create([
+                    'name' => $request->name_ibu,
+                    'nip' => $request->nik_ibu,
+                    'email' => $request->email_ortu,
+                    'password' => Hash::make($request->nik_ibu), // Default password menggunakan NIK Ibu
+                    'role' => 'orangtua',
+                ]);
+            }
         }
     
         $data = array_merge($request->all(), ['user_id' => Auth::id()]);
@@ -96,9 +105,4 @@ class DataPribadiController extends Controller
             ->with('success', 'Data pribadi berhasil disimpan.')
             ->withInput();
     }
-    
-
-   
-    
-
-} 
+}

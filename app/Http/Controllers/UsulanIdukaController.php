@@ -9,6 +9,7 @@ use App\Models\PengajuanUsulan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class  UsulanIdukaController extends Controller
 {
@@ -155,12 +156,24 @@ class  UsulanIdukaController extends Controller
         return view('data.usulan.suratUsulanPDF');
     }
 
+
+
     public function dataIdukaUsulan()
     {
-        $iduka = Iduka::orderBy('created_at', 'desc')->get();
+        $today = Carbon::today();
+    
+        $iduka = Iduka::where(function ($query) use ($today) {
+            $query->whereNull('akhir_kerjasama') // Belum diisi = masih aktif
+                  ->orWhere('akhir_kerjasama', '>=', $today); // Masih dalam masa kerjasama
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
         $today = now()->format('Y-m-d');
+    
         return view('siswa.usulan.dataIdukaUsulan', compact('iduka', 'today'));
     }
+    
     
 
     public function detailIdukaUsulan($id)

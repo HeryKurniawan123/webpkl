@@ -227,6 +227,21 @@
                         @endif</strong>
                 </td>
             </tr>
+            <tr>
+                <th style="font-weight: normal">
+                    <div class="isi">Logo Perusahaan</div></th>
+                    <td>
+                        @if($iduka->foto)
+                        <img src="{{ asset('storage/' . $iduka->foto) }}"
+                            alt="Foto Institusi"
+                            class="img-thumbnail"
+                            style="max-width: 200px; max-height: 200px;">
+                      
+                        @else
+                        <span class="text-muted">Tidak ada foto</span>
+                        @endif
+                    </td>
+            </tr>
         </table>
         <div class="notes">
             <h3>Ket :</h3>

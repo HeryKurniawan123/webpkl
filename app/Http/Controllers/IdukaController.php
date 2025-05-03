@@ -160,6 +160,8 @@ class IdukaController extends Controller
             'nama_pembimbing' => 'required|string',
             'nip_pembimbing' => 'required|string',
             'no_hp_pembimbing' => 'required|numeric',
+            'mulai_kerjasama' => 'required|date',
+        'akhir_kerjasama' => 'required|date|after_or_equal:mulai_kerjasama',
         ];
 
         $request->validate($validationRules);
@@ -180,6 +182,8 @@ class IdukaController extends Controller
                 'kerjasama_lainnya' => $request->kerjasama_lainnya,
                 'kuota_pkl' => $request->kuota_pkl,
                 'no_hp_pimpinan' => $request->no_hp_pimpinan,
+                'mulai_kerjasama' => $request->mulai_kerjasama,
+                'akhir_kerjasama' => $request->akhir_kerjasama,
             ]);
 
             // Update Pembimbing
@@ -288,15 +292,7 @@ class IdukaController extends Controller
                 ]);
             }
 
-            // Update data pembimbing jika ada
-            $pembimbing = Pembimbing::where('user_id', $iduka->user_id)->first();
-            if ($pembimbing) {
-                $pembimbing->update([
-                    'name' => $request->name,
-                    'nip' => $request->nip,
-                    'no_hp' => $request->no_hp,
-                ]);
-            }
+
         });
 
         return redirect()->back()->with('success', 'Data institusi berhasil diperbarui!');
@@ -497,4 +493,11 @@ class IdukaController extends Controller
 
         return view('iduka.siswa_diterima', compact('pengajuanDiterima', 'pengajuanByYear'));
     }
+
+
+
+
+
+
+
 }

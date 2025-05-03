@@ -197,6 +197,10 @@
                                 </div>
                             @endif
                             @foreach ($iduka as $i)
+                            @php
+                            $akhir = \Carbon\Carbon::parse($i->akhir_kerjasama);
+                            $expired = $i->akhir_kerjasama !== null && $akhir->lt(now());
+                        @endphp
                                 <div class="card mb-3 shadow-sm card-hover p-3" style="border-radius: 10px;"
                                     data-rekomendasi="{{ $i->rekomendasi ? 'rekomendasi' : 'ajuan' }}">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -210,6 +214,11 @@
                                             <div class="text-muted text-truncate w-100" style="font-size: 14px;">
                                                 {{ $i->alamat }}
                                             </div>
+                                            @if ($expired)
+                                            <div class="text-danger mt-1" style="font-size: 13px;">
+                                                ⚠️ <strong>Catatan:</strong> Masa kerja sama sudah habis
+                                            </div>
+                                        @endif
                                             @if ($i->rekomendasi == 1)
                                                 <div class="text-success mt-1" style="font-size: 13px;">
                                                     <strong>Rekomendasi:</strong> INSTITUSI ini direkomendasikan

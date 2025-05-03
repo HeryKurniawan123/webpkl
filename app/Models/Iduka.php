@@ -31,6 +31,8 @@ class Iduka extends Model
         'foto',
         'tanggal_awal',
         'tanggal_akhir',
+        'mulai_kerjasama',
+        'akhir_kerjasama'
     ];
 
 
@@ -81,6 +83,4 @@ public function atp()
     {
         return $this->hasMany(PengajuanUsulan::class, 'iduka_id');
     }
-
-    
 }

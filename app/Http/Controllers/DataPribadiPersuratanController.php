@@ -39,6 +39,10 @@ class DataPribadiPersuratanController extends Controller
             'email' => 'required|email|unique:data_pribadi_persuratans,email,' . ($dataPersuratan->id ?? 'null') . ',id',
         ]);
 
+          // Jika agama adalah 'Lainnya', gunakan nilai dari input manual
+    if ($request->agama === 'Lainnya' && $request->has('agama_lainnya')) {
+        $validated['agama'] = $request->agama_lainnya;
+    }
         // Data untuk tabel data_pribadi_persuratans
         $data = $request->except(['password']);
 

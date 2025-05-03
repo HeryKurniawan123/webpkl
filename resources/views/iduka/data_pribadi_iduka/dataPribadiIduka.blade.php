@@ -175,6 +175,18 @@
                                                 <td>:</td>
                                                 <td>{{ $iduka->kuota_pkl }}</td>
                                             </tr>
+                                            <tr>
+                                                <td><i class="bi bi-people"></i> Durasi kerjasama</td>
+                                                <td>:</td>
+                                                <td>
+                                                    @if($iduka->mulai_kerjasama && $iduka->akhir_kerjasama)
+                                                        {{ \Carbon\Carbon::parse($iduka->mulai_kerjasama)->translatedFormat('d F Y') }} - 
+                                                        {{ \Carbon\Carbon::parse($iduka->akhir_kerjasama)->translatedFormat('d F Y') }}
+                                                    @else
+                                                        Belum ditentukan
+                                                    @endif
+                                                </td>
+                                            </tr>
                                             @else
                                             <p>Data tidak ditemukan.</p>
                                         @endif

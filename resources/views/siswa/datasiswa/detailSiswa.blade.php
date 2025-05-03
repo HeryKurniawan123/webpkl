@@ -299,7 +299,7 @@
                     <h5 class="modal-title">Edit Data Siswa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form action="{{ route('siswa.update', $siswa->id) }}" method="POST">
+                <form action="{{ route('siswa.updateSiswa', $siswa->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -346,13 +346,35 @@
                             <input type="text" class="form-control" name="no_hp" value="{{ optional($siswa->dataPribadi)->no_hp }}" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Jenis Kelamin</label>
-                            <input type="text" class="form-control" name="jk" value="{{ optional($siswa->dataPribadi)->jk }}" required>
+                            <label class="form-label">Jenis Kelamin*</label>
+                            <select class="form-control" name="jk" required>
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="laki_laki"
+                                    {{ old('jk', $siswa->dataPribadi->jk ?? '') == 'laki_laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="perempuan"
+                                    {{ old('jk', $siswa->dataPribadi->jk ?? '') == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Agama</label>
-                            <input type="text" class="form-control" name="agama" value="{{ optional($siswa->dataPribadi)->agama }}" required>
+                            <select class="form-control" name="agama" id="agama-select" required>
+                                <option value="">-- Pilih Agama --</option>
+                                <option value="Islam" {{ optional($siswa->dataPribadi)->agama == 'Islam' ? 'selected' : '' }}>Islam</option>
+                                <option value="Kristen Protestan" {{ optional($siswa->dataPribadi)->agama == 'Kristen Protestan' ? 'selected' : '' }}>Kristen Protestan</option>
+                                <option value="Kristen Katolik" {{ optional($siswa->dataPribadi)->agama == 'Kristen Katolik' ? 'selected' : '' }}>Kristen Katolik</option>
+                                <option value="Hindu" {{ optional($siswa->dataPribadi)->agama == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                                <option value="Buddha" {{ optional($siswa->dataPribadi)->agama == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                                <option value="Konghucu" {{ optional($siswa->dataPribadi)->agama == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
+                                <option value="Lainnya" {{ !in_array(optional($siswa->dataPribadi)->agama, ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu']) && optional($siswa->dataPribadi)->agama ? 'selected' : '' }}>Lainnya</option>
+                            </select>
                         </div>
+                        
+                        <div class="mb-3" id="agama-lainnya-container" style="display: none;">
+                            <label class="form-label">Agama Lainnya</label>
+                            <input type="text" class="form-control" name="agama_lainnya" id="agama-lainnya-input" 
+                                   value="{{ !in_array(optional($siswa->dataPribadi)->agama, ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu']) ? optional($siswa->dataPribadi)->agama : '' }}">
+                        </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Tampat Lahir</label>
                             <input type="text" class="form-control" name="tempat_lhr" value="{{ optional($siswa->dataPribadi)->tempat_lhr }}" required>
@@ -393,7 +415,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 @if ($siswa->dataPribadi)
-                    <form action="{{ route('siswa.data_pribadi.update', $siswa->dataPribadi->id) }}" method="POST">
+                    <form action="{{ route('siswa.updateSiswa', $siswa->dataPribadi->id) }}" method="POST">
                     @else
                         <form action="#" method="POST">
                 @endif
@@ -479,4 +501,52 @@
     </div>
 
     </html>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAgama = document.getElementById('agama-select');
+            const inputLainnya = document.getElementById('agama-lainnya-input');
+            const containerLainnya = document.getElementById('agama-lainnya-container');
+            const form = selectAgama.closest('form');
+        
+            // Fungsi untuk menampilkan/menyembunyikan input lainnya
+            function toggleLainnya() {
+                if (selectAgama.value === 'Lainnya') {
+                    containerLainnya.style.display = 'block';
+                    inputLainnya.required = true;
+                    
+                    // Jika ada nilai sebelumnya yang bukan agama standar, set ke input lainnya
+                    const currentAgama = "{{ optional($siswa->dataPribadi)->agama }}";
+                    const agamaStandar = ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu'];
+                    
+                    if (currentAgama && !agamaStandar.includes(currentAgama)) {
+                        inputLainnya.value = currentAgama;
+                    }
+                } else {
+                    containerLainnya.style.display = 'none';
+                    inputLainnya.required = false;
+                }
+            }
+        
+            // Set initial state
+            toggleLainnya();
+        
+            // Change listener
+            selectAgama.addEventListener('change', toggleLainnya);
+        
+            // Before submit, replace 'agama' value if needed
+            form.addEventListener('submit', function (e) {
+                if (selectAgama.value === 'Lainnya' && inputLainnya.value.trim() !== '') {
+                    // Buat hidden input untuk menyimpan nilai akhir
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'agama';
+                    hiddenInput.value = inputLainnya.value.trim();
+                    form.appendChild(hiddenInput);
+                    
+                    // Nonaktifkan select agar tidak ikut terkirim
+                    selectAgama.disabled = true;
+                }
+            });
+        });
+        </script>
 @endsection
