@@ -72,22 +72,22 @@ class DataPribadiController extends Controller
         ]);
     
         // Hanya buat/update user orang tua jika email_ortu diisi
-        if ($request->filled('email_ortu')) {
+        if ($request->filled('nik_ayh')) {
             // Coba cari user orang tua berdasarkan email lama atau baru
-            $userOrtu = User::where('email', $dataPribadi->email_ortu ?? $request->email_ortu)->first();
+            $userOrtu = User::where('nip', $dataPribadi->nik_ayh ?? $request->nik_ayh)->first();
     
             if ($userOrtu) {
                 $userOrtu->update([
-                    'name' => $request->name_ibu,
-                    'nip' => $request->nik_ibu,
+                    'name' => $request->name_ayh,
+                    'nip' => $request->nik_ayh,
                     'email' => $request->email_ortu,
                 ]);
             } else {
                 User::create([
-                    'name' => $request->name_ibu,
-                    'nip' => $request->nik_ibu,
+                    'name' => $request->name_ayh,
+                    'nip' => $request->nik_ayh,
                     'email' => $request->email_ortu,
-                    'password' => Hash::make($request->nik_ibu), // Default password menggunakan NIK Ibu
+                    'password' => Hash::make($request->password), // Default password menggunakan NIK Ibu
                     'role' => 'orangtua',
                 ]);
             }
