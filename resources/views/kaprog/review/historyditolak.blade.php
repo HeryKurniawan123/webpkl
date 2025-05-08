@@ -46,7 +46,7 @@
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
                     <div class="col-md-12 mt-3">
-                        <div class="card">
+                        <div class="card mb-3">
                             <div class="card-body">
                                 <div class="col-md-12 mt-3 d-flex justify-content-between align-items-center">
                                     <h4 class="mb-3">History Pengajuan Diterima</h4>
@@ -127,13 +127,13 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="d-flex justify-content mt-3 mb-2">
+                                    <a href="{{ route('review.usulan')}}" class="btn btn-back shadow-sm">
+                                        Kembali
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content mt-3 mb-2">
-                        <a href="{{ route('review.usulan')}}" class="btn btn-back shadow-sm">
-                            Kembali
-                        </a>
                     </div>
                 </div>
             </div>

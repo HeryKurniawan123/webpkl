@@ -6,12 +6,17 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row">
                 <div class="card mb-3">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Review Pengajuan Institusi / Perusahaan</h5>
-                        <a class="nav-link btn btn-success btn-sm" href="{{ route('kaprog.review.histori') }}">
-                            <i class="fas fa-history me-2 "></i> History Pengajuan
-                        </a>
-                    </div>
+                    <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                        <h5 class="mb-0 text-center text-md-start w-100 w-md-auto">
+                            Review Pengajuan Institusi / Perusahaan
+                        </h5>
+                        <div class="d-none d-md-flex justify-content-end align-items-center">
+                            <a class="btn btn-success btn-sm" href="{{ route('kaprog.review.histori') }}" data-bs-toggle="tooltip" title="History Pengajuan">
+                                {{-- <i class="bi bi-clock-history"></i> --}}
+                                Riwayat
+                            </a>
+                        </div>                                                                    
+                    </div>                    
                 </div>
 
                 <div class="col-md-12 mt-3">
@@ -44,38 +49,67 @@
 
                     @if($filteredPengajuan->count() > 0)
                     <div class="card mb-3 shadow-sm" style="padding: 30px; border-radius: 10px;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="mb-0" style="font-size: 18px"><strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong></div>
-                                @php
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                            @php
+                                // Mendefinisikan jumlah pengajuan yang statusnya 'menunggu'
                                 $jumlahMenunggu = $pengajuanGroup->where('dikirim', 'menunggu')->count();
-                                @endphp
+                            @endphp
+
+                            <div class="w-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="mb-0" style="font-size: 18px">
+                                        <strong>{{ $pengajuanGroup->first()->iduka->nama }}</strong>
+                                    </div>
+
+                                    {{-- Titik tiga - mobile only --}}
+                                    <div class="dropdown d-block d-md-none">
+                                        <button class="btn p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bx bx-dots-vertical-rounded fs-4"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}">
+                                                    <i class="fas fa-info-circle me-2"></i> Detail
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" class="formKirimSemua" data-menunggu="{{ $jumlahMenunggu }}">
+                                                    @csrf
+                                                    <button type="button" class="dropdown-item btn-kirim-semua">
+                                                        <i class="fas fa-paper-plane me-2"></i> Kirim Semua
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
 
                                 <small class="text-muted">{{ $filteredPengajuan->count() }} siswa mengajukan ke sini</small>
                                 @if($jumlahMenunggu > 0)
-                                <div class="text-danger mt-1" style="font-size: 13px;">
-                                    ⚠️ {{ $jumlahMenunggu }} siswa sedang mengajukan pembatalan (menunggu)
-                                </div>
+                                    <div class="text-danger mt-1" style="font-size: 13px;">
+                                        ⚠️ {{ $jumlahMenunggu }} siswa sedang mengajukan pembatalan (menunggu)
+                                    </div>
                                 @endif
-
                             </div>
 
-                            {{-- Desktop View: Inline Buttons --}}
-                            <div class="d-flex" style="gap: 10px; align-items: center; min-height: 100%; height: auto;">
-                                <a href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}" class="btn btn-primary rounded-pill">Detail</a>
-
-                                <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" class="formKirimSemua" data-menunggu="{{ $jumlahMenunggu }}">
-                                    @csrf
-                                    <button type="button" class="btn btn-primary rounded-pill btn-kirim-semua">
-                                        Kirim Semua
-                                    </button>
-                                </form>
-
-
+                            <div class="dropdown d-block">
+                                <button class="btn p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bx bx-dots-vertical-rounded fs-4"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}">Detail</a></li>
+                                    <li>
+                                        <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" class="formKirimSemua" data-menunggu="{{ $jumlahMenunggu }}">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item btn-kirim-semua" style="width: 100px; white-space: nowrap;">Kirim</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                     @endif
+
                     @endforeach
                     @endif
                 </div>
