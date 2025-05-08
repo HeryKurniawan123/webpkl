@@ -10,12 +10,20 @@
                         <h5 class="mb-0 text-center text-md-start w-100 w-md-auto">
                             Review Pengajuan Institusi / Perusahaan
                         </h5>
-                        <div class="d-none d-md-flex justify-content-end align-items-center">
-                            <a class="btn btn-success btn-sm" href="{{ route('kaprog.review.histori') }}" data-bs-toggle="tooltip" title="History Pengajuan">
-                                {{-- <i class="bi bi-clock-history"></i> --}}
+                        <!-- Mode Mobile (full lebar, dari kanan ke kiri) -->
+                        <div class="d-flex d-md-none w-100">
+                            <a class="btn btn-success w-100" href="{{ route('kaprog.review.histori') }}">
+                                Riwayat Pengajuan
+                            </a>
+                        </div>
+
+                        <!-- Mode Desktop (kecil, di kanan tengah) -->
+                        <div class="d-none d-md-flex justify-content-end align-items-center w-100">
+                            <a class="btn btn-success btn-sm" href="{{ route('kaprog.review.histori') }}" data-bs-toggle="tooltip" title="Riwayat Pengajuan">
                                 Riwayat
                             </a>
-                        </div>                                                                    
+                        </div>
+                    
                     </div>                    
                 </div>
 
@@ -92,20 +100,24 @@
                                 @endif
                             </div>
 
-                            <div class="dropdown d-block">
+                            <div class="dropdown d-none d-md-block">
                                 <button class="btn p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bx bx-dots-vertical-rounded fs-4"></i>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}">Detail</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('kaprog.review.reviewdetail', ['iduka_id' => $iduka_id]) }}">
+                                            Detail
+                                        </a>
+                                    </li>
                                     <li>
                                         <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" class="formKirimSemua" data-menunggu="{{ $jumlahMenunggu }}">
                                             @csrf
-                                            <button type="submit" class="dropdown-item btn-kirim-semua" style="width: 100px; white-space: nowrap;">Kirim</button>
+                                            <button type="submit" class="dropdown-item btn-kirim-semua" style="white-space: nowrap;">Kirim</button>
                                         </form>
                                     </li>
                                 </ul>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                     @endif
