@@ -30,7 +30,7 @@ class KaprogController extends Controller
         }
 
         $usulanIdukas = UsulanIduka::with(['user.dataPribadi.kelas'])
-        ->whereIn('status', ['proses', 'menunggu'])
+            ->whereIn('status', ['proses', 'menunggu'])
             ->where('konke_id', $kaprog->konke_id)
             ->get();
 
@@ -38,7 +38,7 @@ class KaprogController extends Controller
         $groupedIduka = $usulanIdukas->groupBy('email'); // setiap group mewakili satu usulan IDUKA
 
         $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
-        ->whereIn('status', ['proses', 'menunggu'])
+            ->whereIn('status', ['proses', 'menunggu'])
             ->where('konke_id', $kaprog->konke_id)
             ->get()
             ->groupBy('iduka_id');
@@ -72,7 +72,7 @@ class KaprogController extends Controller
     //     return view('kaprog.review.detailusulanpkl', compact('usulan'));
     // }
 
-    
+
 
     public function prosesPengajuan($id, Request $request)
     {
@@ -312,7 +312,7 @@ class KaprogController extends Controller
     public function reviewPengajuan()
     {
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
-            ->where('dikirim', 'belum')
+            ->whereIn('dikirim', ['belum', 'menunggu']) // ambil dua status
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('iduka_id');
@@ -326,7 +326,7 @@ class KaprogController extends Controller
 
         $pengajuans = CetakUsulan::with(['dataPribadi.kelas'])
             ->where('iduka_id', $iduka_id)
-            ->where('dikirim', 'belum') // Atau status yang kamu inginkan
+            ->whereIn('dikirim', ['belum', 'menunggu']) // Atau status yang kamu inginkan
             ->get();
 
         return view('kaprog.review.reviewdetail', compact('iduka', 'pengajuans'));
@@ -347,6 +347,14 @@ class KaprogController extends Controller
 
     public function kirimSemua($iduka_id)
     {
+        // Cek jika ada siswa yang mengajukan pembatalan
+        $adaPembatalan = CetakUsulan::where('iduka_id', $iduka_id)
+            ->where('dikirim', 'menunggu')
+            ->exists();
+
+        if ($adaPembatalan) {
+            return redirect()->back()->with('error', 'Tidak dapat mengirim karena ada siswa yang sedang mengajukan pembatalan.');
+        }
         // Ambil semua pengajuan untuk IDUKA tersebut yang statusnya sudah 'sudah'
         $cetak = CetakUsulan::where('iduka_id', $iduka_id)
             ->where('status', 'sudah')
@@ -399,28 +407,82 @@ class KaprogController extends Controller
     }
 
     public function persetujuanPembatalan(Request $request)
-{
-    $id = $request->input('id');
-    $status = $request->input('status'); // 'batal' atau 'proses'
+    {
+        $id = $request->input('id');
+        $status = $request->input('status'); // 'batal' atau 'proses'
 
-    // Coba update di pengajuan_usulans dulu
-    $pengajuan = PengajuanUsulan::find($id);
+        // Coba update di pengajuan_usulans dulu
+        $pengajuan = PengajuanUsulan::find($id);
 
-    if ($pengajuan) {
-        $pengajuan->status = $status;
-        $pengajuan->save();
-    } else {
-        // Kalau tidak ada, coba cari di usulan_idukas
-        $usulan = UsulanIduka::find($id);
-        if ($usulan) {
-            $usulan->status = $status;
-            $usulan->save();
+        if ($pengajuan) {
+            $pengajuan->status = $status;
+            $pengajuan->save();
         } else {
-            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            // Kalau tidak ada, coba cari di usulan_idukas
+            $usulan = UsulanIduka::find($id);
+            if ($usulan) {
+                $usulan->status = $status;
+                $usulan->save();
+            } else {
+                return response()->json(['message' => 'Data tidak ditemukan'], 404);
+            }
         }
+
+
+        return response()->json(['message' => 'Status berhasil diperbarui', 'status' => $status]);
     }
 
+    public function terimaPembatalan($id)
+    {
+        $cetak = CetakUsulan::findOrFail($id);
+        $cetak->dikirim = 'batal';
+        $cetak->save();
 
-    return response()->json(['message' => 'Status berhasil diperbarui', 'status' => $status]);
-}
+        $pengajuan = PengajuanUsulan::where('user_id', $cetak->siswa_id)
+            ->where('iduka_id', $cetak->iduka_id)
+            ->first();
+
+        if ($pengajuan) {
+            $pengajuan->status = 'batal';
+            $pengajuan->save();
+        } else {
+            $usulan = UsulanIduka::where('user_id', $cetak->siswa_id)
+                ->where('iduka_id', $cetak->iduka_id)
+                ->first();
+
+            if ($usulan) {
+                $usulan->status = 'batal';
+                $usulan->save();
+            }
+        }
+
+        return back()->with('success', 'Pembatalan berhasil diterima.');
+    }
+
+    public function tolakPembatalan($id)
+    {
+        $cetak = CetakUsulan::findOrFail($id);
+        $cetak->dikirim = 'belum';
+        $cetak->save();
+
+        $pengajuan = PengajuanUsulan::where('user_id', $cetak->siswa_id)
+            ->where('iduka_id', $cetak->iduka_id)
+            ->first();
+
+        if ($pengajuan) {
+            $pengajuan->status = 'diterima';
+            $pengajuan->save();
+        } else {
+            $usulan = UsulanIduka::where('user_id', $cetak->siswa_id)
+                ->where('iduka_id', $cetak->iduka_id)
+                ->first();
+
+            if ($usulan) {
+                $usulan->status = 'diterima';
+                $usulan->save();
+            }
+        }
+
+        return back()->with('success', 'Pembatalan berhasil ditolak.');
+    }
 }

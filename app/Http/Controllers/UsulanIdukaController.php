@@ -166,6 +166,7 @@ class  UsulanIdukaController extends Controller
             $query->whereNull('akhir_kerjasama') // Belum diisi = masih aktif
                   ->orWhere('akhir_kerjasama', '>=', $today); // Masih dalam masa kerjasama
         })
+        ->orderBy('rekomendasi', 'desc') // ⬅️ utamakan yang direkomendasikan
         ->orderBy('created_at', 'desc')
         ->get();
     

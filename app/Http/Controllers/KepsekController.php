@@ -13,7 +13,10 @@ use Illuminate\Http\Request;
 class KepsekController extends Controller
 {
     public function dataIdukaKepsek (){
-        $iduka = Iduka::paginate(10);
+        $iduka = Iduka::orderBy('rekomendasi', 'desc')  // Urutkan berdasarkan rekomendasi (1 di atas)
+        ->orderBy('created_at', 'desc') // Jika ada yang sama, urutkan berdasarkan tanggal dibuat
+        ->paginate(10);
+        
         return view('iduka.dataiduka.dataiduka', compact('iduka'));
     }
 

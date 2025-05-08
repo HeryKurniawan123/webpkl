@@ -137,7 +137,7 @@
                       </a>
                       @endif
 
-                      @if($usulan->status == 'proses')
+                      @if($usulan->status == 'diterima' || $usulan->status == 'proses')
                       <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usulan->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
                         @csrf
                         <button type="submit" class="btn btn-warning btn-sm">

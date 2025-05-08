@@ -15,7 +15,9 @@ class KaprogIdukaController extends Controller
     public function index()
     {
 
-        $iduka = Iduka::orderBy('created_at', 'desc')->paginate(10);// Urutkan berdasarkan created_at descending
+        $iduka = Iduka::orderBy('rekomendasi', 'desc')  // Urutkan berdasarkan rekomendasi (1 di atas)
+        ->orderBy('created_at', 'desc') // Jika ada yang sama, urutkan berdasarkan tanggal dibuat
+        ->paginate(10);
         return view('iduka.dataiduka.dataiduka', compact('iduka'));
     }
 

@@ -88,7 +88,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
 
 
-Route::put('/siswa/{id}/update-siswa', [SiswaController::class, 'updateSiswa'])->name('siswa.updateSiswa');
+    Route::put('/siswa/{id}/update-siswa', [SiswaController::class, 'updateSiswa'])->name('siswa.updateSiswa');
 
     //PENGAJUAN
     Route::get('/review-pengajuan', [HubinController::class, 'index'])->name('review.pengajuan');
@@ -153,18 +153,18 @@ Route::put('/siswa/{id}/update-siswa', [SiswaController::class, 'updateSiswa'])-
     Route::post('/pusat-bantuan/store', [SuratPengantarController::class, 'store'])->name('surat.store');
     Route::post('/pusat-bantuan/update/{id}', [SuratPengantarController::class, 'update'])->name('surat.update');
 
-     //data daftar iduka
-     Route::get('/daftar/iduka', [KaprogIdukaController::class, 'index'])->name('hubin.iduka.index');
-     Route::get('/daftar/iduka/detail/{id}', [KaprogIdukaController::class, 'show'])->name('hubin.detail.iduka');
-     Route::get('/download/detail-iduka/PDF/{id}', [PdfController::class, 'unduhDetailIdukaPDF'])->name('detailIduka.pdf');
-     Route::post('/iduka/hubin/store', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
-     Route::get('/create/data-iduka', [KaprogIdukaController::class, 'create'])->name('hubin.iduka.create');
-     Route::get('/iduka/{id}/edit', [KaprogIdukaController::class, 'edit'])->name('hubin.iduka.edit');
-     Route::put('/update/{id}', [KaprogIdukaController::class, 'update'])->name('hubin.iduka.update');
-     Route::delete('/hapus-iduka/{id}', [KaprogIdukaController::class, 'destroy'])->name('hubin.iduka.destroy');
-     Route::get('/hubin/download-atp-iduka/{id}', [KaprogIdukaController::class, 'downloadAtpIduka'])
-     ->name('hubin.download.atp');
-     Route::put('/setting/iduka/{id}/tanggal', [KaprogIdukaController::class, 'updateTanggal'])->name('hubin.tanggal.update');
+    //data daftar iduka
+    Route::get('/daftar/iduka', [KaprogIdukaController::class, 'index'])->name('hubin.iduka.index');
+    Route::get('/daftar/iduka/detail/{id}', [KaprogIdukaController::class, 'show'])->name('hubin.detail.iduka');
+    Route::get('/download/detail-iduka/PDF/{id}', [PdfController::class, 'unduhDetailIdukaPDF'])->name('detailIduka.pdf');
+    Route::post('/iduka/hubin/store', [KaprogIdukaController::class, 'store'])->name('hubin.iduka.store');
+    Route::get('/create/data-iduka', [KaprogIdukaController::class, 'create'])->name('hubin.iduka.create');
+    Route::get('/iduka/{id}/edit', [KaprogIdukaController::class, 'edit'])->name('hubin.iduka.edit');
+    Route::put('/update/{id}', [KaprogIdukaController::class, 'update'])->name('hubin.iduka.update');
+    Route::delete('/hapus-iduka/{id}', [KaprogIdukaController::class, 'destroy'])->name('hubin.iduka.destroy');
+    Route::get('/hubin/download-atp-iduka/{id}', [KaprogIdukaController::class, 'downloadAtpIduka'])
+        ->name('hubin.download.atp');
+    Route::put('/setting/iduka/{id}/tanggal', [KaprogIdukaController::class, 'updateTanggal'])->name('hubin.tanggal.update');
 
     //import data siswa
     Route::get('/siswa/download-template', [SiswaController::class, 'downloadTemplate'])->name('siswa.download-template');
@@ -314,6 +314,10 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/history/diterima', [KaprogController::class, 'historyDiterima'])->name('review.historyditerima');
     Route::get('/history/ditolak', [KaprogController::class, 'historyDitolak'])->name('review.historyditolak');
 
+    Route::post('/kaprog/pembatalan/terima/{id}', [KaprogController::class, 'terimaPembatalan'])->name('kaprog.pembatalan.terima');
+    Route::post('/kaprog/pembatalan/tolak/{id}', [KaprogController::class, 'tolakPembatalan'])->name('kaprog.pembatalan.tolak');
+
+
 
     //TP
     Route::get('/cp', [CpAtpController::class, 'cp'])->name('cp.index');
@@ -377,8 +381,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/kaprog/pengajuan/pembatalan/{id}/tolak', [PengajuanPklController::class, 'tolakPembatalan'])->name('kaprog.pengajuan.tolakPembatalan');
     Route::put('/kaprog/pengajuan/{id}/setujui-pembatalan', [PengajuanPklController::class, 'setujuiPembatalan'])->name('kaprog.pengajuan.setujuiPembatalan');
     Route::post('/siswa/pengajuan/{id}/batal', [PengajuanPklController::class, 'ajukanPembatalan'])->name('siswa.pengajuan.ajukanPembatalan');
-
-
 });
 
 //Pendamping
@@ -397,7 +399,6 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
     Route::get('/data-guru/kepsek', [KepsekController::class, 'dataGuruKepsek'])->name('kepsek.guru.index');
     Route::get('/data-tenaga-kependidikan/kepsek', [KepsekController::class, 'dataTKKepsek'])->name('kepsek.tk.index');
     Route::get('/kepsek/daftar/iduka/detail/{id}', [KepsekController::class, 'show'])->name('kepsek.detail.iduka');
-
 });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');

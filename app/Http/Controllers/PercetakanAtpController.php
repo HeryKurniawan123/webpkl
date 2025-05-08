@@ -10,7 +10,9 @@ class PercetakanAtpController extends Controller
 {
     public function index()
     {
-        $iduka = Iduka::orderBy('created_at', 'desc')->paginate(10);
+        $iduka = Iduka::orderBy('rekomendasi', 'desc')  // Urutkan berdasarkan rekomendasi (1 di atas)
+        ->orderBy('created_at', 'desc') // Jika ada yang sama, urutkan berdasarkan tanggal dibuat
+        ->paginate(10);
 
         return view('iduka.dataiduka.cetakatp', compact('iduka'));
     }
