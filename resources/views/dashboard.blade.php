@@ -60,9 +60,9 @@
                   })">Buat Usulan</a>
                 @elseif($statusAjukan === 'diterima')
                 <a href="#" class="dropdown-item" onclick="Swal.fire({
-                      icon: 'success',
-                      title: 'Pengajuan Diterima',
-                      text: 'Kamu sudah mengajukan dan pengajuan telah diterima.',
+                      icon: 'info',
+                      title: 'Tidak dapat mengajukan!',
+                      text: 'Kamu sudah mengusulkan dan usulan telah diterima.',
                       showConfirmButton: true,
                       customClass: { popup: 'animate__animated animate__fadeInDown' }
                   })">Buat Usulan</a>
@@ -162,7 +162,11 @@
                       @if($usul->status == 'proses')
                       <span class="badge bg-warning">Menunggu Verifikasi</span>
                       @elseif($usul->status == 'diterima')
-                      <span class="badge bg-success">Diterima</span>
+                      <span class="badge bg-success">Usulan Diterima</span>
+                      @elseif($usul->status == 'menunggu')
+                      <span class="badge bg-secondary">Menunggu Pembatalan</span>
+                      @elseif($usul->status == 'batal')
+                      <span class="badge bg-secondary">Pengajuan Dibatalkan</span>
                       @else
                       <span class="badge bg-danger">Ditolak</span>
                       @endif
@@ -176,6 +180,15 @@
                         <i class="bi bi-filetype-pdf"></i>
                       </a>
                       @endif
+                      @if($usul->status == 'diterima' || $usul->status == 'proses')
+                      <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usul->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
+                        @csrf
+                        <button type="submit" class="btn btn-warning btn-sm">
+                          <i class="bi bi-x-circle"></i> Batal
+                        </button>
+                      </form>
+                      @endif
+
                     </td>
                   </tr>
                   @empty

@@ -30,7 +30,7 @@ class KaprogController extends Controller
         }
 
         $usulanIdukas = UsulanIduka::with(['user.dataPribadi.kelas'])
-            ->where('status', 'proses')
+        ->whereIn('status', ['proses', 'menunggu'])
             ->where('konke_id', $kaprog->konke_id)
             ->get();
 
@@ -38,7 +38,7 @@ class KaprogController extends Controller
         $groupedIduka = $usulanIdukas->groupBy('email'); // setiap group mewakili satu usulan IDUKA
 
         $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
-            ->where('status', 'proses')
+        ->whereIn('status', ['proses', 'menunggu'])
             ->where('konke_id', $kaprog->konke_id)
             ->get()
             ->groupBy('iduka_id');
@@ -72,37 +72,7 @@ class KaprogController extends Controller
     //     return view('kaprog.review.detailusulanpkl', compact('usulan'));
     // }
 
-    // public function prosesPengajuan($id, Request $request): JsonResponse
-    // {
-
-
-
-    //     $pengajuan = PengajuanUsulan::findOrFail($id);
-
-    //     if ($pengajuan->status === 'dikirim') {
-    //         return response()->json(['message' => 'Pengajuan sudah dikirim sebelumnya.'], 409);
-    //     }
-
-    //     $pengajuan->update([
-    //         'status' => 'dikirim',
-    //     ]);
-
-    //     // Cek apakah data sudah ada agar tidak dobel
-    //     $existing = PengajuanPkl::where('siswa_id', $pengajuan->user_id)
-    //         ->where('iduka_id', $request->iduka_id)
-    //         ->first();
-
-    // 
-    //         PengajuanPkl::create([
-    //             'siswa_id' => $pengajuan->user_id,
-    //             'iduka_id' => $request->iduka_id,
-    //             'status' => 'proses',
-    //         ]);
-
-
-
-    //     return response()->json(['message' => 'Pengajuan berhasil dikirim ke IDUKA.']);
-    // }
+    
 
     public function prosesPengajuan($id, Request $request)
     {
@@ -208,7 +178,7 @@ class KaprogController extends Controller
         $msg = $request->status === 'diterima' ? 'Pengajuan PKL diterima.' : 'Pengajuan PKL ditolak.';
         $type = $request->status === 'diterima' ? 'success' : 'error';
 
-        return redirect()->route('kaprog.review.reviewusulan', $usulan->iduka_id)
+        return redirect()->route('review.usulan', $usulan->iduka_id)
 
             ->with($type, $msg);
     }
@@ -369,7 +339,7 @@ class KaprogController extends Controller
     {
         $pengajuanUsulans = PengajuanUsulan::with(['dataPribadi.kelas'])
             ->where('iduka_id', $iduka_id)
-            ->where('status', 'proses')
+            ->whereIn('status', ['proses', 'menunggu'])
             ->get();
 
         return view('kaprog.review.detailusulan', compact('pengajuanUsulans'));
@@ -427,4 +397,30 @@ class KaprogController extends Controller
 
         return view('kaprog.review.histori', compact('historiPengajuan'));
     }
+
+    public function persetujuanPembatalan(Request $request)
+{
+    $id = $request->input('id');
+    $status = $request->input('status'); // 'batal' atau 'proses'
+
+    // Coba update di pengajuan_usulans dulu
+    $pengajuan = PengajuanUsulan::find($id);
+
+    if ($pengajuan) {
+        $pengajuan->status = $status;
+        $pengajuan->save();
+    } else {
+        // Kalau tidak ada, coba cari di usulan_idukas
+        $usulan = UsulanIduka::find($id);
+        if ($usulan) {
+            $usulan->status = $status;
+            $usulan->save();
+        } else {
+            return response()->json(['message' => 'Data tidak ditemukan'], 404);
+        }
+    }
+
+
+    return response()->json(['message' => 'Status berhasil diperbarui', 'status' => $status]);
+}
 }
