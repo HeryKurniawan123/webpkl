@@ -74,46 +74,48 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-hover">
-                                <tr>
-                                    <td>Nama Siswa</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->name ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>NIS</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->nip ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Kelas</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>No HP</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->no_hp ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Email</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->dataPribadi->email ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Status Pengajuan</td>
-                                    <td>:</td>
-                                    <td>
-                                        @if($pengajuan->status == 'proses')
-                                        <span class="badge bg-warning">Menunggu Verifikasi</span>
-                                        @elseif($pengajuan->status == 'diterima')
-                                        <span class="badge bg-success">Diterima</span>
-                                        @else
-                                        <span class="badge bg-danger">Ditolak</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <tr>
+                                        <td>Nama Siswa</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->name ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>NIS</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->nip ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kelas</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>No HP</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->no_hp ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->dataPribadi->email ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Status Pengajuan</td>
+                                        <td>:</td>
+                                        <td>
+                                            @if($pengajuan->status == 'proses')
+                                            <span class="badge bg-warning">Menunggu Verifikasi</span>
+                                            @elseif($pengajuan->status == 'diterima')
+                                            <span class="badge bg-success">Diterima</span>
+                                            @else
+                                            <span class="badge bg-danger">Ditolak</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -124,79 +126,85 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-hover">
-                                <tr>
-                                    <td>Nama Institusi</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->nama ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Nama Pimpinan</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->nama_pimpinan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>NIP Pimpinan</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->nip_pimpinan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Jabatan Pimpinan</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->jabatan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Alamat Institusi</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->alamat ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Kode POS</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->kode_pos ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>No Telepon Institusi</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->telepon ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Email</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->email ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Bidang Industri</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->bidang_industri ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Kerjasama</td>
-                                    <td>:</td>
-                                    <td>{{ $pengajuan->iduka->kerjasama ?? '-' }}</td>
-                                </tr>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <tr>
+                                        <td>Nama Institusi</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->nama ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nama Pimpinan</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->nama_pimpinan ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>NIP Pimpinan</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->nip_pimpinan ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jabatan Pimpinan</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->jabatan ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Alamat Institusi</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->alamat ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kode POS</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->kode_pos ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>No Telepon Institusi</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->telepon ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Email</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->email ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bidang Industri</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->bidang_industri ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kerjasama</td>
+                                        <td>:</td>
+                                        <td>{{ $pengajuan->iduka->kerjasama ?? '-' }}</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-3 d-flex justify-content-end mb-4">
-                    <a href="{{ route('pengajuan.review') }}" class="btn btn-primary me-2">
-                        Kembali
-                    </a>
-                    @if(Auth::user()->role == 'iduka' && $pengajuan->status == 'proses')
-                    <form id="terima-form" action="{{ route('pengajuan.terima', $pengajuan->id) }}" method="POST" class="me-2">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn btn-success">Terima</button>
-                    </form>
-
-                    <form id="tolak-form" action="{{ route('pengajuan.tolak', $pengajuan->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn btn-danger">Tolak</button>
-                    </form>
-                    @endif
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mt-3 d-flex justify-content-end mb-4">
+                            <a href="{{ route('pengajuan.review') }}" class="btn btn-primary me-2">
+                                Kembali
+                            </a>
+                            @if(Auth::user()->role == 'iduka' && $pengajuan->status == 'proses')
+                            <form id="terima-form" action="{{ route('pengajuan.terima', $pengajuan->id) }}" method="POST" class="me-2">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-success">Terima</button>
+                            </form>
+        
+                            <form id="tolak-form" action="{{ route('pengajuan.tolak', $pengajuan->id) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-danger">Tolak</button>
+                            </form>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

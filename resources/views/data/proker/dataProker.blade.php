@@ -21,20 +21,21 @@
                 <div class="card mb-3">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="mb-0">Data Program Keahlian</h5>
-
+                            {{-- Judul: h5 untuk desktop, h6 untuk mobile --}}
+                            <h5 class="mb-0 d-none d-md-block">Data Program Keahlian</h5>
+                            <h6 class="mb-0 d-md-none">Data Program Keahlian</h6>
+                        
                             <div class="d-flex gap-2">
                                 <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
                                     <i class="bi bi-search"></i>
                                     <span class="d-none d-md-inline">Cari</span>
                                 </button>
-                
-                
+                        
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahProkerModal">
                                     <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
                                 </button>
                             </div>
-                        </div>
+                        </div>                        
 
                         {{-- NOTIFIKASI ERROR --}}
                         @if ($errors->any())

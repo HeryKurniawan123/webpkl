@@ -40,7 +40,6 @@
 
 <div class="container-fluid">
     <div class="container-xxl flex-grow-1 container-p-y">
-        <h4 class="mb-4">Review Formulir Usulan INSTITUSI</h4>
 
         {{-- Alert Success/Error --}}
         @if(session()->has('success'))
@@ -57,20 +56,37 @@
             </div>
         @endif
 
-        {{-- Card Action --}}
         <div class="card mb-3">
-            <div class="card-body d-flex flex-wrap justify-content-between align-items-center">
-                <h5 class="mb-3 mb-md-0">Aksi Review</h5>
-                <div class="d-flex gap-2">
-                    <a href="{{ route('review.historyditerima') }}" class="btn btn-success btn-status btn-sm">
-                        <i class="bi bi-check-circle"></i> <span class="d-none d-md-inline">History Diterima</span>
-                    </a>
-                    <a href="{{ route('review.historyditolak') }}" class="btn btn-danger btn-status btn-sm">
-                        <i class="bi bi-x-circle"></i> <span class="d-none d-md-inline">History Ditolak</span>
-                    </a>
+            <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                
+                {{-- Kontainer judul + tombol mobile --}}
+                <div class="d-flex justify-content-between align-items-center w-100 d-md-none">
+                    <h6 class="mb-0 text-start">Review Formulir Usulan INSTITUSI</h6>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('review.historyditerima') }}" class="btn btn-sm btn-success" data-bs-toggle="tooltip" title="Riwayat Diterima">
+                            <i class="bi bi-check-circle"></i>
+                        </a>
+                        <a href="{{ route('review.historyditolak') }}" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Riwayat Ditolak">
+                            <i class="bi bi-x-circle"></i>
+                        </a>
+                    </div>
                 </div>
+        
+                {{-- Desktop: tetap tampil jika lebar md ke atas --}}
+                <div class="d-none d-md-flex justify-content-between align-items-center w-100">
+                    <h5 class="mb-0 text-start">Review Formulir Usulan INSTITUSI</h5>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('review.historyditerima') }}" class="btn btn-success btn-sm px-4">
+                            Riwayat Diterima
+                        </a>
+                        <a href="{{ route('review.historyditolak') }}" class="btn btn-danger btn-sm px-4">
+                            Riwayat Ditolak
+                        </a>
+                    </div>
+                </div>
+        
             </div>
-        </div>
+        </div>                                
 
         {{-- Daftar Usulan INSTITUSI --}}
         <div class="row">
@@ -90,10 +106,19 @@
                 @empty
                     <p class="text-muted">Belum ada usulan INSTITUSI.</p>
                 @endforelse
+
+                {{-- Pagination --}}
+                <div class="card">
+                    @if($usulanIdukas->total() > 10) <!-- Mengecek apakah total data lebih dari 10 -->
+                    <div class="d-flex justify-content-end mt-4">
+                        {{ $usulanIdukas->links('pagination::bootstrap-5') }}  <!-- Menampilkan pagination Bootstrap -->
+                    </div>
+                    @endif
+                </div>
             </div>
         </div>
 
-        {{-- Bagian Pengajuan PKL (jika ada) --}}
+        {{-- Bagian Pengajuan PKL --}}
         @if(isset($pengajuanUsulans) && !$pengajuanUsulans->isEmpty())
             <hr>
             <div class="row">
@@ -111,6 +136,15 @@
                             </div>
                         </div>
                     @endforeach
+
+                    {{-- Pagination --}}
+                    <div class="card">
+                        @if($pengajuanUsulans->total() > 10) <!-- Mengecek apakah total data lebih dari 10 -->
+                        <div class="d-flex justify-content-end mt-4">
+                            {{ $pengajuanUsulans->links('pagination::bootstrap-5') }}  <!-- Menampilkan pagination Bootstrap -->
+                        </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         @endif

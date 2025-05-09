@@ -145,6 +145,9 @@
                                 </table>
                             </div>
                         </div>
+                        {{-- <div class="d-flex justify-content-end mt-4">
+                            {{ $usulanDiterimaPkl->links('pagination::bootstrap-5') }}  <!-- Menampilkan pagination Bootstrap -->
+                        </div> --}}
                         <div class="d-flex justify-content mt-3 mb-2">
                             <a href="{{ route('review.usulan')}}" class="btn btn-back shadow-sm">
                                 Kembali

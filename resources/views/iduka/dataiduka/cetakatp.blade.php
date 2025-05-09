@@ -273,11 +273,11 @@
                             @endforeach
                         @endif
                     </div>                    
-                    {{-- <div class="card">
+                    <div class="card">
                         <div class="d-flex justify-content-end mt-3">
                             {{ $iduka->links('pagination::bootstrap-5') }}
                         </div>
-                    </div>                     --}}
+                    </div>                    
                 </div>
             </div>
         </div>

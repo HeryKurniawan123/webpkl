@@ -77,19 +77,30 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="mb-0">Data Kelas</h5>
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
+                        
+                                {{-- Tombol untuk mode mobile (icon only) --}}
+                                <div class="d-flex d-md-none gap-2">
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal" data-bs-toggle="tooltip" title="Search">
                                         <i class="bi bi-search"></i>
-                                        <span class="d-none d-md-inline">Search</span>
                                     </button>
-                    
-                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahKelasModal">
-                                        <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah</span>
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahKelasModal" data-bs-toggle="tooltip" title="Tambah">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </div>
+                        
+                                {{-- Tombol untuk mode desktop (icon + text) --}}
+                                <div class="d-none d-md-flex gap-2 align-items-center">
+                                    <button type="button" class="btn btn-warning btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                        <i class="bi bi-search me-1"></i>
+                                        <span>Search</span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#tambahKelasModal">
+                                        <i class="bi bi-plus-lg me-1"></i>
+                                        <span>Tambah</span>
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    
+                        </div>                        
                         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">

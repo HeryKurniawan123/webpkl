@@ -12,7 +12,7 @@
                         </h5>
                         <!-- Mode Mobile (full lebar, dari kanan ke kiri) -->
                         <div class="d-flex d-md-none w-100">
-                            <a class="btn btn-success w-100" href="{{ route('kaprog.review.histori') }}">
+                            <a class="btn btn-sm btn-success w-100" href="{{ route('kaprog.review.histori') }}">
                                 Riwayat Pengajuan
                             </a>
                         </div>
@@ -48,7 +48,7 @@
                     </div>
                     @endif
 
-                    @foreach($pengajuanUsulans as $iduka_id => $pengajuanGroup)
+                    @foreach($pengajuanUsulans->groupBy('iduka_id') as $iduka_id => $pengajuanGroup)
                     @php
                     $filteredPengajuan = $pengajuanGroup->filter(function($item) {
                     return $item->status === 'sudah';
@@ -124,6 +124,14 @@
 
                     @endforeach
                     @endif
+
+                    <div class="card">
+                        @if($pengajuanUsulans->total() > 10) <!-- Mengecek apakah total data lebih dari 10 -->
+                            <div class="d-flex justify-content-end mt-4">
+                                {{ $pengajuanUsulans->links('pagination::bootstrap-5') }}
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

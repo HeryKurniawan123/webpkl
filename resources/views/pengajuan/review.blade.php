@@ -90,7 +90,7 @@
                         </div>
                         @else
 
-                        {{-- Looping Data Pengajuan --}}
+                       {{-- Looping Data Pengajuan --}}
                         @foreach($pengajuans as $pengajuan)
                         <div class="card mb-3 shadow-sm card-hover" style="padding: 30px; border-radius: 10px;">
                             @if(session()->has('success'))
@@ -115,14 +115,14 @@
 
                                 <div class="d-flex align-items-center">
                                     @if($iduka->kuota_pkl > 0)
-                                    {{-- Tombol Lihat Detail --}}
-                                    <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-info me-2">
-                                        Lihat Detail
+                                    {{-- Tombol Detail --}}
+                                    <a href="{{ route('pengajuan.detail', $pengajuan->id) }}" class="btn btn-primary btn-sm rounded-3 me-2">
+                                        Detail
                                     </a>
                                     @else
-                                    {{-- Tombol Lihat Detail Nonaktif (SweetAlert) --}}
-                                    <button type="button" class="btn btn-info me-2" onclick="showKuotaAlert()">
-                                        Lihat Detail
+                                    {{-- Tombol Detail Nonaktif (SweetAlert) --}}
+                                    <button type="button" class="btn btn-primary btn-sm rounded-3 me-2" onclick="showKuotaAlert()">
+                                        Detail
                                     </button>
 
                                     {{-- Tombol Tolak --}}
@@ -132,13 +132,12 @@
                                     </form>
 
                                     <button type="button" class="btn btn-danger me-2" onclick="confirmTolak('{{ $pengajuan->id }}')">Tolak</button>
-
                                     @endif
 
                                     {{-- Dropdown Menu --}}
                                     <!-- <div class="dropdown ms-2">
                                         <button class="btn dropdown-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                           <i class="bi bi-three-dots-vertical"></i>                                        </button>
+                                        <i class="bi bi-three-dots-vertical"></i>                                        </button>
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
                                                 <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengajuan ini?');">
