@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 
 class KaprogController extends Controller
@@ -190,23 +192,53 @@ class KaprogController extends Controller
             return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
         }
 
+        // Ambil data dari UsulanIduka
         $usulanDiterima = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'diterima')
             ->where('konke_id', $kaprog->konke_id)
             ->orderByRaw("CASE WHEN surat_izin = 'belum' THEN 0 ELSE 1 END")
             ->latest()
-            ->paginate(10);
+            ->get()
+            ->map(function ($item) {
+                $item->tipe = 'usulan';
+                return $item;
+            });
 
+        // Ambil data dari PengajuanUsulan
         $usulanDiterimaPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->where('status', 'diterima')
             ->where('konke_id', $kaprog->konke_id)
             ->orderByRaw("CASE WHEN surat_izin = 'belum' THEN 0 ELSE 1 END")
             ->latest()
-            ->paginate(10);
+            ->get()
+            ->map(function ($item) {
+                $item->tipe = 'pkl';
+                return $item;
+            });
 
-        return view('kaprog.review.historyditerima', compact('usulanDiterima', 'usulanDiterimaPkl'));
+        // Gabungkan dan urutkan berdasarkan surat_izin dulu, lalu tanggal
+        $combined = $usulanDiterima->concat($usulanDiterimaPkl)
+            ->sortBy([
+                fn($a, $b) => strcmp($a->surat_izin, $b->surat_izin), // surat_izin 'belum' dulu
+                fn($a, $b) => $b->created_at <=> $a->created_at       // terbaru dulu
+            ])
+            ->values();
+
+        // Paginate manual
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $currentItems = $combined->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $paginated = new LengthAwarePaginator(
+            $currentItems,
+            $combined->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return view('kaprog.review.historyditerima', compact('paginated'));
     }
-
     public function historyDitolak()
 
     {

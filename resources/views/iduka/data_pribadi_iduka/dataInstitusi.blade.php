@@ -186,7 +186,179 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card mb-3">
+                </div>
+
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <div class="card bg-primary" style="padding: 12px 30px 0 30px;">
+                            <h6 class="text-white">Data Pribadi Institusi</h6>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Nama Institusi / Perusahaan</b></h6>
+                                <span>{{ $iduka->nama }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card ke-2 -->
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Alamat Institusi / Perusahaan</b></h6>
+                                <span>{{ $iduka->alamat }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card ke-3 -->
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Bidang Usaha / Kerja</b></h6>
+                                <span>{{ $iduka->bidang_industri }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Nomor Telepon / Hp Perusahaan</b></h6>
+                                <span>{{ $iduka->telepon }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="card bg-primary" style="padding: 12px 30px 0 30px;">
+                            <h6 class="text-white">Yang menandatangi sertifikat PKL</h6>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="card" style="padding: 12px 30px 0 30px;">
+                            <h6 class=""><b>A. Kepala / Pimpinan Institusi</b></h6>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Nama Lengkap</b></h6>
+                                <span>{{ $iduka->nama_pimpinan }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Nomor Induk Pegawai / Nomor Induk Karyawan</b></h6>
+                                <span>{{ $iduka->nip_pimpinan }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Jabatan</b></h6>
+                                <span>{{ $iduka->jabatan }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>No Hp / Telepon</b></h6>
+                                <span>{{ $iduka->no_hp_pimpinan ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="card" style="padding: 12px 30px 0 30px;">
+                            <h6 class=""><b>B. Pembimbing Institusi / Perusahaan</b></h6>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Nama Lengkap</b></h6>
+                                <span>{{ $pembimbing->name ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Nomor Induk Pegawai / Nomor Induk Karyawan</b></h6>
+                                <span>{{ $pembimbing->nip ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Nomor Hp / Telepon</b></h6>
+                                <span>{{ $pembimbing->no_hp ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                                <div>
+                                    <h6 class="text-primary mb-2"><b>Apakah institusi / perusahaan akan menerbitkan surat keterangan atau sertifikat dicetak oleh perusahaan atau dibantu pihak sekolah?</b></h6>
+                                    <span>{{ $iduka->kolom6 == 'Ya' ? 'Cetak oleh perusahaan' : 'Dibantu pihak sekolah' }}</span>
+                                </div>
+                                {{-- <div class="mt-3 mt-md-0">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="kolom6" value="Ya" {{ $iduka->kolom6 == 'Ya' ? 'checked' : '' }} disabled>
+                                        <label class="form-check-label">Cetak oleh perusahaan</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="kolom6" value="Tidak" {{ $iduka->kolom6 != 'Ya' ? 'checked' : '' }} disabled>
+                                        <label class="form-check-label">Dibantu pihak sekolah</label>
+                                    </div>
+                                </div> --}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Apakah di institusi / perusahaan ada SOP / Aturan Kerja / Tata Tertib?</b></h6>
+                                <span>{{ $iduka->kolom7 ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Apakah institusi / perusahaan menerapkan K3LH (kesehatan, keselamatan kerja, dan lingkungan hidup)?</b></h6>
+                                <span>{{ $iduka->kolom8 ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="text-primary"><b>Logo Perusahaan (Opsional)</b></h6>
+                                @if($iduka->foto)
+                                    <img src="{{ asset('storage/' . $iduka->foto) }}" alt="Foto Institusi" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                                    <div class="mt-2">
+                                        <a href="{{ asset('storage/' . $iduka->foto) }}" target="_blank" class="btn btn-sm btn-info">Lihat Full Size</a>
+                                    </div>
+                                @else
+                                    <span class="text-muted">Tidak ada foto</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                                   
+                    {{-- <div class="card mb-3">
                         <div class="card-body">
                             @if ($errors->any())
                             <div class="alert alert-danger">
@@ -223,10 +395,10 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        {{-- kosongkan --}}
+
                                     </tr>
                                     <tr>
-                                        {{-- kosongkan --}}
+
                                     </tr>
                                     <tr>
                                         <td>3.</td>
@@ -242,7 +414,7 @@
                                         <td>5.</td>
                                         <td colspan="3">Yang akan menandatangani sertifikat PKL</td>
                                     </tr>
-                                    {{-- pemimpin --}}
+
                                     <tr>
                                         <td></td>
                                         <td colspan="3"><b>A. Kepala / Pimpinan Institusi / Perusahaan</b></td>
@@ -268,7 +440,7 @@
                                         <td><span>d) No Hp / Telepon</span></td>
                                         <td colspan="2">{{ $iduka->no_hp_pimpinan }}</td>
                                     </tr>
-                                    {{-- pembimbing --}}
+
                                     <tr>
                                         <td></td>
                                         <td colspan="3"><b>B. Pembimbing Institusi / Perusahaan</b></td>
@@ -332,7 +504,7 @@
 
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="card">
                         <div class="card-body">

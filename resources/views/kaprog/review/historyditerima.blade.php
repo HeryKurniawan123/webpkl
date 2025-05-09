@@ -56,105 +56,75 @@
                             </div>
                         </div>
                    </div>
-                    <div class="card shadow-sm" style="padding: 20px;">
-                        @if(session()->has('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        @endif
-                        <div class="table-responsive">
-                            <div class="table-reponsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama Siswa</th>
-                                            <th>Kelas</th>
-                                            <th>Nama Institusi</th>
-                                            <th>Tanggal Pengajuan</th>
-                                            <th>Status</th>
-                                            <th>Surat Izin</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Data History Diterima -->
-                                        @foreach($usulanDiterima as $index => $usulan)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $usulan->user->name }}</td>
-                                            <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                            <td>{{ $usulan->nama }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
-                                            <td><span class="badge bg-success">Diterima</span></td>
-                                            <td>
-                                                @if($usulan->surat_izin == 'belum')
-                                                <form class="form-surat-izin" data-id="{{ $usulan->id }}" data-tipe="usulan">
-                                                    @csrf
-                                                    <button type="button" class="btn btn-warning btn-sm btn-surat-izin">
-                                                        Belum
-                                                    </button>
-                                                </form>
-                                                @else
-                                                <span class="badge bg-success">Sudah</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usulan->id }}" data-tipe="usulan">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @if($usulanDiterima->isEmpty())
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
-                                        </tr>
+                   <div class="card shadow-sm" style="padding: 20px;">
+                    @if(session()->has('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    @endif
+                
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Kelas</th>
+                                    <th>Nama Institusi</th>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th>Status</th>
+                                    <th>Surat Izin</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($paginated as $index => $item)
+                                <tr>
+                                    <td>{{ ($paginated->firstItem() ?? 0) + $index }}</td>
+                                    <td>{{ $item->user->name }}</td>
+                                    <td>{{ $item->user->dataPribadi->kelas->kelas ?? '-' }}{{ $item->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                    <td>
+                                        @if($item->tipe == 'usulan')
+                                            {{ $item->nama }}
+                                        @else
+                                            {{ $item->iduka->nama ?? '-' }}
                                         @endif
-        
-                                        @foreach ($usulanDiterimaPkl as $usul)
-                                        <tr>
-                                        <td>{{ $loop->iteration + count($usulanDiterima) }}</td>
-                                            <td>{{ $usul->user->name }}</td>
-                                            <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }}{{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                            <td>{{ $usul->iduka->nama ?? '-' }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
-                                            <td><span class="badge bg-success">Diterima</span></td>
-                                            <td>
-                                                @if($usul->surat_izin == 'belum')
-                                                <form class="form-surat-izin" data-id="{{ $usul->id }}" data-tipe="pkl">
-                                                    @csrf
-                                                    <button type="button" class="btn btn-warning btn-sm btn-surat-izin">
-                                                        Belum
-                                                    </button>
-                                                </form>
-                                                @else
-                                                <span class="badge bg-success">Sudah</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $usul->id }}" data-tipe="pkl">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        <!-- Add more rows here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        {{-- <div class="d-flex justify-content-end mt-4">
-                            {{ $usulanDiterimaPkl->links('pagination::bootstrap-5') }}  <!-- Menampilkan pagination Bootstrap -->
-                        </div> --}}
-                        <div class="d-flex justify-content mt-3 mb-2">
-                            <a href="{{ route('review.usulan')}}" class="btn btn-back shadow-sm">
-                                Kembali
-                            </a>
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
+                                    <td><span class="badge bg-success">Diterima</span></td>
+                                    <td>
+                                        @if($item->surat_izin == 'belum')
+                                        <form class="form-surat-izin" data-id="{{ $item->id }}" data-tipe="{{ $item->tipe }}">
+                                            @csrf
+                                            <button type="button" class="btn btn-warning btn-sm btn-surat-izin">Belum</button>
+                                        </form>
+                                        @else
+                                        <span class="badge bg-success">Sudah</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="{{ $item->id }}" data-tipe="{{ $item->tipe }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                
+                        <!-- Pagination di sini -->
+                        <div class="d-flex justify-content-end mt-4">
+                            {{ $paginated->links('pagination::bootstrap-5') }}
                         </div>
                     </div>
-                </div>
+                
+                    <div class="d-flex justify-content mt-3 mb-2">
+                        <a href="{{ route('review.usulan')}}" class="btn btn-back shadow-sm">
+                            Kembali
+                        </a>
+                    </div>
+                </div>                
             </div>
         </div>
     </div>
