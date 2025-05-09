@@ -222,7 +222,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between mt-3 mb-2">
-                                <a href="{{ route('persuratan.review') }}" class="btn btn-secondary">
+                                <a href="{{ url()->previous() }}" class="btn btn-secondary">
                                     <i class="bi bi-arrow-left"></i> Kembali
                                 </a>
                                 <a href="{{ route('persuratan.download', $pengajuan->id) }}" class="btn btn-danger">

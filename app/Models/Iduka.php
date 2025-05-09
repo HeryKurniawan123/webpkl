@@ -32,7 +32,8 @@ class Iduka extends Model
         'tanggal_awal',
         'tanggal_akhir',
         'mulai_kerjasama',
-        'akhir_kerjasama'
+        'akhir_kerjasama',
+        'hidden',
     ];
 
 

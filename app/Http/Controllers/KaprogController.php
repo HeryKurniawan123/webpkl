@@ -535,4 +535,14 @@ class KaprogController extends Controller
 
         return back()->with('success', 'Pembatalan berhasil ditolak.');
     }
+
+
+ public function toggleVisibility(Iduka $iduka)
+ {
+     $iduka->update([
+         'hidden' => !$iduka->hidden
+     ]);
+ 
+     return back()->with('success', 'Status tampil berhasil diubah!');
+ }
 }

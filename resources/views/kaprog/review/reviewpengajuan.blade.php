@@ -51,7 +51,7 @@
                     @foreach($pengajuanUsulans->groupBy('iduka_id') as $iduka_id => $pengajuanGroup)
                     @php
                     $filteredPengajuan = $pengajuanGroup->filter(function($item) {
-                    return $item->status === 'sudah';
+                        return $item->status === 'sudah';
                     });
                     @endphp
 

@@ -162,15 +162,14 @@ class  UsulanIdukaController extends Controller
     {
         $today = Carbon::today();
     
-        $iduka = Iduka::where(function ($query) use ($today) {
-            $query->whereNull('akhir_kerjasama') // Belum diisi = masih aktif
-                  ->orWhere('akhir_kerjasama', '>=', $today); // Masih dalam masa kerjasama
-        })
-        ->orderBy('rekomendasi', 'desc') // ⬅️ utamakan yang direkomendasikan
-        ->orderBy('created_at', 'desc')
-        ->get();
-    
-        $today = now()->format('Y-m-d');
+        $iduka = Iduka::where('hidden', false) // Hanya tampilkan yang tidak hidden
+            ->where(function ($query) use ($today) {
+                $query->whereNull('akhir_kerjasama')
+                      ->orWhere('akhir_kerjasama', '>=', $today);
+            })
+            ->orderBy('rekomendasi', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
     
         return view('siswa.usulan.dataIdukaUsulan', compact('iduka', 'today'));
     }

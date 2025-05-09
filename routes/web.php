@@ -340,6 +340,11 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     //--------
 
     Route::get('/kaprog/histori-pengajuan', [KaprogController::class, 'historiPengajuan'])->name('kaprog.review.histori');
+
+
+  // Gunakan middleware untuk kedua role
+Route::put('/iduka/{iduka}/toggle-visibility', [KaprogController::class, 'toggleVisibility'])
+->name('iduka.toggleVisibility');
 });
 
 
