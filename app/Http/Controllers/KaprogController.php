@@ -362,25 +362,37 @@ class KaprogController extends Controller
     //mengirim ke iduka
     public function reviewPengajuan()
     {
+        $userKonkeId = auth()->user()->konke_id; // ambil konke_id dari Kaprog yang login
+    
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
-            ->whereIn('dikirim', ['belum', 'menunggu']) // ambil dua status
+            ->whereIn('dikirim', ['belum', 'menunggu'])
+            ->whereHas('dataPribadi', function ($query) use ($userKonkeId) {
+                $query->where('konke_id', $userKonkeId);
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-
+    
         return view('kaprog.review.reviewpengajuan', compact('pengajuanUsulans'));
     }
+    
 
     public function detailUsulanPkl($iduka_id)
     {
+        $userKonkeId = auth()->user()->konke_id;
+    
         $iduka = Iduka::findOrFail($iduka_id);
-
+    
         $pengajuans = CetakUsulan::with(['dataPribadi.kelas'])
             ->where('iduka_id', $iduka_id)
-            ->whereIn('dikirim', ['belum', 'menunggu']) // Atau status yang kamu inginkan
+            ->whereIn('dikirim', ['belum', 'menunggu'])
+            ->whereHas('dataPribadi', function ($query) use ($userKonkeId) {
+                $query->where('konke_id', $userKonkeId);
+            })
             ->get();
-
+    
         return view('kaprog.review.reviewdetail', compact('iduka', 'pengajuans'));
     }
+    
 
 
 
