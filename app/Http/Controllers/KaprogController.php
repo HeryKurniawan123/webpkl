@@ -239,28 +239,43 @@ class KaprogController extends Controller
 
         return view('kaprog.review.historyditerima', compact('paginated'));
     }
-    public function historyDitolak()
 
+    public function historyDitolak()
     {
         $kaprog = DB::table('gurus')->where('user_id', Auth::id())->first();
         if (!$kaprog) {
             return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
         }
-
+    
+        // Ambil data usulan dari UsulanIduka
         $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'ditolak')
             ->where('konke_id', $kaprog->konke_id)
-            ->paginate(2);
-
+            ->get();
+    
+        // Ambil data usulan dari PengajuanUsulan
         $usulanDitolakPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->where('status', 'ditolak')
-            ->whereHas('user', function ($query) use ($kaprog) {
-                $query->where('konke_id', $kaprog->konke_id);
-            })
-            ->paginate(2);
-
-        return view('kaprog.review.historyditolak', compact('usulanDitolak', 'usulanDitolakPkl'));
+            ->where('konke_id', $kaprog->konke_id)
+            ->get();
+    
+        // Gabungkan semua data dan urutkan berdasarkan tanggal terbaru
+        $combined = $usulanDitolak->concat($usulanDitolakPkl)->sortByDesc('created_at')->values();
+    
+        // Manual pagination
+        $perPage = 10;
+        $currentPage = request()->get('page', 1);
+        $paginated = new LengthAwarePaginator(
+            $combined->forPage($currentPage, $perPage),
+            $combined->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+    
+        return view('kaprog.review.historyditolak', compact('paginated'));
     }
+
 
 
     // public function showDetailUsulan($id)

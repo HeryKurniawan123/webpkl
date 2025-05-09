@@ -62,28 +62,28 @@
                                 </div>
                             @endif  
                             <div class="table-responsive">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">                            
-                                        <thead>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Siswa</th>
+                                            <th>Kelas</th>
+                                            <th>Nama Institusi</th>
+                                            <th>Tanggal Pengajuan</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($paginated as $index => $item)
                                             <tr>
-                                                <th>No</th>
-                                                <th>Nama Siswa</th>
-                                                <th>Kelas</th>
-                                                <th>Nama Institusi</th>
-                                                <th>Tanggal Pengajuan</th>
-                                                <th>Status</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <!-- Data History Diterima -->
-                                            @foreach($usulanDitolak as $index => $usulan)
-                                            <tr>
-                                                <td>{{ $index + 1 }}</td>
-                                                <td>{{ $usulan->user->name }}</td>
-                                                <td>{{ $usulan->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usulan->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                                <td>{{ $usulan->nama }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($usulan->created_at)->format('d-m-Y') }}</td>
+                                                <td>{{ $paginated->firstItem() + $index }}</td>
+                                                <td>{{ $item->user->name }}</td>
+                                                <td>{{ $item->user->dataPribadi->kelas->kelas ?? '-' }} {{ $item->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
+                                                <td>
+                                                    {{ $item->nama ?? ($item->iduka->nama ?? '-') }}
+                                                </td>
+                                                <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d-m-Y') }}</td>
                                                 <td><span class="badge bg-danger">Ditolak</span></td>
                                                 <td>
                                                     <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
@@ -93,46 +93,24 @@
                                                             <i class="bi bi-trash"></i>
                                                         </button>
                                                     </form>
-                                                    
                                                 </td>
                                             </tr>
-                                            @endforeach
-                                            @if($usulanDitolak->isEmpty())
+                                        @empty
                                             <tr>
-                                                <td colspan="7" class="text-center text-muted">Belum ada pengajuan diterima.</td>
+                                                <td colspan="7" class="text-center text-muted">Belum ada pengajuan ditolak.</td>
                                             </tr>
-                                            @endif
-        
-                                            @foreach ($usulanDitolakPkl as $usul)
-                                            <tr>
-                                            <td>{{ $loop->iteration + count($usulanDitolakPkl) }}</td>
-                                                <td>{{ $usul->user->name }}</td>
-                                                <td>{{ $usul->user->dataPribadi->kelas->kelas ?? '-' }} {{ $usul->user->dataPribadi->kelas->name_kelas ?? '-' }}</td>
-                                                <td>{{ $usul->iduka->nama }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($usul->created_at)->format('d-m-Y') }}</td>
-                                                <td><span class="badge bg-danger">Ditolak</span></td>
-                                                <td>
-                                                    <form action="#" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                    
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                            <!-- Add more rows here -->
-                                        </tbody>
-                                    </table>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            
+                                <div class="d-flex justify-content-end mt-3">
+                                    {{ $paginated->links('pagination::bootstrap-5') }}
                                 </div>
-                                <div class="d-flex justify-content mt-3 mb-2">
-                                    <a href="{{ route('review.usulan')}}" class="btn btn-back shadow-sm">
-                                        Kembali
-                                    </a>
+                            
+                                <div class="d-flex justify-content-start mt-3">
+                                    <a href="{{ route('review.usulan') }}" class="btn btn-back shadow-sm">Kembali</a>
                                 </div>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>
