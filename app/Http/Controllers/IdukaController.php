@@ -22,8 +22,8 @@ class IdukaController extends Controller
     public function index()
     {
         $iduka = Iduka::orderBy('rekomendasi', 'desc')  // Urutkan berdasarkan rekomendasi (1 di atas)
-                  ->orderBy('created_at', 'desc') // Jika ada yang sama, urutkan berdasarkan tanggal dibuat
-                  ->paginate(10);
+            ->orderBy('created_at', 'desc') // Jika ada yang sama, urutkan berdasarkan tanggal dibuat
+            ->paginate(10);
 
         return view('iduka.dataiduka.dataiduka', compact('iduka'));
     }
@@ -162,8 +162,9 @@ class IdukaController extends Controller
             'nama_pembimbing' => 'required|string',
             'nip_pembimbing' => 'required|string',
             'no_hp_pembimbing' => 'required|numeric',
-            'mulai_kerjasama' => 'required|date',
-        'akhir_kerjasama' => 'required|date|after_or_equal:mulai_kerjasama',
+            'mulai_kerjasama' => 'nullable|date',
+            'akhir_kerjasama' => 'nullable|date|after_or_equal:mulai_kerjasama',
+
         ];
 
         $request->validate($validationRules);
@@ -293,8 +294,6 @@ class IdukaController extends Controller
                     'name' => $request->nama,
                 ]);
             }
-
-
         });
 
         return redirect()->back()->with('success', 'Data institusi berhasil diperbarui!');
@@ -495,11 +494,4 @@ class IdukaController extends Controller
 
         return view('iduka.siswa_diterima', compact('pengajuanDiterima', 'pengajuanByYear'));
     }
-
-
-
-
-
-
-
 }
