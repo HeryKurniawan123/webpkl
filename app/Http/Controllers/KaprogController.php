@@ -40,12 +40,20 @@ class KaprogController extends Controller
 
         $groupedIduka = $usulanIdukas->groupBy('email');
 
+        // Ambil semua data pengajuan PKL (tanpa paginate), untuk menghitung jumlah total siswa per IDUKA
+        $pengajuanUsulanSemua = PengajuanUsulan::with('iduka')
+            ->whereIn('status', ['proses', 'menunggu'])
+            ->where('konke_id', $kaprog->konke_id)
+            ->get()
+            ->groupBy('iduka_id');
+
+        // Ambil data paginate hanya untuk tampilan daftar
         $pengajuanUsulans = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->whereIn('status', ['proses', 'menunggu'])
             ->where('konke_id', $kaprog->konke_id)
-            ->paginate(10);  // Gunakan paginate
+            ->paginate(10);
 
-        return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans', 'groupedIduka'));
+        return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans', 'groupedIduka', 'pengajuanUsulanSemua'));
     }
 
 
