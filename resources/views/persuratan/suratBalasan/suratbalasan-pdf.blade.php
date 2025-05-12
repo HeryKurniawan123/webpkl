@@ -108,20 +108,20 @@
                 <tr>
                     <th style="text-align: center; width:3%;">NO</th>
                     <th style="text-align: center; width:30%;">NAMA</th>
-                    <th style="text-align: center; width:20%;">KELAS</th>
+                    <th style="text-align: center; width:17%;">KELAS</th>
                     <th style="text-align: center; width:17%;">NIS</th>
-                    <th style="text-align: center; width:18%;">TEMPAT</th>
-                    <th style="text-align: center; width:12%;">KET</th>
+                    <th style="text-align: center; width:17%;">TEMPAT</th>
+                    <th style="text-align: center; width:25%;">KETERANGAN</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>1</td>
-                    <td>{{ $pengajuan->datapribadi->name ?? ''}}</td>
-                    <td>{{ $pengajuan->datapribadi->kelas->kelas }} {{ $pengajuan->datapribadi->kelas->name_kelas }}</td>
-                    <td>{{ $pengajuan->datapribadi->nip }}</td>
-                    <td>{{ $pengajuan->datapribadi->alamat_siswa }}</td>
-                    <td>{{ $pengajuan->status }}</td>
+                    <td style="text-align: center; width:3%;">1</td>
+                    <td style="text-align: center; width:30%;">{{ $pengajuan->datapribadi->name ?? ''}}</td>
+                    <td style="text-align: center; width:17%;">{{ $pengajuan->datapribadi->kelas->kelas }} {{ $pengajuan->datapribadi->kelas->name_kelas }}</td>
+                    <td style="text-align: center; width:17%;">{{ $pengajuan->datapribadi->nip }}</td>
+                    <td style="text-align: center; width:17%;">{{ $pengajuan->datapribadi->alamat_siswa }}</td>
+                    <td style="text-align: center; width:25%;">{{ $pengajuan->status }}</td>
                 </tr>
             </tbody>
         </table>

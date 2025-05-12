@@ -4,6 +4,7 @@
 <div class="container-fluid">
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
+
             <div class="row">
                 <div class="card mb-3">
                     <div class="card-body d-flex justify-content-between align-items-center">
@@ -16,145 +17,101 @@
 
                 <div class="col-md-12 mt-3">
                     @if ($pengajuans->isEmpty())
-                    <p class="text-center">Tidak ada pengajuan yang tersedia untuk Institusi ini.</p>
+                        <p class="text-center">Tidak ada pengajuan yang tersedia untuk Institusi ini.</p>
                     @else
-                    @foreach ($pengajuans as $pengajuan)
-                    <div class="card mb-3 shadow-sm" style="padding: 20px; border-radius: 10px;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="mb-0" style="font-size: 18px">
-                                    <strong>{{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}</strong>
-                                </div>
+                        @foreach ($pengajuans as $pengajuan)
+                        <div class="card mb-3 shadow-sm p-3 rounded">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }}
-                                    {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
-                                </div>
-                                <div>
-                                    Status: {{ ucfirst($pengajuan->status) }}
-                                </div>
-                                {{-- Tambahan untuk status "menunggu" --}}
-                                @if($pengajuan->dikirim === 'menunggu')
-                                <div class="text-danger mt-1" style="font-size: 13px;">
-                                    ⚠️ Siswa mengajukan pembatalan!
-                                </div>
-                                @endif
-                            </div>
-                            <div class="d-inline-block position-relative">
-                                <!-- Desktop: Tombol langsung -->
-                                <div class="d-none d-md-flex gap-2">
-                                    <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-primary rounded-pill">
-                                        Lihat Detail
-                                    </a>
-
-                                    @if ($pengajuan->dikirim === 'menunggu')
-                                    <form action="{{ route('kaprog.pembatalan.terima', $pengajuan->id) }}" method="POST" id="form-terima-{{ $pengajuan->id }}" class="d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-success rounded-pill" onclick="confirmTerimaPembatalan('{{ $pengajuan->id }}')">
-                                            Terima Pembatalan
-                                        </button>
-                                    </form>
-
-                                    <form action="{{ route('kaprog.pembatalan.tolak', $pengajuan->id) }}" method="POST" id="form-tolak-{{ $pengajuan->id }}" class="d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-danger rounded-pill" onclick="confirmTolakPembatalan('{{ $pengajuan->id }}')">
-                                            Tolak Pembatalan
-                                        </button>
-                                    </form>
-                                    @elseif ($pengajuan->dikirim === 'belum')
-                                    <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-{{ $pengajuan->id }}">
-                                        @csrf
-                                        <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                        <button type="button" class="btn btn-primary rounded-pill" onclick="confirmKirim('{{ $pengajuan->id }}')">
-                                            Kirim
-                                        </button>
-                                    </form>
-                                    @elseif ($pengajuan->dikirim === 'batal')
-                                    <button class="btn btn-secondary rounded-pill" disabled>Telah Dibatalkan</button>
+                                    <div class="fw-bold" style="font-size: 18px">
+                                        {{ $pengajuan->dataPribadi->name ?? 'Nama Tidak Tersedia' }}
+                                    </div>
+                                    <div>
+                                        Kelas: {{ $pengajuan->dataPribadi->kelas->kelas ?? '-' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '-' }}
+                                    </div>
+                                    <div>
+                                        Status: {{ ucfirst($pengajuan->status) }}
+                                    </div>
+                                    @if($pengajuan->dikirim === 'menunggu')
+                                    <div class="text-danger mt-1" style="font-size: 13px;">
+                                        ⚠️ Siswa mengajukan pembatalan!
+                                    </div>
                                     @endif
                                 </div>
 
-                                <!-- Mobile: Dropdown tiga titik -->
-                                <div class="dropdown d-md-none">
-                                    <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="dropdown-item text-success">
-                                                Lihat Detail
-                                            </a>
-                                        </li>
-                                        @if ($pengajuan->status === 'diterima')
-                                        <li>
-                                            <button class="dropdown-item text-muted" disabled>Sudah Dikirim</button>
-                                        </li>
-                                        @else
-                                        <li>
-                                            <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-mobile-{{ $pengajuan->id }}">
+                                <div class="d-inline-block position-relative">
+                                    {{-- Desktop actions --}}
+                                    <div class="d-none d-md-flex gap-2">
+                                        <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="btn btn-primary rounded-pill">
+                                            Lihat Detail
+                                        </a>
+
+                                        @if ($pengajuan->dikirim === 'menunggu')
+                                            <form action="{{ route('kaprog.pembatalan.terima', $pengajuan->id) }}" method="POST" id="form-terima-{{ $pengajuan->id }}">
+                                                @csrf
+                                                <button type="button" class="btn btn-success rounded-pill" onclick="confirmTerimaPembatalan('{{ $pengajuan->id }}')">Terima Pembatalan</button>
+                                            </form>
+                                            <form action="{{ route('kaprog.pembatalan.tolak', $pengajuan->id) }}" method="POST" id="form-tolak-{{ $pengajuan->id }}">
+                                                @csrf
+                                                <button type="button" class="btn btn-danger rounded-pill" onclick="confirmTolakPembatalan('{{ $pengajuan->id }}')">Tolak Pembatalan</button>
+                                            </form>
+                                        @elseif ($pengajuan->dikirim === 'belum')
+                                            <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-{{ $pengajuan->id }}">
                                                 @csrf
                                                 <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                                <button type="button" class="dropdown-item text-primary" onclick="confirmKirimMobile('{{ $pengajuan->id }}')">
-                                                    Kirim
-                                                </button>
+                                                <button type="button" class="btn btn-primary rounded-pill" onclick="confirmKirim('{{ $pengajuan->id }}')">Kirim</button>
                                             </form>
-                                        </li>
+                                        @elseif ($pengajuan->dikirim === 'batal')
+                                            <button class="btn btn-secondary rounded-pill" disabled>Telah Dibatalkan</button>
                                         @endif
-                                    </ul>
+                                    </div>
+
+                                    {{-- Mobile dropdown --}}
+                                    <div class="dropdown d-md-none">
+                                        <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="dropdown-item text-success">
+                                                    Lihat Detail
+                                                </a>
+                                            </li>
+
+                                            @if ($pengajuan->status === 'diterima')
+                                                <li><button class="dropdown-item text-muted" disabled>Sudah Dikirim</button></li>
+                                            @elseif ($pengajuan->dikirim === 'menunggu')
+                                                <li>
+                                                    <form action="{{ route('kaprog.pengajuan.setujuiPembatalan', $pengajuan->id) }}" method="POST" onsubmit="return confirm('Setujui pembatalan pengajuan ini?')">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button class="dropdown-item text-danger">Setujui Batal</button>
+                                                    </form>
+                                                </li>
+                                            @else
+                                                <li>
+                                                    <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-mobile-{{ $pengajuan->id }}">
+                                                        @csrf
+                                                        <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
+                                                        <button type="button" class="dropdown-item text-primary" onclick="confirmKirimMobile('{{ $pengajuan->id }}')">Kirim</button>
+                                                    </form>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-inline-block position-relative">
-                        <!-- Desktop: Tombol langsung -->
-                        <div class="d-none d-md-flex gap-2">
-
-                        </div>
-
-                        <!-- Mobile: Dropdown tiga titik -->
-                        <div class="dropdown d-md-none">
-                            <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                ⋮
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <a href="{{ route('persuratan.suratPengajuan.detailSuratPengajuan', $pengajuan->id) }}" class="dropdown-item text-success">
-                                        Lihat Detail
-                                    </a>
-                                </li>
-                                @if ($pengajuan->status === 'diterima')
-                                <li>
-                                    <button class="dropdown-item text-muted" disabled>Sudah Dikirim</button>
-                                </li>
-                                @elseif ($pengajuan->status === 'menunggu')
-                                <form action="{{ route('kaprog.pengajuan.setujuiPembatalan', $pengajuan->id) }}" method="POST" onsubmit="return confirm('Setujui pembatalan pengajuan ini?')">
-                                    @csrf
-                                    @method('PUT')
-                                    <button class="btn btn-danger">Setujui Batal</button>
-                                </form>
-                                <li>
-                                    @else
-                                    <form action="{{ route('kaprog.pengajuan.prosesPengajuan', $pengajuan->id) }}" method="POST" id="form-mobile-{{ $pengajuan->id }}">
-                                        @csrf
-                                        <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                        <button type="button" class="dropdown-item text-primary" onclick="confirmKirimMobile('{{ $pengajuan->id }}')">
-                                            Kirim
-                                        </button>
-                                    </form>
-                                </li>
-                                @endif
-                            </ul>
-                        </div>
-                    </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
-            @endforeach
-            @endif
+
         </div>
     </div>
 </div>
-</div>
-</div>
 @endsection
+
 
 @push('scripts')
 <!-- SweetAlert2 -->

@@ -159,9 +159,9 @@
     </table>
     <br>
 
-    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Sehubungan dengan pelaksanaan kegiatan Praktik Kerja Lapangan (PKL), dengan ini kami bermaksud mengajukan permohonan Praktik Kerja Lapangan (PKL) yang akan dimulai pada tanggal 13 Oktober 2025 sampai dengan 14 Februari 2026 di Perusahaan / Instansi Bapak/Ibu bagi peserta didik SMKN 1 Kawali atas nama :</p>
+    <p style="margin-bottom:20px; font-size: 14px; text-align: justify; line-height: 1.5;">Sehubungan dengan pelaksanaan kegiatan Praktik Kerja Lapangan (PKL), dengan ini kami bermaksud mengajukan permohonan Praktik Kerja Lapangan (PKL) yang akan dimulai pada tanggal <b>13 Oktober 2025 sampai dengan 14 Februari 2026</b> di Perusahaan / Instansi Bapak/Ibu bagi peserta didik SMKN 1 Kawali atas nama :</p>
 
-<table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 12px;">
+<table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 14px;">
     <tr style="text-align: center;">
         <th style="text-align: center;  width: 5%;">NO</th>
         <th style="text-align: center;  width: 30%;">NAMA</th>
@@ -180,10 +180,12 @@
 </table>
 <br>
 
-<p style="margin-bottom:20px; font-size: 12px; text-align: justify;">
-    Tanpa mengurangi rasa hormat,  kami berharap Bapak/Ibu pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai format yang telah kami lampirkan.
+<p style="margin-bottom:20px; font-size: 14px; text-align: justify; line-height: 1.5;">
+    Tanpa mengurangi rasa hormat,  kami berharap Bapak/Ibu pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai dengan format yang telah kami lampirkan dan dapat dikirimkan melalui <i>WhatsApp</i> ke nomor xxxx-xxxx-xxxx atas nama xxxxxxxxxx.
     Atas perhatian dan kerjasamanya kami ucapkan terima kasih.
 </p>
+
+<p style="text-align: right; font-size: 14px; padding-right: 55px;">Plh. KEPALA SMK NEGERI 1 KAWALI</p>
 </body>
 
 </html>

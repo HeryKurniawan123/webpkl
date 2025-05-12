@@ -145,7 +145,7 @@
 
     </div>
 
-    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
         <tr>
             <td style="padding: 0px; width: 10%; vertical-align: top;">Nomor</td>
             <!-- <td style="padding: 2px; width: 60%;">: {{ $suratPengantar->nomor ?? '-' }} </td> -->
@@ -168,26 +168,24 @@
     </table>
     <br>
 
-    <p style="margin-bottom:20px; font-size: 12px; text-align: left;">Sehubungan dengan pelaksanaan kegiatan Praktik Kerja Lapangan (PKL), dengan ini kami bermaksud mengajukan Permohonan Praktik Kerja Lapangan (PKL) yang akan dimulai pada tanggal 13 Oktober 2025 sampai dengan 14 Februari 2026 di Perusahaan/ Instansi Bapak/Ibu bagi peserta didik SMKN 1 Kawali atas nama:</p>
+    <p style="margin-bottom:20px; font-size: 14px; text-align: justify; line-height: 1.5;">Sehubungan dengan pelaksanaan kegiatan Praktik Kerja Lapangan (PKL), dengan ini kami bermaksud mengajukan Permohonan Praktik Kerja Lapangan (PKL) yang akan dimulai pada tanggal <b>13 Oktober 2025 sampai dengan 14 Februari 2026</b> di Perusahaan/ Instansi Bapak/Ibu bagi peserta didik SMKN 1 Kawali atas nama:</p>
 
 
-    <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 12px;">
+    <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 14px;">
         <tr style="text-align: center;">
             <th style="text-align: center;  width: 5%;">NO</th>
             <th style="text-align: center;  width: 30%;">NAMA</th>
-            <th style="text-align: center">KELAS</th>
-            <th style="text-align: center; width:15%">NIS</th>
-            <th style="text-align: center; width: 25%;">KONSENTRASI KEAHLIAN</th>
-            <th style="text-align: center">KET</th>
+            <th style="text-align: center;  width: 15%">KELAS</th>
+            <th style="text-align: center;  width: 15%">NIS</th>
+            <th style="text-align: center;  width: 30%;">KONSENTRASI KEAHLIAN</th>
         </tr>
         @foreach($pengajuans as $index => $pengajuan)
         <tr>
             <td style="width: 5%; text-align: center;">{{ $index + 1 }}</td>
             <td style="text-align: center; width: 30%;">{{ $pengajuan->dataPribadi->name }}</td>
-            <td align="center">{{ $pengajuan->dataPribadi->kelas->kelas }} {{ $pengajuan->dataPribadi->kelas->name_kelas }}</td>
-            <td align="center">{{ $pengajuan->dataPribadi->nip }} </td>
-            <td style="text-align: center;">{{ $pengajuan->dataPribadi->konkes->name_konke }}</td>
-            <td></td>
+            <td style="text-align: center; width: 15%;">{{ $pengajuan->dataPribadi->kelas->kelas }} {{ $pengajuan->dataPribadi->kelas->name_kelas }}</td>
+            <td style="text-align: center; width: 15%;">{{ $pengajuan->dataPribadi->nip }} </td>
+            <td style="text-align: center; width: 30%;">{{ $pengajuan->dataPribadi->konkes->name_konke }}</td>
         </tr>
         @endforeach
 
@@ -195,11 +193,15 @@
     </table>
     <br>
 
-    <p style="margin-bottom:20px; font-size: 12px; text-align: justify;">
+    <p style="margin-bottom:20px; font-size: 14px; text-align: justify; line-height: 1.5;">
         <!-- {{ $suratPengantar->deskripsi ?? '-' }} -->
-        Tanpa mengurangi rasa hormat, kami berharap Bapak/ Ibu Pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai format yang telah kami lampirkan. <br>
+        Tanpa mengurangi rasa hormat,  kami berharap Bapak/Ibu pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai dengan format yang telah kami lampirkan dan dapat dikirimkan melalui <i>WhatsApp</i> ke nomor xxxx-xxxx-xxxx atas nama xxxxxxxxxx. <br>
         Atas perhatian dan kerjasamanya kami ucapkan terima kasih.
     </p>
+    <br><br>
+
+    <p style="text-align: right; font-size: 14px; padding-right: 55px;">Plh. KEPALA SMK NEGERI 1 KAWALI</p>
+
 
     <!-- @if(file_exists(public_path('images/ttd.png')))
     <div class="ttd">

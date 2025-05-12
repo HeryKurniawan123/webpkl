@@ -172,23 +172,24 @@
                       @endif
                     </td>
                     <td>
-                      <a href="{{ route('detail.usulan', $usul->id) }}" class="btn btn-info btn-sm">
+                      <div class="d-flex gap-2 justify-content-center">
+                      <a href="{{ route('detail.usulan', $usul->id) }}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center mt-3" style="width: 40px; height: 25px;">
                         <i class="bi bi-eye"></i>
                       </a>
                       @if($usul->status == 'diterima')
-                      <a href="{{ route('usulan.pdf', $usul->id) }}" class="btn btn-danger btn-sm">
+                      <a href="{{ route('usulan.pdf', $usul->id) }}" class="btn btn-info btn-sm d-flex align-items-center justify-content-center mt-3" style="width: 40px; height: 25px;">
                         <i class="bi bi-filetype-pdf"></i>
                       </a>
                       @endif
                       @if($usul->status == 'diterima' || $usul->status == 'proses')
                       <form action="{{ route('siswa.pengajuan.ajukanPembatalan', $usul->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin mengajukan pembatalan?')">
                         @csrf
-                        <button type="submit" class="btn btn-warning btn-sm">
-                          <i class="bi bi-x-circle"></i> Batal
+                        <button type="submit" class="btn btn-warning btn-sm d-flex align-items-center justify-content-center mt-3" style="width: 40px; height: 25px;">
+                          <i class="bi bi-x-circle"></i>
                         </button>
                       </form>
                       @endif
-
+                    </div>
                     </td>
                   </tr>
                   @empty
