@@ -113,7 +113,7 @@
                                     <li>
                                         <form action="{{ route('kaprog.review.kirimSemua', ['iduka_id' => $iduka_id]) }}" method="POST" class="formKirimSemua" data-menunggu="{{ $jumlahMenunggu }}">
                                             @csrf
-                                            <button type="submit" class="dropdown-item btn-kirim-semua" style="white-space: nowrap;">Kirim</button>
+                                            <button type="button" class="dropdown-item btn-kirim-semua" style="white-space: nowrap;">Kirim</button>
                                         </form>
                                     </li>
                                 </ul>
@@ -181,8 +181,7 @@
 <script>
     Swal.fire({
         title: 'Berhasil!',
-        text: '{{ session('
-        success ') }}',
+        text: '{{ session('success') }}',
         icon: 'success',
         timer: 1500,
         showConfirmButton: false
