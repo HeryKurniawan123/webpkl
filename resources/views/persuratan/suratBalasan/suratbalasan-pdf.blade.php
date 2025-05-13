@@ -121,7 +121,7 @@
                     <td style="text-align: center; width:17%;">{{ $pengajuan->datapribadi->kelas->kelas }} {{ $pengajuan->datapribadi->kelas->name_kelas }}</td>
                     <td style="text-align: center; width:17%;">{{ $pengajuan->datapribadi->nip }}</td>
                     <td style="text-align: center; width:17%;">{{ $pengajuan->datapribadi->alamat_siswa }}</td>
-                    <td style="text-align: center; width:25%;">{{ $pengajuan->status }}</td>
+                    <td style="text-align: center; width:25%;"></td>
                 </tr>
             </tbody>
         </table>

@@ -115,7 +115,7 @@
                     <th>KELAS</th>
                     <th>NIS</th>
                     <th>TEMPAT</th>
-                    <th>KET</th>
+                    <th>KETERANGAN</th>
                 </tr>
             </thead>
             <tbody>
@@ -126,7 +126,7 @@
                         <td>{{ $pengajuan->dataPribadi->kelas->kelas ?? '' }} {{ $pengajuan->dataPribadi->kelas->name_kelas ?? '' }}</td>
                         <td>{{ $pengajuan->dataPribadi->nip ?? '' }}</td>
                         <td>{{ $pengajuan->dataPribadi->alamat_siswa ?? '' }}</td>
-                        <td>{{ $pengajuan->status ?? '' }}</td>
+                        <td></td>
                     </tr>
                 @endforeach
             </tbody>
