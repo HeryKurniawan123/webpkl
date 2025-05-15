@@ -340,6 +340,20 @@
             showConfirmButton: false
         });
         @endif
+
+          // Menampilkan SweetAlert jika ada error validasi (misal: NIP/NIK sudah digunakan)
+          @if ($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal Menambahkan Data',
+            html: `{!! implode('<br>', $errors->all()) !!}`,
+            confirmButtonText: 'Tutup'
+        }).then(() => {
+            // Buka kembali modal jika ada error validasi
+            const tambahModal = new bootstrap.Modal(document.getElementById('tambahGuruModal'));
+            tambahModal.show();
+        });
+        @endif
     });
 </script>
 

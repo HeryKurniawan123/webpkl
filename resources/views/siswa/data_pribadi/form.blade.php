@@ -215,17 +215,32 @@
     </div>
 @endsection
 @if(session('success'))
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            showConfirmButton: false,
-            timer: 2000
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 2000
+            });
         });
-    });
-</script>
+    </script>
+@endif
+
+{{-- Notifikasi error validasi --}}
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal menyimpan data!',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                confirmButtonText: 'Tutup'
+            });
+        });
+    </script>
+@endif
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const agamaSelect = document.getElementById('agama-select');
@@ -281,5 +296,4 @@
     </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-@endif
 
