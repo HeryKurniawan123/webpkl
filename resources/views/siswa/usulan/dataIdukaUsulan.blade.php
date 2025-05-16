@@ -75,7 +75,6 @@
             color: #ffbf00;
             border-color: white;
         }
-
     </style>
 </head>
 
@@ -119,35 +118,35 @@
                                         </div>
                                     </div>
                                 </div>
-                            
+
                                 <div class="d-flex d-md-none justify-content-end">
-                                <div class="dropdown">
-                                    <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                       <i class="bi bi-three-dots-vertical"></i>                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a href="{{ route('siswa.dashboard') }}" class="dropdown-item text-primary">
-                                        <i class="bi bi-arrow-left-circle me-2"></i> Kembali
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <button type="button" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
-                                        <i class="bi bi-search me-2"></i> Cari
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <div class="px-3 pt-2">
-                                        <select class="form-select form-select-sm" id="filterIdukaMobile">
-                                            <option value="all">Semua</option>
-                                            <option value="rekomendasi">Rekomendasi</option>
-                                            <option value="ajuan">Ajuan</option>
-                                        </select>
-                                        </div>
-                                    </li>
-                                    </ul>
+                                    <div class="dropdown">
+                                        <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical"></i> </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a href="{{ route('siswa.dashboard') }}" class="dropdown-item text-primary">
+                                                    <i class="bi bi-arrow-left-circle me-2"></i> Kembali
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button type="button" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                                    <i class="bi bi-search me-2"></i> Cari
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <div class="px-3 pt-2">
+                                                    <select class="form-select form-select-sm" id="filterIdukaMobile">
+                                                        <option value="all">Semua</option>
+                                                        <option value="rekomendasi">Rekomendasi</option>
+                                                        <option value="ajuan">Ajuan</option>
+                                                    </select>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                                </div>
-                            </div>                                                                                                               
+                            </div>
                         </div>
 
                         <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
@@ -210,7 +209,7 @@
                                     @endphp
                                     @if ($kuota <= 0)
                                         <button
-                                        class="btn btn-kuota rounded-pill btn-sm btn-detail"
+                                        class="btn btn-kuota rounded-pill btn-sm btn-kuota-penuh"
                                         data-nama="{{ $i->nama }}">
                                         Kuota Penuh
                                         </button>
@@ -339,6 +338,19 @@
                         confirmButtonColor: '#7e7dfb'
                     });
                 }
+            });
+        });
+         // 🆕 Tombol kuota penuh
+         const kuotaButtons = document.querySelectorAll(".btn-kuota-penuh");
+        kuotaButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const nama = this.getAttribute("data-nama");
+                Swal.fire({
+                    icon: "info",
+                    title: "Kuota Penuh",
+                    text: `Maaf, pendaftaran ke institusi "${nama}" sudah penuh.`,
+                    confirmButtonColor: "#7e7dfb"
+                });
             });
         });
     });

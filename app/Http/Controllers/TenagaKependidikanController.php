@@ -25,7 +25,7 @@ class TenagaKependidikanController extends Controller
         $request->validate([
             'nama' => 'required|string|max:100',
             'nik' => 'required|string|max:20|unique:kependik,nik',
-            'nip_nuptk' => 'nullable|string|max:30',
+           'nip_nuptk' => 'nullable|string|max:30|unique:kependik,nip_nuptk',
             'tempat_lahir' => 'required|string|max:50',
             'tanggal_lahir' => 'required|date',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',

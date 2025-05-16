@@ -282,6 +282,16 @@
             showConfirmButton: false
         });
         @endif
+
+          // SweetAlert error validasi
+    @if ($errors->any())
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal Menambahkan',
+        html: `{!! implode('<br>', $errors->all()) !!}`,
+        confirmButtonText: 'Tutup'
+    });
+    @endif
     });
 </script>
 

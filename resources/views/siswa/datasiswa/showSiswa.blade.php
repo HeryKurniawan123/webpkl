@@ -308,6 +308,16 @@
             showConfirmButton: false
         });
         @endif
+
+          // SweetAlert error validasi
+          @if ($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal Menambahkan Siswa',
+            html: `{!! implode('<br>', $errors->all()) !!}`,
+            confirmButtonText: 'Tutup'
+        });
+        @endif
     });
 </script>
 
