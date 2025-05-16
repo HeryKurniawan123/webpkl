@@ -74,7 +74,8 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <table class="table table-hover">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
                                 <tr>
                                     <td>Nama Siswa</td>
                                     <td>:</td>
@@ -125,8 +126,8 @@
                                     <td>:</td>
                                     <td>{{ $dataPribadi->email ?? '-' }}</td>
                                 </tr>
-
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,7 +139,8 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($usulanIduka)
-                            <table class="table table-hover">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
                                 <tr>
                                     <td>Nama Institusi / Perusahaan</td>
                                     <td>:</td>
@@ -190,8 +192,10 @@
                                     <td>{{ $usulanIduka->kerjasama ?? '-' }}</td>
                                 </tr>
                             </table>
+                            </div>
                             @elseif ($pengajuanUsulan && $pengajuanUsulan->iduka)
-                            <table class="table table-hover">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
                                 <tr>
                                     <td>Nama IDUKA</td>
                                     <td>:</td>
@@ -238,6 +242,7 @@
                                     <td>{{ $pengajuanUsulan->iduka->kerjasama ?? '-' }}</td>
                                 </tr>
                             </table>
+                            </div>
                             @else
                             <p>Belum ada data IDUKA yang diusulkan atau diajukan.</p>
                             @endif

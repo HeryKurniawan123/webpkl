@@ -217,7 +217,7 @@
                                     <input type="hidden" name="kuota_pkl" value="{{ $iduka->kuota_pkl }}">
                                     
                                     <button type="submit" class="ajukan-btn btn btn-primary shadow-sm">
-                                        Usulkan PKL
+                                        Ajukan PKL
                                     </button>
                                 </form>
                                                              
@@ -236,12 +236,12 @@
         
                 Swal.fire({
                     title: "Apakah kamu yakin?",
-                    text: "Ingin mengusulkan Institusi ini?",
+                    text: "Ingin mengajukan Institusi ini?",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Ya, Usulkan!"
+                    confirmButtonText: "Ya, Ajukan!"
                 }).then((result) => {
                     if (result.isConfirmed) {
                         this.closest('.ajukan-form').submit();
@@ -253,7 +253,7 @@
         if (result.isConfirmed) {
             Swal.fire({
                 icon: 'success',
-                title: 'Usulan berhasil dikirim!',
+                title: 'Pengajuan berhasil dikirim!',
                 text: 'Data kamu sudah terkirim ke sistem.',
                 showConfirmButton: false,
                 timer: 2000
@@ -266,7 +266,7 @@
         if (result.isConfirmed) {
             Swal.fire({
                 icon: 'success',
-                title: 'Usulan berhasil dikirim!',
+                title: 'Pengajuan berhasil dikirim!',
                 text: 'Data kamu sudah terkirim ke sistem.',
                 showConfirmButton: false,
                 timer: 2000

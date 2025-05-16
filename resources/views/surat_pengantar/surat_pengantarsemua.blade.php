@@ -126,6 +126,35 @@
             display: block;
             height: 80px;
         }
+
+       /* .signature-container {
+            margin-top: 30px;
+            text-align: left;
+            margin-left: 30px;
+        }
+
+        .signature-position {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .signature-box {
+            border: 1px solid black;
+            border-radius: 15px;
+            padding: 10px 20px;
+            display: inline-block;
+            max-width: 300px;
+        }
+
+        .signature-box img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        } */
+
+
+
+
     </style>
 </head>
 
@@ -199,109 +228,18 @@
         Atas perhatian dan kerjasamanya kami ucapkan terima kasih.
     </p>
     <br><br>
-
-    <p style="text-align: right; font-size: 14px; padding-right: 55px;">Plh. KEPALA SMK NEGERI 1 KAWALI</p>
-
-
-    <!-- @if(file_exists(public_path('images/ttd.png')))
-    <div class="ttd">
-        <img src="{{ public_path('images/ttd.png') }}" alt="Tanda Tangan" width="150">
+    
+    <div class="mt-4 text-end me-3" style="max-width: 320px; margin-left: auto;">
+        <p class="fw-bold mb-2 fs-6">Plh. KEPALA SMK NEGERI 1 KAWALI</p>
+        <div class="border rounded p-3 d-inline-block" style="max-width: 300px;">
+            <img src="{{ asset('images/ttd_kurikulum.png') }}" alt="Tanda Tangan Waka Kurikulum" class="img-fluid d-block" />
+        </div>
     </div>
-    @else
-    <p>Tanda tangan belum tersedia</p>
-    @endif -->
 
 
 
 
-    {{--
-    <table width="100%" style="font-size: 14px;">
-        <tr>
-            <td style="vertical-align: top; width: 60%;">
-                <p><strong>Nomor</strong> : </p>
-    <p><strong>Lampiran</strong> : </p>
-    <p><strong>Perihal</strong> : Permohonan Praktik Kerja Lapangan (PKL)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kerja Lapangan (PKL)</p>
-    </td>
-    <td style="vertical-align: top; width: 40%; text-align: right;">
-        <p>Kepada :</p>
-        <p>Yth. Pimpinan {{ $pengajuan->iduka->nama ?? '-' }} <br>
-    Di<br>
-    Tempat </p>
-    </td>
-    </tr>
-    </table> --}}
 
-    {{-- <table>
-        <tr>
-            <td>Nama</td>
-            <td>:</td>
-            <td>{{ $dataPribadi->name ?? '-' }}</td>
-    </tr>
-    <tr>
-        <td>NIS</td>
-        <td>:</td>
-        <td>{{ $dataPribadi->nip ?? '-' }}</td>
-    </tr>
-    <tr>
-        <td>Kelas</td>
-        <td>:</td>
-        <td>{{ $dataPribadi->kelas->kelas ?? '-' }}{{ $dataPribadi->kelas->name_kelas ?? '-' }}</td>
-    </tr>
-    <tr>
-        <td>Kompetensi Keahlian</td>
-        <td>:</td>
-        <td>{{ $dataPribadi->konkes->name_konke ?? '-' }}</td>
-    </tr>
-    </table>
-
-    <p style="text-align: justify;">Mengajukan tempat Praktik Kerja Lapangan (PKL) Tahun pelajaran 2025/2026, di :</p>
-
-    <table>
-        <tr>
-            <td>Nama Institusi/Perusahaan</td>
-            <td>:</td>
-            <td>{{ $usulanIduka->nama ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td>Alamat</td>
-            <td>:</td>
-            <td>{{ $usulanIduka->alamat ?? '-' }}</td>
-        </tr>
-        <tr>
-            <td>Kompetensi Keahlian</td>
-            <td>:</td>
-            <td>{{ $usulanIduka->bidang_industri ?? '-' }}</td>
-        </tr>
-    </table>
-    <p style="text-align: justify;">Demikian ajuan ini, untuk dipergunakan sebagaimana mestinya.</p>
-    <br>
-    <p style="text-align: right; margin-right: 75px;">Kawali, .............2025</p>
-
-    <table class="sign-table">
-        <tr>
-            <td>Mengetahui,<br>Orang Tua/Wali<br>
-                <div class="space"></div>
-                <strong>{{ $dataPribadi->name_ayh ?? '-' }}</strong>
-            </td>
-            <td>Yang Mengajukan,<br>Siswa<br>
-                <div class="space"></div>
-                <strong>{{ $dataPribadi->name ?? '-' }}</strong>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">Disetujui,<br>Kaprog<br>
-                <div class="space"></div>
-                @if(isset($kaprog))
-                <strong>{{ $kaprog->nama }}</strong><br>
-                NIP: {{ $kaprog->nip ?? '-' }}
-                @else
-                <strong>(...........................................)</strong><br>
-                NIP: .........................................
-                @endif
-            </td>
-        </tr>
-    </table> --}}
 
 </body>
 

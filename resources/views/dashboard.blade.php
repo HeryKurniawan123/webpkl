@@ -14,7 +14,7 @@
                   <p class="mb-4">Data kamu belum terisi sepenuhnya nih. Ayo isi terlebih dahulu!</p>
 
                   @if(auth()->user()->role == 'siswa')
-                  <a href="{{ route('detail.siswa') }}" class="btn btn-sm btn-outline-primary">Lengkapi Data</a>
+                  <a href="{{ route('siswa.data_pribadi.create') }}" class="btn btn-sm btn-outline-primary">Lengkapi Data</a>
                   @endif
 
                   @if(in_array(auth()->user()->role, ['hubin', 'guru', 'ppkl', 'psekolah', 'orangtua', 'kaprog', 'iduka', 'persuratan']))
@@ -54,18 +54,18 @@
                 <a href="#" class="dropdown-item" onclick="Swal.fire({
                       icon: 'warning',
                       title: 'Pengajuan Sedang Diproses',
-                      text: 'Kamu sudah mengajukan usulan PKL dan sedang diproses.',
+                      text: 'Kamu sudah mengajukan tempat PKL dan sedang diproses.',
                       showConfirmButton: true,
                       customClass: { popup: 'animate__animated animate__bounce' }
-                  })">Buat Usulan</a>
+                  })">Buat Pengajuan</a>
                 @elseif($statusAjukan === 'diterima')
                 <a href="#" class="dropdown-item" onclick="Swal.fire({
                       icon: 'info',
                       title: 'Tidak dapat mengajukan!',
-                      text: 'Kamu sudah mengusulkan dan usulan telah diterima.',
+                      text: 'Kamu sudah mengajukan dan pengajuan telah diterima.',
                       showConfirmButton: true,
                       customClass: { popup: 'animate__animated animate__fadeInDown' }
-                  })">Buat Usulan</a>
+                  })">Buat Pengajuan</a>
                 @else
                 <a href="#" class="dropdown-item" onclick="Swal.fire({
                       icon: 'info',
@@ -73,10 +73,10 @@
                       text: 'Pengajuan sedang diproses atau telah diterima.',
                       showConfirmButton: true,
                       customClass: { popup: 'animate__animated animate__fadeIn' }
-                  })">Buat Usulan</a>
+                  })">Buat Pengajuan</a>
                 @endif
                 @else
-                <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Buat Usulan</a>
+                <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Buat Pengajuan</a>
                 @endif
               </li>
 
@@ -88,7 +88,7 @@
                     text: 'Kamu sudah diterima di tempat PKL. Tidak bisa mengajukan lagi.',
                     showConfirmButton: true,
                     customClass: { popup: 'animate__animated animate__shakeX' }
-                })">Usulan Baru</a>
+                })">Pengajuan Baru</a>
                 @endif
               </li>
             </ul>
@@ -100,14 +100,14 @@
       <div class="col-lg-12 mb-4 order-0">
         <div class="card">
           <div class="card-body">
-            <h5>Riwayat Usulan</h5>
+            <h5>Riwayat Pengajuan</h5>
             <div class="table-responsive">
               <table class="table table-hover" style="text-align: center">
                 <thead>
                   <tr>
                     <td>#</td>
                     <td>Nama Institusi</td>
-                    <td>Tanggal Usulan</td>
+                    <td>Tanggal Pengajuan</td>
                     <td>Status</td>
                     <td>Aksi</td>
                   </tr>
