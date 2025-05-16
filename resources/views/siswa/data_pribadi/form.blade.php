@@ -13,7 +13,7 @@
                         </ul>
                     </div>
                 @endif
-
+<!-- tess -->
                 <form action="{{ route('siswa.data_pribadi.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="id" value="{{ old('id', $dataPribadi->id ?? '') }}">
