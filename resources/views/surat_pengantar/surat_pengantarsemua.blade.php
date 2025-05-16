@@ -162,12 +162,12 @@
     <div class="kop-surat">
         <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/jawabarat.png'))) }}" alt="Logo Jawa Barat" />
         <div class="teks">
-            <h3>PEMERINTAH DAERAH PROVINSI JAWA BARAT</h3>
-            <h3>DINAS PENDIDIKAN</h3>
-            <h3>CABANG DINAS PENDIDIKAN WILAYAH XIII</h3>
-            <h3>SMK NEGERI 1 KAWALI</h3>
-            <p>Jalan Talagasari No.35 Tlp. (0265) 791727 E-Mail : smkn1kawali@gmail.com</p>
-            <p>Kawali – Kabupaten Ciamis 46253</p>
+            <p style="font-size: 20px;">PEMERINTAH DAERAH PROVINSI JAWA BARAT</p>
+            <p style="font-size: 20px;">DINAS PENDIDIKAN</p>
+            <p style="font-size: 20px;">CABANG DINAS PENDIDIKAN WILAYAH XIII</p>
+            <p style="font-size: 20px;"><b>SMK NEGERI 1 KAWALI</b></p>
+            <p >Jalan Talagasari No. 35 Tlp. (0265) 791727 Fax. (0265) 2797676 <br> e-Mail : smkn1kawali@gmail.com</p>
+            <p>Kawali – 46253</p>
         </div>
         <hr>
         <p style="text-align: right;"> Kawali, {{ $tanggal }}
@@ -224,17 +224,23 @@
 
     <p style="margin-bottom:20px; font-size: 14px; text-align: justify; line-height: 1.5;">
         <!-- {{ $suratPengantar->deskripsi ?? '-' }} -->
-        Tanpa mengurangi rasa hormat,  kami berharap Bapak/Ibu pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai dengan format yang telah kami lampirkan dan dapat dikirimkan melalui <i>WhatsApp</i> ke nomor xxxx-xxxx-xxxx atas nama xxxxxxxxxx. <br>
+        Tanpa mengurangi rasa hormat,  kami berharap Bapak/Ibu pimpinan dapat memfasilitasi kegiatan PKL ini. Adapun untuk keputusannya dapat diinformasikan sesuai dengan format yang telah kami lampirkan dan dapat dikirimkan melalui <i>WhatsApp</i> ke nomor xxxx-xxxx-xxxx atas nama xxxxxxxxxx dan/ atau ke nomor 0813-2034-3842 atas nama MUHAMAD GOJALI, S.Pd. <br>
         Atas perhatian dan kerjasamanya kami ucapkan terima kasih.
     </p>
     <br><br>
-    
-    <div class="mt-4 text-end me-3" style="max-width: 320px; margin-left: auto;">
-        <p class="fw-bold mb-2 fs-6">Plh. KEPALA SMK NEGERI 1 KAWALI</p>
-        <div class="border rounded p-3 d-inline-block" style="max-width: 300px;">
-        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/ttd_kurikulum.png'))) }}" alt="Tanda Tangan Waka Kurikulum" class="img-fluid d-block" />
+
+    <div class="mt-4" style="max-width: 320px; margin-left: auto; margin-right: 40px; text-align: center;">
+        <p class="fw-bold mb-1" style="font-size: 12px;">Plh. KEPALA SMK NEGERI 1 KAWALI</p>
+        <div class="border rounded p-3" style="padding: 0;">
+            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/ttd_kurikulum.png'))) }}"
+                alt="Tanda Tangan Waka Kurikulum"
+                class="img-fluid"
+                style="max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
         </div>
     </div>
+
+
+
 
 
 
