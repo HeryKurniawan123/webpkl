@@ -29,7 +29,7 @@
         .kop-surat img {
             position: absolute;
             left: 40px;
-            height: 100px;
+            height: 145px;
             margin-left: 20px;
         }
 
