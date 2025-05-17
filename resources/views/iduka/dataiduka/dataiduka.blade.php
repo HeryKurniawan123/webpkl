@@ -109,14 +109,17 @@
                             <h5 class="mb-0">Data Institusi / Perusahaan</h5>
 
                             <div class="d-none d-md-flex gap-2 align-items-center">
-                                <select class="form-select form-select-sm w-auto" id="filterIduka">
-                                    <option value="all">Semua</option>
-                                    <option value="rekomendasi">Rekomendasi</option>
-                                    <option value="ajuan">Ajuan</option>
-                              
-                                    <option value="hidden">Hidden</option>
-                                   
-                                </select>
+                            <form method="GET" action="{{ route('iduka.index') }}" id="filterForm">
+
+ <select class="form-select form-select-sm w-auto" id="filterIduka" name="filter">
+    <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>Semua</option>
+    <option value="rekomendasi" {{ request('filter') == 'rekomendasi' ? 'selected' : '' }}>Rekomendasi</option>
+    <option value="ajuan" {{ request('filter') == 'ajuan' ? 'selected' : '' }}>Ajuan</option>
+    <option value="hidden" {{ request('filter') == 'hidden' ? 'selected' : '' }}>Hidden</option>
+</select>
+
+</form>
+
 
                                 <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#searchModal">
@@ -177,26 +180,27 @@
                     </div>
                 </div>
 
-                {{-- Modal Search --}}
-                <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="searchModalLabel">Cari Institusi / Perusahaan</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Tutup"></button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="text" id="searchInput" name="search" class="form-control"
-                                    placeholder="Cari Institusi / Perusahaan...">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary btn-sm" id="searchButton">Cari</button>
-                            </div>
-                        </div>
-                    </div>
+              {{-- Modal Search --}}
+<form action="{{ route('iduka.index') }}" method="GET">
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Cari Institusi / Perusahaan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
+                <div class="modal-body">
+                   <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari Institusi / Perusahaan...">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 
                 <div class="col-md-12 mt-3" id="idukaContainer">
                     @if ($iduka->isEmpty())
@@ -204,6 +208,12 @@
                             Belum ada data institusi / perusahaan yang tersedia.
                         </div>
                     @else
+                    @if(request('search'))
+    <div class="alert alert-info">
+        Menampilkan hasil pencarian untuk: <strong>{{ request('search') }}</strong>
+    </div>
+@endif
+
                         @if (session()->has('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ session('success') }}
@@ -403,9 +413,10 @@
                     @endif
                 </div>
                 <div class="card">
-                    <div class="d-flex justify-content-end mt-3">
-                        {{ $iduka->links('pagination::bootstrap-5') }}
-                    </div>
+                  <div class="d-flex justify-content-end mt-3">
+    {{ $iduka->appends(request()->query())->links('pagination::bootstrap-5') }}
+</div>
+
                 </div>
             </div>
         </div>
@@ -451,9 +462,7 @@
                                 <input type="text" class="form-control" id="jabatan{{ $i->id }}" name="jabatan" value="{{ $i->jabatan }}" required>
                             </div>
                        
-                        
-                        <!-- Kolom Kanan -->
-                      
+                       
                             <div class="mb-3">
                                 <label for="alamat{{ $i->id }}" class="form-label">Alamat*</label>
                                 <textarea class="form-control" id="alamat{{ $i->id }}" name="alamat" required>{{ $i->alamat }}</textarea>
@@ -481,7 +490,7 @@
                     </div>
                        
                     
-                    <!-- Bagian Bawah -->
+                
                  
                             <div class="mb-3">
                                 <label for="bidang_industri{{ $i->id }}" class="form-label">Bidang Industri*</label>
@@ -644,37 +653,49 @@
                 });
             @endif
 
-            // Filter + Search
-            const filterSelect = document.getElementById('filterIduka');
-            const filterSelectMobile = document.getElementById('filterIdukaMobile');
-            const searchInput = document.getElementById('searchInput');
-            const searchButton = document.getElementById('searchButton');
-            const idukaCards = document.querySelectorAll('#idukaContainer .card-hover');
-            function filterIduka() {
-    const filter = filterSelect.value;
-    const search = searchInput.value.toLowerCase();
-
-    idukaCards.forEach(card => {
-        const rekomendasi = card.getAttribute('data-rekomendasi');
-        const hiddenStatus = card.getAttribute('data-hidden'); // Tambahkan ini
-        const nama = card.querySelector('.fw-bold').textContent.toLowerCase();
-        const alamat = card.querySelector('.text-muted').textContent.toLowerCase();
-
-        // Logika filter baru
-        let matchFilter;
-        if (filter === 'hidden') {
-            matchFilter = hiddenStatus === 'true'; // Filter khusus hidden
-        } else if (filter === 'all') {
-            matchFilter = true; // Tampilkan semua
-        } else {
-            matchFilter = rekomendasi === filter; // Filter rekomendasi/ajuan
-        }
-
-        const matchSearch = search === '' || nama.includes(search) || alamat.includes(search);
-
-        card.style.display = (matchFilter && matchSearch) ? 'block' : 'none';
+          document.getElementById('filterIduka').addEventListener('change', function() {
+        // Ketika filter berubah, submit form tanpa membawa query string lain
+        document.getElementById('filterForm').submit();
     });
-}
+    // Filter + Search
+    const filterSelect = document.getElementById('filterIduka');
+    const filterSelectMobile = document.getElementById('filterIdukaMobile');
+    const idukaCards = document.querySelectorAll('#idukaContainer .card-hover');
+    
+    function filterIduka() {
+        const filter = filterSelect.value;
+        
+        idukaCards.forEach(card => {
+            const rekomendasi = card.getAttribute('data-rekomendasi');
+            const hiddenStatus = card.getAttribute('data-hidden');
+            
+            // Logika filter
+            let shouldShow = false;
+            
+            if (filter === 'all') {
+                shouldShow = true;
+            } else if (filter === 'rekomendasi') {
+                shouldShow = rekomendasi === 'rekomendasi';
+            } else if (filter === 'ajuan') {
+                shouldShow = rekomendasi === 'ajuan';
+            } else if (filter === 'hidden') {
+                shouldShow = hiddenStatus === 'true';
+            }
+            
+            card.style.display = shouldShow ? 'block' : 'none';
+        });
+    }
+
+    // Event listeners
+    filterSelect.addEventListener('change', filterIduka);
+    filterSelectMobile.addEventListener('change', function() {
+        filterSelect.value = this.value;
+        filterIduka();
+    });
+    
+    // Inisialisasi filter saat pertama kali load
+    filterIduka();
+
 
             filterSelect.addEventListener('change', filterIduka);
             filterSelectMobile.addEventListener('change', function() {
@@ -692,5 +713,6 @@
      
 
     </script>
+
 
 @endsection

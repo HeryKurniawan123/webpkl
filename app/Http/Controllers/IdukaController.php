@@ -19,14 +19,37 @@ use Illuminate\Support\Facades\Storage;
 
 class IdukaController extends Controller
 {
-    public function index()
-    {
-        $iduka = Iduka::orderBy('rekomendasi', 'desc')  // Urutkan berdasarkan rekomendasi (1 di atas)
-            ->orderBy('created_at', 'desc') // Jika ada yang sama, urutkan berdasarkan tanggal dibuat
-            ->paginate(10);
+public function index(Request $request)
+{
+    $filter = $request->get('filter');
+    $query = Iduka::query();
 
-        return view('iduka.dataiduka.dataiduka', compact('iduka'));
+    // Pencarian umum
+    if ($request->has('search')) {
+        $search = $request->input('search');
+        $query->where(function ($q) use ($search) {
+            $q->where('nama', 'like', "%$search%")
+              ->orWhere('alamat', 'like', "%$search%");
+        });
     }
+
+    // Filter
+    if ($filter === 'rekomendasi') {
+        $query->where('rekomendasi', true)
+              ->where('hidden', false); // Hindari data yang disembunyikan
+    } elseif ($filter === 'ajuan') {
+        $query->where('rekomendasi', false)
+              ->where('hidden', false);
+    } elseif ($filter === 'hidden') {
+        $query->where('hidden', true);
+    }
+
+    // Pagination tetap muncul
+    $iduka = $query->paginate(10)->appends($request->all());
+
+    return view('iduka.dataiduka.dataiduka', compact('iduka'));
+}
+
 
     public function dataPribadiIduka()
     {

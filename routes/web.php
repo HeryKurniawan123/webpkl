@@ -349,6 +349,8 @@ Route::put('/iduka/{iduka}/toggle-visibility', [KaprogController::class, 'toggle
 
 
 Route::middleware(['auth'])->group(function () {
+    //sreach iduka di kaprog/hubin
+     Route::get('/iduka', [IdukaController::class, 'index'])->name('iduka.index');
 
     //update data iduka yang ada di hubin dan kaprog
     Route::put('/iduka-update/{id}', [IdukaController::class, 'updateiduka'])->name('updateiduka.update');

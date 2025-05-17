@@ -466,23 +466,16 @@ class KaprogController extends Controller
 
     public function historiPengajuan()
     {
-        $kaprog = auth()->user(); // Ambil user login
-        $konkeId = $kaprog->konke_id; // Ambil jurusan Kaprog
-    
-        // Ambil data pengajuan siswa sesuai jurusan (konke)
-        $historiPengajuan = PengajuanPkl::with(['iduka', 'siswa.kelas'])
+        // Ambil semua data pengajuan yang sudah diproses (status bukan 'proses')
+        $historiPengajuan = PengajuanPkl::with('iduka', 'siswa')
             ->where('status', 'diterima')
-            ->whereHas('siswa.kelas', function ($query) use ($konkeId) {
-                $query->where('konke_id', $konkeId);
-            })
             ->orderBy('updated_at', 'desc')
             ->get()
             ->groupBy('iduka_id');
-    
+
         return view('kaprog.review.histori', compact('historiPengajuan'));
     }
-    
-
+ 
     public function persetujuanPembatalan(Request $request)
     {
         $id = $request->input('id');

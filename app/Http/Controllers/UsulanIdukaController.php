@@ -160,6 +160,7 @@ class  UsulanIdukaController extends Controller
 
     public function dataIdukaUsulan()
     {
+        
         $today = Carbon::today();
     
         $iduka = Iduka::where('hidden', false) // Hanya tampilkan yang tidak hidden
