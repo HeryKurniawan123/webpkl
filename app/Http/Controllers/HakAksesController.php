@@ -12,7 +12,7 @@ class HakAksesController extends Controller
 {
     function hubin()
     {
-        return view('dashboard');
+        return view('hubin.dashboard');
     }
     function siswa()
     {
@@ -44,19 +44,19 @@ class HakAksesController extends Controller
             ->whereIn('status', ['proses', 'diterima'])
             ->value('status');
 
-        return view('dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima', 'sudahAjukan',  'statusAjukan'));
+        return view('siswa.dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima', 'sudahAjukan',  'statusAjukan'));
     }
     function iduka()
     {
-        return view('dashboard');
+        return view('iduka.dashboard');
     }
     function kaprog()
     {
-        return view('dashboard');
+        return view('kaprog.dashboard');
     }
     function persuratan()
     {
-        return view('dashboard');
+        return view('persuratan.dashboard');
     }
     function guru()
     {
@@ -68,7 +68,7 @@ class HakAksesController extends Controller
     }
     function orangtua()
     {
-        return view('dashboard');
+        return view('orangtua.dashboard');
     }
     function psekolah()
     {
