@@ -1,7 +1,10 @@
 <div class="modal fade" id="tambahIdukaModal" tabindex="-1" aria-labelledby="tambahIdukaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ route('hubin.iduka.store') }}" method="POST">
+            <form
+                action="{{ auth()->user()->role === 'hubin' ? route('hubin.iduka.store') : route('iduka.store') }}"
+                method="POST">
+
                 @csrf
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="tambahIdukaModalLabel">Form Tambah Data Industri Dunia Kerja</h1>
@@ -16,7 +19,7 @@
                     <div class="mb-3">
                         <label class="form-label">Nama Lengkap Pimpinan*</label>
                         <input type="text" class="form-control" name="nama_pimpinan" placeholder="Masukkan Nama Lengkap Pimpinan" required>
-                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!<i/></small>
+                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!<i /></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">NIP/NIK Pimpinan*</label>
@@ -28,7 +31,7 @@
                         <input type="text" class="form-control" name="no_hp_pimpinan" placeholder="Masukkan Nomor Telepon Pimpinan" required>
                         <small class="form-text text-muted"><i>Masukkan nomor telepon aktif. Pastikan bisa diakses!</i></small>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Jabatan*</label>
                         <input type="text" class="form-control" name="jabatan" placeholder="Masukkan Jabatan" required>
@@ -45,12 +48,12 @@
                     <div class="mb-3">
                         <label class="form-label">Nomor Telepon (Kantor / Perusahaan)*</label>
                         <input type="number" class="form-control" name="telepon" placeholder="Masukkan Nomor Telepon" required>
-                        <small class="form-text text-muted"<i>Masukkan nomor telepon aktif. Pastikan bisa diakses!</i></small>
+                        <small class="form-text text-muted" <i>Masukkan nomor telepon aktif. Pastikan bisa diakses!</i></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email*</label>
                         <input type="email" class="form-control" name="email" placeholder="Masukkan Email" required>
-                        <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>                        
+                        <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password*</label>

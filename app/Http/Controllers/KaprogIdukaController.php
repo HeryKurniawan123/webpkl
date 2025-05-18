@@ -443,7 +443,7 @@ class KaprogIdukaController extends Controller
         });
 
 
-        return redirect()->route('data.iduka')->with('success', 'Data Iduka berhasil dihapus.');
+        return redirect()->route('hubin.iduka.index')->with('success', 'Data Iduka berhasil dihapus.');
     }
 
     public function downloadPDF($id)

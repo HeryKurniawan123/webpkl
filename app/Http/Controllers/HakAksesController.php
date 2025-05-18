@@ -10,10 +10,26 @@ use Illuminate\Support\Facades\Auth;
 
 class HakAksesController extends Controller
 {
-    function hubin()
+    public function hubin()
     {
-        return view('hubin.dashboard');
+        // Data Usulan dari dua tabel
+        $jumlahUsulan = PengajuanUsulan::count() + UsulanIduka::count();
+    
+        // Status Diterima
+        $jumlahDiterima = PengajuanUsulan::where('status', 'diterima')->count()
+                          + UsulanIduka::where('status', 'diterima')->count();
+    
+        // Status Ditolak
+        $jumlahDitolak = PengajuanUsulan::where('status', 'ditolak')->count()
+                          + UsulanIduka::where('status', 'ditolak')->count();
+    
+      
+    
+        return view('hubin.dashboard', compact(
+            'jumlahUsulan', 'jumlahDiterima', 'jumlahDitolak'
+        ));
     }
+
     function siswa()
     {
         $user = auth()->user();

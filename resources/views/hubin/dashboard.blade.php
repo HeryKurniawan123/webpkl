@@ -75,31 +75,18 @@
               </div>
               <div>
                 <h6 class="text-muted mb-0">Jumlah Usulan</h6>
-                <h4 class="mb-0 fw-bold text-primary">125</h4>
+                <h4 class="mb-0 fw-bold text-primary">{{ $jumlahUsulan }}</h4>
               </div>
             </div>
           </div>
-
-          <div class="card card-custom">
-            <div class="d-flex align-items-center p-3">
-              <div class="icon-wrapper me-3">
-                <i class="fas fa-paper-plane"></i>
-              </div>
-              <div>
-                <h6 class="text-muted mb-0">Jumlah Pengajuan</h6>
-                <h4 class="mb-0 fw-bold text-primary">97</h4>
-              </div>
-            </div>
-          </div>
-
           <div class="card card-custom">
             <div class="d-flex align-items-center p-3">
               <div class="icon-wrapper me-3">
                 <i class="fas fa-check-circle"></i>
               </div>
               <div>
-                <h6 class="text-muted mb-0">Jumlah Diterima</h6>
-                <h4 class="mb-0 fw-bold text-primary">80</h4>
+                <h6 class="text-muted mb-0">Jumlah Usulan Diterima</h6>
+                <h4 class="mb-0 fw-bold text-primary">{{ $jumlahDiterima }}</h4>
               </div>
             </div>
           </div>
@@ -110,8 +97,8 @@
                 <i class="fas fa-times-circle"></i>
               </div>
               <div>
-                <h6 class="text-muted mb-0">Jumlah Ditolak</h6>
-                <h4 class="mb-0 fw-bold text-primary">17</h4>
+                <h6 class="text-muted mb-0">Jumlah Usulan Ditolak</h6>
+                <h4 class="mb-0 fw-bold text-primary">{{ $jumlahDitolak }}</h4>
               </div>
             </div>
           </div>
@@ -122,7 +109,7 @@
       {{-- Chart --}}
     <div class="card mt-4">
         <div class="card-body">
-          <h5 class="card-title text-center">Statistik Pengajuan</h5>
+          <h5 class="card-title text-center">Statistik Usulan</h5>
           <canvas id="statistikChart" height="100"></canvas>
         </div>
     </div>
@@ -173,17 +160,16 @@
   document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('statistikChart').getContext('2d');
     const statistikChart = new Chart(ctx, {
-      type: 'bar', // tipe grafik ieu batang
+      type: 'bar',
       data: {
-        labels: ['Usulan', 'Pengajuan', 'Diterima', 'Ditolak'], // label sesuai card
+        labels: ['Usulan', 'Diterima', 'Ditolak'],
         datasets: [{
           label: 'Jumlah',
-          data: [125, 97, 80, 17], // data sesuai card
+          data: [{{ $jumlahUsulan }}, {{ $jumlahDiterima }}, {{ $jumlahDitolak }}],
           backgroundColor: [
-            'rgba(102, 126, 234, 0.8)', //biru ungu
-            'rgba(54, 162, 235, 0.8)',  // biru muda
-            'rgba(75, 192, 192, 0.8)',  // hijau toska
-            'rgba(255, 99, 132, 0.8)'   // merah
+            'rgba(102, 126, 234, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(255, 99, 132, 0.8)'
           ],
           borderRadius: 10,
           borderWidth: 1
@@ -195,7 +181,7 @@
           y: {
             beginAtZero: true,
             ticks: {
-              stepSize: 10 // supaya langkah y axis kelihatan rapi
+              stepSize: 10
             }
           }
         }
@@ -203,4 +189,5 @@
     });
   });
 </script>
+
 

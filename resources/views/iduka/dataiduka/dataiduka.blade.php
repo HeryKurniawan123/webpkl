@@ -314,7 +314,7 @@
                                     
                                                     {{-- Tombol Hapus --}}
                                                     <li>
-                                                        <form action="{{ route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
+                                                       <form action="{{ auth()->user()->role === 'hubin' ? route('hubin.iduka.destroy', $i->id) : route('iduka.destroy', $i->id) }}" method="POST" class="delete-form">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
