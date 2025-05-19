@@ -40,7 +40,12 @@
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Password (Biarkan kosong jika tidak ingin diubah)</label>
-                        <input type="password" class="form-control" name="password">
+                          <div class="input-group">
+                        <input type="password" id="password-showhide" class="form-control" name="password">
+                         <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-showhide" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
                     </div>
 
                     
@@ -178,6 +183,23 @@
             // Check if "Lainnya" is already selected on page load
             if (radio.value === "Lainnya" && radio.checked) {
                 lainnyaInput.style.display = "block";
+            }
+        });
+    });
+     document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
             }
         });
     });

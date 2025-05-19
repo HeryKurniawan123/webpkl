@@ -59,22 +59,40 @@
             <form action="{{ route('profile.update.password') }}" method="POST">
                 @csrf
 
-                <div class="mb-3">
-                    <label class="form-label">Password Saat Ini</label>
-                    <input type="password" name="current_password" class="form-control">
-                    @error('current_password')<div class="text-danger">{{ $message }}</div>@enderror
-                </div>
+          <!-- Password Saat Ini -->
+<div class="mb-3">
+    <label class="form-label">Password Saat Ini</label>
+    <div class="input-group">
+        <input type="password" name="current_password" class="form-control" id="current_password">
+        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="current_password" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+    @error('current_password')<div class="text-danger">{{ $message }}</div>@enderror
+</div>
 
-                <div class="mb-3">
-                    <label class="form-label">Password Baru</label>
-                    <input type="password" name="new_password" class="form-control">
-                    @error('new_password')<div class="text-danger">{{ $message }}</div>@enderror
-                </div>
+<!-- Password Baru -->
+<div class="mb-3">
+    <label class="form-label">Password Baru</label>
+    <div class="input-group">
+        <input type="password" name="new_password" class="form-control" id="new_password">
+        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+    @error('new_password')<div class="text-danger">{{ $message }}</div>@enderror
+</div>
 
-                <div class="mb-3">
-                    <label class="form-label">Konfirmasi Password Baru</label>
-                    <input type="password" name="new_password_confirmation" class="form-control">
-                </div>
+<!-- Konfirmasi Password Baru -->
+<div class="mb-3">
+    <label class="form-label">Konfirmasi Password Baru</label>
+    <div class="input-group">
+        <input type="password" name="new_password_confirmation" class="form-control" id="new_password_confirmation">
+        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password_confirmation" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+</div>
 
                 <button class="btn btn-primary btn-sm">Ganti Password</button>
             </form>
@@ -83,6 +101,7 @@
 </div>
 
 <!-- Include CropperJS CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
@@ -167,5 +186,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        });
+    });
+
+
 </script>
 @endsection

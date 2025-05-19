@@ -202,11 +202,16 @@
                             <small class="form-text text-muted"><i>Masukkan nomor HP yang aktif dan terhubung dengan WhatsApp.</i></small>
                     </div>
                    
-                    <div class="mb-3">
-                        <label class="form-label">Password </label>
-                        <input type="password" class="form-control" name="password" placeholder="Password">
-                        <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
-                    </div>
+                   <div class="mb-3">
+    <label class="form-label">Password</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="password-showhide" name="password" placeholder="Password">
+        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-showhide" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+    <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
+</div>
 
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </form>
@@ -292,7 +297,27 @@
                 agamaSelect.disabled = true;
             }
         });
+    
+    // Toggle Password Show/Hide
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        });
     });
+});
+
     </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

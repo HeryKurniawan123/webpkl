@@ -55,11 +55,17 @@
                         <input type="email" class="form-control" name="email" placeholder="Masukkan Email" required>
                         <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password*</label>
-                        <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
-                        <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
-                    </div>
+                  <div class="mb-3">
+    <label class="form-label">Password*</label>
+    <div class="input-group">
+        <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan Password" required>
+        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+    <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
+</div>
+
                     <div class="mb-3">
                         <label class="form-label">Bidang Industri*</label>
                         <input type="text" class="form-control" name="bidang_industri" placeholder="Masukkan Bidang Industri" required>
@@ -134,6 +140,24 @@
                     lainnyaInput.style.display = "none";
                 }
             });
+        });
+    });
+
+     document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
         });
     });
 </script>

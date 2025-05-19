@@ -333,11 +333,19 @@
                                 <input type="email" class="form-control" id="email{{ $iduka->id }}" name="email" value="{{ $iduka->email }}" required>
                                 <small class="form-text text-muted">Masukkan email aktif. Pastikan bisa diakses ya!</small></div>
                             
-                            <div class="mb-3">
-                                <label for="password{{ $iduka->id }}" class="form-label">Password (Biarkan kosong jika tidak ingin diubah)</label>
-                                <input type="password" class="form-control" id="password{{ $iduka->id }}" name="password" placeholder="Kosongkan jika tidak diubah">
-                        <small class="form-text text-muted">Password minimal 8 karakter.</small>
-                    </div>
+                           <div class="mb-3">
+    <label for="password{{ $iduka->id }}" class="form-label">
+        Password (Biarkan kosong jika tidak ingin diubah)
+    </label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="password{{ $iduka->id }}" name="password" placeholder="Kosongkan jika tidak diubah">
+        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password{{ $iduka->id }}" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
+    <small class="form-text text-muted">Password minimal 8 karakter.</small>
+</div>
+
                        
                     
                     <!-- Bagian Bawah -->
@@ -414,6 +422,23 @@
                 });
             });
         });
+          document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
+        });
+    });
     </script>
 
     @include('iduka.dataiduka.editiduka')

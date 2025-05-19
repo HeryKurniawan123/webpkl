@@ -265,8 +265,13 @@
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Password Baru
                                                                             (Opsional)</label>
-                                                                        <input type="password" class="form-control"
+                                                                              <div class="input-group">
+                                                                        <input type="password"  id="password-required" class="form-control"
                                                                             name="password">
+                                                                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-required" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
                                                                         <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                                                                     </div>
                                                                 </div>
@@ -367,7 +372,12 @@
                 
                         <div class="mb-3">
                             <label class="form-label">Password*</label>
-                            <input type="password" class="form-control" name="password" placeholder="Masukkan Password" required>
+                            <div class="input-group">
+                            <input type="password" class="form-control" id="password-required" name="password" placeholder="Masukkan Password" required>
+                              <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-required" tabindex="-1">
+            <i class="bi bi-eye-slash"></i>
+        </button>
+    </div>
                             <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                             @error('password')
                                 <div class="text-danger">{{ $message }}</div>
@@ -502,6 +512,25 @@
                     }
                 });
             });
+        });
+    });
+
+
+      document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            }
         });
     });
     
