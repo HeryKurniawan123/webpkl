@@ -9,6 +9,7 @@ use App\Http\Controllers\DataController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\CpAtpController;
+use App\Http\Controllers\DaftarIdukaController;
 use App\Http\Controllers\HubinController;
 use App\Http\Controllers\IdukaController;
 use App\Http\Controllers\KelasController;
@@ -168,6 +169,8 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
     //import data siswa
     Route::get('/siswa/download-template', [SiswaController::class, 'downloadTemplate'])->name('siswa.download-template');
+
+    Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {

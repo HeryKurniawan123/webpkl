@@ -295,6 +295,12 @@
                             <div data-i18n="Basic">Pusat Bantuan</div>
                         </a>
                     </li>
+                    <li class="menu-item {{ Request::routeIs('hubin.iduka.daftar') ? 'active' : '' }}">
+                        <a href="{{ route('hubin.iduka.daftar') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Daftar Iduka</div>
+                        </a>
+                    </li>
                     @endif
                     @if(auth()->user()->role == 'pendamping')
                     <li class="menu-item {{ Request::routeIs('pendamping.iduka.index') ? 'active' : '' }}">
