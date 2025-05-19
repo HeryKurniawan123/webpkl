@@ -48,6 +48,10 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+        .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
     </style>
 </head>
 

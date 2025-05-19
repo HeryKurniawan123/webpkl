@@ -274,6 +274,7 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 
+    Route::get('/dashboard/kaprog', [HakAksesController::class, 'kaprog'])->name('kaprog.dashboard');
     //sementara
     Route::get('/detail-Surat-Pengajuan/{id}', [PersuratanController::class, 'show'])->name('persuratan.suratPengajuan.detailSuratPengajuan');
 
