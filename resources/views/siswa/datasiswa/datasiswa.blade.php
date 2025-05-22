@@ -266,12 +266,12 @@
                                                                         <label class="form-label">Password Baru
                                                                             (Opsional)</label>
                                                                               <div class="input-group">
-                                                                        <input type="password"  id="password-required" class="form-control"
+                                                                        <input type="password"  id="password-edit-{{ $s->id }}" class="form-control"
                                                                             name="password">
-                                                                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-required" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
-        </button>
-    </div>
+                                                                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-edit-{{ $s->id }}" tabindex="-1">
+                                                                            <i class="bi bi-eye-slash"></i>
+                                                                        </button>
+                                                                    </div>
                                                                         <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                                                                     </div>
                                                                 </div>
@@ -373,16 +373,19 @@
                         <div class="mb-3">
                             <label class="form-label">Password*</label>
                             <div class="input-group">
-                            <input type="password" class="form-control" id="password-required" name="password" placeholder="Masukkan Password" required>
-                              <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-required" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
-        </button>
-    </div>
+                                <input type="password" class="form-control" id="password-create" name="password"
+                                    placeholder="Masukkan Password" required>
+                                <button type="button" class="btn btn-outline-secondary toggle-password"
+                                    data-target="password-create" tabindex="-1">
+                                    <i class="bi bi-eye-slash"></i>
+                                </button>
+                            </div>
                             <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
                             @error('password')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+
                     </div>
                 
                     <div class="modal-footer">
@@ -394,158 +397,90 @@
         </div>
     </div>
     
-
-    <script>
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', function(event) {
-                event.preventDefault(); // Mencegah aksi default tombol
-
-                Swal.fire({
-                    title: "Apakah kamu yakin?",
-                    text: "Data ini tidak bisa dikembalikan!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Ya, Hapus!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Temukan form terdekat dan submit
-                        this.closest('form').submit();
-                    }
-                });
-            });
-        });
-
-
-    </script>
-
     @include('siswa.datasiswa.createSiswa')
     @include('siswa.datasiswa.editSiswa')
 
     </html>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
     <script>
-         document.addEventListener("DOMContentLoaded", function () {
-        // Ambil data dari session flash Laravel melalui input hidden
-        let successMessage = document.getElementById("success-message")?.value;
-        let errorMessage = document.getElementById("error-message")?.value;
-
-        if (successMessage) {
-            Swal.fire({
-                icon: "success",
-                title: "Sukses!",
-                text: successMessage,
-                showConfirmButton: false,
-                timer: 3000
-            });
-        }
-
-        if (errorMessage) {
-            Swal.fire({
-                icon: "error",
-                title: "Gagal!",
-                text: errorMessage,
-                showConfirmButton: true
-            });
-        }
-    });
-    
-            document.querySelectorAll('.delete-btn').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Data ini tidak bisa dikembalikan!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Hapus!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        });
-    });
-
-
-    document.addEventListener("DOMContentLoaded", function() {
-    const searchInput = document.querySelector("input[name='search']");
-    const tableRows = document.querySelectorAll("tbody tr");
-
-    searchInput.addEventListener("keyup", function() {
-        const searchValue = this.value.toLowerCase();
-
-        tableRows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchValue) ? "" : "none";
-        });
-    });
-});
-
-
-
-</script>
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-{{-- alert hapus --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const forms = document.querySelectorAll('.form-hapus-siswa');
-        forms.forEach(form => {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault(); // hentikan submit default
-                Swal.fire({
-                    title: 'Yakin ingin menghapus?',
-                    text: "Data siswa yang dihapus tidak bisa dikembalikan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit(); // submit form secara manual
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            document.querySelectorAll('.toggle-password').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    
+                    if (input) {
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            icon.classList.remove('bi-eye-slash');
+                            icon.classList.add('bi-eye');
+                        } else {
+                            input.type = 'password';
+                            icon.classList.remove('bi-eye');
+                            icon.classList.add('bi-eye-slash');
+                        }
                     }
                 });
             });
-        });
-    });
 
+            // Delete confirmation
+            document.querySelectorAll('.form-hapus-siswa').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: "Data siswa yang dihapus tidak bisa dikembalikan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
 
-      document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function () {
-            const targetId = this.getAttribute('data-target');
-            const input = document.getElementById(targetId);
-            const icon = this.querySelector('i');
+            // Search functionality
+            const searchInput = document.querySelector("input[name='search']");
+            if (searchInput) {
+                const tableRows = document.querySelectorAll("tbody tr");
+                searchInput.addEventListener("keyup", function() {
+                    const searchValue = this.value.toLowerCase();
+                    tableRows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchValue) ? "" : "none";
+                    });
+                });
+            }
 
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi-eye');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('bi-eye');
-                icon.classList.add('bi-eye-slash');
+            // Flash messages
+            let successMessage = "{{ session('success') }}";
+            let errorMessage = "{{ session('error') }}";
+
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: successMessage,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    showConfirmButton: true
+                });
             }
         });
-    });
-    
-</script>
-@if (session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Berhasil!',
-        text: '{{ session('success') }}',
-        timer: 2000,
-        showConfirmButton: false
-    });
-</script>
-@endif
-
-
+    </script>
 @endsection
