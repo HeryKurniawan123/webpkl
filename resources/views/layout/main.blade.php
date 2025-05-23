@@ -424,15 +424,12 @@
                                                             class="rounded-circle"
                                                             width="50"
                                                             height="50">
-
-
-
-
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span
-                                                        class="fw-semibold d-block">{{ auth()->user()->profile->nama ?? auth()->user()->name }}</span>
+                                                    <span class="fw-semibold d-block text-truncate" style="max-width: 150px;" title="{{ auth()->user()->profile->nama ?? auth()->user()->name }}">
+                                                        {{ auth()->user()->profile->nama ?? auth()->user()->name }}
+                                                    </span>
                                                     <small class="text-muted">{{ auth()->user()->role }}</small>
                                                 </div>
                                             </div>

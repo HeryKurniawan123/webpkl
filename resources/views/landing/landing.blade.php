@@ -120,7 +120,7 @@
             </ul>
           </li> --}}
           <li><a href="#contact">Kontak</a></li>
-          <li><a href="{{ route('login')}}">Log In</a></li>
+          <li><a href="{{ route('login')}}">Masuk</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -141,7 +141,7 @@
             <h2 class="animate__animated animate__fadeInDown">Selamat Datang di <span class="highlighted-text">PKL SMKN 1 Kawali</span></h2>
             <p class="animate__animated animate__fadeInUp">Platform pendaftaran PKL untuk siswa SMK, lebih mudah, cepat, dan praktis!</p>
             <div class="button-group">
-              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
+              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
               <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih Lanjut</a>
             </div>
           </div>
@@ -153,7 +153,7 @@
             <h2 class="animate__animated animate__fadeInDown">Pendaftaran PKL Tanpa Ribet</h2>
             <p class="animate__animated animate__fadeInUp">Daftar ke perusahaan mitra PKL hanya dengan beberapa langkah sederhana, kapan saja dan di mana saja.</p>
             <div class="button-group">
-              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
+              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
               <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih Lanjut</a>
             </div>
           </div>
@@ -165,7 +165,7 @@
             <h2 class="animate__animated animate__fadeInDown">Pengalaman Langsung di Dunia Industri</h2>
             <p class="animate__animated animate__fadeInUp">Dapatkan pengalaman PKL yang berharga sebagai bekal menghadapi dunia kerja setelah lulus.</p>
             <div class="button-group">
-              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
+              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
               <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih Lanjut</a>
             </div>
           </div>
@@ -176,7 +176,7 @@
             <h2 class="animate__animated animate__fadeInDown">Siap Memulai PKL?</h2>
             <p class="animate__animated animate__fadeInUp">Dapatkan kesempatan berharga untuk belajar langsung di dunia industri melalui program PKL yang telah disiapkan khusus untuk siswa SMK.</p>
             <div class="button-group">
-              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
+              <a href="{{ route('login') }}" class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
               <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih Lanjut</a>
             </div>
           </div>
@@ -225,7 +225,7 @@
             <div class="our-story rounded-container">
               <h4>Sejak 2025</h4>
               <h3>Cerita Kita</h3>
-              <p><b>PKL SMKN 1 Kawali</b> hadir untuk membantu siswa memulai perjalanan PKL mereka dengan mudah dan lancar.Kami memahami pentingnya pengalaman PKL yang tepat untuk membangun keterampilan dan pengetahuan di dunia profesional. Kami bekerja sama dengan berbagai perusahaan terkemuka untuk memberikan kesempatan terbaik bagi setiap siswa.</p>
+              <p><b>PKL SMKN 1 Kawali</b> hadir untuk membantu siswa memulai perjalanan PKL mereka dengan mudah dan lancar. Kami memahami pentingnya pengalaman PKL yang tepat untuk membangun keterampilan dan pengetahuan di dunia profesional. Kami bekerja sama dengan berbagai perusahaan terkemuka untuk memberikan kesempatan terbaik bagi setiap siswa.</p>
               <ul>
                 <li><i class="bi bi-check-circle"></i> <span>Proses pendaftaran yang cepat dan efisien</span></li>
                 <li><i class="bi bi-check-circle"></i> <span>Kerjasama dengan berbagai perusahaan terkemuka</span></li>
@@ -430,9 +430,9 @@
         <p>Visualisasi data siswa yang mendaftar dan status penerimaan PKL</p>
       </div>
 
-      <div class="container" data-aos="fade-up" data-aos-delay="200">
-        <canvas id="pklChart" style="max-height: 400px;"></canvas>
-      </div>
+    <div class="container d-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
+      <canvas id="pklChart" style="max-height: 400px;"></canvas>
+    </div>
 
     </section>
     <!-- /Section Grafik -->
@@ -810,40 +810,37 @@
 
   <!-- Chart Script -->
   <script>
-    const ctx = document.getElementById('pklChart').getContext('2d');
-    const pklChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Total Siswa', 'Diterima', 'Ditolak'],
-        datasets: [{
-          label: 'Jumlah Siswa',
-          data: [300, 250, 50], // <<<< Ganti sesuai data kamu
-          backgroundColor: [
-            'rgba(54, 162, 235, 0.7)', // Total
-            'rgba(75, 192, 192, 0.7)', // Diterima
-            'rgba(255, 99, 132, 0.7)'  // Ditolak
-          ],
-          borderColor: [
-            'rgba(54, 162, 235, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(255, 99, 132, 1)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        animation: {
-          duration: 1500, // Lama animasi (milidetik)
-          easing: 'easeOutBounce' // Gaya animasi: bounce pas muncul
-        },
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
+   const ctx = document.getElementById('pklChart').getContext('2d');
+  const pklChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Total Siswa', 'Diterima', 'Ditolak'],
+      datasets: [{
+        label: 'Jumlah Siswa',
+        data: [300, 250, 50],
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.7)', 
+          'rgba(75, 192, 192, 0.7)', 
+          'rgba(255, 99, 132, 0.7)' 
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(255, 99, 132, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // tambah ini agar tidak menyusut
+      animation: {
+        duration: 1500,
+        easing: 'easeOutBounce'
       }
-    });
+    }
+  });
+
   </script>
 
   <!-- Vendor JS Files -->
