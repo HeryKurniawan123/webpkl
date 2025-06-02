@@ -266,6 +266,9 @@
                                         @elseif(auth()->user()->role == 'hubin')
                                             <a href="{{ route('hubin.detail.iduka', $i->id) }}"
                                                 class="btn btn-hover rounded-pill btn-sm d-none d-md-block">Detail</a>
+                                        @elseif(auth()->user()->role == 'kepsek')
+                                            <a href="{{ route('kepsek.detail.iduka', $i->id) }}"
+                                                class="btn btn-hover rounded-pill btn-sm d-none d-md-block">Detail</a>
                                         @endif
                                     
                                         {{-- Tombol Kalender --}}
@@ -294,9 +297,12 @@
                                                             <a href="{{ route('detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
                                                         @elseif(auth()->user()->role == 'hubin')
                                                             <a href="{{ route('hubin.detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
+                                                        @elseif(auth()->user()->role == 'kepsek')
+                                                            <a href="{{ route('kepsek.detail.iduka', $i->id) }}" class="dropdown-item text-primary">Detail</a>
                                                         @endif
                                                     </li>
                                     
+                                                      @if (auth()->user()->role == 'kaprog')
                                                     {{-- Tombol Hidden/Unhidden --}}
                                                     <li>
                                                         <form action="{{ route('iduka.toggleVisibility', $i->id) }}" method="POST">
@@ -320,6 +326,7 @@
                                                             <button type="submit" class="delete-btn dropdown-item text-danger">Hapus</button>
                                                         </form>
                                                     </li>
+                                                      @endif
                                                 </ul>
                                             </div>
                                         @endif

@@ -101,7 +101,7 @@
                                             </a>
                                         </li>
                                     </ul>
-
+  @if(in_array(auth()->user()->role, ['hubin', 'kaprog']))
                                     <div class="dropdown">
                                         <button class="btn btn-back dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown">
@@ -120,6 +120,7 @@
                                             </li>
                                         </ul>
                                     </div>
+                                    @endif
                                 </div>
 
                                 <div class="card-body">
@@ -276,9 +277,20 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content mt-3 mb-2">
-                                        <a href="{{ route('siswa.index') }}" class="btn btn-back shadow-sm">
+                                       
+                                         @if (auth()->user()->role == 'kaprog')
+                                                           <a href="{{ route('kaprog.siswa.index') }}" class="btn btn-back shadow-sm">
                                             Kembali
                                         </a>
+                                                        @elseif(auth()->user()->role == 'hubin')
+                                                           <a href="{{ route('siswa.index') }}" class="btn btn-back shadow-sm">
+                                            Kembali
+                                        </a>
+                                                        @elseif(auth()->user()->role == 'kepsek')
+                                                            <a href="{{ route('kepsek.siswa.index') }}" class="btn btn-back shadow-sm">
+                                            Kembali
+                                        </a>
+                                                        @endif
                                     </div>
                                 </div>
                             </div>

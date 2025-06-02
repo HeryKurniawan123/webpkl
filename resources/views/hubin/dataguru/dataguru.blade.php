@@ -180,7 +180,7 @@
                                                                 <option value="guru" {{ $g->role == 'guru' ? 'selected' : '' }}>Guru</option>
                                                                 <option value="kaprog" {{ $g->role == 'kaprog' ? 'selected' : '' }}>Kaprog</option>
                                                                 <option value="hubin" {{ $g->role == 'hubin' ? 'selected' : '' }}>Hubin</option>
-                                                                <option value="psekolah" {{ $g->role == 'psekolah' ? 'selected' : '' }}>Pimpinan Sekolah</option>
+                                                                <option value="psekolah" {{ $g->role == 'psekolah' ? 'selected' : '' }}>Pembimbing Sekolah</option>
                                                             </select>
                                                         </div> -->
                                                         <div class="mb-3">
@@ -284,7 +284,7 @@
                                             <option value="guru">Guru</option>
                                             <option value="kaprog">Kaprog</option>
                                             <option value="hubin">Hubin</option>
-                                            <option value="psekolah">Pimpinan Sekolah</option>
+                                            <option value="psekolah">Pembimbing Sekolah</option>
                                         </select>
                                     </div>
                                    <div class="mb-3">

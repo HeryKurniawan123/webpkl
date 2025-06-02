@@ -17,7 +17,7 @@
                   <a href="{{ route('siswa.data_pribadi.create') }}" class="btn btn-sm btn-outline-primary">Lengkapi Data</a>
                   @endif
 
-                  @if(in_array(auth()->user()->role, ['hubin', 'guru', 'ppkl', 'psekolah', 'orangtua', 'kaprog', 'iduka', 'persuratan']))
+                  @if(in_array(auth()->user()->role, ['hubin', 'guru', 'ppkl', 'psekolah', 'orangtua', 'kaprog', 'iduka', 'persuratan', 'kepsek']))
                   <p>Button "Lengkapi Data" baru ada di akun siswa</p>
                   @endif
                 </div>

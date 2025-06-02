@@ -72,6 +72,12 @@ class UsersSeeder extends Seeder
                 'role'=>'persuratan ',
                 'password'=>bcrypt('12345678')
             ],
+            [
+                'name'=>'kepsek',
+                'nip'=>'1234567898',
+                'role'=>'kepsek ',
+                'password'=>bcrypt('12345678')
+            ],
         ];
 
         foreach($userData as $key => $val){

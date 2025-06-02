@@ -338,6 +338,12 @@
                     @endif
 
                     @if(auth()->user()->role == 'kepsek')
+                     <li class="menu-item {{ Request::routeIs('kepsek.reviewPengajuanSiswa') ? 'active' : '' }}">
+                        <a href="{{ route('kepsek.reviewPengajuanSiswa') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Data Pengajuan PKL Siswa</div>
+                        </a>
+                    </li>
                     <li class="menu-item {{ Request::routeIs('kepsek.iduka.index') ? 'active' : '' }}">
                         <a href="{{ route('kepsek.iduka.index') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>

@@ -184,9 +184,20 @@
                                                                 <i class="bi bi-pen"></i>
                                                             </button>
                                                             @endif
+                                                          
+                                                             @if (auth()->user()->role == 'kaprog')
+                                                            <a href="{{ route('kaprog.siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        @elseif(auth()->user()->role == 'hubin')
                                                             <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
                                                                 <i class="bi bi-eye"></i>
                                                             </a>
+                                                        @elseif(auth()->user()->role == 'kepsek')
+                                                            <a href="{{ route('kepsek.siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                        @endif
                                                             @if(in_array(auth()->user()->role, ['hubin', 'guru']))
                                                             <form action="{{ route('siswa.destroy', $s->id) }}" method="POST" class="form-hapus-siswa">
                                                                 @csrf

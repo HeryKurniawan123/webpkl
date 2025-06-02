@@ -321,6 +321,8 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::post('/kaprog/pembatalan/terima/{id}', [KaprogController::class, 'terimaPembatalan'])->name('kaprog.pembatalan.terima');
     Route::post('/kaprog/pembatalan/tolak/{id}', [KaprogController::class, 'tolakPembatalan'])->name('kaprog.pembatalan.tolak');
 
+      Route::get('/kaprog/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kaprog.siswa.detail');
+          Route::get('/kaprog/siswa', [SiswaController::class, 'index'])->name('kaprog.siswa.index');
 
 
     //TP
@@ -411,6 +413,11 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
     Route::get('/data-guru/kepsek', [KepsekController::class, 'dataGuruKepsek'])->name('kepsek.guru.index');
     Route::get('/data-tenaga-kependidikan/kepsek', [KepsekController::class, 'dataTKKepsek'])->name('kepsek.tk.index');
     Route::get('/kepsek/daftar/iduka/detail/{id}', [KepsekController::class, 'show'])->name('kepsek.detail.iduka');
+     Route::get('/kepsek/histori-pengajuan', [KepsekController::class, 'historiPengajuan'])->name('kepsek.reviewPengajuanSiswa');
+         Route::get('kepsek/iduka/detail/{id}', [IdukaController::class, 'show'])->name('kepsek.detail.iduka');
+            Route::get('/kepsek/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kepsek.siswa.detail');
+            
+    Route::get('/kepsek/siswa', [SiswaController::class, 'index'])->name('kepsek.siswa.index');
 });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');

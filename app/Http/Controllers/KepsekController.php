@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guru;
+use App\Models\User;
 use App\Models\Iduka;
 use App\Models\Kelas;
-use App\Models\Kependik;
 use App\Models\Konke;
-use App\Models\User;
+use App\Models\Kependik;
+use App\Models\PengajuanPkl;
 use Illuminate\Http\Request;
 
 class KepsekController extends Controller
@@ -49,4 +50,17 @@ class KepsekController extends Controller
 
         return view('iduka.dataiduka.detailDataIduka', compact('iduka'));
     }
+
+     public function historiPengajuan()
+    {
+        // Ambil semua data pengajuan yang sudah diproses (status bukan 'proses')
+        $historiPengajuan = PengajuanPkl::with('iduka', 'siswa')
+            ->where('status', 'diterima')
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->groupBy('iduka_id');
+
+        return view('kepsek.reviewPengajuanSiswa', compact('historiPengajuan'));
+    }
+ 
 }
