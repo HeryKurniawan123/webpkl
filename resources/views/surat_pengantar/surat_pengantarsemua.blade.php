@@ -232,10 +232,10 @@
     <div class="mt-4" style="max-width: 320px; margin-left: auto; margin-right: 40px; text-align: center;">
         <p class="fw-bold mb-1" style="font-size: 12px;">Plh. KEPALA SMK NEGERI 1 KAWALI</p>
         <div class="border rounded p-3" style="padding: 0;">
-            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/ttd_kurikulum.png'))) }}"
+            <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/ttd_kepsek.png'))) }}"
                 alt="Tanda Tangan Waka Kurikulum"
                 class="img-fluid"
-                style="max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
+                style="max-height: 160px; object-fit: contain; display: block; margin: 0 auto;" />
         </div>
     </div>
 
