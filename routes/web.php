@@ -421,3 +421,10 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
 });
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
+
+
+// admin
+
+// teknisi
+
+// guru
