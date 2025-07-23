@@ -9,6 +9,7 @@ use App\Http\Controllers\DataController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\OrtuController;
 use App\Http\Controllers\CpAtpController;
+use App\Http\Controllers\DaftarCetakController;
 use App\Http\Controllers\DaftarIdukaController;
 use App\Http\Controllers\HubinController;
 use App\Http\Controllers\IdukaController;
@@ -171,6 +172,9 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/siswa/download-template', [SiswaController::class, 'downloadTemplate'])->name('siswa.download-template');
 
     Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
+    Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
+    Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
+
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -423,8 +427,17 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
 
 
+
 // admin
 
 // teknisi
 
 // guru
+
+//LATIHAN
+//YTYTYFYDIO
+//HFDFSHRTERRS//
+//HFFYHGJGUGFUFUG
+//GDGDGGDGDGDGDG
+//YFYYYTETSRRR
+//JUFYDDDTDITO g
