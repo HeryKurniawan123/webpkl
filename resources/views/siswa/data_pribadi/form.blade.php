@@ -13,7 +13,7 @@
                         </ul>
                     </div>
                 @endif
-<!-- tess -->
+                <!-- tess -->
                 <form action="{{ route('siswa.data_pribadi.store') }}" method="POST">
                     @csrf
                     <input type="hidden" name="id" value="{{ old('id', $dataPribadi->id ?? '') }}">
@@ -22,14 +22,16 @@
                         <label class="form-label">Nama Lengkap*</label>
                         <input type="text" name="name" class="form-control"
                             value="{{ old('name', $siswa->name ?? '') }}" required>
-                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah benar!</i></small>
-                    </div>                    
+                        <small class="form-text text-muted"><i>Nama lengkap ini akan tercatat di sistem, pastikan sudah
+                                benar!</i></small>
+                    </div>
 
                     <div class="mb-3">
                         <label class="form-label">NIS*</label>
                         <input type="text" name="nip" class="form-control"
                             value="{{ old('nip', $siswa->nip ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Pastikan penulisan NIS sudah sesuai dengan data resmi sekolah!</i></small>
+                        <small class="form-text text-muted"><i>Pastikan penulisan NIS sudah sesuai dengan data resmi
+                                sekolah!</i></small>
                     </div>
 
                     <div class="mb-3">
@@ -42,7 +44,8 @@
                                 </option>
                             @endforeach
                         </select>
-                        <small class="form-text text-muted"><i>Pastikan penulisan kelas sudah benar sesuai dengan tingkat dan jurusanmu!</i></small>
+                        <small class="form-text text-muted"><i>Pastikan penulisan kelas sudah benar sesuai dengan tingkat
+                                dan jurusanmu!</i></small>
                     </div>
 
                     <div class="mb-3">
@@ -55,20 +58,22 @@
                                 </option>
                             @endforeach
                         </select>
-                        <small class="form-text text-muted"><i>Pastikan pemilihan Konsentrasi Kelahlian sudah benar sesuai dengan tingkat dan jurusanmu!</i></small>
+                        <small class="form-text text-muted"><i>Pastikan pemilihan Konsentrasi Kelahlian sudah benar sesuai
+                                dengan tingkat dan jurusanmu!</i></small>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Alamat*</label>
                         <textarea name="alamat_siswa" class="form-control" required>{{ old('alamat_siswa', $dataPribadi->alamat_siswa ?? '') }}</textarea>
-                        <small class="form-text text-muted"><i>Pastikan alamat ditulis dengan lengkap dan sesuai, agar dapat digunakan dengan tepat jika diperlukan.</i></small>
+                        <small class="form-text text-muted"><i>Pastikan alamat ditulis dengan lengkap dan sesuai, agar dapat
+                                digunakan dengan tepat jika diperlukan.</i></small>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">No Telepon Siswa*</label>
                         <input type="text" name="no_hp" class="form-control"
                             value="{{ old('no_hp', $dataPribadi->no_hp ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Gunakan nomor yang aktif dan bisa dihubungi.</i></small>
+                        <small class="form-text text-muted"><i>Gunakan nomor yang aktif dan bisa dihubungi.</i></small>
                     </div>
 
                     <div class="mb-3">
@@ -85,30 +90,57 @@
                     <div class="mb-3">
                         <label class="form-label">Agama*</label>
                         <select name="agama" class="form-control" id="agama-select" required>
-                            <option value="" disabled {{ old('agama', $dataPribadi->agama ?? '') == '' ? 'selected' : '' }}>-- Pilih Agama --</option>
-                            <option value="Islam" {{ old('agama', $dataPribadi->agama ?? '') == 'Islam' ? 'selected' : '' }}>Islam</option>
-                            <option value="Kristen Protestan" {{ old('agama', $dataPribadi->agama ?? '') == 'Kristen Protestan' ? 'selected' : '' }}>Kristen Protestan</option>
-                            <option value="Kristen Katolik" {{ old('agama', $dataPribadi->agama ?? '') == 'Kristen Katolik' ? 'selected' : '' }}>Kristen Katolik</option>
-                            <option value="Hindu" {{ old('agama', $dataPribadi->agama ?? '') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
-                            <option value="Buddha" {{ old('agama', $dataPribadi->agama ?? '') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
-                            <option value="Konghucu" {{ old('agama', $dataPribadi->agama ?? '') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
-                            <option value="Lainnya" 
-                                {{ !in_array(old('agama', $dataPribadi->agama ?? ''), ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu', '']) 
-                                && old('agama', $dataPribadi->agama ?? '') 
-                                ? 'selected' : '' }}>
+                            <option value="" disabled
+                                {{ old('agama', $dataPribadi->agama ?? '') == '' ? 'selected' : '' }}>-- Pilih Agama --
+                            </option>
+                            <option value="Islam"
+                                {{ old('agama', $dataPribadi->agama ?? '') == 'Islam' ? 'selected' : '' }}>Islam</option>
+                            <option value="Kristen Protestan"
+                                {{ old('agama', $dataPribadi->agama ?? '') == 'Kristen Protestan' ? 'selected' : '' }}>
+                                Kristen Protestan</option>
+                            <option value="Kristen Katolik"
+                                {{ old('agama', $dataPribadi->agama ?? '') == 'Kristen Katolik' ? 'selected' : '' }}>
+                                Kristen Katolik</option>
+                            <option value="Hindu"
+                                {{ old('agama', $dataPribadi->agama ?? '') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                            <option value="Buddha"
+                                {{ old('agama', $dataPribadi->agama ?? '') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                            <option value="Konghucu"
+                                {{ old('agama', $dataPribadi->agama ?? '') == 'Konghucu' ? 'selected' : '' }}>Konghucu
+                            </option>
+                            <option value="Lainnya"
+                                {{ !in_array(old('agama', $dataPribadi->agama ?? ''), [
+                                    'Islam',
+                                    'Kristen Protestan',
+                                    'Kristen Katolik',
+                                    'Hindu',
+                                    'Buddha',
+                                    'Konghucu',
+                                    '',
+                                ]) && old('agama', $dataPribadi->agama ?? '')
+                                    ? 'selected'
+                                    : '' }}>
                                 Lainnya
                             </option>
                         </select>
                     </div>
-                    
+
                     <div class="mb-3" id="agama-lainnya-container" style="display: none;">
                         <label class="form-label">Agama Lainnya*</label>
-                        <input type="text" class="form-control" name="agama_lainnya" id="agama-lainnya-input" 
-                               value="{{ !in_array(old('agama', $dataPribadi->agama ?? ''), ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu', '']) 
-                                      ? old('agama', $dataPribadi->agama ?? '') 
-                                      : '' }}">
+                        <input type="text" class="form-control" name="agama_lainnya" id="agama-lainnya-input"
+                            value="{{ !in_array(old('agama', $dataPribadi->agama ?? ''), [
+                                'Islam',
+                                'Kristen Protestan',
+                                'Kristen Katolik',
+                                'Hindu',
+                                'Buddha',
+                                'Konghucu',
+                                '',
+                            ])
+                                ? old('agama', $dataPribadi->agama ?? '')
+                                : '' }}">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Tempat Lahir*</label>
                         <input type="text" name="tempat_lhr" class="form-control"
@@ -124,7 +156,7 @@
                         <label class="form-label">Email*</label>
                         <input type="email" name="email" class="form-control"
                             value="{{ old('email', $siswa->email ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
+                        <small class="form-text text-muted"><i>Masukkan email aktif. Pastikan bisa diakses!</i></small>
                     </div><br>
                     {{-- ayah --}}
                     <h1 class="h3 mb-2 text-gray-800">Data Orang Tua</h1><br>
@@ -133,13 +165,15 @@
                         <label class="form-label">Nama Ayah*</label>
                         <input type="text" name="name_ayh" class="form-control"
                             value="{{ old('name_ayh', $dataPribadi->name_ayh ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Tuliskan nama lengkap ayah sesuai dengan data kependudukan.</i></small>
+                        <small class="form-text text-muted"><i>Tuliskan nama lengkap ayah sesuai dengan data
+                                kependudukan.</i></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">NIK Ayah*</label>
                         <input type="text" name="nik_ayh" class="form-control"
                             value="{{ old('nik_ayh', $dataPribadi->nik_ayh ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Masukkan NIK dengan benar sesuai data resmi yang berlaku.</i></small>
+                        <small class="form-text text-muted"><i>Masukkan NIK dengan benar sesuai data resmi yang
+                                berlaku.</i></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Tempat Lahir Ayah*</label>
@@ -162,13 +196,15 @@
                         <label class="form-label">Nama Ibu*</label>
                         <input type="text" name="name_ibu" class="form-control"
                             value="{{ old('name_ibu', $dataPribadi->name_ibu ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Tuliskan nama lengkap ayah sesuai dengan data kependudukan.</i></small>
+                        <small class="form-text text-muted"><i>Tuliskan nama lengkap ayah sesuai dengan data
+                                kependudukan.</i></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">NIK Ibu*</label>
                         <input type="text" name="nik_ibu" class="form-control"
                             value="{{ old('nik_ibu', $dataPribadi->nik_ibu ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Masukkan NIK dengan benar sesuai data resmi yang berlaku.</i></small>
+                        <small class="form-text text-muted"><i>Masukkan NIK dengan benar sesuai data resmi yang
+                                berlaku.</i></small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Tempat Lahir Ibu*</label>
@@ -191,37 +227,91 @@
                     <div class="mb-3">
                         <label class="form-label">Email Orang Tua</label>
                         <input type="email" name="email_ortu" class="form-control"
-                            value="{{ old('email_ortu', $dataPribadi->email_ortu ?? '') }}" >
-                            <small class="form-text text-muted"><i>Pastikan alamat email yang dimasukkan benar dan aktif untuk keperluan komunikasi lebih lanjut.</i></small>
+                            value="{{ old('email_ortu', $dataPribadi->email_ortu ?? '') }}">
+                        <small class="form-text text-muted"><i>Pastikan alamat email yang dimasukkan benar dan aktif untuk
+                                keperluan komunikasi lebih lanjut.</i></small>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Nomor Telepon</label>
                         <input type="text" name="no_tlp" class="form-control"
                             value="{{ old('no_tlp', $dataPribadi->no_tlp ?? '') }}" required>
-                            <small class="form-text text-muted"><i>Masukkan nomor HP yang aktif dan terhubung dengan WhatsApp.</i></small>
+                        <small class="form-text text-muted"><i>Masukkan nomor HP yang aktif dan terhubung dengan
+                                WhatsApp.</i></small>
                     </div>
-                   
-                   <div class="mb-3">
-    <label class="form-label">Password</label>
-    <div class="input-group">
-        <input type="password" class="form-control" id="password-showhide" name="password" placeholder="Password">
-        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-showhide" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
-        </button>
-    </div>
-    <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
-</div>
 
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password-showhide" name="password"
+                                placeholder="Password">
+                            <button type="button" class="btn btn-outline-secondary toggle-password"
+                                data-target="password-showhide" tabindex="-1">
+                                <i class="bi bi-eye-slash"></i>
+                            </button>
+                        </div>
+                        <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
+                    </div>
+
+
+
+                    <!-- Pilihan ttd_ortu -->
+                    <div class="mb-2">
+                        <div class="form-group">
+                            <label for="ttd_ortu_option">Tanda Tangan Orang Tua / Wali</label>
+                            <select name="ttd_ortu_option" id="ttd_ortu_option" class="form-control"
+                                onchange="toggleManualFields()">
+                                <option value="ayah"
+                                    {{ old('ttd_ortu_option', $dataPribadi->ttd_ortu_option ?? ($dataPribadi->ttd_ortu === 'ayah' ? 'ayah' : '')) == 'ayah' ? 'selected' : '' }}>
+                                    Ayah</option>
+                                <option value="ibu"
+                                    {{ old('ttd_ortu_option', $dataPribadi->ttd_ortu_option ?? ($dataPribadi->ttd_ortu === 'ibu' ? 'ibu' : '')) == 'ibu' ? 'selected' : '' }}>
+                                    Ibu</option>
+                                <option value="manual"
+                                    {{ old('ttd_ortu_option', $dataPribadi->ttd_ortu_option ?? (!in_array($dataPribadi->ttd_ortu, ['ayah', 'ibu']) ? 'manual' : '')) == 'manual' ? 'selected' : '' }}>
+                                    Manual</option>
+                            </select>
+
+                            <small id="ttd-help" class="form-text text-muted mt-1">
+                                Pilih siapa yang akan menandatangani surat.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Field Manual -->
+                    <div id="manualFields" style="display: none;">
+                        <div class="mb-2">
+                            <div class="form-group">
+                                <label for="ttd_ortu_manual_hubungan">Hubungan dengan Siswa</label>
+                                <input type="text" name="ttd_ortu_manual_hubungan" class="form-control"
+                                    value="{{ old('ttd_ortu_manual_hubungan', $dataPribadi->ttd_ortu ?? '') }}">
+                                <small id="hubunganHelp" class="form-text text-muted">Tulis hubungan penandatangan dengan
+                                    siswa.</small>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <div class="form-group">
+                                <label for="ttd_ortu_manual_nama">Nama</label>
+                                <input type="text" name="ttd_ortu_manual_nama" class="form-control"
+                                    value="{{ old('ttd_ortu_manual_nama', $dataPribadi->ttd_ortu_nama ?? '') }}">
+                                <small id="namaHelp" class="form-text text-muted">Tulis nama lengkap orang yang akan
+                                    menandatangani surat.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-start mt-3">
+                        <button type="submit" class="btn btn-primary px-4">Simpan</button>
+                    </div>
+
                 </form>
             </div>
         </div>
     </div>
 @endsection
-@if(session('success'))
+@if (session('success'))
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil!',
@@ -236,7 +326,7 @@
 {{-- Notifikasi error validasi --}}
 @if ($errors->any())
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal menyimpan data!',
@@ -252,20 +342,22 @@
         const agamaLainnyaContainer = document.getElementById('agama-lainnya-container');
         const agamaLainnyaInput = document.getElementById('agama-lainnya-input');
         const form = agamaSelect.closest('form');
-    
+
         // Fungsi untuk menampilkan/menyembunyikan input lainnya
         function toggleAgamaLainnya() {
             const selectedValue = agamaSelect.value;
-            const agamaStandar = ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha', 'Konghucu'];
-            
+            const agamaStandar = ['Islam', 'Kristen Protestan', 'Kristen Katolik', 'Hindu', 'Buddha',
+                'Konghucu'
+            ];
+
             // Cek apakah nilai saat ini termasuk agama standar
             const currentAgama = "{{ old('agama', $dataPribadi->agama ?? '') }}";
             const isCustomAgama = currentAgama && !agamaStandar.includes(currentAgama);
-    
+
             if (selectedValue === 'Lainnya' || isCustomAgama) {
                 agamaLainnyaContainer.style.display = 'block';
                 agamaLainnyaInput.required = true;
-                
+
                 if (isCustomAgama && selectedValue !== 'Lainnya') {
                     // Jika data yang ada bukan agama standar, set select ke Lainnya
                     agamaSelect.value = 'Lainnya';
@@ -276,13 +368,13 @@
                 agamaLainnyaInput.required = false;
             }
         }
-    
+
         // Inisialisasi pertama kali
         toggleAgamaLainnya();
-    
+
         // Event listener untuk perubahan select
         agamaSelect.addEventListener('change', toggleAgamaLainnya);
-    
+
         // Handler sebelum form submit
         form.addEventListener('submit', function(e) {
             if (agamaSelect.value === 'Lainnya') {
@@ -292,33 +384,88 @@
                 hiddenInput.name = 'agama';
                 hiddenInput.value = agamaLainnyaInput.value.trim();
                 form.appendChild(hiddenInput);
-                
+
                 // Nonaktifkan select asli agar tidak ikut terkirim
                 agamaSelect.disabled = true;
             }
         });
-    
-    // Toggle Password Show/Hide
-    document.querySelectorAll('.toggle-password').forEach(button => {
-        button.addEventListener('click', function () {
-            const targetId = this.getAttribute('data-target');
-            const input = document.getElementById(targetId);
-            const icon = this.querySelector('i');
 
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi-eye');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('bi-eye');
-                icon.classList.add('bi-eye-slash');
-            }
+        // Toggle Password Show/Hide
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                }
+            });
         });
     });
-});
 
-    </script>
+
+    //ttd
+
+    function toggleManualFields() {
+        const select = document.getElementById('ttd_ortu_option');
+        const manualFields = document.getElementById('manualFields');
+        const helpText = document.getElementById('ttd-help');
+
+        const hubunganInput = document.querySelector('input[name="ttd_ortu_manual_hubungan"]');
+        const namaInput = document.querySelector('input[name="ttd_ortu_manual_nama"]');
+        const hubunganHelp = document.getElementById('hubunganHelp');
+        const namaHelp = document.getElementById('namaHelp');
+
+        if (select.value === 'manual') {
+            manualFields.style.display = 'block';
+            helpText.textContent = 'Anda memilih "Manual". Silakan isi hubungan dan nama penandatangan.';
+
+
+            if (hubunganInput && hubunganHelp) {
+                hubunganHelp.style.display = hubunganInput.value.trim() !== '' ? 'none' : 'block';
+            }
+            if (namaInput && namaHelp) {
+                namaHelp.style.display = namaInput.value.trim() !== '' ? 'none' : 'block';
+            }
+
+        } else if (select.value === 'ayah') {
+            manualFields.style.display = 'none';
+            helpText.textContent = 'Anda memilih "Ayah" sebagai penandatangan.';
+        } else if (select.value === 'ibu') {
+            manualFields.style.display = 'none';
+            helpText.textContent = 'Anda memilih "Ibu" sebagai penandatangan.';
+        } else {
+            manualFields.style.display = 'none';
+            helpText.textContent = 'Pilih siapa yang akan menandatangani surat.';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleManualFields();
+
+        const hubunganInput = document.querySelector('input[name="ttd_ortu_manual_hubungan"]');
+        const namaInput = document.querySelector('input[name="ttd_ortu_manual_nama"]');
+        const hubunganHelp = document.getElementById('hubunganHelp');
+        const namaHelp = document.getElementById('namaHelp');
+
+        if (hubunganInput && hubunganHelp) {
+            hubunganInput.addEventListener('input', function() {
+                hubunganHelp.style.display = this.value.trim() !== '' ? 'none' : 'block';
+            });
+        }
+
+        if (namaInput && namaHelp) {
+            namaInput.addEventListener('input', function() {
+                namaHelp.style.display = this.value.trim() !== '' ? 'none' : 'block';
+            });
+        }
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-

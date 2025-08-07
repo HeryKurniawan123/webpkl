@@ -35,10 +35,12 @@ class DataPribadi extends Model
         'tempat_lhr_ibu',
         'tgl_lahir_ibu',
         'pekerjaan_ibu',
+        'ttd_ortu',
+        'ttd_ortu_nama',
 
         'email_ortu',
         'no_tlp',
-       
+
     ];
 
     public function user()

@@ -21,6 +21,7 @@
         p {
             text-align: center;
         }
+
         .kop-surat {
             text-align: center;
         }
@@ -36,7 +37,9 @@
             margin-left: 120px;
         }
 
-        .kop-surat h3, .kop-surat h4, .kop-surat p {
+        .kop-surat h3,
+        .kop-surat h4,
+        .kop-surat p {
             margin: 0;
             text-align: center;
         }
@@ -60,7 +63,9 @@
         }
 
 
-        h3, h4, p {
+        h3,
+        h4,
+        p {
             margin: 0;
             padding: 0;
         }
@@ -121,13 +126,19 @@
             display: block;
             height: 80px;
         }
+
+        .sign-table td {
+            vertical-align: top;
+            padding: 10px;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="kop-surat">
-        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/jawabarat.png'))) }}" alt="Logo Jawa Barat" />
+        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/jawabarat.png'))) }}"
+            alt="Logo Jawa Barat" />
         <div class="teks">
             <h3>PEMERINTAH DAERAH PROVINSI JAWA BARAT</h3>
             <h3>DINAS PENDIDIKAN</h3>
@@ -139,7 +150,7 @@
         <hr>
         <h5><u>SURAT PENGAJUAN MENCARI TEMPAT PKL TP 2025/2026</u></h5>
     </div>
-              
+
     <table>
         <tr>
             <td>Nama</td>
@@ -186,30 +197,50 @@
     <br>
     <p style="text-align: right; margin-right: 75px;">Kawali, .............2025</p>
 
-    <table class="sign-table">
+    <br><br><br>
+
+    <table width="100%" class="sign-table" style="text-align: center;">
         <tr>
-            <td>Menyetujui,<br>Orang Tua/Wali<br>
-                <div class="space"></div>
-                <strong>{{ $dataPribadi->name_ayh ?? '-' }}</strong>
+            <td width="33%">
+                Menyetujui,<br>
+                @if ($dataPribadi->ttd_ortu === 'ayah')
+                    Orang Tua (Ayah)<br><br><br><br>
+                    <strong>{{ $dataPribadi->name_ayh }}</strong>
+                @elseif($dataPribadi->ttd_ortu === 'ibu')
+                    Orang Tua (Ibu)<br><br><br><br>
+                    <strong>{{ $dataPribadi->name_ibu }}</strong>
+                @else
+                    Wali ({{ $dataPribadi->ttd_ortu }})<br><br><br><br>
+                    <strong>{{ $dataPribadi->ttd_ortu_nama }}</strong>
+                @endif
             </td>
-            <td>Yang Mengajukan,<br>Siswa<br>
-                <div class="space"></div>
+
+            <td width="33%">
+                Yang Mengajukan,<br>
+                Siswa<br><br><br><br>
                 <strong>{{ $dataPribadi->name ?? '-' }}</strong>
             </td>
         </tr>
+
         <tr>
-            <td colspan="2">Menyetujui,<br>Ketua KK {{ $singkatanJurusan }}<br>
-                <div class="space"></div>
-                @if(isset($kaprog))
-                <strong>{{ $kaprog->name }}</strong><br>
-                NIP: {{ $kaprog->nip ?? '-' }}
+            <td colspan="2"><br><br></td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                Menyetujui,<br>
+                Ketua KK {{ $singkatanJurusan }}<br><br><br>
+                @if (isset($kaprog))
+                    <strong>{{ $kaprog->name }}</strong><br>
+                    NIP: {{ $kaprog->nip ?? '-' }}
                 @else
-                <strong>(...........................................)</strong><br>
-                NIP: .........................................
+                    <strong>(...........................................)</strong><br>
+                    NIP: .........................................
                 @endif
             </td>
         </tr>
     </table>
+
 
 </body>
 
