@@ -3,24 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Iduka;
-use App\Models\User;
 use Illuminate\Http\Request;
-use LaporanIdukaExport;
 use Maatwebsite\Excel\Facades\Excel;
-
-
+use App\Exports\LaporanIdukaExport;
+use App\Exports\LaporanIdukaAllExport;
 
 class LaporanIduka extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Tampilkan daftar IDUKA dengan pagination (untuk tampilan web).
      */
     public function index(Request $request)
     {
-
         $query = Iduka::with('siswa');
 
-        // filter nama iduka
+        // Filter nama IDUKA
         if ($request->filled('nama_iduka')) {
             $query->where('nama', 'like', '%' . $request->nama_iduka . '%');
         }
@@ -31,23 +28,7 @@ class LaporanIduka extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
+     * Tampilkan daftar siswa per IDUKA.
      */
     public function showSiswa($id)
     {
@@ -55,34 +36,27 @@ class LaporanIduka extends Controller
         return view('hubin.laporan_iduka.siswa', compact('iduka'));
     }
 
+    /**
+     * Export siswa per IDUKA ke Excel.
+     */
     public function exportExcel($id)
     {
         $iduka = Iduka::with('siswa')->findOrFail($id);
-        return Excel::download(new \App\Exports\LaporanIdukaExport($iduka), 'laporan_iduka_' . $iduka->nama . '.xlsx');
-    }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return Excel::download(
+            new LaporanIdukaExport($iduka),
+            'laporan_iduka_' . $iduka->nama . '.xlsx'
+        );
     }
 
     /**
-     * Update the specified resource in storage.
+     * Export semua IDUKA + siswa ke Excel.
      */
-    public function update(Request $request, string $id)
+    public function exportAll()
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return Excel::download(
+            new LaporanIdukaAllExport,
+            'laporan_iduka.xlsx'
+        );
     }
 }

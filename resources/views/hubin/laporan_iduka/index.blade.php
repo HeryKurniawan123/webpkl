@@ -23,6 +23,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </form>
                     </div>
@@ -36,6 +37,14 @@
                     <div class="card-header bg-transparent border-0">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title fw-bold mb-0">📋 Daftar Laporan Iduka</h5>
+                            <div class="col-lg-4">
+                                <div class="d-flex gap-2 justify-content-lg-end mt-3 mt-lg-0">
+                                    <a href="{{ route('laporan-iduka.export.all') }}" class="btn btn-outline-success">
+                                        <i class="fas fa-file-excel me-1"></i>
+                                        Export Semua
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body p-0">

@@ -8,7 +8,6 @@
             <th>No</th>
             <th>Nama Siswa</th>
             <th>Kelas</th>
-            <th>Jurusan</th>
         </tr>
     </thead>
     <tbody>
@@ -17,7 +16,7 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $s->name }}</td>
                 <td>{{ $s->kelas ?? '-' }}</td>
-                <td>{{ $s->jurusan ?? '-' }}</td>
+                <td>{{ $s->kelas->name_kelas ?? '-' }}</td>
             </tr>
         @endforeach
     </tbody>

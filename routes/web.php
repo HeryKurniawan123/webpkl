@@ -191,8 +191,8 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
         ->name('laporan.iduka.siswa');
     Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])
     ->name('laporan.iduka.export.excel');
-
-
+    Route::get('/laporan-iduka/export', [LaporanIduka::class, 'exportAll'])
+    ->name('laporan-iduka.export.all');
 
 });
 
