@@ -1,7 +1,10 @@
 <?php
 
 
+use App\Http\Controllers\AbsensiSiswaController;
+use App\Http\Controllers\LaporanIduka;
 use App\Http\Controllers\PendampingController;
+use App\Http\Controllers\PengajuanIzinSiswaController;
 use App\Models\Cp;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
@@ -80,6 +83,13 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
     Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
     Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
+
+    //absensi
+    Route::get('/absensi', [AbsensiSiswaController::class, 'index'])->name('siswa.absensi.index');
+    Route::post('/absensi/masuk', [AbsensiSiswaController::class, 'absenMasuk'])->name('absensi.masuk');
+    Route::post('/absensi/pulang', [AbsensiSiswaController::class, 'absenPulang'])->name('absensi.pulang');
+
+    Route::post('/izin/store', [AbsensiSiswaController::class, 'izin'])->name('izin.store');
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -141,7 +151,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::put('/data-guru/{guru}/update', [GuruController::class, 'update'])->name('guru.update');
     Route::delete('/data-guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
 
-    //TK 
+    //TK
     Route::get('/data-tenaga-kependidikan', [TenagaKependidikanController::class, 'tenagaKependidikan'])->name('tk.index');
     Route::get('/kependik/create', [TenagaKependidikanController::class, 'create'])->name('kependik.create');
     Route::post('/kependik/store', [TenagaKependidikanController::class, 'store'])->name('kependik.store');
@@ -174,6 +184,15 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
     Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
     Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
+
+    //laporan iduka
+    Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
+    Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])
+        ->name('laporan.iduka.siswa');
+    Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])
+    ->name('laporan.iduka.export.excel');
+
+
 
 });
 
@@ -325,8 +344,8 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::post('/kaprog/pembatalan/terima/{id}', [KaprogController::class, 'terimaPembatalan'])->name('kaprog.pembatalan.terima');
     Route::post('/kaprog/pembatalan/tolak/{id}', [KaprogController::class, 'tolakPembatalan'])->name('kaprog.pembatalan.tolak');
 
-      Route::get('/kaprog/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kaprog.siswa.detail');
-          Route::get('/kaprog/siswa', [SiswaController::class, 'index'])->name('kaprog.siswa.index');
+    Route::get('/kaprog/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kaprog.siswa.detail');
+    Route::get('/kaprog/siswa', [SiswaController::class, 'index'])->name('kaprog.siswa.index');
 
 
     //TP
@@ -359,9 +378,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     //untuk hidden/unhidden
     Route::put('/iduka/{iduka}/toggle-visibility', [KaprogController::class, 'toggleVisibility'])
-->name('iduka.toggleVisibility');
+        ->name('iduka.toggleVisibility');
     //sreach iduka di kaprog/hubin
-     Route::get('/iduka', [IdukaController::class, 'index'])->name('iduka.index');
+    Route::get('/iduka', [IdukaController::class, 'index'])->name('iduka.index');
 
     //update data iduka yang ada di hubin dan kaprog
     Route::put('/iduka-update/{id}', [IdukaController::class, 'updateiduka'])->name('updateiduka.update');
@@ -386,7 +405,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/persuratan/download/{id}', [PersuratanController::class, 'downloadPdf'])
         ->name('persuratan.download');
 
-    // membuat data persuratan    
+    // membuat data persuratan
     Route::get('/pengajuan-iduka-baru', [PersuratanController::class, 'idukaBaru'])->name('pengajuan.iduka');
     Route::get('/detail-iduka-baru', [PersuratanController::class, 'showidukaBaru'])->name('detail.iduka.baru');
 
@@ -417,10 +436,10 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
     Route::get('/data-guru/kepsek', [KepsekController::class, 'dataGuruKepsek'])->name('kepsek.guru.index');
     Route::get('/data-tenaga-kependidikan/kepsek', [KepsekController::class, 'dataTKKepsek'])->name('kepsek.tk.index');
     Route::get('/kepsek/daftar/iduka/detail/{id}', [KepsekController::class, 'show'])->name('kepsek.detail.iduka');
-     Route::get('/kepsek/histori-pengajuan', [KepsekController::class, 'historiPengajuan'])->name('kepsek.reviewPengajuanSiswa');
-         Route::get('kepsek/iduka/detail/{id}', [IdukaController::class, 'show'])->name('kepsek.detail.iduka');
-            Route::get('/kepsek/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kepsek.siswa.detail');
-            
+    Route::get('/kepsek/histori-pengajuan', [KepsekController::class, 'historiPengajuan'])->name('kepsek.reviewPengajuanSiswa');
+    Route::get('kepsek/iduka/detail/{id}', [IdukaController::class, 'show'])->name('kepsek.detail.iduka');
+    Route::get('/kepsek/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kepsek.siswa.detail');
+
     Route::get('/kepsek/siswa', [SiswaController::class, 'index'])->name('kepsek.siswa.index');
 });
 

@@ -26,7 +26,8 @@ class User extends Authenticatable
         'password',
         'role',
         'iduka_id',
-         'profile_photo'
+        'lokasi_pkl_id',
+        'profile_photo'
     ];
 
     // Relasi ke tabel gurus (One to One)
@@ -72,7 +73,7 @@ class User extends Authenticatable
         return $this->hasOne(DataPribadiPersuratan::class, 'user_id', 'id');
 
     }
-    
+
 
     public function siswa()
     {
@@ -80,9 +81,24 @@ class User extends Authenticatable
     }
 
     public function pembimbingpkl()
-{
-    return $this->hasOne(Pembimbing::class, 'user_id', 'id');
-}
+    {
+        return $this->hasOne(Pembimbing::class, 'user_id', 'id');
+    }
+
+    public function absensi()
+    {
+        return $this->hasMany(AbsensiPkl::class, 'nis', 'nip');
+    }
+
+    public function lokasiPkl()
+    {
+        return $this->belongsTo(LokasiPkl::class, 'lokasi_pkl_id');
+    }
+
+    public function idukaDiterima()
+    {
+        return $this->belongsTo(Iduka::class, 'iduka_id', 'id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.

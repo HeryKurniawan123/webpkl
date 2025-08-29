@@ -67,21 +67,29 @@ class Iduka extends Model
     }
 
     // Relasi ke CP (Capaian Pembelajaran)
-   // IdukaAtp.php
+    // IdukaAtp.php
 
-public function cp()
-{
-    return $this->belongsTo(Cp::class);
-}
+    public function cp()
+    {
+        return $this->belongsTo(Cp::class);
+    }
 
-public function atp()
-{
-    return $this->belongsTo(Atp::class);
-}
+    public function atp()
+    {
+        return $this->belongsTo(Atp::class);
+    }
 
 
     public function pengajuanUsulans()
     {
         return $this->hasMany(PengajuanUsulan::class, 'iduka_id');
+    }
+
+
+    //laporan
+    public function siswa()
+    {
+        return $this->hasMany(User::class, 'iduka_id', 'id')
+            ->where('role', 'siswa');
     }
 }

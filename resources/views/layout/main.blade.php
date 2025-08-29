@@ -84,17 +84,17 @@
                     <!-- Dashboard -->
 
                     <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                        <a href="@if(auth()->user()->role == 'guru') /dashboard/guru 
-                                @elseif(auth()->user()->role == 'siswa') /dashboard/siswa 
-                                @elseif(auth()->user()->role == 'hubin') /dashboard/hubin 
-                                @elseif(auth()->user()->role == 'kaprog') /dashboard/kaprog 
-                                @elseif(auth()->user()->role == 'ppkl') /dashboard/ppkl 
-                                @elseif(auth()->user()->role == 'psekolah') /dashboard/psekolah 
-                                @elseif(auth()->user()->role == 'iduka') /dashboard/iduka 
-                                @elseif(auth()->user()->role == 'orangtua') /dashboard/orangtua 
-                                @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan 
-                                @elseif(auth()->user()->role == 'kepsek') /dashboard/kepsek 
-                                @elseif(auth()->user()->role == 'pendamping') /dashboard/pendamping 
+                        <a href="@if(auth()->user()->role == 'guru') /dashboard/guru
+                                @elseif(auth()->user()->role == 'siswa') /dashboard/siswa
+                                @elseif(auth()->user()->role == 'hubin') /dashboard/hubin
+                                @elseif(auth()->user()->role == 'kaprog') /dashboard/kaprog
+                                @elseif(auth()->user()->role == 'ppkl') /dashboard/ppkl
+                                @elseif(auth()->user()->role == 'psekolah') /dashboard/psekolah
+                                @elseif(auth()->user()->role == 'iduka') /dashboard/iduka
+                                @elseif(auth()->user()->role == 'orangtua') /dashboard/orangtua
+                                @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan
+                                @elseif(auth()->user()->role == 'kepsek') /dashboard/kepsek
+                                @elseif(auth()->user()->role == 'pendamping') /dashboard/pendamping
                                 @endif" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Dashboard</div>
@@ -178,6 +178,10 @@
                         <a href="{{ route('siswa.data_pribadi.create') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
                             <div data-i18n="Basic">Data Pribadi Siswa</div>
+                        </a>
+                        <a href="{{ route('siswa.absensi.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Absensi</div>
                         </a>
                     </li>
                     @endif
@@ -299,6 +303,12 @@
                         <a href="{{ route('hubin.iduka.daftar') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
                             <div data-i18n="Basic">Daftar Iduka</div>
+                        </a>
+                    </li>
+                    <li class="menu-item {{ Request::routeIs('laporan.iduka.index') ? 'active' : '' }}">
+                        <a href="{{ route('laporan.iduka.index') }}" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <div data-i18n="Basic">Laporan Iduka</div>
                         </a>
                     </li>
                     <li class="menu-item {{ Request::routeIs('hubin.daftarcetak') ? 'active' : '' }}">
