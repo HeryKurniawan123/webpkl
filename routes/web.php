@@ -184,16 +184,6 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
     Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
     Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
-
-    //laporan iduka
-    Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
-    Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])
-        ->name('laporan.iduka.siswa');
-    Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])
-        ->name('laporan.iduka.export.excel');
-    Route::get('/laporan-iduka/export', [LaporanIduka::class, 'exportAll'])
-        ->name('laporan-iduka.export.all');
-
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -369,18 +359,6 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     //--------
 
     Route::get('/kaprog/histori-pengajuan', [KaprogController::class, 'historiPengajuan'])->name('kaprog.review.histori');
-
-    //laporan iduka
-    Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
-    Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])
-        ->name('laporan.iduka.siswa');
-    Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])
-        ->name('laporan.iduka.export.excel');
-    Route::get('/laporan-iduka/export', [LaporanIduka::class, 'exportAll'])
-        ->name('laporan-iduka.export.all');
-
-
-
 });
 
 
@@ -450,9 +428,12 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
     Route::get('/kepsek/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kepsek.siswa.detail');
 
     Route::get('/kepsek/siswa', [SiswaController::class, 'index'])->name('kepsek.siswa.index');
+});
 
-    //laporan iduka
-    Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
+
+//laporan iduka
+Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
+ Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
     Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])
         ->name('laporan.iduka.siswa');
     Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])
@@ -460,6 +441,8 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
     Route::get('/laporan-iduka/export', [LaporanIduka::class, 'exportAll'])
         ->name('laporan-iduka.export.all');
 });
+
+
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
 

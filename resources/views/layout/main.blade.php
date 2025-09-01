@@ -267,12 +267,6 @@
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
                         </li>
-                         <li class="menu-item {{ Request::routeIs('laporan.iduka.index') ? 'active' : '' }}">
-                            <a href="{{ route('laporan.iduka.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
-                                <div data-i18n="Basic">Laporan Iduka</div>
-                            </a>
-                        </li>
                     @endif
                     @if (auth()->user()->role == 'hubin')
                         <li class="menu-header small text-uppercase">
@@ -311,13 +305,6 @@
                                 <div data-i18n="Basic">Daftar Iduka</div>
                             </a>
                         </li>
-                        <li class="menu-item {{ Request::routeIs('laporan.iduka.index') ? 'active' : '' }}">
-                            <a href="{{ route('laporan.iduka.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
-                                <div data-i18n="Basic">Laporan Iduka</div>
-                            </a>
-                        </li>
-
                         <li class="menu-item {{ Request::routeIs('hubin.daftarcetak') ? 'active' : '' }}">
                             <a href="{{ route('hubin.daftarcetak') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -379,12 +366,6 @@
                                 <div data-i18n="Basic">Data Siswa</div>
                             </a>
                         </li>
-                         <li class="menu-item {{ Request::routeIs('laporan.iduka.index') ? 'active' : '' }}">
-                            <a href="{{ route('laporan.iduka.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
-                                <div data-i18n="Basic">Laporan Iduka</div>
-                            </a>
-                        </li>
                         <li
                             class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -406,6 +387,16 @@
                             </ul>
                         </li>
                     @endif
+                    @if (in_array(auth()->user()->role, ['hubin', 'kaprog', 'kepsek']))
+                        <li class="menu-item {{ Request::routeIs('laporan.iduka.index') ? 'active' : '' }}">
+                            <a href="{{ route('laporan.iduka.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
+                                <div data-i18n="Basic">Laporan Iduka</div>
+                            </a>
+                        </li>
+                    @endif
+
+
                 </ul>
             </aside>
             <div class="layout-page">

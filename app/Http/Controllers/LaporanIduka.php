@@ -24,7 +24,7 @@ class LaporanIduka extends Controller
 
         $idukas = $query->paginate(10);
 
-        return view('hubin.laporan_iduka.index', compact('idukas'));
+        return view('laporan_iduka.index', compact('idukas'));
     }
 
     /**
@@ -33,7 +33,7 @@ class LaporanIduka extends Controller
     public function showSiswa($id)
     {
         $iduka = Iduka::with('siswa')->findOrFail($id);
-        return view('hubin.laporan_iduka.siswa', compact('iduka'));
+        return view('laporan_iduka.siswa', compact('iduka'));
     }
 
     /**
