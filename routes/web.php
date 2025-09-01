@@ -464,6 +464,20 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
 
 
+//api data siswa, diterima,ditolak,
+Route::get('/api/chart-data', function () {
+    $total = \App\Models\User::where('role', 'siswa')->count();
+    $diterima = \App\Models\PengajuanPkl::where('status', 'diterima')->count();
+    $ditolak = \App\Models\PengajuanPkl::where('status', 'ditolak')->count();
+
+    return response()->json([
+        'total' => $total,
+        'diterima' => $diterima,
+        'ditolak' => $ditolak,
+    ]);
+});
+
+
 
 // admin
 
