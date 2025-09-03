@@ -70,7 +70,7 @@
                                 <tbody>
                                     @foreach ($siswa as $index => $row)
                                         <tr>
-                                            <td class="px-4">{{ $index + 1 }}</td>
+                                            <td class="px-4">{{  $siswa->firstItem() + $index }}</td>
                                             <td>{{ $row->nama_siswa }}</td>
                                             <td>{{ $row->kelas }}</td>
                                             <td>{{ $row->jurusan }}</td>
@@ -125,6 +125,18 @@
                             </table>
                         </div>
                     </div>
+                     <div class="card-footer bg-transparent border-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    Menampilkan {{ $siswa->firstItem() }} - {{ $siswa->lastItem() }} dari
+                                    {{ $siswa->total() }} data
+                                </small>
+
+                                <nav>
+                                    {{ $siswa->links('pagination::bootstrap-5') }}
+                                </nav>
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>

@@ -26,18 +26,61 @@ class SiswaProgres implements FromCollection, WithHeadings, WithStyles, WithCust
      */
     public function collection()
     {
-        return $this->siswa->map(function ($item, $index) {
-            return [
-                'no' => $index + 1,
-                'nama_siswa' => $item->nama_siswa,
-                'kelas' => $item->kelas,
-                'jurusan' => $item->jurusan,
-                'nama_iduka' => $item->nama_iduka ?? '-',
-                'status_usulan' => $item->status_usulan ?? '-',
-                'status_surat_usulan' => $item->status_surat_usulan ?? '-',
-                'status_pengajuan' => $item->status_pengajuan ?? '-',
-            ];
+        // Pisahkan data berdasarkan ada tidaknya iduka
+        $siswaWithIduka = $this->siswa->filter(function($item) {
+            return !empty($item->nama_iduka) && $item->nama_iduka !== null;
         });
+
+        $siswaWithoutIduka = $this->siswa->filter(function($item) {
+            return empty($item->nama_iduka) || $item->nama_iduka === null;
+        });
+
+        $result = collect();
+        $counter = 1;
+
+        // Pertama: Proses siswa yang SUDAH ADA IDUKA (dikelompokkan)
+        if ($siswaWithIduka->isNotEmpty()) {
+            $groupedSiswa = $siswaWithIduka->groupBy('nama_iduka')->sortKeys();
+
+            foreach ($groupedSiswa as $namaIduka => $siswaGroup) {
+                // Urutkan siswa dalam grup berdasarkan nama
+                $sortedGroup = $siswaGroup->sortBy('nama_siswa');
+
+                foreach ($sortedGroup as $item) {
+                    $result->push([
+                        'no' => $counter++,
+                        'nama_siswa' => $item->nama_siswa,
+                        'kelas' => $item->kelas,
+                        'jurusan' => $item->jurusan,
+                        'nama_iduka' => $item->nama_iduka,
+                        'status_usulan' => $item->status_usulan ?? '-',
+                        'status_surat_usulan' => $item->status_surat_usulan ?? '-',
+                        'status_pengajuan' => $item->status_pengajuan ?? '-',
+                    ]);
+                }
+            }
+        }
+
+        // Kedua: Proses siswa yang BELUM ADA IDUKA (di bawah)
+        if ($siswaWithoutIduka->isNotEmpty()) {
+            // Urutkan berdasarkan nama siswa
+            $sortedWithoutIduka = $siswaWithoutIduka->sortBy('nama_siswa');
+
+            foreach ($sortedWithoutIduka as $item) {
+                $result->push([
+                    'no' => $counter++,
+                    'nama_siswa' => $item->nama_siswa,
+                    'kelas' => $item->kelas,
+                    'jurusan' => $item->jurusan,
+                    'nama_iduka' => '-',
+                    'status_usulan' => $item->status_usulan ?? '-',
+                    'status_surat_usulan' => $item->status_surat_usulan ?? '-',
+                    'status_pengajuan' => $item->status_pengajuan ?? '-',
+                ]);
+            }
+        }
+
+        return $result;
     }
 
     /**

@@ -32,7 +32,7 @@ class ProgresSiswaController extends Controller
             ->leftJoin('idukas as i', 'p.iduka_id', '=', 'i.id')
             ->where('u.role', 'siswa');
 
-        // 🔍 Filter berdasarkan input pencarian
+        // ðŸ” Filter berdasarkan input pencarian
         if ($request->filled('nama_iduka')) {
             $search = $request->nama_iduka;
             $query->where(function ($q) use ($search) {
@@ -51,28 +51,28 @@ class ProgresSiswaController extends Controller
 
     public function export()
     {
-        // Ambil data siswa + join kelas, jurusan, iduka, dan status
-        $siswa = DB::table('users as u')
-            ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
-            ->join('konkes as ko', 'k.konke_id', '=', 'ko.id')
-            ->leftJoin('pengajuan_pkl as p', 'p.siswa_id', '=', 'u.id')
-            ->leftJoin('pengajuan_usulans as pu', 'pu.user_id', '=', 'u.id')
-            ->leftJoin('idukas as i', 'i.id', '=', 'p.iduka_id')
-            ->select(
-                'u.id',
-                'u.name as nama_siswa',
-                'k.kelas',
-                'ko.name_konke as jurusan',
-                'i.nama as nama_iduka',
-                'p.status as status_pengajuan',
-                'pu.status as status_usulan',
-                'pu.surat_izin as status_surat_usulan'
-            )
-            ->where('u.role', 'siswa')
-            ->get();
+         $siswa = DB::table('users as u')
+        ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+        ->join('konkes as ko', 'u.konke_id', '=', 'ko.id')
+        ->leftJoin('pengajuan_pkl as p', 'u.id', '=', 'p.siswa_id')
+        ->leftJoin('idukas as i', 'p.iduka_id', '=', 'i.id')
+        ->leftJoin('pengajuan_usulans as pu', 'u.id', '=', 'pu.user_id')
+        ->where('u.role', 'siswa')
+        ->select(
+            'u.id',
+            'u.name as nama_siswa',
+            'k.kelas',
+            'ko.name_konke as jurusan',
+            'i.nama as nama_iduka',
+            'p.status as status_pengajuan',
+            'pu.status as status_usulan',
+            'pu.surat_izin as status_surat_usulan'
+        )
+        ->orderBy('i.nama')
+        ->orderBy('u.name')
+        ->get();
 
-        // Panggil export class
-        return Excel::download(new SiswaProgres($siswa), 'laporan_siswa_progres.xlsx');
+    return Excel::download(new SiswaProgres($siswa), 'data_siswa_pkl.xlsx');
     }
 
     /**

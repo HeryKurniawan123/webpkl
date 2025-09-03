@@ -43,7 +43,7 @@ class LaporanIdukaAllExport implements FromArray, ShouldAutoSize, WithStyles, Wi
                         $siswa->name,
                         $siswa->kelas->name_kelas ?? '-',
                         strtoupper($iduka->nama),
-                        $iduka->kota ?? '-'
+                        $iduka->alamat ?? '-'
                     ];
                 }
             } else {
@@ -190,7 +190,7 @@ class LaporanIdukaAllExport implements FromArray, ShouldAutoSize, WithStyles, Wi
                 ],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
-                    'color' => ['rgb' => 'E3F2FD'] 
+                    'color' => ['rgb' => 'E3F2FD']
                 ],
                 'borders' => [
                     'allBorders' => [
