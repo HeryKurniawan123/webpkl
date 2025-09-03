@@ -11,10 +11,9 @@
                             <div class="row align-items-center">
                                 <div class="col-lg-8">
                                     <div class="row g-3">
-                                        <div class="col-md-3">
-                                            <label class="form-label fw-semibold text-muted small">Nama Iduka</label>
+                                        <div class="col-md-3 align-content-center">
                                             <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}"
-                                                class="form-control" placeholder="Cari Nama Iduka">
+                                                class="form-control" placeholder="Cari Siswa / Iduka">
                                         </div>
                                         <div class="col-md-3 d-flex align-items-end gap-2">
                                             <button type="submit" class="btn btn-primary w-100">
