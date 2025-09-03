@@ -15,11 +15,21 @@ class LaporanIduka extends Controller
      */
     public function index(Request $request)
     {
-        $query = Iduka::with('siswa');
+        $query = Iduka::with(['siswa.kelas']);
 
         // Filter nama IDUKA
         if ($request->filled('nama_iduka')) {
             $query->where('nama', 'like', '%' . $request->nama_iduka . '%');
+        }
+
+        // Filter berdasarkan alamat
+        if ($request->filled('alamat')) {
+            $query->where('alamat', 'like', '%' . $request->alamat . '%');
+        }
+
+        // Filter berdasarkan bidang industri
+        if ($request->filled('bidang_industri')) {
+            $query->where('bidang_industri', 'like', '%' . $request->bidang_industri . '%');
         }
 
         $idukas = $query->paginate(10);
@@ -32,7 +42,7 @@ class LaporanIduka extends Controller
      */
     public function showSiswa($id)
     {
-        $iduka = Iduka::with('siswa')->findOrFail($id);
+        $iduka = Iduka::with(['siswa.kelas'])->findOrFail($id);
         return view('laporan_iduka.siswa', compact('iduka'));
     }
 
@@ -41,7 +51,7 @@ class LaporanIduka extends Controller
      */
     public function exportExcel($id)
     {
-        $iduka = Iduka::with('siswa')->findOrFail($id);
+        $iduka = Iduka::with(['siswa.kelas'])->findOrFail($id);
 
         return Excel::download(
             new LaporanIdukaExport($iduka),

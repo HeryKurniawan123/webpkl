@@ -394,6 +394,12 @@
                                 <div data-i18n="Basic">Laporan Iduka</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('progres.siswa.index') ? 'active' : '' }}">
+                            <a href="{{ route('progres.siswa.index') }}" class="menu-link">
+                                <i class="menu-icon bx bx-line-chart"></i>
+                                <div data-i18n="Basic">Progres Siswa</div>
+                            </a>
+                        </li>
                     @endif
 
 

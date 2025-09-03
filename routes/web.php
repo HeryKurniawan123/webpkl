@@ -3,8 +3,10 @@
 
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\LaporanIduka;
+use App\Http\Controllers\LaporanSiswaController;
 use App\Http\Controllers\PendampingController;
 use App\Http\Controllers\PengajuanIzinSiswaController;
+use App\Http\Controllers\ProgresSiswaController;
 use App\Models\Cp;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
@@ -433,13 +435,19 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
 
 //laporan iduka
 Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
- Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
-    Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])
-        ->name('laporan.iduka.siswa');
-    Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])
-        ->name('laporan.iduka.export.excel');
-    Route::get('/laporan-iduka/export', [LaporanIduka::class, 'exportAll'])
-        ->name('laporan-iduka.export.all');
+  Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
+Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])->name('laporan.iduka.siswa');
+Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])->name('laporan.iduka.export.excel');
+Route::get('/laporan/iduka/export-all', [LaporanIduka::class, 'exportAll'])->name('laporan.iduka.export.all');
+
+// Routes tambahan untuk fitur baru (opsional)
+Route::get('/laporan/iduka/export-json', [LaporanIduka::class, 'exportJson'])->name('laporan.iduka.export.json');
+Route::get('/laporan/iduka/statistics', [LaporanIduka::class, 'getStatistics'])->name('laporan.iduka.statistics');
+Route::get('/laporan/iduka/preview-export', [LaporanIduka::class, 'previewExport'])->name('laporan.iduka.preview.export');
+
+Route::get('/progres/siswa', [ProgresSiswaController::class , 'index'])->name('progres.siswa.index');
+Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
+
 });
 
 
