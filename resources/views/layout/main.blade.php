@@ -8,11 +8,11 @@
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <link rel="icon" target="_blank" href="{{ asset('images/logo.png') }}" type="image/png">
 
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="" />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/YOUR-FONT-AWESOME-KIT.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Favicon -->
 
@@ -29,6 +29,8 @@
 
     <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet" href="{{ asset('snet/assets/vendor/fonts/boxicons.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('snet/assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
@@ -166,6 +168,13 @@
                             </a>
                         </li>
 
+                        <li class="menu-item {{ Request::routeIs('konfir.absen.index') ? 'active' : '' }}">
+                            <a href="{{ route('konfir.absen.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Absensi</div>
+                            </a>
+                        </li>
+
                         <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
                         <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -179,8 +188,8 @@
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Siswa</div>
                             </a>
-                            <a href="{{ route('siswa.absensi.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                            <a href="{{ route('absensi.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar-check"></i>
                                 <div data-i18n="Basic">Absensi</div>
                             </a>
                         </li>
@@ -206,6 +215,14 @@
                             </a>
                         </li>
                     @endif
+                     @if (in_array(auth()->user()->role, ['hubin', 'kaprog']))
+                     <li class="menu-item {{ Request::routeIs('data-absen.index') ? 'active' : '' }}">
+                            <a href="{{ route('data-absen.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Absensi</div>
+                            </a>
+                        </li>
+                     @endif
                     @if (auth()->user()->role == 'persuratan')
                         <li
                             class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">

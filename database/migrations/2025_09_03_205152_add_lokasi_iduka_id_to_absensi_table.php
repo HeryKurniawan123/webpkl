@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('absensi_pkl', function (Blueprint $table) {
-              $table->enum('tipe_izin', ['Sakit', 'Izin'])->nullable()->change();
+        Schema::table('absensi', function (Blueprint $table) {
+            $table->foreignId('lokasi_iduka_id')->nullable()->constrained('lokasi_iduka')->onDelete('set null');
         });
     }
 
@@ -21,7 +20,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('absensi_pkl', function (Blueprint $table) {
+        Schema::table('absensi', function (Blueprint $table) {
             //
         });
     }

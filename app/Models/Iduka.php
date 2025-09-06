@@ -92,4 +92,9 @@ class Iduka extends Model
         return $this->hasMany(User::class, 'iduka_id', 'id')
             ->where('role', 'siswa');
     }
+
+    public function lokasi()
+    {
+        return $this->hasMany(LokasiIduka::class, 'iduka_id');
+    }
 }

@@ -87,7 +87,7 @@ class User extends Authenticatable
 
     public function absensi()
     {
-        return $this->hasMany(AbsensiPkl::class, 'nis', 'nip');
+        return $this->hasMany(Absensi::class, 'nis', 'nip');
     }
 
     public function lokasiPkl()

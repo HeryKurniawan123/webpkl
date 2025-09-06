@@ -1,6 +1,8 @@
 <?php
 
-
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\DataAbsensiController;
+use App\Http\Controllers\KonfirAbsenSiswaController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\LaporanIduka;
 use App\Http\Controllers\LaporanSiswaController;
@@ -87,11 +89,19 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
 
     //absensi
-    Route::get('/absensi', [AbsensiSiswaController::class, 'index'])->name('siswa.absensi.index');
-    Route::post('/absensi/masuk', [AbsensiSiswaController::class, 'absenMasuk'])->name('absensi.masuk');
-    Route::post('/absensi/pulang', [AbsensiSiswaController::class, 'absenPulang'])->name('absensi.pulang');
 
-    Route::post('/izin/store', [AbsensiSiswaController::class, 'izin'])->name('izin.store');
+
+    Route::prefix('absensi')->name('absensi.')->group(function () {
+        Route::get('/absensi', [AbsensiController::class, 'index'])->name('index');
+        Route::post('/absensi/izin', [AbsensiController::class, 'izin'])->name('izin');
+        Route::delete('/absensi/batal-izin', [AbsensiController::class, 'batalIzin'])->name('batal-izin');
+        Route::post('/masuk', [AbsensiController::class, 'masuk'])->name('masuk');
+        Route::post('/pulang', [AbsensiController::class, 'pulang'])->name('pulang');
+        Route::get('/status', [AbsensiController::class, 'getStatus'])->name('status');
+        Route::get('/riwayat', [AbsensiController::class, 'riwayat'])->name('riwayat');
+        Route::get('/absensi/cek-izin', [AbsensiController::class, 'cekStatusIzin'])
+       ->name('cek-izin');
+    });
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -260,6 +270,11 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/get-cp-atp/{konke_id}', function ($konke_id) {
         $cps = Cp::where('konke_id', $konke_id)->with('atp')->get();
         return response()->json($cps);
+
+        // //konfir absen
+        // Route::get('/konfirmasi-absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfirmasi-absen');
+
+
     });
     Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
 
@@ -287,6 +302,52 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/review/pengajuan/ditolak', [PengajuanPklController::class, 'reviewPengajuanDitolak'])->name('review.pengajuanditolak');
 
     Route::get('/iduka/daftar/siswa-diterima', [IdukaController::class, 'siswaDiterima'])->name('iduka.siswa.diterima');
+    Route::get('/konfir/absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfir.absen.index');
+
+    Route::prefix('iduka')->name('iduka.')->group(function () {
+        // tampil halaman konfirmasi
+        Route::get('/konfirmasi-absen', [KonfirAbsenSiswaController::class, 'index'])
+            ->name('konfirmasi-absen');
+
+        // proses individual konfirmasi
+        Route::post('/konfirmasi-absen/{id}', [KonfirAbsenSiswaController::class, 'konfirmasiAbsensi'])
+            ->name('konfirmasi-absen.proses');
+
+        // Route untuk konfirmasi banyak absensi
+        Route::post('/konfirmasi-banyak-absen', [KonfirAbsenSiswaController::class, 'konfirmasiBanyakAbsen'])
+            ->name('konfirmasi-banyak-absen');
+
+        // Route untuk konfirmasi izin
+        Route::post('/konfirmasi-izin/{id}', [KonfirAbsenSiswaController::class, 'konfirmasiIzin'])
+            ->name('konfirmasi-izin');
+
+        // Route untuk detail absen dan izin
+        Route::get('/detail-absen/{id}', [KonfirAbsenSiswaController::class, 'detailAbsen'])
+            ->name('detail-absen');
+        Route::get('/detail-izin/{id}', [KonfirAbsenSiswaController::class, 'detailIzin'])
+            ->name('detail-izin');
+
+        // Route untuk API endpoints (untuk refresh data)
+        Route::get('/api/absensi-hari-ini', [KonfirAbsenSiswaController::class, 'getAbsensiHariIni'])
+            ->name('api.absensi-hari-ini');
+        Route::get('/api/absensi-pending', [KonfirAbsenSiswaController::class, 'getAbsensiPending'])
+            ->name('api.absensi-pending');
+        Route::get('/api/izin-pending', [KonfirAbsenSiswaController::class, 'getIzinPending'])
+            ->name('api.izin-pending');
+
+        Route::get('/detail-absen/{id}', [KonfirAbsenSiswaController::class, 'detailAbsen'])
+            ->name('detail-absen');
+        Route::get('/detail-izin/{id}', [KonfirAbsenSiswaController::class, 'detailIzin'])
+            ->name('detail-izin');
+
+        //filter riwayat absen
+        // routes/web.php
+        Route::get('/iduka/riwayat-absensi', [KonfirAbsenSiswaController::class, 'filterRiwayat'])
+            ->name('filter-riwayat');
+
+
+    });
+
 });
 
 
@@ -435,18 +496,34 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
 
 //laporan iduka
 Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
-  Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
-Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])->name('laporan.iduka.siswa');
-Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])->name('laporan.iduka.export.excel');
-Route::get('/laporan/iduka/export-all', [LaporanIduka::class, 'exportAll'])->name('laporan.iduka.export.all');
+    Route::get('/laporan/iduka', [LaporanIduka::class, 'index'])->name('laporan.iduka.index');
+    Route::get('/laporan/iduka/{id}/siswa', [LaporanIduka::class, 'showSiswa'])->name('laporan.iduka.siswa');
+    Route::get('/laporan/iduka/{id}/export-excel', [LaporanIduka::class, 'exportExcel'])->name('laporan.iduka.export.excel');
+    Route::get('/laporan/iduka/export-all', [LaporanIduka::class, 'exportAll'])->name('laporan.iduka.export.all');
 
-// Routes tambahan untuk fitur baru (opsional)
-Route::get('/laporan/iduka/export-json', [LaporanIduka::class, 'exportJson'])->name('laporan.iduka.export.json');
-Route::get('/laporan/iduka/statistics', [LaporanIduka::class, 'getStatistics'])->name('laporan.iduka.statistics');
-Route::get('/laporan/iduka/preview-export', [LaporanIduka::class, 'previewExport'])->name('laporan.iduka.preview.export');
+    // Routes tambahan untuk fitur baru (opsional)
+    Route::get('/laporan/iduka/export-json', [LaporanIduka::class, 'exportJson'])->name('laporan.iduka.export.json');
+    Route::get('/laporan/iduka/statistics', [LaporanIduka::class, 'getStatistics'])->name('laporan.iduka.statistics');
+    Route::get('/laporan/iduka/preview-export', [LaporanIduka::class, 'previewExport'])->name('laporan.iduka.preview.export');
 
-Route::get('/progres/siswa', [ProgresSiswaController::class , 'index'])->name('progres.siswa.index');
-Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
+    Route::get('/progres/siswa', [ProgresSiswaController::class, 'index'])->name('progres.siswa.index');
+    Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
+
+});
+
+//data absensi siswa
+Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
+Route::get('/data-absensi' , [DataAbsensiController::class , 'index'])->name('data-absen.index');
+
+Route::get('/absensi/chart-data', [DataAbsensiController::class, 'chartData']);
+
+Route::get('/absensi/chart-data', [DataAbsensiController::class, 'getAttendanceChart']);
+Route::get('/absensi/jurusan-data', [DataAbsensiController::class, 'getJurusanChart']);
+
+//export
+Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])
+    ->name('export.jurusan');
+
 
 });
 
