@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layout.main')
 
 @section('content')
 <div class="container">
@@ -9,7 +9,6 @@
 
     {{-- Kartu Statistik --}}
     <div class="row mb-4">
-        <!-- Jumlah Usulan -->
         <div class="col-md-3">
             <div class="card text-center border-0 shadow-sm">
                 <div class="card-body">
@@ -20,7 +19,6 @@
             </div>
         </div>
 
-        <!-- Usulan Diterima -->
         <div class="col-md-3">
             <div class="card text-center border-0 shadow-sm">
                 <div class="card-body">
@@ -31,7 +29,6 @@
             </div>
         </div>
 
-        <!-- Usulan Ditolak -->
         <div class="col-md-3">
             <div class="card text-center border-0 shadow-sm">
                 <div class="card-body">
@@ -42,7 +39,6 @@
             </div>
         </div>
 
-        <!-- Jumlah Pengajuan -->
         <div class="col-md-3">
             <div class="card text-center border-0 shadow-sm">
                 <div class="card-body">
@@ -55,12 +51,124 @@
     </div>
 
     {{-- Grafik Statistik --}}
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-4">
         <div class="card-header bg-white fw-bold">
             <i class="bx bx-pie-chart-alt-2 text-primary"></i> Grafik Usulan & Pengajuan
         </div>
         <div class="card-body">
             <canvas id="statistikChart" height="120"></canvas>
+        </div>
+    </div>
+
+    {{-- Filter --}}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ route('progres.siswa.index') }}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}"
+                            class="form-control" placeholder="Cari Siswa / Iduka">
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search me-2"></i> Search
+                        </button>
+                        <a href="{{ route('progres.siswa.index') }}" class="btn btn-secondary w-100">
+                            <i class="fas fa-sync-alt me-2"></i> Reset
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Tabel Daftar Siswa --}}
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="card-title fw-bold mb-0">👨‍🎓 Daftar Siswa</h5>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <a href="{{ route('progres.siswa.export') }}{{ request()->getQueryString() ? '?' . request()->getQueryString() : '' }}"
+                        class="btn btn-outline-success">
+                        <i class="fas fa-file-excel me-1"></i>
+                        Export Semua
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="siswaTable">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="border-0 fw-semibold text-muted small px-4 py-3">NO</th>
+                            <th class="border-0 fw-semibold text-muted small py-3">NAMA SISWA</th>
+                            <th class="border-0 fw-semibold text-muted small py-3">KELAS</th>
+                            <th class="border-0 fw-semibold text-muted small py-3">JURUSAN</th>
+                            <th class="border-0 fw-semibold text-muted small py-3">NAMA IDUKA</th>
+                            <th class="border-0 fw-semibold text-muted small py-3">STATUS USULAN</th>
+                            <th class="border-0 fw-semibold text-muted small py-3">STATUS SURAT USULAN</th>
+                            <th class="border-0 fw-semibold text-muted small py-3">STATUS PENGAJUAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($siswa as $index => $row)
+                        <tr>
+                            <td class="px-4">{{ $siswa->firstItem() + $index }}</td>
+                            <td>{{ $row->nama_siswa }}</td>
+                            <td>{{ $row->kelas }}</td>
+                            <td>{{ $row->jurusan }}</td>
+                            <td>{{ $row->nama_iduka ?? '-' }}</td>
+                            <td class="text-center">
+                                @if ($row->status_usulan == 'diterima')
+                                    <span class="badge bg-success">{{ $row->status_usulan }}</span>
+                                @elseif($row->status_usulan == 'ditolak')
+                                    <span class="badge bg-danger">{{ $row->status_usulan }}</span>
+                                @elseif($row->status_usulan == 'proses')
+                                    <span class="badge bg-warning">{{ $row->status_usulan }}</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ $row->status_usulan ?? '-' }}</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if ($row->status_surat_usulan == 'sudah')
+                                    <span class="badge bg-success">{{ $row->status_surat_usulan }}</span>
+                                @elseif($row->status_surat_usulan == 'belum')
+                                    <span class="badge bg-danger">{{ $row->status_surat_usulan }}</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ $row->status_surat_usulan ?? '-' }}</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                @if ($row->status_pengajuan == 'diterima')
+                                    <span class="badge bg-success">{{ $row->status_pengajuan }}</span>
+                                @elseif($row->status_pengajuan == 'ditolak')
+                                    <span class="badge bg-danger">{{ $row->status_pengajuan }}</span>
+                                @elseif($row->status_pengajuan == 'proses')
+                                    <span class="badge bg-warning">{{ $row->status_pengajuan }}</span>
+                                @else
+                                    <span class="badge bg-secondary">{{ $row->status_pengajuan ?? '-' }}</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer bg-transparent border-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    Menampilkan {{ $siswa->firstItem() }} - {{ $siswa->lastItem() }} dari {{ $siswa->total() }} data
+                </small>
+                <nav>
+                    {{ $siswa->links('pagination::bootstrap-5') }}
+                </nav>
+            </div>
         </div>
     </div>
 </div>
@@ -83,10 +191,10 @@
                     {{ $totalPengajuan }}
                 ],
                 backgroundColor: [
-                    'rgba(54, 162, 235, 0.7)',  // biru
-                    'rgba(75, 192, 192, 0.7)',  // hijau
-                    'rgba(255, 99, 132, 0.7)',  // merah
-                    'rgba(255, 206, 86, 0.7)'   // kuning
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(255, 206, 86, 0.7)'
                 ],
                 borderColor: [
                     'rgba(54, 162, 235, 1)',
@@ -99,18 +207,9 @@
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
             }
         }
     });
