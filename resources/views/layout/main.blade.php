@@ -121,6 +121,13 @@
                             </a>
                         </li>
 
+                        <li class="menu-item {{ Request::routeIs('pembimbing.siswa.index') ? 'active' : '' }}">
+                            <a href="{{ route('pembimbing.siswa.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Pembimbing</div>
+                            </a>
+                        </li>
+
                         <li
                             class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">

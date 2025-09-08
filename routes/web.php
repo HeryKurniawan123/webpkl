@@ -39,6 +39,7 @@ use App\Http\Controllers\SuratPengantarController;
 use App\Http\Controllers\TenagaKependidikanController;
 use App\Http\Controllers\DataPribadiPersuratanController;
 use App\Http\Controllers\KepsekController;
+use App\Http\Controllers\Pembimbingsiswacontroller;
 use App\Http\Controllers\PercetakanAtpController;
 
 Route::get('/PKL SMKN 1 Kawali', function () {
@@ -100,17 +101,12 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
         Route::get('/status', [AbsensiController::class, 'getStatus'])->name('status');
         Route::get('/riwayat', [AbsensiController::class, 'riwayat'])->name('riwayat');
         Route::get('/absensi/cek-izin', [AbsensiController::class, 'cekStatusIzin'])
-       ->name('cek-izin');
+            ->name('cek-izin');
     });
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/dashboard/hubin', [HakAksesController::class, 'hubin'])->name('hubin.dashboard');
-
-    // SISWA
-    Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
-    Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
-
 
     Route::put('/siswa/{id}/update-siswa', [SiswaController::class, 'updateSiswa'])->name('siswa.updateSiswa');
 
@@ -120,32 +116,6 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/history/diterima', [HubinController::class, 'diterima'])->name('history.diterima');
     Route::get('/history/ditolak', [HubinController::class, 'ditolak'])->name('history.ditolak');
 
-
-    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
-    Route::get('/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
-    Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
-    Route::get('/siswa/{id}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
-    Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
-    Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
-    Route::post('/import-siswa', [SiswaController::class, 'importExcel'])->name('siswa.import');
-    Route::put('/siswa/data_pribadi/{id}', [DataPribadiController::class, 'update'])->name('siswa.data_pribadi.update');
-    Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
-    Route::get('/data-siswa-kelas', [SiswaController::class, 'showSiswa'])->name('siswa.kelas');
-
-    //PROKER
-    Route::get('/program-keahlian', [DataController::class, 'proker'])->name('proker.index');
-    Route::get('/proker', [ProkerController::class, 'index'])->name('proker.index');
-    Route::post('/proker', [ProkerController::class, 'store'])->name('proker.store');
-    Route::put('/proker/{proker}', [ProkerController::class, 'update'])->name('proker.update');
-    Route::delete('/proker/{proker}', [ProkerController::class, 'destroy'])->name('proker.destroy');
-
-    //KONKE
-    Route::get('/konsentrasi-keahlian', [DataController::class, 'konke'])->name('konke.index');
-    Route::get('/konke', [KonkeController::class, 'index'])->name('konke.index');
-    Route::post('/konke', [KonkeController::class, 'store'])->name('konke.store');
-    Route::put('/konke/{konke}', [KonkeController::class, 'update'])->name('konke.update');
-    Route::delete('/konke/{konke}', [KonkeController::class, 'destroy'])->name('konke.destroy');
-
     //KELAS
     Route::get('/data-kelas', [DataController::class, 'kelas'])->name('kelas.index');
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
@@ -154,29 +124,20 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::delete('/kelas/{kelas}', [KelasController::class, 'destroy'])->name('kelas.destroy');
     Route::get('/siswa/{id}/kelas', [KelasController::class, 'showSiswa'])->name('siswa.kelas');
 
-    //GURU
-    Route::get('/data-guru', [GuruController::class, 'dataguru'])->name('guru.index');
-    Route::get('/data-guru/detail', [GuruController::class, 'detailGuru'])->name('guru.detail');
-    Route::get('/create', [GuruController::class, 'create'])->name('guru.create');
-    Route::post('/store', [GuruController::class, 'store'])->name('guru.store');
-    Route::get('/data-guru/{guru}/edit', [GuruController::class, 'edit'])->name('guru.edit');
-    Route::put('/data-guru/{guru}/update', [GuruController::class, 'update'])->name('guru.update');
-    Route::delete('/data-guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
-
-    //TK
-    Route::get('/data-tenaga-kependidikan', [TenagaKependidikanController::class, 'tenagaKependidikan'])->name('tk.index');
-    Route::get('/kependik/create', [TenagaKependidikanController::class, 'create'])->name('kependik.create');
-    Route::post('/kependik/store', [TenagaKependidikanController::class, 'store'])->name('kependik.store');
-    Route::get('/kependik/{id}/edit', [TenagaKependidikanController::class, 'edit'])->name('kependik.edit');
-    Route::put('/kependik/{id}', [TenagaKependidikanController::class, 'update'])->name('kependik.update');
-    Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
-
     Route::get('/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
 
     Route::get('/pusat-bantuan', [SuratPengantarController::class, 'index'])->name('pusatbantuan.index');
     Route::post('/pusat-bantuan/store', [SuratPengantarController::class, 'store'])->name('surat.store');
     Route::post('/pusat-bantuan/update/{id}', [SuratPengantarController::class, 'update'])->name('surat.update');
 
+  
+    Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
+    Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
+    Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
+});
+
+
+Route::middleware(['auth', 'hakakses:hubin,guru,psekolah'])->group(function () {
     //data daftar iduka
     Route::get('/daftar/iduka', [KaprogIdukaController::class, 'index'])->name('hubin.iduka.index');
     Route::get('/daftar/iduka/detail/{id}', [KaprogIdukaController::class, 'show'])->name('hubin.detail.iduka');
@@ -190,12 +151,55 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
         ->name('hubin.download.atp');
     Route::put('/setting/iduka/{id}/tanggal', [KaprogIdukaController::class, 'updateTanggal'])->name('hubin.tanggal.update');
 
-    //import data siswa
+    //siswa
+    Route::get('/data-kelas', [DataController::class, 'kelas'])->name('kelas.index');
+    Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
+    Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
+    Route::put('/kelas/{kelas}', [KelasController::class, 'update'])->name('kelas.update');
+    Route::delete('/kelas/{kelas}', [KelasController::class, 'destroy'])->name('kelas.destroy');
+    Route::get('/siswa/{id}/kelas', [KelasController::class, 'showSiswa'])->name('siswa.kelas');
+
+    //guru
+    Route::get('/data-guru', [GuruController::class, 'dataguru'])->name('guru.index');
+    Route::get('/data-guru/detail', [GuruController::class, 'detailGuru'])->name('guru.detail');
+    Route::get('/create', [GuruController::class, 'create'])->name('guru.create');
+    Route::post('/store', [GuruController::class, 'store'])->name('guru.store');
+    Route::get('/data-guru/{guru}/edit', [GuruController::class, 'edit'])->name('guru.edit');
+    Route::put('/data-guru/{guru}/update', [GuruController::class, 'update'])->name('guru.update');
+    Route::delete('/data-guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
+
+     //TK
+    Route::get('/data-tenaga-kependidikan', [TenagaKependidikanController::class, 'tenagaKependidikan'])->name('tk.index');
+    Route::get('/kependik/create', [TenagaKependidikanController::class, 'create'])->name('kependik.create');
+    Route::post('/kependik/store', [TenagaKependidikanController::class, 'store'])->name('kependik.store');
+    Route::get('/kependik/{id}/edit', [TenagaKependidikanController::class, 'edit'])->name('kependik.edit');
+    Route::put('/kependik/{id}', [TenagaKependidikanController::class, 'update'])->name('kependik.update');
+    Route::delete('/kependik/{id}', [TenagaKependidikanController::class, 'destroy'])->name('kependik.destroy');
+
+    // SISWA
+    Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
+    Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+
+      //import data siswa
     Route::get('/siswa/download-template', [SiswaController::class, 'downloadTemplate'])->name('siswa.download-template');
 
-    Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
-    Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
-    Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
+
+     //PROKER
+    Route::get('/program-keahlian', [DataController::class, 'proker'])->name('proker.index');
+    Route::get('/proker', [ProkerController::class, 'index'])->name('proker.index');
+    Route::post('/proker', [ProkerController::class, 'store'])->name('proker.store');
+    Route::put('/proker/{proker}', [ProkerController::class, 'update'])->name('proker.update');
+    Route::delete('/proker/{proker}', [ProkerController::class, 'destroy'])->name('proker.destroy');
+
+     //KONKE
+    Route::get('/konsentrasi-keahlian', [DataController::class, 'konke'])->name('konke.index');
+    Route::get('/konke', [KonkeController::class, 'index'])->name('konke.index');
+    Route::post('/konke', [KonkeController::class, 'store'])->name('konke.store');
+    Route::put('/konke/{konke}', [KonkeController::class, 'update'])->name('konke.update');
+    Route::delete('/konke/{konke}', [KonkeController::class, 'destroy'])->name('konke.destroy');
+
+    Route::get('/pembimbing-siswa',[Pembimbingsiswacontroller::class,'index'])->name('pembimbing.siswa.index');
+    
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -344,10 +348,7 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
         // routes/web.php
         Route::get('/iduka/riwayat-absensi', [KonfirAbsenSiswaController::class, 'filterRiwayat'])
             ->name('filter-riwayat');
-
-
     });
-
 });
 
 
@@ -508,23 +509,20 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
 
     Route::get('/progres/siswa', [ProgresSiswaController::class, 'index'])->name('progres.siswa.index');
     Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
-
 });
 
 //data absensi siswa
 Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
-Route::get('/data-absensi' , [DataAbsensiController::class , 'index'])->name('data-absen.index');
+    Route::get('/data-absensi', [DataAbsensiController::class, 'index'])->name('data-absen.index');
 
-Route::get('/absensi/chart-data', [DataAbsensiController::class, 'chartData']);
+    Route::get('/absensi/chart-data', [DataAbsensiController::class, 'chartData']);
 
-Route::get('/absensi/chart-data', [DataAbsensiController::class, 'getAttendanceChart']);
-Route::get('/absensi/jurusan-data', [DataAbsensiController::class, 'getJurusanChart']);
+    Route::get('/absensi/chart-data', [DataAbsensiController::class, 'getAttendanceChart']);
+    Route::get('/absensi/jurusan-data', [DataAbsensiController::class, 'getJurusanChart']);
 
-//export
-Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])
-    ->name('export.jurusan');
-
-
+    //export
+    Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])
+        ->name('export.jurusan');
 });
 
 
