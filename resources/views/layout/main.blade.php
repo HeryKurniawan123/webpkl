@@ -121,12 +121,7 @@
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('pembimbing.siswa.index') ? 'active' : '' }}">
-                            <a href="{{ route('pembimbing.siswa.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Pembimbing</div>
-                            </a>
-                        </li>
+
 
                         <li
                             class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
@@ -229,6 +224,12 @@
                                 <div data-i18n="Basic">Absensi</div>
                             </a>
                         </li>
+                         <li class="menu-item {{ Request::routeIs('pembimbing.siswa.index') ? 'active' : '' }}">
+                            <a href="{{ route('pembimbing.siswa.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Pembimbing</div>
+                            </a>
+                        </li>
                      @endif
                     @if (auth()->user()->role == 'persuratan')
                         <li
@@ -304,20 +305,20 @@
                             <span class="menu-header-text">Pusat Control</span>
                         </li>
                         <li
-                            class="menu-item {{ Request::routeIs('data.siswa', 'users.gtk.index') ? 'active open' : '' }}">
+                            class="menu-item {{ Request::routeIs('user.siswa', 'user.guru') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-layout"></i>
                                 <div data-i18n="Layouts">Tambah User</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('user.siswa') ? 'active' : '' }}">
+                                    <a href="{{route('user.siswa')}}" class="menu-link">
                                         <div data-i18n="Without menu">Siswa</div>
                                     </a>
                                 </li>
-                                <li class="menu-item {{ Request::routeIs('users.gtk.index') ? 'active' : '' }}">
-                                    <a href="" class="menu-link">
+                                <li class="menu-item {{ Request::routeIs('user.guru') ? 'active' : '' }}">
+                                    <a href="{{route('user.guru')}}" class="menu-link">
                                         <div data-i18n="Without menu">GTK</div>
                                     </a>
                                 </li>
@@ -418,6 +419,8 @@
                             </ul>
                         </li>
                     @endif
+
+
                     @if (in_array(auth()->user()->role, ['hubin', 'kaprog', 'kepsek']))
                         <li class="menu-item {{ Request::routeIs('laporan.iduka.index') ? 'active' : '' }}">
                             <a href="{{ route('laporan.iduka.index') }}" class="menu-link">

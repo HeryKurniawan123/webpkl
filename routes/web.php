@@ -10,6 +10,7 @@ use App\Http\Controllers\LaporanSiswaController;
 use App\Http\Controllers\PendampingController;
 use App\Http\Controllers\PengajuanIzinSiswaController;
 use App\Http\Controllers\ProgresSiswaController;
+use App\Http\Controllers\UsersController;
 use App\Models\Cp;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
@@ -138,6 +139,18 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
 
     Route::get('/progres/siswa', [ProgresSiswaController::class, 'index'])->name('progres.siswa.index');
+
+    //user siswa
+    Route::get('/user-siswa' , [UsersController::class , 'index'])->name('user.siswa');
+    Route::post('/siswa-store', [UsersController::class, 'store'])->name('user.siswa.store');
+
+    //users guru
+    Route::get('/user-guru' , [UsersController::class , 'guruIndex'])->name('user.guru');
+    Route::post('/siswa', [UsersController::class, 'guruStore'])->name('user.guru.store');
+
+    //pembimbing siswa
+    Route::get('/pembimbing-siswa', [Pembimbingsiswacontroller::class, 'index'])->name('pembimbing.siswa.index');
+
 });
 
 
@@ -210,7 +223,6 @@ Route::middleware(['auth', 'hakakses:hubin,guru,psekolah'])->group(function () {
     Route::put('/konke/{konke}', [KonkeController::class, 'update'])->name('konke.update');
     Route::delete('/konke/{konke}', [KonkeController::class, 'destroy'])->name('konke.destroy');
 
-    Route::get('/pembimbing-siswa', [Pembimbingsiswacontroller::class, 'index'])->name('pembimbing.siswa.index');
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {

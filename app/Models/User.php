@@ -24,6 +24,7 @@ class User extends Authenticatable
         'konke_id',
         'email',
         'password',
+        'tahun_ajaran',
         'role',
         'iduka_id',
         'lokasi_pkl_id',
