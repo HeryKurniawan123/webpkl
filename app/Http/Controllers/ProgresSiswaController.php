@@ -82,6 +82,15 @@ class ProgresSiswaController extends Controller
         $totalPengajuan = DB::table('pengajuan_pkl')->count();
         $totalPengajuanDiterima = DB::table('pengajuan_pkl')->where('status', 'diterima')->count();
         $totalPengajuanDitolak = DB::table('pengajuan_pkl')->where('status', 'ditolak')->count();
+        // Hitung siswa yang belum diterima PKL
+        $totalBelumPKL = DB::table('users')
+            ->where('role', 'siswa')
+            ->whereNotIn('id', function ($query) {
+                $query->select('siswa_id')
+                    ->from('pengajuan_pkl')
+                    ->where('status', 'diterima');
+            })
+            ->count();
 
         return view('siswa_progres.index', compact(
             'siswa',
@@ -90,7 +99,8 @@ class ProgresSiswaController extends Controller
             'totalUsulanDitolak',
             'totalPengajuan',
             'totalPengajuanDiterima',
-            'totalPengajuanDitolak'
+            'totalPengajuanDitolak',
+            'totalBelumPKL' // ⬅️ jangan lupa dikirim ke view
         ));
     }
 

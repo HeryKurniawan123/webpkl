@@ -180,10 +180,18 @@ Route::middleware(['auth', 'hakakses:hubin,guru,psekolah'])->group(function () {
 
     // SISWA
     Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
+    Route::post('/siswa/store', [SiswaController::class, 'store'])->name('siswa.store');
     Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
+    Route::delete('/siswa/destroy/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+    Route::put('/siswa/update/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
 
-    //import data siswa
+
+
+
+    //export import data siswa
     Route::get('/siswa/download-template', [SiswaController::class, 'downloadTemplate'])->name('siswa.download-template');
+    Route::post('/kaprog/import', [SiswaController::class, 'importExcel'])->name('siswa.import');
 
 
     //PROKER

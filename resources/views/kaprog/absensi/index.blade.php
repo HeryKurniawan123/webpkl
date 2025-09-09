@@ -162,6 +162,7 @@
                                         </div>
                                     @endforeach
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -269,7 +270,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function () {
                 let attendanceChart;
                 let majorChart;
 
@@ -348,7 +349,7 @@
 
                 // Klik dropdown filter
                 document.querySelectorAll('.chart-filter').forEach(item => {
-                    item.addEventListener('click', function(e) {
+                    item.addEventListener('click', function (e) {
                         e.preventDefault();
                         const filter = this.dataset.filter;
                         document.getElementById('chartFilterBtn').innerText = this.innerText;
@@ -418,4 +419,4 @@
                 });
             });
         </script>
-    @endsection
+@endsection

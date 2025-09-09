@@ -257,22 +257,22 @@ class KaprogController extends Controller
         if (!$kaprog) {
             return redirect()->back()->with('error', 'Data Kaprog tidak ditemukan.');
         }
-    
+
         // Ambil data usulan dari UsulanIduka
         $usulanDitolak = UsulanIduka::with(['user.dataPribadi.kelas'])
             ->where('status', 'ditolak')
             ->where('konke_id', $kaprog->konke_id)
             ->get();
-    
+
         // Ambil data usulan dari PengajuanUsulan
         $usulanDitolakPkl = PengajuanUsulan::with(['user.dataPribadi.kelas', 'iduka'])
             ->where('status', 'ditolak')
             ->where('konke_id', $kaprog->konke_id)
             ->get();
-    
+
         // Gabungkan semua data dan urutkan berdasarkan tanggal terbaru
         $combined = $usulanDitolak->concat($usulanDitolakPkl)->sortByDesc('created_at')->values();
-    
+
         // Manual pagination
         $perPage = 10;
         $currentPage = request()->get('page', 1);
@@ -283,7 +283,7 @@ class KaprogController extends Controller
             $currentPage,
             ['path' => request()->url(), 'query' => request()->query()]
         );
-    
+
         return view('kaprog.review.historyditolak', compact('paginated'));
     }
 
@@ -374,7 +374,7 @@ class KaprogController extends Controller
     public function reviewPengajuan()
     {
         $userKonkeId = auth()->user()->konke_id; // ambil konke_id dari Kaprog yang login
-    
+
         $pengajuanUsulans = CetakUsulan::with(['dataPribadi.kelas', 'iduka'])
             ->whereIn('dikirim', ['belum', 'menunggu'])
             ->whereHas('dataPribadi', function ($query) use ($userKonkeId) {
@@ -382,17 +382,17 @@ class KaprogController extends Controller
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-    
+
         return view('kaprog.review.reviewpengajuan', compact('pengajuanUsulans'));
     }
-    
+
 
     public function detailUsulanPkl($iduka_id)
     {
         $userKonkeId = auth()->user()->konke_id;
-    
+
         $iduka = Iduka::findOrFail($iduka_id);
-    
+
         $pengajuans = CetakUsulan::with(['dataPribadi.kelas'])
             ->where('iduka_id', $iduka_id)
             ->whereIn('dikirim', ['belum', 'menunggu'])
@@ -400,10 +400,10 @@ class KaprogController extends Controller
                 $query->where('konke_id', $userKonkeId);
             })
             ->get();
-    
+
         return view('kaprog.review.reviewdetail', compact('iduka', 'pengajuans'));
     }
-    
+
 
 
 
@@ -478,7 +478,7 @@ class KaprogController extends Controller
 
         return view('kaprog.review.histori', compact('historiPengajuan'));
     }
- 
+
     public function persetujuanPembatalan(Request $request)
     {
         $id = $request->input('id');
@@ -560,108 +560,117 @@ class KaprogController extends Controller
     }
 
 
- public function toggleVisibility(Iduka $iduka)
- {
-     $iduka->update([
-         'hidden' => !$iduka->hidden
-     ]);
- 
-     return back()->with('success', 'Status tampil berhasil diubah!');
- }
+    public function toggleVisibility(Iduka $iduka)
+    {
+        $iduka->update([
+            'hidden' => !$iduka->hidden
+        ]);
 
- public function dataAbsen()
-{
-    $kaprog = auth()->user();
+        return back()->with('success', 'Status tampil berhasil diubah!');
+    }
 
-    // Ambil jurusan (konke) kaprog
-    $konkeId = $kaprog->konke_id;
+    public function dataAbsen()
+    {
+        $kaprog = auth()->user();
+        $konkeId = $kaprog->konke_id;
 
-    // Total siswa PKL per jurusan kaprog
-    $totalSiswaPKL = User::whereHas('kelas', function ($q) use ($konkeId) {
+        // Total siswa PKL per jurusan kaprog
+        $totalSiswaPKL = User::whereHas('kelas', function ($q) use ($konkeId) {
             $q->where('konke_id', $konkeId);
         })
-        ->where('role', 'siswa')
-        ->count();
+            ->where('role', 'siswa')
+            ->count();
 
-    // Hadir hari ini (hanya siswa jurusan kaprog)
-    $hadirHariIni = Absensi::whereDate('tanggal', now())
-        ->whereHas('user.kelas', function ($q) use ($konkeId) {
-            $q->where('konke_id', $konkeId);
-        })
-        ->where('status', 'hadir')
-        ->count();
-
-    // Tidak hadir (izin + sakit + alfa) hari ini
-    $tidakHadir = Absensi::whereDate('tanggal', now())
-        ->whereHas('user.kelas', function ($q) use ($konkeId) {
-            $q->where('konke_id', $konkeId);
-        })
-        ->whereIn('status', ['izin', 'sakit', 'alfa'])
-        ->count();
-
-    // Tingkat kehadiran (%)
-    $totalAbsenHariIni = max($totalSiswaPKL, 1);
-    $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100);
-
-    // Ambil kelas sesuai jurusan (konke) kaprog
-    $kelasList = Kelas::with(['siswa' => function ($q) {
-            $q->where('role', 'siswa');
-        }])
-        ->withCount(['siswa' => function ($q) {
-            $q->where('role', 'siswa');
-        }])
-        ->where('konke_id', $konkeId)
-        ->get();
-
-    $absensiHariIni = Absensi::whereDate('tanggal', today())->get();
-
-    $kelasAnalisis = $kelasList->map(function ($kelas) use ($absensiHariIni) {
-        $totalSiswa = $kelas->siswa_count;
-
-        $hadirCount = $absensiHariIni
-            ->whereIn('user_id', $kelas->siswa->pluck('id'))
+        // Hadir hari ini
+        $hadirHariIni = Absensi::whereDate('tanggal', now())
+            ->whereHas('user.kelas', function ($q) use ($konkeId) {
+                $q->where('konke_id', $konkeId);
+            })
             ->where('status', 'hadir')
             ->count();
 
-        $persentase = $totalSiswa > 0 ? round(($hadirCount / $totalSiswa) * 100, 2) : 0;
+        // Tidak hadir (izin/sakit/alfa)
+        $tidakHadir = Absensi::whereDate('tanggal', now())
+            ->whereHas('user.kelas', function ($q) use ($konkeId) {
+                $q->where('konke_id', $konkeId);
+            })
+            ->whereIn('status', ['izin', 'sakit', 'alfa'])
+            ->count();
 
-        return [
-            'kelas' => $kelas->kelas, // contoh: XII RPL 1
-            'total_siswa' => $totalSiswa,
-            'persentase' => $persentase,
+        // Tingkat kehadiran (%)
+        $totalAbsenHariIni = max($totalSiswaPKL, 1);
+        $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100);
+
+        // Ambil semua kelas dari jurusan kaprog
+        $kelasList = Kelas::with(['siswa' => function ($q) {
+            $q->where('role', 'siswa');
+        }])
+            ->withCount(['siswa' => function ($q) {
+                $q->where('role', 'siswa');
+            }])
+            ->where('konke_id', $konkeId)
+            ->orderBy('kelas', 'asc') // urutkan X, XI, XII
+            ->orderBy('name_kelas', 'asc') // urutkan 1, 2, 3
+            ->get();
+
+        $absensiHariIni = Absensi::whereDate('tanggal', today())->get();
+
+        // Analisis per kelas
+        $kelasAnalisis = $kelasList->map(function ($kelas) use ($absensiHariIni) {
+            $totalSiswa = $kelas->siswa_count;
+
+            $hadirCount = $absensiHariIni
+                ->whereIn('user_id', $kelas->siswa->pluck('id'))
+                ->where('status', 'hadir')
+                ->count();
+
+            $persentase = $totalSiswa > 0 ? round(($hadirCount / $totalSiswa) * 100, 2) : 0;
+
+            return [
+                'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas, // contoh: XII RPL 1
+                'total_siswa' => $totalSiswa,
+                'persentase' => $persentase,
+            ];
+        });
+
+        // Data chart distribusi
+        $kelasLabels = $kelasAnalisis->pluck('kelas');
+        $kelasValues = $kelasAnalisis->pluck('total_siswa');
+
+        return view('kaprog.absensi.index', compact(
+            'totalSiswaPKL',
+            'hadirHariIni',
+            'tidakHadir',
+            'tingkatKehadiran',
+            'kelasLabels',
+            'kelasValues',
+            'kelasAnalisis'
+        ));
+    }
+
+    public function export(Request $request)
+    {
+        $tanggal = $request->input('tanggal', now()->toDateString());
+        $konkeId = auth()->user()->konke_id; // pastikan field ini ada
+
+        return Excel::download(new DataAbsenKaprog($tanggal, $konkeId), "absensi_{$tanggal}.xlsx");
+    }
+
+    /**
+     * 🔹 Helper untuk ambil singkatan jurusan
+     */
+    private function getSingkatan($jurusan)
+    {
+        $map = [
+            'Rekayasa Perangkat Lunak' => 'RPL',
+            'Manajemen Perkantoran dan Lembaga Bisnis' => 'MPLB',
+            'Teknik Komputer dan Jaringan' => 'TKJ',
+            'Akuntansi dan Keuangan Lembaga' => 'AKL',
+            'Desain Pemodelan dan Informasi Bangunan' => 'DPIB',
+            'Teknik Kendaraan Ringan' => 'TKR',
+            // tambahkan sesuai kebutuhan
         ];
-    });
 
-    // Data untuk chart distribusi per kelas
-    $kelasLabels = $kelasAnalisis->pluck('kelas');
-    $kelasValues = $kelasAnalisis->pluck('total_siswa');
-
-    return view('kaprog.absensi.index', compact(
-        'totalSiswaPKL',
-        'hadirHariIni',
-        'tidakHadir',
-        'tingkatKehadiran',
-        'kelasLabels',
-        'kelasValues',
-        'kelasAnalisis'
-    ));
-}
-
-public function export(Request $request)
-{
-    $tanggal = $request->get('tanggal', now()->toDateString());
-
-    $kaprog = auth()->user();
-    $konkeId = $kaprog->konke_id;
-
-    $data = Absensi::with('user.kelas')
-        ->whereDate('tanggal', $tanggal)
-        ->whereHas('user.kelas', function ($q) use ($konkeId) {
-            $q->where('konke_id', $konkeId);
-        })
-        ->get();
-
-    return Excel::download(new DataAbsenKaprog($data, $tanggal), "absensi_{$tanggal}.xlsx");
-}
-
+        return $map[$jurusan] ?? $jurusan;
+    }
 }

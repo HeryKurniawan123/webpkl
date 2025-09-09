@@ -1,21 +1,22 @@
 <table>
     <thead>
         <tr>
-            <th>Nama Siswa</th>
+            <th colspan="4">Rekap Absensi Tanggal {{ $tanggal }}</th>
+        </tr>
+        <tr>
             <th>Kelas</th>
-            <th>Jurusan</th>
-            <th>Status</th>
-            <th>Tanggal</th>
+            <th>Total Siswa</th>
+            <th>Hadir</th>
+            <th>Tingkat Kehadiran (%)</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($absensi as $a)
+        @foreach ($data as $row)
             <tr>
-                <td>{{ $a->user->name }}</td>
-                <td>{{ $a->user->kelas->kelas ?? '-' }}</td>
-                <td>{{ $a->user->kelas->konke->name_konke ?? '-' }}</td>
-                <td>{{ ucfirst($a->status) }}</td>
-                <td>{{ $tanggal }}</td>
+                <td>{{ $row['kelas'] }}</td>
+                <td>{{ $row['total_siswa'] }}</td>
+                <td>{{ $row['hadir'] }}</td>
+                <td>{{ $row['persentase'] }}%</td>
             </tr>
         @endforeach
     </tbody>
