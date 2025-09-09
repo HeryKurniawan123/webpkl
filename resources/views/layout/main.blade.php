@@ -222,7 +222,7 @@
                             </a>
                         </li>
                     @endif
-                     @if (in_array(auth()->user()->role, ['hubin', 'kaprog']))
+                     @if (in_array(auth()->user()->role, ['hubin']))
                      <li class="menu-item {{ Request::routeIs('data-absen.index') ? 'active' : '' }}">
                             <a href="{{ route('data-absen.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -289,6 +289,13 @@
                             <a href="{{ route('kaprog.review.pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
+                            </a>
+                        </li>
+
+                        <li class="menu-item {{ Request::routeIs('absen.siswa.kaprog') ? 'active' : '' }}">
+                            <a href="{{ route('absen.siswa.kaprog') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Data Absensi</div>
                             </a>
                         </li>
                     @endif

@@ -15,4 +15,10 @@ class Kelas extends Model
     {
         return $this->belongsTo(Konke::class, 'konke_id'); // Perbaiki relasi
     }
+
+    public function siswa()
+    {
+        return $this->hasMany(User::class, 'kelas_id');
+    }
+
 }

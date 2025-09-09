@@ -2,11 +2,14 @@
 //anjay
 namespace App\Http\Controllers;
 
+use App\Exports\DataAbsenKaprog;
+use App\Models\Absensi;
 use App\Models\Cp;
 use App\Models\Atp;
 use App\Models\CetakUsulan;
 use App\Models\User;
 use App\Models\Iduka;
+use App\Models\Kelas;
 use App\Models\PengajuanPkl;
 use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
@@ -18,7 +21,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaprogController extends Controller
 {
@@ -565,4 +568,100 @@ class KaprogController extends Controller
  
      return back()->with('success', 'Status tampil berhasil diubah!');
  }
+
+ public function dataAbsen()
+{
+    $kaprog = auth()->user();
+
+    // Ambil jurusan (konke) kaprog
+    $konkeId = $kaprog->konke_id;
+
+    // Total siswa PKL per jurusan kaprog
+    $totalSiswaPKL = User::whereHas('kelas', function ($q) use ($konkeId) {
+            $q->where('konke_id', $konkeId);
+        })
+        ->where('role', 'siswa')
+        ->count();
+
+    // Hadir hari ini (hanya siswa jurusan kaprog)
+    $hadirHariIni = Absensi::whereDate('tanggal', now())
+        ->whereHas('user.kelas', function ($q) use ($konkeId) {
+            $q->where('konke_id', $konkeId);
+        })
+        ->where('status', 'hadir')
+        ->count();
+
+    // Tidak hadir (izin + sakit + alfa) hari ini
+    $tidakHadir = Absensi::whereDate('tanggal', now())
+        ->whereHas('user.kelas', function ($q) use ($konkeId) {
+            $q->where('konke_id', $konkeId);
+        })
+        ->whereIn('status', ['izin', 'sakit', 'alfa'])
+        ->count();
+
+    // Tingkat kehadiran (%)
+    $totalAbsenHariIni = max($totalSiswaPKL, 1);
+    $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100);
+
+    // Ambil kelas sesuai jurusan (konke) kaprog
+    $kelasList = Kelas::with(['siswa' => function ($q) {
+            $q->where('role', 'siswa');
+        }])
+        ->withCount(['siswa' => function ($q) {
+            $q->where('role', 'siswa');
+        }])
+        ->where('konke_id', $konkeId)
+        ->get();
+
+    $absensiHariIni = Absensi::whereDate('tanggal', today())->get();
+
+    $kelasAnalisis = $kelasList->map(function ($kelas) use ($absensiHariIni) {
+        $totalSiswa = $kelas->siswa_count;
+
+        $hadirCount = $absensiHariIni
+            ->whereIn('user_id', $kelas->siswa->pluck('id'))
+            ->where('status', 'hadir')
+            ->count();
+
+        $persentase = $totalSiswa > 0 ? round(($hadirCount / $totalSiswa) * 100, 2) : 0;
+
+        return [
+            'kelas' => $kelas->kelas, // contoh: XII RPL 1
+            'total_siswa' => $totalSiswa,
+            'persentase' => $persentase,
+        ];
+    });
+
+    // Data untuk chart distribusi per kelas
+    $kelasLabels = $kelasAnalisis->pluck('kelas');
+    $kelasValues = $kelasAnalisis->pluck('total_siswa');
+
+    return view('kaprog.absensi.index', compact(
+        'totalSiswaPKL',
+        'hadirHariIni',
+        'tidakHadir',
+        'tingkatKehadiran',
+        'kelasLabels',
+        'kelasValues',
+        'kelasAnalisis'
+    ));
+}
+
+public function export(Request $request)
+{
+    $tanggal = $request->get('tanggal', now()->toDateString());
+
+    $kaprog = auth()->user();
+    $konkeId = $kaprog->konke_id;
+
+    $data = Absensi::with('user.kelas')
+        ->whereDate('tanggal', $tanggal)
+        ->whereHas('user.kelas', function ($q) use ($konkeId) {
+            $q->where('konke_id', $konkeId);
+        })
+        ->get();
+
+    return Excel::download(new DataAbsenKaprog($data, $tanggal), "absensi_{$tanggal}.xlsx");
+}
+
 }

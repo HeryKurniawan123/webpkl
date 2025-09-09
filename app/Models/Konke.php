@@ -34,9 +34,12 @@ class Konke extends Model
         return $this->hasMany(Cp::class, 'konke_id');
     }
     public function idukaAtps()
-{
-    return $this->hasMany(IdukaAtp::class, 'konke_id');
-}
-    
+    {
+        return $this->hasMany(IdukaAtp::class, 'konke_id');
+    }
 
+    public function kelas()
+    {
+        return $this->hasMany(Kelas::class, 'konke_id');
+    }
 }

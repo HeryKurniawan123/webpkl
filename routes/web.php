@@ -1,5 +1,6 @@
 <?php
 
+use App\Exports\DataAbsenKaprog;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\DataAbsensiController;
 use App\Http\Controllers\KonfirAbsenSiswaController;
@@ -41,6 +42,7 @@ use App\Http\Controllers\DataPribadiPersuratanController;
 use App\Http\Controllers\KepsekController;
 use App\Http\Controllers\Pembimbingsiswacontroller;
 use App\Http\Controllers\PercetakanAtpController;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/PKL SMKN 1 Kawali', function () {
     return view('landing.landing');
@@ -130,7 +132,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::post('/pusat-bantuan/store', [SuratPengantarController::class, 'store'])->name('surat.store');
     Route::post('/pusat-bantuan/update/{id}', [SuratPengantarController::class, 'update'])->name('surat.update');
 
-  
+
     Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
     Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
     Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
@@ -168,7 +170,7 @@ Route::middleware(['auth', 'hakakses:hubin,guru,psekolah'])->group(function () {
     Route::put('/data-guru/{guru}/update', [GuruController::class, 'update'])->name('guru.update');
     Route::delete('/data-guru/{guru}', [GuruController::class, 'destroy'])->name('guru.destroy');
 
-     //TK
+    //TK
     Route::get('/data-tenaga-kependidikan', [TenagaKependidikanController::class, 'tenagaKependidikan'])->name('tk.index');
     Route::get('/kependik/create', [TenagaKependidikanController::class, 'create'])->name('kependik.create');
     Route::post('/kependik/store', [TenagaKependidikanController::class, 'store'])->name('kependik.store');
@@ -180,26 +182,25 @@ Route::middleware(['auth', 'hakakses:hubin,guru,psekolah'])->group(function () {
     Route::get('/data-siswa-detail', [SiswaController::class, 'show'])->name('detail.siswa');
     Route::get('/data-siswa', [SiswaController::class, 'index'])->name('data.siswa');
 
-      //import data siswa
+    //import data siswa
     Route::get('/siswa/download-template', [SiswaController::class, 'downloadTemplate'])->name('siswa.download-template');
 
 
-     //PROKER
+    //PROKER
     Route::get('/program-keahlian', [DataController::class, 'proker'])->name('proker.index');
     Route::get('/proker', [ProkerController::class, 'index'])->name('proker.index');
     Route::post('/proker', [ProkerController::class, 'store'])->name('proker.store');
     Route::put('/proker/{proker}', [ProkerController::class, 'update'])->name('proker.update');
     Route::delete('/proker/{proker}', [ProkerController::class, 'destroy'])->name('proker.destroy');
 
-     //KONKE
+    //KONKE
     Route::get('/konsentrasi-keahlian', [DataController::class, 'konke'])->name('konke.index');
     Route::get('/konke', [KonkeController::class, 'index'])->name('konke.index');
     Route::post('/konke', [KonkeController::class, 'store'])->name('konke.store');
     Route::put('/konke/{konke}', [KonkeController::class, 'update'])->name('konke.update');
     Route::delete('/konke/{konke}', [KonkeController::class, 'destroy'])->name('konke.destroy');
 
-    Route::get('/pembimbing-siswa',[Pembimbingsiswacontroller::class,'index'])->name('pembimbing.siswa.index');
-    
+    Route::get('/pembimbing-siswa', [Pembimbingsiswacontroller::class, 'index'])->name('pembimbing.siswa.index');
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -423,6 +424,10 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     //--------
 
     Route::get('/kaprog/histori-pengajuan', [KaprogController::class, 'historiPengajuan'])->name('kaprog.review.histori');
+
+    Route::get('/absen-kaprog' , [KaprogController::class , 'dataAbsen'])->name('absen.siswa.kaprog');
+   Route::get('/kaprog/absensi/export', [KaprogController::class, 'export'])
+    ->name('kaprog.absensi.export');
 });
 
 

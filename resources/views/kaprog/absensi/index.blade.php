@@ -44,7 +44,7 @@
                                 </div>
                                 <div>
                                     <h3 class="mb-1 fw-bold text-dark">{{ $totalSiswaPKL }}</h3>
-                                    <p class="text-secondary mb-0 small">Total Siswa PKL</p>
+                                    <p class="text-secondary mb-0 small">Total Siswa</p>
                                 </div>
                             </div>
                         </div>

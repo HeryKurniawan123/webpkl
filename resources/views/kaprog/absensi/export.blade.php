@@ -1,23 +1,21 @@
-<h3>Data Absensi Tanggal: {{ \Carbon\Carbon::parse($tanggal)->format('d M Y') }}</h3>
-
 <table>
     <thead>
         <tr>
             <th>Nama Siswa</th>
             <th>Kelas</th>
+            <th>Jurusan</th>
             <th>Status</th>
-            <th>Jam Masuk</th>
-            <th>Jam Pulang</th>
+            <th>Tanggal</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($dataAbsensi as $absen)
+        @foreach($absensi as $a)
             <tr>
-                <td>{{ $absen->user->name }}</td>
-                <td>{{ $absen->user->kelas->kelas ?? '-' }} {{ $absen->user->kelas->name_kelas ?? '' }}</td>
-                <td>{{ ucfirst($absen->status) }}</td>
-                <td>{{ $absen->jam_masuk ?? '-' }}</td>
-                <td>{{ $absen->jam_pulang ?? '-' }}</td>
+                <td>{{ $a->user->name }}</td>
+                <td>{{ $a->user->kelas->kelas ?? '-' }}</td>
+                <td>{{ $a->user->kelas->konke->name_konke ?? '-' }}</td>
+                <td>{{ ucfirst($a->status) }}</td>
+                <td>{{ $tanggal }}</td>
             </tr>
         @endforeach
     </tbody>
