@@ -303,7 +303,7 @@
                         <li class="menu-header small text-uppercase">
                             <span class="menu-header-text">Pusat Control</span>
                         </li>
-                        {{-- <li
+                        <li
                             class="menu-item {{ Request::routeIs('data.siswa', 'users.gtk.index') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -311,7 +311,7 @@
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('siswa.index') ? 'active' : '' }}">
+                                <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
                                     <a href="" class="menu-link">
                                         <div data-i18n="Without menu">Siswa</div>
                                     </a>
@@ -322,7 +322,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li> --}}
+                        </li>
 
                         <li class="menu-item {{ Request::routeIs('pusatbantuan.index') ? 'active' : '' }}">
                             <a href="{{ route('pusatbantuan.index') }}" class="menu-link">

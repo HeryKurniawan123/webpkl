@@ -136,6 +136,8 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
     Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
     Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
+
+    Route::get('/progres/siswa', [ProgresSiswaController::class, 'index'])->name('progres.siswa.index');
 });
 
 
