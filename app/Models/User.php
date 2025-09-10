@@ -101,6 +101,10 @@ class User extends Authenticatable
         return $this->belongsTo(Iduka::class, 'iduka_id', 'id');
     }
 
+    public function pembimbing()
+    {
+        return $this->belongsTo(Guru::class, 'pembimbing_id');
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

@@ -6,16 +6,16 @@
             <i class="fas fa-user-tie me-2 mt-4"></i> Daftar Pembimbing (Guru)
         </h3>
 
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        @if(session('error'))
+        @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
         <div class="row">
-            @foreach($pembimbings as $pembimbing)
+            @foreach ($pembimbings as $pembimbing)
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 border-0 shadow-sm" style="border-radius: 15px; transition: all 0.3s ease;"
                         onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.1)'"
@@ -71,7 +71,7 @@
                                             <i class="fas fa-users me-2"></i> Daftar Siswa Bimbingan
                                         </h6>
 
-                                        @if($pembimbing->siswas->count() > 0)
+                                        @if ($pembimbing->siswas->count() > 0)
                                             <div class="table-responsive">
                                                 <table class="table table-bordered align-middle">
                                                     <thead class="table-light">
@@ -84,19 +84,21 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach($pembimbing->siswas as $s)
+                                                        @foreach ($pembimbing->siswas as $s)
                                                             <tr>
                                                                 <td>{{ $s->name }}</td>
                                                                 <td>{{ $s->kelas->kelas ?? '-' }}</td>
                                                                 <td>{{ $s->kelas->name_kelas ?? '-' }}</td>
                                                                 <td>{{ $s->idukaDiterima->nama ?? '-' }}</td>
                                                                 <td>
-                                                                    <form action="{{ route('pembimbing.destroy', [$pembimbing->id, $s->id]) }}"
+                                                                    <form
+                                                                        action="{{ route('pembimbing.destroy', [$pembimbing->id, $s->id]) }}"
                                                                         method="POST"
                                                                         onsubmit="return confirm('Hapus siswa ini dari bimbingan?')">
                                                                         @csrf
                                                                         @method('DELETE')
-                                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-danger">
                                                                             <i class="fas fa-trash"></i>
                                                                         </button>
                                                                     </form>
@@ -120,17 +122,31 @@
                                             @csrf
                                             <div class="row g-2">
                                                 <div class="col-md-8">
-                                                    <select name="siswa_id" class="form-select" required>
-                                                        <option value="">-- Pilih siswa --</option>
-                                                        @foreach($siswas as $s)
-                                                            <option value="{{ $s->id }}">
-                                                                {{ $s->name }}
-                                                                @if($s->kelas) - {{ $s->kelas->kelas }} @endif
-                                                                @if($s->kelas) - {{ $s->kelas->name_kelas }} @endif
-                                                                @if($s->iduka) - {{ $s->iduka->nama_iduka }} @endif
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                    <div class="mb-3">
+                                                        <label for="siswa_id" class="form-label fw-bold text-secondary">
+                                                            Pilih Siswa
+                                                        </label>
+                                                        <select name="siswa_id" id="siswa_id{{ $pembimbing->id }}"
+                                                            class="form-select select2" required>
+                                                            <option value="">-- Pilih siswa --</option>
+                                                            @foreach ($siswas as $s)
+                                                                <option value="{{ $s->id }}">
+                                                                    {{ $s->name }}
+                                                                    @if ($s->kelas)
+                                                                        - {{ $s->kelas->kelas }}
+                                                                    @endif
+                                                                    @if ($s->kelas)
+                                                                        - {{ $s->kelas->name_kelas }}
+                                                                    @endif
+                                                                    @if ($s->iduka)
+                                                                        - {{ $s->iduka->nama_iduka }}
+                                                                    @endif
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+
+
                                                 </div>
                                                 <div class="col-md-4">
                                                     <button type="submit" class="btn btn-success w-100">

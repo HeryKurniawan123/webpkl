@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
-    data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+    data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -251,7 +251,8 @@
                         </li>
                     @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -330,12 +331,12 @@
 
                             <ul class="menu-sub">
                                 <li class="menu-item {{ Request::routeIs('user.siswa') ? 'active' : '' }}">
-                                    <a href="{{route('user.siswa')}}" class="menu-link">
+                                    <a href="{{ route('user.siswa') }}" class="menu-link">
                                         <div data-i18n="Without menu">Siswa</div>
                                     </a>
                                 </li>
                                 <li class="menu-item {{ Request::routeIs('user.guru') ? 'active' : '' }}">
-                                    <a href="{{route('user.guru')}}" class="menu-link">
+                                    <a href="{{ route('user.guru') }}" class="menu-link">
                                         <div data-i18n="Without menu">GTK</div>
                                     </a>
                                 </li>
@@ -481,7 +482,8 @@
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
 
                             <!-- User -->
-                            <li style="margin-right: 10px">{{ auth()->user()->profile->nama ?? auth()->user()->name }}
+                            <li style="margin-right: 10px">
+                                {{ auth()->user()->profile->nama ?? auth()->user()->name }}
                             </li>
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
@@ -554,7 +556,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function (event) {
+                button.addEventListener('click', function(event) {
                     event.preventDefault();
 
                     Swal.fire({
@@ -605,6 +607,30 @@
         {{-- sweetAlert2 --}}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <!-- CSS Select2 -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+        <!-- Select2 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+        <!-- Select2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                $('.select2').each(function() {
+                    $(this).select2({
+                        dropdownParent: $(this).closest('.modal'),
+                        placeholder: "-- Pilih siswa --",
+                        allowClear: true,
+                        width: '100%'
+                    });
+                });
+            });
+        </script>
+
+
 
 
         @stack('scripts')

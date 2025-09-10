@@ -50,7 +50,7 @@ class Guru extends Model
     }
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function konke()
     {
@@ -59,6 +59,6 @@ class Guru extends Model
 
     public function siswas()
     {
-        return $this->belongsToMany(User::class, 'pembimbing_siswa', 'guru_id', 'siswa_id');
+        return $this->hasMany(User::class, 'pembimbing_id');
     }
 }

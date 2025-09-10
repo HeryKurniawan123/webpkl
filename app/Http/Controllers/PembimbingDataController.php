@@ -9,21 +9,21 @@ use App\Models\User;
 
 class PembimbingDataController extends Controller
 {
-    // Halaman daftar siswa yang dibimbing oleh pembimbing login
     public function index()
     {
-        // ambil guru yang login sekarang
-        $guru = Guru::where('user_id', Auth::id())->first();
+        $guru = auth()->user()->guru;
 
         if (!$guru) {
-            abort(404, 'Data pembimbing tidak ditemukan.');
+            return view('guru.siswa-dibimbing.index', [
+                'guru' => null,
+                'siswas' => collect(),
+            ])->with('error', 'Akun guru ini belum punya data pembimbing.');
         }
 
-        // ambil siswa yang dibimbing oleh guru ini
-        $siswas = User::where('konke_id', $guru->konke_id)
-            ->where('role', 'siswa')
-            ->get();
+        $siswas = $guru->siswas()->with(['kelas', 'idukaDiterima'])->get();
 
         return view('guru.siswa-dibimbing.index', compact('guru', 'siswas'));
     }
+
+
 }
