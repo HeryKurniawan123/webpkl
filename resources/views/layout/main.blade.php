@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
-    data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -12,7 +12,7 @@
     <meta name="description" content="" />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Favicon -->
 
@@ -87,7 +87,7 @@
 
                     <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
                         <a href="@if (auth()->user()->role == 'guru') /dashboard/guru
-                                @elseif(auth()->user()->role == 'siswa') /dashboard/siswa
+                        @elseif(auth()->user()->role == 'siswa') /dashboard/siswa
                                 @elseif(auth()->user()->role == 'hubin') /dashboard/hubin
                                 @elseif(auth()->user()->role == 'kaprog') /dashboard/kaprog
                                 @elseif(auth()->user()->role == 'ppkl') /dashboard/ppkl
@@ -107,7 +107,7 @@
                     </li>
 
                     <!-- Layouts -->
-                    @if (in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah']))
+                    @if (in_array(auth()->user()->role, ['hubin', 'psekolah']))
                         <li class="menu-item {{ Request::routeIs('hubin.iduka.index') ? 'active' : '' }}">
                             <a href="{{ route('hubin.iduka.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -120,9 +120,6 @@
                                 <div data-i18n="Basic">Data Siswa</div>
                             </a>
                         </li>
-
-
-
                         <li
                             class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -178,12 +175,27 @@
                         </li>
 
                         <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                        <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                            <div data-i18n="Basic">Pembimbing</div>
-                        </a>
-                    </li> -->
+                            <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Pembimbing</div>
+                            </a>
+                        </li> -->
                     @endif
+
+                    @if (auth()->user()->role == 'guru')
+                        <li class="menu-item {{ Request::routeIs('pembimbing.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('pembimbing.dashboard') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Siswa Dibimbing</div>
+                            </a>
+                            {{-- <a href="{{ route('absensi.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar-check"></i>
+                                <div data-i18n="Basic">Absensi</div>
+                            </a> --}}
+                        </li>
+                    @endif
+
+
                     @if (auth()->user()->role == 'siswa')
                         <li class="menu-item {{ Request::routeIs('siswa.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('siswa.data_pribadi.create') }}" class="menu-link">
@@ -195,8 +207,15 @@
                                 <div data-i18n="Basic">Absensi</div>
                             </a>
                         </li>
+
+                        <li class="menu-item {{ Request::routeIs('jurnal.siswa') ? 'active' : '' }}">
+                            <a href="{{ route('jurnal.siswa') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar-check"></i>
+                                <div data-i18n="Basic">Jurnal</div>
+                            </a>
+                        </li>
                     @endif
-                    @if (in_array(auth()->user()->role, ['hubin', 'guru', 'psekolah']))
+                    @if (in_array(auth()->user()->role, ['hubin', 'psekolah']))
                         <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
                             <a href="{{ route('data.siswa') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -217,23 +236,22 @@
                             </a>
                         </li>
                     @endif
-                     @if (in_array(auth()->user()->role, ['hubin']))
-                     <li class="menu-item {{ Request::routeIs('data-absen.index') ? 'active' : '' }}">
+                    @if (in_array(auth()->user()->role, ['hubin']))
+                        <li class="menu-item {{ Request::routeIs('data-absen.index') ? 'active' : '' }}">
                             <a href="{{ route('data-absen.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Absensi</div>
                             </a>
                         </li>
-                         <li class="menu-item {{ Request::routeIs('pembimbing.siswa.index') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('pembimbing.siswa.index') ? 'active' : '' }}">
                             <a href="{{ route('pembimbing.siswa.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Pembimbing</div>
                             </a>
                         </li>
-                     @endif
+                    @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li
-                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -304,8 +322,7 @@
                         <li class="menu-header small text-uppercase">
                             <span class="menu-header-text">Pusat Control</span>
                         </li>
-                        <li
-                            class="menu-item {{ Request::routeIs('user.siswa', 'user.guru') ? 'active open' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('user.siswa', 'user.guru') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-layout"></i>
                                 <div data-i18n="Layouts">Tambah User</div>
@@ -455,8 +472,8 @@
                         {{-- <div class="navbar-nav align-items-center">
                             <div class="nav-item d-flex align-items-center">
                                 <i class="bx bx-search fs-4 lh-0"></i>
-                                <input type="text" class="form-control border-0 shadow-none"
-                                    placeholder="Search..." aria-label="Search..." />
+                                <input type="text" class="form-control border-0 shadow-none" placeholder="Search..."
+                                    aria-label="Search..." />
                             </div>
                         </div> --}}
                         <!-- /Search -->
@@ -537,7 +554,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function(event) {
+                button.addEventListener('click', function (event) {
                     event.preventDefault();
 
                     Swal.fire({

@@ -3,10 +3,12 @@
 use App\Exports\DataAbsenKaprog;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\DataAbsensiController;
+use App\Http\Controllers\JurnalSiswaController;
 use App\Http\Controllers\KonfirAbsenSiswaController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\LaporanIduka;
 use App\Http\Controllers\LaporanSiswaController;
+use App\Http\Controllers\PembimbingDataController;
 use App\Http\Controllers\PendampingController;
 use App\Http\Controllers\PengajuanIzinSiswaController;
 use App\Http\Controllers\ProgresSiswaController;
@@ -106,6 +108,9 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
         Route::get('/absensi/cek-izin', [AbsensiController::class, 'cekStatusIzin'])
             ->name('cek-izin');
     });
+
+    //jurnal
+    Route::get('/jurnal-siswa-index', [JurnalSiswaController::class, 'index'])->name('jurnal.siswa');
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -141,20 +146,25 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/progres/siswa', [ProgresSiswaController::class, 'index'])->name('progres.siswa.index');
 
     //user siswa
-    Route::get('/user-siswa' , [UsersController::class , 'index'])->name('user.siswa');
+    Route::get('/user-siswa', [UsersController::class, 'index'])->name('user.siswa');
     Route::post('/siswa-store', [UsersController::class, 'store'])->name('user.siswa.store');
 
     //users guru
-    Route::get('/user-guru' , [UsersController::class , 'guruIndex'])->name('user.guru');
+    Route::get('/user-guru', [UsersController::class, 'guruIndex'])->name('user.guru');
     Route::post('/siswa', [UsersController::class, 'guruStore'])->name('user.guru.store');
 
     //pembimbing siswa
-    Route::get('/pembimbing-siswa', [Pembimbingsiswacontroller::class, 'index'])->name('pembimbing.siswa.index');
+    Route::get('/pembimbing-siswa', [PembimbingSiswaController::class, 'index'])->name('pembimbing.siswa.index');
 
+    Route::prefix('pembimbing-siswa')->name('pembimbing.')->group(function () {
+        Route::get('/{id}', [PembimbingSiswaController::class, 'show'])->name('show');
+        Route::post('/{id}/tambah-siswa', [PembimbingSiswaController::class, 'store'])->name('store');
+        Route::delete('/{id}/hapus-siswa/{siswa_id}', [PembimbingSiswaController::class, 'destroy'])->name('destroy');
+    });
 });
 
 
-Route::middleware(['auth', 'hakakses:hubin,guru,psekolah'])->group(function () {
+Route::middleware(['auth', 'hakakses:hubin,psekolah'])->group(function () {
     //data daftar iduka
     Route::get('/daftar/iduka', [KaprogIdukaController::class, 'index'])->name('hubin.iduka.index');
     Route::get('/daftar/iduka/detail/{id}', [KaprogIdukaController::class, 'show'])->name('hubin.detail.iduka');
@@ -222,7 +232,6 @@ Route::middleware(['auth', 'hakakses:hubin,guru,psekolah'])->group(function () {
     Route::post('/konke', [KonkeController::class, 'store'])->name('konke.store');
     Route::put('/konke/{konke}', [KonkeController::class, 'update'])->name('konke.update');
     Route::delete('/konke/{konke}', [KonkeController::class, 'destroy'])->name('konke.destroy');
-
 });
 
 Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
@@ -447,9 +456,9 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 
     Route::get('/kaprog/histori-pengajuan', [KaprogController::class, 'historiPengajuan'])->name('kaprog.review.histori');
 
-    Route::get('/absen-kaprog' , [KaprogController::class , 'dataAbsen'])->name('absen.siswa.kaprog');
-   Route::get('/kaprog/absensi/export', [KaprogController::class, 'export'])
-    ->name('kaprog.absensi.export');
+    Route::get('/absen-kaprog', [KaprogController::class, 'dataAbsen'])->name('absen.siswa.kaprog');
+    Route::get('/kaprog/absensi/export', [KaprogController::class, 'export'])
+        ->name('kaprog.absensi.export');
 });
 
 
@@ -550,6 +559,10 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
     //export
     Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])
         ->name('export.jurusan');
+});
+Route::middleware(['auth', 'hakakses:guru'])->group(function () {
+    Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
+        ->name('pembimbing.dashboard');
 });
 
 

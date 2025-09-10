@@ -56,4 +56,9 @@ class Guru extends Model
     {
         return $this->belongsTo(Konke::class, 'konke_id', 'id');
     }
+
+    public function siswas()
+    {
+        return $this->belongsToMany(User::class, 'pembimbing_siswa', 'guru_id', 'siswa_id');
+    }
 }
