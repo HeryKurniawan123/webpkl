@@ -3,6 +3,7 @@
 use App\Exports\DataAbsenKaprog;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\DataAbsensiController;
+use App\Http\Controllers\JournalApprovalController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\JurnalSiswaController;
 use App\Http\Controllers\KonfirAbsenSiswaController;
@@ -566,14 +567,27 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
     Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])
         ->name('export.jurusan');
 });
-Route::middleware(['auth', 'hakakses:guru'])->group(function () {
+
+Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
+
+
+Route::middleware(['auth', 'hakakses:guru,iduka'])->group(function () {
     Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
         ->name('pembimbing.dashboard');
+
+    Route::get('/iduka', [JournalApprovalController::class, 'indexIduka'])->name('approval.iduka.index');
+    Route::post('/iduka/{id}/approve', [JournalApprovalController::class, 'approveByIduka'])->name('approval.iduka.approve');
+
+    // Untuk Pembimbing
+    Route::get('/pembimbing', [JournalApprovalController::class, 'indexPembimbing'])->name('approval.pembimbing.index');
+    Route::post('/pembimbing/{id}/approve', [JournalApprovalController::class, 'approveByPembimbing'])->name('approval.pembimbing.approve');
+
+    // Common
+    Route::post('/{id}/reject', [JournalApprovalController::class, 'reject'])->name('approval.reject');
+    Route::get('/{id}', [JournalApprovalController::class, 'showForApproval'])->name('approval.show');
 });
 
 
-
-Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
 
 
 //api data siswa, diterima,ditolak,

@@ -174,6 +174,13 @@
                             </a>
                         </li>
 
+                        <li class="menu-item {{ Request::routeIs('approval.pembimbing.index') ? 'active' : '' }}">
+                            <a href="{{ route('approval.pembimbing.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Konfir Journal</div>
+                            </a>
+                        </li>
+
                         <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
                             <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -192,6 +199,10 @@
                                 <i class="menu-icon tf-icons bx bx-calendar-check"></i>
                                 <div data-i18n="Basic">Absensi</div>
                             </a> --}}
+                            <a href="{{ route('approval.pembimbing.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar-check"></i>
+                                <div data-i18n="Basic">Konfir Journal</div>
+                            </a>
                         </li>
                     @endif
 
@@ -281,6 +292,10 @@
                     @if (in_array(auth()->user()->role, ['iduka']))
                         <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
                             <a href="{{ route('pengajuan.review') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Review Pengajuan</div>
+                            </a>
+                            <a href="{{ route('approval.iduka.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>

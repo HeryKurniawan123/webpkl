@@ -364,37 +364,74 @@
         <!-- Journal Section -->
         <div class="journal-section">
             <h2 class="section-title">Jurnal PKL</h2>
-            <div class="journal-detail">
-    <div class="journal-date">
-        {{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
-    </div>
-    <div style="display: flex; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #718096;">
-        <span>🕐 {{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</span>
-        @if ($jurnal->foto)
-            <span>📷 Dengan foto</span>
-        @endif
-    </div>
-    <div class="journal-content">
-        {{ $jurnal->uraian }}
-    </div>
-    @if ($jurnal->foto)
-        <div class="mt-3">
-            <img src="{{ $jurnal->foto }}" alt="Foto Kegiatan" class="journal-image">
-        </div>
-    @endif
-    <div class="journal-tags mt-3">
-        @if ($jurnal->validasi_pembimbing == 'sudah')
-            <span class="tag" style="background: #d1fae5; color: #065f46;">✅ Disetujui Pembimbing</span>
-        @else
-            <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu Pembimbing</span>
-        @endif
-        @if ($jurnal->validasi_iduka == 'sudah')
-            <span class="tag" style="background: #d1fae5; color: #065f46;">✅ Disetujui IDUKA</span>
-        @else
-            <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu IDUKA</span>
-        @endif
-    </div>
-</div>
+
+            @if ($jurnals->count() > 0)
+                <div class="journal-grid">
+                    @foreach ($jurnals as $jurnal)
+                        <div class="journal-card">
+                            <div class="journal-date">
+                                {{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                            </div>
+                            <div class="journal-subject">Kegiatan Harian</div>
+                            <div class="journal-content">
+                                {{ Str::limit($jurnal->uraian, 150) }}
+                            </div>
+                            <div style="display: flex; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #718096;">
+                                <span>🕐 {{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</span>
+                                @if ($jurnal->foto)
+                                    <span>📷 Dengan foto</span>
+                                @endif
+                            </div>
+                            <div class="journal-tags">
+                                @if ($jurnal->status === 'pending')
+                                    <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu
+                                        Persetujuan</span>
+                                @elseif ($jurnal->status === 'approved_iduka')
+                                    <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui
+                                        IDUKA</span>
+                                @elseif ($jurnal->status === 'approved_pembimbing')
+                                    <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui
+                                        Pembimbing</span>
+                                @elseif ($jurnal->status === 'approved')
+                                    <span class="tag" style="background: #d1fae5; color: #065f46;">✅ Disetujui</span>
+                                @elseif ($jurnal->status === 'rejected')
+                                    <span class="tag" style="background: #fee2e2; color: #dc2626;">❌ Ditolak</span>
+                                    <small class="text-muted">Alasan: {{ $jurnal->rejected_reason }}</small>
+                                @endif
+                            </div>
+                            <div class="journal-actions">
+                                <button type="button" class="action-btn btn-view" data-bs-toggle="modal"
+                                    data-bs-target="#viewJournalModal" data-id="{{ $jurnal->id }}">
+                                    Lihat Detail
+                                </button>
+                                <button type="button" class="action-btn btn-edit" data-bs-toggle="modal"
+                                    data-bs-target="#editJournalModal" data-id="{{ $jurnal->id }}">
+                                    Edit
+                                </button>
+                                <form action="{{ route('jurnal.destroy', $jurnal->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="action-btn btn-delete"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?')">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h4>Belum ada jurnal</h4>
+                    <p>Mulai tambah jurnal harian Anda untuk mencatat aktivitas PKL.</p>
+                    <button type="button" class="add-entry-btn mt-3" data-bs-toggle="modal"
+                        data-bs-target="#createJournalModal">
+                        + Tambah Jurnal Baru
+                    </button>
+                </div>
+            @endif
+
             {{-- Pagination --}}
             @if ($jurnals && method_exists($jurnals, 'links'))
                 <div class="mt-4">
@@ -467,7 +504,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Detail Jurnal</h5>
+                    <h5 class="modal-title text-white">Detail Jurnal</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="viewJournalContent">
@@ -513,98 +550,261 @@
         </div>
     </div>
 
-   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // JavaScript untuk menangani modal view
-    const viewJournalModal = document.getElementById('viewJournalModal');
-    viewJournalModal.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const journalId = button.getAttribute('data-id');
-        
-        // Reset content
-        document.getElementById('viewJournalContent').innerHTML = `
-            <div class="text-center py-5">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `;
-        
-        // Load content via AJAX
-        const url = `{{ route('jurnal.show', ['jurnal' => ':id']) }}`.replace(':id', journalId);
-        
-        fetch(url, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'text/html'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            document.getElementById('viewJournalContent').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('viewJournalContent').innerHTML = `
-                <div class="alert alert-danger">
-                    <h6>Error</h6>
-                    <p>Tidak dapat memuat detail jurnal. Silakan coba lagi.</p>
-                </div>
-            `;
-        });
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menambahkan CSRF token ke header AJAX
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-    // JavaScript untuk menangani modal edit
-    const editJournalModal = document.getElementById('editJournalModal');
-    editJournalModal.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const journalId = button.getAttribute('data-id');
-        
-        // Set form action
-        document.getElementById('editJournalForm').action = `{{ route('jurnal.update', ['jurnal' => ':id']) }}`.replace(':id', journalId);
-        
-        // Reset content
-        document.getElementById('editJournalContent').innerHTML = `
-            <div class="text-center py-5">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `;
-        
-        // Load content via AJAX
-        const url = `{{ route('jurnal.edit', ['jurnal' => ':id']) }}`.replace(':id', journalId);
-        
-        fetch(url, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'text/html'
+            // Validasi form create
+            const createForm = document.querySelector('#createJournalModal form');
+            if (createForm) {
+                createForm.addEventListener('submit', function(e) {
+                    // Validasi jam selesai harus setelah jam mulai
+                    const jamMulai = document.querySelector('input[name="jam_mulai"]').value;
+                    const jamSelesai = document.querySelector('input[name="jam_selesai"]').value;
+
+                    if (jamMulai && jamSelesai && jamSelesai <= jamMulai) {
+                        e.preventDefault();
+                        alert('Jam selesai harus setelah jam mulai.');
+                        return false;
+                    }
+                });
             }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            document.getElementById('editJournalContent').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('editJournalContent').innerHTML = `
-                <div class="alert alert-danger">
-                    <h6>Error</h6>
-                    <p>Tidak dapat memuat form edit. Silakan coba lagi.</p>
+
+            // JavaScript untuk menangani modal view
+            const viewJournalModal = document.getElementById('viewJournalModal');
+            viewJournalModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const journalId = button.getAttribute('data-id');
+
+                // Reset content
+                document.getElementById('viewJournalContent').innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 </div>
             `;
+
+                // Load content via AJAX
+                const url = `/jurnal/${journalId}`;
+
+                fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 403) {
+                                throw new Error('Unauthorized access');
+                            }
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        document.getElementById('viewJournalContent').innerHTML = data;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('viewJournalContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>Error</h6>
+                        <p>${error.message || 'Tidak dapat memuat detail jurnal. Silakan coba lagi.'}</p>
+                    </div>
+                `;
+                    });
+            });
+
+            // JavaScript untuk menangani modal edit
+            const editJournalModal = document.getElementById('editJournalModal');
+            editJournalModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const journalId = button.getAttribute('data-id');
+
+                // Set form action
+                document.getElementById('editJournalForm').action = `/jurnal/${journalId}`;
+
+                // Reset content
+                document.getElementById('editJournalContent').innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            `;
+
+                // Load content via AJAX
+                const url = `/jurnal/${journalId}/edit`;
+
+                fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'text/html',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 403) {
+                                throw new Error('Unauthorized access');
+                            }
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        document.getElementById('editJournalContent').innerHTML = data;
+
+                        // Tambahkan validasi client-side setelah form dimuat
+                        const jamMulaiInput = document.querySelector(
+                            '#editJournalContent input[name="jam_mulai"]');
+                        const jamSelesaiInput = document.querySelector(
+                            '#editJournalContent input[name="jam_selesai"]');
+
+                        if (jamMulaiInput && jamSelesaiInput) {
+                            jamSelesaiInput.addEventListener('change', function() {
+                                if (jamMulaiInput.value && this.value && this.value <=
+                                    jamMulaiInput.value) {
+                                    this.setCustomValidity(
+                                        'Jam selesai harus setelah jam mulai');
+                                } else {
+                                    this.setCustomValidity('');
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('editJournalContent').innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>Error</h6>
+                        <p>${error.message || 'Tidak dapat memuat form edit. Silakan coba lagi.'}</p>
+                    </div>
+                `;
+                    });
+            });
+
+            // Menangani submit form edit
+            document.getElementById('editJournalForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const form = this;
+                const formData = new FormData(form);
+                const url = form.action;
+
+                // Validasi client-side untuk jam selesai
+                const jamMulai = formData.get('jam_mulai');
+                const jamSelesai = formData.get('jam_selesai');
+
+                if (jamMulai && jamSelesai && jamSelesai <= jamMulai) {
+                    alert('Jam selesai harus setelah jam mulai.');
+                    return false;
+                }
+
+                // Disable submit button to prevent double submission
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Memproses...';
+
+                fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        // Check if response is ok
+                        if (!response.ok) {
+                            // Try to get error message from response
+                            return response.text().then(text => {
+                                throw new Error(
+                                    `HTTP ${response.status}: ${text || 'Unknown error'}`);
+                            });
+                        }
+
+                        // Check if response is JSON
+                        const contentType = response.headers.get("content-type");
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            return response.json();
+                        } else {
+                            // If not JSON, assume success and reload
+                            return {
+                                success: true
+                            };
+                        }
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Show success message
+                            alert('Jurnal berhasil diperbarui!');
+
+                            // Close modal and reload page
+                            $('#editJournalModal').modal('hide');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 500);
+                        } else {
+                            // Menampilkan error validasi khusus
+                            if (data.errors && data.errors.jam_selesai) {
+                                throw new Error(data.errors.jam_selesai[0]);
+                            }
+                            throw new Error(data.message || 'Terjadi kesalahan saat mengupdate jurnal');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+
+                        // Show specific error message
+                        let errorMessage = 'Terjadi kesalahan saat mengupdate jurnal.';
+
+                        if (error.message.includes('jam selesai') || error.message.includes('after')) {
+                            errorMessage = 'Jam selesai harus setelah jam mulai.';
+                        } else if (error.message.includes('422')) {
+                            errorMessage = 'Data yang dimasukkan tidak valid. Silakan periksa kembali.';
+                        } else if (error.message.includes('403')) {
+                            errorMessage = 'Anda tidak memiliki akses untuk mengupdate jurnal ini.';
+                        } else if (error.message.includes('500')) {
+                            errorMessage = 'Terjadi kesalahan server. Silakan coba lagi.';
+                        } else {
+                            errorMessage = error.message;
+                        }
+
+                        alert(errorMessage);
+                    })
+                    .finally(() => {
+                        // Re-enable submit button
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    });
+            });
+
+            // Validasi real-time untuk form create
+            const jamMulaiCreate = document.querySelector('#createJournalModal input[name="jam_mulai"]');
+            const jamSelesaiCreate = document.querySelector('#createJournalModal input[name="jam_selesai"]');
+
+            if (jamSelesaiCreate) {
+                jamSelesaiCreate.addEventListener('change', function() {
+                    if (jamMulaiCreate.value && this.value && this.value <= jamMulaiCreate.value) {
+                        this.setCustomValidity('Jam selesai harus setelah jam mulai');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+            }
         });
-    });
-});
-   </script>
+    </script>
 @endsection

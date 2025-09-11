@@ -33,4 +33,9 @@ class Journal extends Model
     {
         return $this->belongsTo(User::class, 'nis', 'nis');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
