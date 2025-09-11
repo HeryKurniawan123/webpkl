@@ -3,6 +3,7 @@
 use App\Exports\DataAbsenKaprog;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\DataAbsensiController;
+use App\Http\Controllers\JournalController;
 use App\Http\Controllers\JurnalSiswaController;
 use App\Http\Controllers\KonfirAbsenSiswaController;
 use App\Http\Controllers\AbsensiSiswaController;
@@ -110,7 +111,12 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     });
 
     //jurnal
-    Route::get('/jurnal-siswa-index', [JurnalSiswaController::class, 'index'])->name('jurnal.siswa');
+    Route::get('/jurnal', [JournalController::class, 'index'])->name('jurnal.index');
+    Route::post('/jurnal', [JournalController::class, 'store'])->name('jurnal.store');
+    Route::get('/jurnal/{jurnal}', [JournalController::class, 'show'])->name('jurnal.show');
+    Route::get('/jurnal/{jurnal}/edit', [JournalController::class, 'edit'])->name('jurnal.edit');
+    Route::put('/jurnal/{jurnal}', [JournalController::class, 'update'])->name('jurnal.update');
+    Route::delete('/jurnal/{jurnal}', [JournalController::class, 'destroy'])->name('jurnal.destroy');
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {

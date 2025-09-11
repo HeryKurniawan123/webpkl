@@ -208,8 +208,8 @@
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('jurnal.siswa') ? 'active' : '' }}">
-                            <a href="{{ route('jurnal.siswa') }}" class="menu-link">
+                        <li class="menu-item {{ Request::routeIs('jurnal.index') ? 'active' : '' }}">
+                            <a href="{{ route('jurnal.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar-check"></i>
                                 <div data-i18n="Basic">Jurnal</div>
                             </a>

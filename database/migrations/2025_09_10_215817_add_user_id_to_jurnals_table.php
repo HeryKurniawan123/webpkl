@@ -10,9 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('gurus', function (Blueprint $table) {
+        Schema::table('jurnals', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable()->after('id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('set null')
+                ->onUpdate('cascade');
         });
     }
 
@@ -21,8 +25,9 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('gurus', function (Blueprint $table) {
-            //
+        Schema::table('jurnals', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropColumn('user_id');
         });
     }
 };
