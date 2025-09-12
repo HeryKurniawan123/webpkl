@@ -295,10 +295,6 @@
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
-                            <a href="{{ route('approval.iduka.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Review Pengajuan</div>
-                            </a>
                         </li>
                     @endif
                     @if (auth()->user()->role == 'kaprog')
