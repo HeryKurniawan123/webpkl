@@ -13,18 +13,21 @@ class JournalController extends Controller
 {
     public function index()
     {
-        $nis = Auth::user()->nis;
-        $jurnals = Jurnal::where('nis', $nis)
+        // Ambil user yang sedang login
+        $user = Auth::user();
+        
+        // Ambil jurnal milik siswa ini saja dengan relasi yang benar
+        $jurnals = Jurnal::where('user_id', $user->id)
+            ->orWhere('nis', $user->nip) // Jika menggunakan NIS
+            ->with([
+                'user.idukaDiterima', // Memuat relasi IDUKA
+                'user.pembimbing'     // Memuat relasi pembimbing (Guru)
+            ])
             ->orderBy('tgl', 'desc')
             ->orderBy('jam_mulai', 'desc')
             ->paginate(10);
 
         return view('siswa.jurnal.index', compact('jurnals'));
-    }
-
-    public function create()
-    {
-        return view('jurnal.create');
     }
 
     public function store(Request $request)
@@ -37,12 +40,17 @@ class JournalController extends Controller
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Ambil user yang sedang login
+        $user = Auth::user();
+        
         $data = $request->only(['tgl', 'uraian', 'jam_mulai', 'jam_selesai']);
-        $data['user_id'] = Auth::user()->id;
-        $data['nis'] = Auth::user()->nis;
+        $data['user_id'] = $user->id;
+        $data['nis'] = $user->nip; // Gunakan NIP sebagai NIS
         $data['status'] = 'pending';
         $data['validasi_iduka'] = 'belum';
         $data['validasi_pembimbing'] = 'belum';
+        $data['iduka_id'] = $user->iduka_id;
+        $data['pembimbing_id'] = $user->pembimbing_id;
 
         if ($request->hasFile('foto')) {
             $path = $request->file('foto')->store('public/jurnals');
@@ -56,11 +64,15 @@ class JournalController extends Controller
 
     public function show($id)
     {
-        // Find jurnal by ID
-        $jurnal = Jurnal::findOrFail($id);
+        // Ambil jurnal dengan relasi yang benar
+        $jurnal = Jurnal::with([
+            'user.idukaDiterima', // Memuat relasi IDUKA
+            'user.pembimbing'     // Memuat relasi pembimbing (Guru)
+        ])->findOrFail($id);
 
-        // Authorization - cek baik user_id maupun nis
-        if ($jurnal->nis !== Auth::user()->nis && $jurnal->user_id !== Auth::user()->id) {
+        // Authorization - cek apakah jurnal ini milik siswa yang sedang login
+        $user = Auth::user();
+        if ($jurnal->user_id !== $user->id && $jurnal->nis !== $user->nip) {
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json(['error' => 'Unauthorized access'], 403);
             }
@@ -73,7 +85,6 @@ class JournalController extends Controller
                 $html = view('siswa.jurnal.partials.view', compact('jurnal'))->render();
                 return response($html, 200);
             } catch (\Exception $e) {
-                // Jika view partial tidak ada, buat HTML langsung
                 $formattedDate = \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY');
 
                 $html = '
@@ -105,13 +116,29 @@ class JournalController extends Controller
                     </div>';
                 }
 
+                // Informasi IDUKA dan Pembimbing dari user siswa
                 $html .= '
+                <div class="row">
+                    <div class="col-md-6">
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">IDUKA</label>
+                            <div style="color: #4a5568;">' . ($jurnal->user->idukaDiterima ? $jurnal->user->idukaDiterima->nama : '-') . '</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Pembimbing</label>
+                            <div style="color: #4a5568;">' . ($jurnal->user->pembimbing ? $jurnal->user->pembimbing->nama : '-') . '</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-6">
                         <div style="margin-bottom: 15px;">
                             <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Status Pembimbing</label>';
 
-                if ($jurnal->validasi_pembimbing == 'sudah') {
+                if ($jurnal->isApprovedByPembimbing()) {
                     $html .= '<span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">✅ Disetujui</span>';
                 } else {
                     $html .= '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">⏳ Menunggu Persetujuan</span>';
@@ -123,7 +150,7 @@ class JournalController extends Controller
                         <div style="margin-bottom: 15px;">
                             <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Status IDUKA</label>';
 
-                if ($jurnal->validasi_iduka == 'sudah') {
+                if ($jurnal->isApprovedByIduka()) {
                     $html .= '<span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">✅ Disetujui</span>';
                 } else {
                     $html .= '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">⏳ Menunggu Persetujuan</span>';
@@ -142,11 +169,11 @@ class JournalController extends Controller
 
     public function edit($id)
     {
-        // Find jurnal by ID
         $jurnal = Jurnal::findOrFail($id);
 
         // Authorization
-        if ($jurnal->nis !== Auth::user()->nis && $jurnal->user_id !== Auth::user()->id) {
+        $user = Auth::user();
+        if ($jurnal->user_id !== $user->id && $jurnal->nis !== $user->nip) {
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json(['error' => 'Unauthorized access'], 403);
             }
@@ -159,7 +186,6 @@ class JournalController extends Controller
                 $html = view('siswa.jurnal.partials.edit', compact('jurnal'))->render();
                 return response($html, 200);
             } catch (\Exception $e) {
-                // Jika view partial tidak ada, buat HTML langsung
                 $html = '
                 <div class="row">
                     <div class="col-md-6">
@@ -207,18 +233,17 @@ class JournalController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            // Find jurnal by ID
             $jurnal = Jurnal::findOrFail($id);
 
             // Authorization
-            if ($jurnal->nis !== Auth::user()->nis && $jurnal->user_id !== Auth::user()->id) {
+            $user = Auth::user();
+            if ($jurnal->user_id !== $user->id && $jurnal->nis !== $user->nip) {
                 if (request()->ajax() || request()->wantsJson()) {
                     return response()->json(['success' => false, 'error' => 'Unauthorized access'], 403);
                 }
                 abort(403, 'Unauthorized access');
             }
 
-            // Validation
             $validator = Validator::make($request->all(), [
                 'tgl' => 'required|date',
                 'uraian' => 'required|string|max:1000',
@@ -279,11 +304,11 @@ class JournalController extends Controller
 
     public function destroy($id)
     {
-        // Find jurnal by ID
         $jurnal = Jurnal::findOrFail($id);
 
         // Authorization
-        if ($jurnal->nis !== Auth::user()->nis && $jurnal->user_id !== Auth::user()->id) {
+        $user = Auth::user();
+        if ($jurnal->user_id !== $user->id && $jurnal->nis !== $user->nip) {
             abort(403, 'Unauthorized access');
         }
 

@@ -368,56 +368,78 @@
             @if ($jurnals->count() > 0)
                 <div class="journal-grid">
                     @foreach ($jurnals as $jurnal)
-                        <div class="journal-card">
-                            <div class="journal-date">
-                                {{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
-                            </div>
-                            <div class="journal-subject">Kegiatan Harian</div>
-                            <div class="journal-content">
-                                {{ Str::limit($jurnal->uraian, 150) }}
-                            </div>
-                            <div style="display: flex; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #718096;">
-                                <span>🕐 {{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</span>
-                                @if ($jurnal->foto)
-                                    <span>📷 Dengan foto</span>
-                                @endif
-                            </div>
-                            <div class="journal-tags">
-                                @if ($jurnal->status === 'pending')
-                                    <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu
-                                        Persetujuan</span>
-                                @elseif ($jurnal->status === 'approved_iduka')
-                                    <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui
-                                        IDUKA</span>
-                                @elseif ($jurnal->status === 'approved_pembimbing')
-                                    <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui
-                                        Pembimbing</span>
-                                @elseif ($jurnal->status === 'approved')
-                                    <span class="tag" style="background: #d1fae5; color: #065f46;">✅ Disetujui</span>
-                                @elseif ($jurnal->status === 'rejected')
-                                    <span class="tag" style="background: #fee2e2; color: #dc2626;">❌ Ditolak</span>
-                                    <small class="text-muted">Alasan: {{ $jurnal->rejected_reason }}</small>
-                                @endif
-                            </div>
-                            <div class="journal-actions">
-                                <button type="button" class="action-btn btn-view" data-bs-toggle="modal"
-                                    data-bs-target="#viewJournalModal" data-id="{{ $jurnal->id }}">
-                                    Lihat Detail
-                                </button>
-                                <button type="button" class="action-btn btn-edit" data-bs-toggle="modal"
-                                    data-bs-target="#editJournalModal" data-id="{{ $jurnal->id }}">
-                                    Edit
-                                </button>
-                                <form action="{{ route('jurnal.destroy', $jurnal->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="action-btn btn-delete"
-                                        onclick="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?')">
-                                        Hapus
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                        <!-- Di dalam loop foreach jurnal -->
+<div class="journal-card">
+    <div class="journal-date">
+        {{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+    </div>
+    <div class="journal-subject">Kegiatan Harian</div>
+    <div class="journal-content">
+        {{ Str::limit($jurnal->uraian, 150) }}
+    </div>
+    
+    <!-- Informasi waktu dan foto -->
+    <div style="display: flex; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #718096;">
+        <span>🕐 {{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</span>
+        @if ($jurnal->foto)
+            <span>📷 Dengan foto</span>
+        @endif
+    </div>
+    
+    <!-- Informasi IDUKA dan Pembimbing yang TEPAT -->
+    <div style="display: flex; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #718096;">
+        @if ($jurnal->user && $jurnal->user->idukaDiterima)
+            <span>🏢 {{ $jurnal->user->idukaDiterima->nama }}</span>
+        @endif
+        @if ($jurnal->user && $jurnal->user->pembimbing)
+            <span>👨‍🏫 {{ $jurnal->user->pembimbing->nama }}</span>
+        @endif
+    </div>
+    
+    <!-- Status validasi -->
+    <div class="journal-tags">
+        @if ($jurnal->isRejected())
+            <span class="tag" style="background: #fee2e2; color: #dc2626;">❌ Ditolak</span>
+            @if ($jurnal->rejected_reason)
+                <small class="text-muted">Alasan: {{ $jurnal->rejected_reason }}</small>
+            @endif
+        @elseif ($jurnal->isFullyApproved())
+            <span class="tag" style="background: #d1fae5; color: #065f46;">✅ Disetujui</span>
+        @else
+            @if ($jurnal->isApprovedByIduka())
+                <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui IDUKA</span>
+            @else
+                <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu Persetujuan IDUKA</span>
+            @endif
+
+            @if ($jurnal->isApprovedByPembimbing())
+                <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui Pembimbing</span>
+            @else
+                <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu Persetujuan Pembimbing</span>
+            @endif
+        @endif
+    </div>
+    
+    <!-- Tombol aksi -->
+    <div class="journal-actions">
+        <button type="button" class="action-btn btn-view" data-bs-toggle="modal"
+            data-bs-target="#viewJournalModal" data-id="{{ $jurnal->id }}">
+            Lihat Detail
+        </button>
+        <button type="button" class="action-btn btn-edit" data-bs-toggle="modal"
+            data-bs-target="#editJournalModal" data-id="{{ $jurnal->id }}">
+            Edit
+        </button>
+        <form action="{{ route('jurnal.destroy', $jurnal->id) }}" method="POST" class="d-inline">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="action-btn btn-delete"
+                onclick="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?')">
+                Hapus
+            </button>
+        </form>
+    </div>
+</div>
                     @endforeach
                 </div>
             @else
@@ -597,8 +619,7 @@
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'text/html',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     })
                     .then(response => {
@@ -649,8 +670,7 @@
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'text/html',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     })
                     .then(response => {
@@ -666,17 +686,13 @@
                         document.getElementById('editJournalContent').innerHTML = data;
 
                         // Tambahkan validasi client-side setelah form dimuat
-                        const jamMulaiInput = document.querySelector(
-                            '#editJournalContent input[name="jam_mulai"]');
-                        const jamSelesaiInput = document.querySelector(
-                            '#editJournalContent input[name="jam_selesai"]');
+                        const jamMulaiInput = document.querySelector('#editJournalContent input[name="jam_mulai"]');
+                        const jamSelesaiInput = document.querySelector('#editJournalContent input[name="jam_selesai"]');
 
                         if (jamMulaiInput && jamSelesaiInput) {
                             jamSelesaiInput.addEventListener('change', function() {
-                                if (jamMulaiInput.value && this.value && this.value <=
-                                    jamMulaiInput.value) {
-                                    this.setCustomValidity(
-                                        'Jam selesai harus setelah jam mulai');
+                                if (jamMulaiInput.value && this.value && this.value <= jamMulaiInput.value) {
+                                    this.setCustomValidity('Jam selesai harus setelah jam mulai');
                                 } else {
                                     this.setCustomValidity('');
                                 }
@@ -721,8 +737,7 @@
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content'),
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
@@ -731,8 +746,7 @@
                         if (!response.ok) {
                             // Try to get error message from response
                             return response.text().then(text => {
-                                throw new Error(
-                                    `HTTP ${response.status}: ${text || 'Unknown error'}`);
+                                throw new Error(`HTTP ${response.status}: ${text || 'Unknown error'}`);
                             });
                         }
 

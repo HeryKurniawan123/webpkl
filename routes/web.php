@@ -571,37 +571,18 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
 
 
+
 Route::middleware(['auth', 'hakakses:guru,iduka'])->group(function () {
     Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
         ->name('pembimbing.dashboard');
 
-    // Routes untuk IDUKA
-    Route::get('/iduka/konfir-jurnal', [JournalApprovalController::class, 'indexIduka'])
-        ->name('approval.iduka.index');
-
-    Route::get('/iduka/riwayat-jurnal', [JournalApprovalController::class, 'riwayatIduka'])
-        ->name('approval.iduka.riwayat');
-
-    Route::post('/approval/iduka/{id}/approve', [JournalApprovalController::class, 'approveByIduka'])
-        ->name('approval.iduka.approve');
-
-    // Routes untuk Pembimbing/Guru
-    Route::get('/guru/konfir-jurnal', [JournalApprovalController::class, 'indexPembimbing'])
-        ->name('approval.pembimbing.index');
-
-    Route::get('/guru/riwayat-jurnal', [JournalApprovalController::class, 'riwayatPembimbing'])
-        ->name('approval.pembimbing.riwayat');
-
-    Route::post('/approval/pembimbing/{id}/approve', [JournalApprovalController::class, 'approveByPembimbing'])
-        ->name('approval.pembimbing.approve');
-
-    // Routes umum
-    Route::post('/approval/{id}/reject', [JournalApprovalController::class, 'reject'])
-        ->name('approval.reject');
-
-    Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])
-        ->name('approval.detail');
+    Route::get('/approval', [JournalApprovalController::class, 'index'])->name('approval.index');
+    Route::get('/approval/riwayat', [JournalApprovalController::class, 'riwayat'])->name('approval.riwayat');
+    Route::post('/approval/{id}/approve', [JournalApprovalController::class, 'approve'])->name('approval.approve');
+    Route::post('/approval/{id}/reject', [JournalApprovalController::class, 'reject'])->name('approval.reject');
+    Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])->name('approval.showDetail');
 });
+
 
 
 

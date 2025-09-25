@@ -3,168 +3,310 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jurnal;
+use App\Models\Iduka;
+use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class JournalApprovalController extends Controller
 {
-    // Tampilkan jurnal yang perlu disetujui oleh IDUKA
-    public function indexIduka()
+    /**
+     * Helper method untuk mencari atau membuat data guru
+     */
+    private function findOrCreateGuru($user)
     {
-        $jurnals = Jurnal::with('user')
-            ->whereHas('user')
-            ->where('validasi_iduka', 'belum') // Hanya yang belum divalidasi IDUKA
-            ->where('status', '!=', 'rejected') // Tidak termasuk yang sudah ditolak
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return view('iduka.konfir_jurnal.index', compact('jurnals'));
+        // Cari berdasarkan user_id (cara normal)
+        $guru = Guru::where('user_id', $user->id)->first();
+        
+        if ($guru) {
+            return $guru;
+        }
+        
+        // Cari berdasarkan nama dan email
+        $guru = Guru::where('nama', $user->name)
+                   ->where('email', $user->email)
+                   ->first();
+        
+        if ($guru) {
+            // Update user_id jika ditemukan
+            $guru->user_id = $user->id;
+            $guru->save();
+            Log::info("Updated guru user_id for guru: {$guru->nama}");
+            return $guru;
+        }
+        
+        // Cari berdasarkan email saja
+        $guru = Guru::where('email', $user->email)->first();
+        
+        if ($guru) {
+            // Update user_id dan nama jika ditemukan
+            $guru->user_id = $user->id;
+            $guru->nama = $user->name;
+            $guru->save();
+            Log::info("Updated guru user_id and nama for guru: {$guru->nama}");
+            return $guru;
+        }
+        
+        // Jika tidak ditemukan sama sekali, buat data guru baru
+        $guru = new Guru();
+        $guru->user_id = $user->id;
+        $guru->nama = $user->name;
+        $guru->email = $user->email;
+        $guru->nip = 'AUTO-' . date('Ymd') . '-' . $user->id; // NIP otomatis
+        $guru->save();
+        
+        Log::info("Created new guru for user: {$user->name}");
+        return $guru;
     }
 
-    // Tampilkan riwayat persetujuan oleh IDUKA
-    public function riwayatIduka()
-    {
-        $jurnals = Jurnal::with('user')
-            ->whereHas('user')
-            ->where(function($query) {
-                $query->where('validasi_iduka', 'sudah')
-                      ->orWhere('status', 'rejected');
-            })
-            ->orderBy('updated_at', 'desc')
-            ->paginate(10);
-
-        return view('iduka.konfir_jurnal.riwayat', compact('jurnals'));
-    }
-
-    // Tampilkan jurnal yang perlu disetujui oleh Pembimbing
-    public function indexPembimbing()
-    {
-        $jurnals = Jurnal::with('user')
-            ->whereHas('user')
-            ->where('validasi_pembimbing', 'belum') // Hanya yang belum divalidasi Pembimbing
-            ->where('status', '!=', 'rejected') // Tidak termasuk yang sudah ditolak
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return view('guru.konfir_jurnal.index', compact('jurnals'));
-    }
-
-    // Tampilkan riwayat persetujuan oleh Pembimbing
-    public function riwayatPembimbing()
-    {
-        $jurnals = Jurnal::with('user')
-            ->whereHas('user')
-            ->where(function($query) {
-                $query->where('validasi_pembimbing', 'sudah')
-                      ->orWhere('status', 'rejected');
-            })
-            ->orderBy('updated_at', 'desc')
-            ->paginate(10);
-
-        return view('guru.konfir_jurnal.riwayat', compact('jurnals'));
-    }
-
-    // Proses persetujuan oleh IDUKA
-    public function approveByIduka($id)
+    /**
+     * Tampilkan jurnal yang perlu disetujui (IDUKA atau Guru/Pembimbing)
+     */
+    public function index()
     {
         try {
-            DB::beginTransaction();
-            
-            $journal = Jurnal::findOrFail($id);
+            $user = auth()->user();
+            Log::info('JournalApprovalController@index - User role: ' . ($user->role ?? 'guest') . ' id: ' . ($user->id ?? 'null'));
 
-            // Update validasi IDUKA
-            $journal->validasi_iduka = 'sudah';
-            
-            // Update status berdasarkan kondisi pembimbing
-            if ($journal->validasi_pembimbing === 'sudah') {
-                $journal->status = 'approved'; // Kedua pihak sudah menyetujui
-            } else {
-                $journal->status = 'approved_iduka';
+            if ($user->role === 'iduka') {
+                // Ambil model Iduka
+                $iduka = Iduka::where('user_id', $user->id)->first();
+                if (! $iduka) {
+                    Log::warning("IDUKA not found for user_id: {$user->id}");
+                    return redirect()->back()->with('error', 'Data IDUKA tidak ditemukan.');
+                }
+
+                // Query menggunakan relasi langsung
+                $jurnals = Jurnal::with('user')
+                    ->where('iduka_id', $iduka->id)
+                    ->where('validasi_iduka', 'belum')
+                    ->where('status', '!=', 'rejected')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
+
+                Log::info('IDUKA journals count: ' . $jurnals->total());
+                return view('iduka.konfir_jurnal.index', compact('jurnals'));
             }
 
-            $journal->save();
-            
-            DB::commit();
+            if ($user->role === 'guru') {
+                // Gunakan helper method untuk mencari/membuat data guru
+                $pembimbing = $this->findOrCreateGuru($user);
+                
+                // Query menggunakan relasi langsung
+                $jurnals = Jurnal::with('user')
+                    ->where('pembimbing_id', $pembimbing->id)
+                    ->where('validasi_pembimbing', 'belum')
+                    ->where('status', '!=', 'rejected')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
 
-            return redirect()->route('approval.iduka.index')->with('success', 'Jurnal berhasil disetujui oleh IDUKA.');
-            
+                Log::info('Guru/Pembimbing journals count: ' . $jurnals->total());
+                return view('guru.konfir_jurnal.index', compact('jurnals'));
+            }
+
+            Log::warning('Unauthorized role: ' . $user->role);
+            return redirect()->back()->with('error', 'Akses tidak diizinkan.');
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyetujui jurnal: ' . $e->getMessage());
+            Log::error('Error in index: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
-    // Proses persetujuan oleh Pembimbing
-    public function approveByPembimbing($id)
+    /**
+     * Tampilkan riwayat persetujuan
+     */
+    public function riwayat()
     {
         try {
-            DB::beginTransaction();
-            
-            $journal = Jurnal::findOrFail($id);
+            $user = auth()->user();
 
-            // Update validasi Pembimbing
-            $journal->validasi_pembimbing = 'sudah';
-            
-            // Update status berdasarkan kondisi IDUKA
-            if ($journal->validasi_iduka === 'sudah') {
-                $journal->status = 'approved'; // Kedua pihak sudah menyetujui
-            } else {
-                $journal->status = 'approved_pembimbing';
+            if ($user->role === 'iduka') {
+                $iduka = Iduka::where('user_id', $user->id)->first();
+                if (! $iduka) {
+                    return redirect()->back()->with('error', 'Data IDUKA tidak ditemukan.');
+                }
+
+                // Query menggunakan relasi langsung
+                $jurnals = Jurnal::with('user')
+                    ->where('iduka_id', $iduka->id)
+                    ->where(function ($q) {
+                        $q->where('validasi_iduka', 'sudah')
+                          ->orWhere('status', 'rejected');
+                    })
+                    ->orderBy('updated_at', 'desc')
+                    ->paginate(10);
+
+                return view('iduka.konfir_jurnal.riwayat', compact('jurnals'));
             }
 
-            $journal->save();
-            
-            DB::commit();
+            if ($user->role === 'guru') {
+                // Gunakan helper method untuk mencari/membuat data guru
+                $pembimbing = $this->findOrCreateGuru($user);
 
-            return redirect()->route('approval.pembimbing.index')->with('success', 'Jurnal berhasil disetujui oleh Pembimbing.');
-            
+                // Query menggunakan relasi langsung
+                $jurnals = Jurnal::with('user')
+                    ->where('pembimbing_id', $pembimbing->id)
+                    ->where(function ($q) {
+                        $q->where('validasi_pembimbing', 'sudah')
+                          ->orWhere('status', 'rejected');
+                    })
+                    ->orderBy('updated_at', 'desc')
+                    ->paginate(10);
+
+                return view('guru.konfir_jurnal.riwayat', compact('jurnals'));
+            }
+
+            return redirect()->back()->with('error', 'Akses tidak diizinkan.');
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyetujui jurnal: ' . $e->getMessage());
+            Log::error('Error in riwayat: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
-    // Proses penolakan
+    /**
+     * Approve jurnal
+     */
+    public function approve($id)
+    {
+        DB::beginTransaction();
+        try {
+            $journal = Jurnal::with('user')->findOrFail($id);
+            $user = auth()->user();
+
+            if ($user->role === 'iduka') {
+                $iduka = Iduka::where('user_id', $user->id)->first();
+                if (! $iduka) {
+                    return redirect()->back()->with('error', 'Data IDUKA tidak ditemukan.');
+                }
+
+                // Periksa kepemilikan dengan menggunakan relasi langsung
+                if ($journal->iduka_id !== $iduka->id) {
+                    Log::warning("Unauthorized approval attempt by IDUKA {$iduka->id} for journal {$id}");
+                    return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui jurnal ini.');
+                }
+
+                $journal->validasi_iduka = 'sudah';
+                $journal->approved_iduka_at = now();
+                $journal->status = $journal->validasi_pembimbing === 'sudah' ? 'approved' : 'approved_iduka';
+            } elseif ($user->role === 'guru') {
+                // Gunakan helper method untuk mencari/membuat data guru
+                $pembimbing = $this->findOrCreateGuru($user);
+
+                // Periksa kepemilikan dengan menggunakan relasi langsung
+                if ($journal->pembimbing_id !== $pembimbing->id) {
+                    Log::warning("Unauthorized approval attempt by Guru {$pembimbing->id} for journal {$id}");
+                    return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui jurnal ini.');
+                }
+
+                $journal->validasi_pembimbing = 'sudah';
+                $journal->approved_pembimbing_at = now();
+                $journal->status = $journal->validasi_iduka === 'sudah' ? 'approved' : 'approved_pembimbing';
+            } else {
+                return redirect()->back()->with('error', 'Akses tidak diizinkan.');
+            }
+
+            $journal->save();
+            DB::commit();
+
+            return redirect()->route('approval.riwayat')->with('success', 'Jurnal berhasil disetujui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error in approve: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyetujui: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Reject jurnal
+     */
     public function reject(Request $request, $id)
     {
-        try {
-            $request->validate([
-                'rejected_reason' => 'required|string|max:500'
-            ]);
+        $request->validate([
+            'rejected_reason' => 'required|string|max:500'
+        ]);
 
-            DB::beginTransaction();
-            
-            $journal = Jurnal::findOrFail($id);
+        DB::beginTransaction();
+        try {
+            $journal = Jurnal::with('user')->findOrFail($id);
+            $user = auth()->user();
+
+            if ($user->role === 'iduka') {
+                $iduka = Iduka::where('user_id', $user->id)->first();
+                if (! $iduka) {
+                    return redirect()->back()->with('error', 'Data IDUKA tidak ditemukan.');
+                }
+
+                // Periksa kepemilikan dengan menggunakan relasi langsung
+                if ($journal->iduka_id !== $iduka->id) {
+                    Log::warning("Unauthorized rejection attempt by IDUKA {$iduka->id} for journal {$id}");
+                    return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak jurnal ini.');
+                }
+
+                $journal->validasi_iduka = 'ditolak';
+            } elseif ($user->role === 'guru') {
+                // Gunakan helper method untuk mencari/membuat data guru
+                $pembimbing = $this->findOrCreateGuru($user);
+
+                // Periksa kepemilikan dengan menggunakan relasi langsung
+                if ($journal->pembimbing_id !== $pembimbing->id) {
+                    Log::warning("Unauthorized rejection attempt by Guru {$pembimbing->id} for journal {$id}");
+                    return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak jurnal ini.');
+                }
+
+                $journal->validasi_pembimbing = 'ditolak';
+            } else {
+                return redirect()->back()->with('error', 'Akses tidak diizinkan.');
+            }
+
             $journal->status = 'rejected';
             $journal->rejected_reason = $request->rejected_reason;
             $journal->rejected_at = now();
-            
-            // Tentukan siapa yang menolak
-            if (auth()->user()->role === 'iduka') {
-                $journal->validasi_iduka = 'ditolak';
-            } else if (auth()->user()->role === 'pembimbing') {
-                $journal->validasi_pembimbing = 'ditolak';
-            }
-            
             $journal->save();
-            
-            DB::commit();
 
+            DB::commit();
             return redirect()->back()->with('success', 'Jurnal berhasil ditolak.');
-            
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menolak jurnal: ' . $e->getMessage());
+            DB::rollBack();
+            Log::error('Error in reject: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menolak: ' . $e->getMessage());
         }
     }
 
-    // Detail jurnal untuk persetujuan (modal)
+    /**
+     * Detail jurnal untuk modal
+     */
     public function showDetail($id)
     {
-        $journal = Jurnal::with('user')->findOrFail($id);
-        return response()->json([
-            'success' => true,
-            'data' => view('partials.jurnal_detail', compact('journal'))->render()
-        ]);
+        try {
+            $journal = Jurnal::with('user')->findOrFail($id);
+            $user = auth()->user();
+
+            if ($user->role === 'iduka') {
+                $iduka = Iduka::where('user_id', $user->id)->first();
+                $idukaId = $iduka ? $iduka->id : 'null';
+                
+                if (! $iduka || $journal->iduka_id !== $iduka->id) {
+                    Log::warning("Unauthorized detail view by IDUKA {$idukaId} for journal {$id}");
+                    return response()->json(['success' => false, 'message' => 'Anda tidak memiliki akses untuk melihat jurnal ini.'], 403);
+                }
+            } elseif ($user->role === 'guru') {
+                // Gunakan helper method untuk mencari/membuat data guru
+                $pembimbing = $this->findOrCreateGuru($user);
+                $pembimbingId = $pembimbing ? $pembimbing->id : 'null';
+
+                if (! $pembimbing || $journal->pembimbing_id !== $pembimbing->id) {
+                    Log::warning("Unauthorized detail view by Guru {$pembimbingId} for journal {$id}");
+                    return response()->json(['success' => false, 'message' => 'Anda tidak memiliki akses untuk melihat jurnal ini.'], 403);
+                }
+            } else {
+                return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+            }
+
+            return response()->json(['success' => true, 'data' => view('partials.detail.jurnal', compact('journal'))->render()]);
+        } catch (\Exception $e) {
+            Log::error('Error in showDetail: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
     }
 }

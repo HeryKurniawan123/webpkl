@@ -14,6 +14,8 @@ class Jurnal extends Model
 
     protected $fillable = [
         'user_id',
+        'iduka_id',
+        'pembimbing_id',
         'nis',
         'tgl',
         'uraian',
@@ -23,7 +25,9 @@ class Jurnal extends Model
         'status',
         'validasi_iduka',
         'validasi_pembimbing',
-        'rejected_reason'
+        'rejected_reason',
+        'approved_iduka_at',
+        'approved_pembimbing_at'
     ];
 
     protected $casts = [
@@ -32,16 +36,28 @@ class Jurnal extends Model
         'approved_pembimbing_at' => 'datetime',
     ];
 
-    // Relasi dengan User - menggunakan user_id sebagai foreign key
+    // Relasi dengan User (siswa)
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Jika ada relasi dengan NIS juga
+    // Relasi dengan siswa melalui NIS
     public function siswa()
     {
-        return $this->belongsTo(User::class, 'nis', 'nis');
+        return $this->belongsTo(User::class, 'nis', 'nip');
+    }
+
+    // Relasi dengan IDUKA
+    public function iduka()
+    {
+        return $this->belongsTo(Iduka::class);
+    }
+
+    // Relasi dengan Pembimbing (Guru)
+    public function pembimbing()
+    {
+        return $this->belongsTo(Guru::class);
     }
 
     // Scope untuk filter berdasarkan validasi
@@ -75,6 +91,11 @@ class Jurnal extends Model
     public function isFullyApproved()
     {
         return $this->isApprovedByIduka() && $this->isApprovedByPembimbing();
+    }
+
+    public function isRejected()
+    {
+        return $this->status === 'rejected';
     }
 
     // Boot method untuk set default values

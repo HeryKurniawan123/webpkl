@@ -3,19 +3,19 @@
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="mb-4">
-        <h3 class="fw-bold">Persetujuan Jurnal - IDUKA 📖</h3>
+        <h3 class="fw-bold">Persetujuan Jurnal - Guru/Pembimbing 📖</h3>
         <p class="text-muted">Daftar jurnal yang membutuhkan persetujuan</p>
         
         {{-- Tab Navigation --}}
         <ul class="nav nav-tabs mb-4">
             <li class="nav-item">
-                <a class="nav-link active" href="{{ route('approval.iduka.index') }}">
+                <a class="nav-link {{ Request::routeIs('approval.index') ? 'active' : '' }}" href="{{ route('approval.index') }}">
                     <i class="bx bx-time me-1"></i> Menunggu Persetujuan
                     <span class="badge bg-primary rounded-pill ms-1">{{ $jurnals->total() }}</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('approval.iduka.riwayat') }}">
+                <a class="nav-link {{ Request::routeIs('approval.riwayat') ? 'active' : '' }}" href="{{ route('approval.riwayat') }}">
                     <i class="bx bx-history me-1"></i> Riwayat
                 </a>
             </li>
@@ -62,10 +62,10 @@
                                     @endif
                                 </div>
                                 <div class="mb-3">
-                                    @if ($jurnal->validasi_pembimbing === 'sudah')
-                                        <span class="badge bg-info text-white">✅ Disetujui Pembimbing</span>
+                                    @if ($jurnal->validasi_iduka === 'sudah')
+                                        <span class="badge bg-info text-white">✅ Disetujui IDUKA</span>
                                     @else
-                                        <span class="badge bg-warning text-dark">⏳ Menunggu Pembimbing</span>
+                                        <span class="badge bg-warning text-dark">⏳ Menunggu IDUKA</span>
                                     @endif
                                 </div>
                                 <div class="mt-auto d-flex gap-2">
@@ -74,7 +74,7 @@
                                         Lihat Detail
                                     </button>
                                     
-                                    <form action="{{ route('approval.iduka.approve', $jurnal->id) }}" method="POST" class="d-inline approve-form">
+                                    <form action="{{ route('approval.approve', $jurnal->id) }}" method="POST" class="d-inline approve-form">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-success" 
                                                 onclick="return confirmApproval('{{ $jurnal->user ? $jurnal->user->name : 'User' }}')">
@@ -131,7 +131,7 @@
                 <div style="font-size: 50px;">✅</div>
                 <h5 class="fw-bold mt-3">Tidak ada jurnal yang perlu disetujui</h5>
                 <p class="text-muted">Semua jurnal telah diproses.</p>
-                <a href="{{ route('approval.iduka.riwayat') }}" class="btn btn-primary mt-2">
+                <a href="{{ route('approval.riwayat') }}" class="btn btn-primary mt-2">
                     Lihat Riwayat Persetujuan
                 </a>
             </div>
