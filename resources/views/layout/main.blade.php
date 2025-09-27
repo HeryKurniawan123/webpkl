@@ -228,6 +228,16 @@
                             </a>
                         </li>
                     @endif
+
+                    @if (in_array(auth()->user()->role, [ 'kaprog', 'guru', 'hubin']))
+    <li class="menu-item {{ Request::routeIs('monitoring.index') ? 'active' : '' }}">
+        <a href="{{ route('monitoring.index') }}" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-calendar-check"></i>
+            <div data-i18n="Basic">monitoring</div>
+        </a>
+    </li>
+@endif
+
                     @if (in_array(auth()->user()->role, ['hubin', 'psekolah']))
                         <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
                             <a href="{{ route('data.siswa') }}" class="menu-link">

@@ -47,6 +47,7 @@ use App\Http\Controllers\DataPribadiPersuratanController;
 use App\Http\Controllers\KepsekController;
 use App\Http\Controllers\Pembimbingsiswacontroller;
 use App\Http\Controllers\PercetakanAtpController;
+use App\Http\Controllers\MonitoringController;
 use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/PKL SMKN 1 Kawali', function () {
@@ -163,11 +164,23 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     //pembimbing siswa
     Route::get('/pembimbing-siswa', [PembimbingSiswaController::class, 'index'])->name('pembimbing.siswa.index');
 
+    
     Route::prefix('pembimbing-siswa')->name('pembimbing.')->group(function () {
         Route::get('/{id}', [PembimbingSiswaController::class, 'show'])->name('show');
         Route::post('/{id}/tambah-siswa', [PembimbingSiswaController::class, 'store'])->name('store');
         Route::delete('/{id}/hapus-siswa/{siswa_id}', [PembimbingSiswaController::class, 'destroy'])->name('destroy');
     });
+});
+
+// Route monitoring hanya untuk login dan role kaprog, hubin, pembimbing
+Route::middleware(['auth', 'hakakses:kaprog,hubin,guru'])->prefix('monitoring')->group(function () {
+    Route::get('/', [MonitoringController::class, 'index'])->name('monitoring.index');
+    Route::get('/create', [MonitoringController::class, 'create'])->name('monitoring.create');
+    Route::post('/', [MonitoringController::class, 'store'])->name('monitoring.store');
+    Route::get('/{monitoring}', [MonitoringController::class, 'show'])->name('monitoring.show');
+    Route::get('/{monitoring}/edit', [MonitoringController::class, 'edit'])->name('monitoring.edit');
+    Route::put('/{monitoring}', [MonitoringController::class, 'update'])->name('monitoring.update');
+    Route::delete('/{monitoring}', [MonitoringController::class, 'destroy'])->name('monitoring.destroy');
 });
 
 
