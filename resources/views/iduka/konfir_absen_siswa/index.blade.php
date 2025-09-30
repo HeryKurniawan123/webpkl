@@ -124,7 +124,15 @@
                                                             </td>
                                                             <td>
                                                                 <span
-                                                                    class="badge {{ $absensi->status === 'tepat_waktu' ? 'bg-success' : ($absensi->status === 'terlambat' ? 'bg-warning' : ($absensi->status === 'izin' ? 'bg-info' : 'bg-danger')) }}">
+                                                                    class="badge {{ $absensi->status === 'tepat_waktu'
+                                                                        ? 'bg-success'
+                                                                        : ($absensi->status === 'terlambat'
+                                                                            ? 'bg-warning'
+                                                                            : ($absensi->status === 'izin'
+                                                                                ? 'bg-info'
+                                                                                : ($absensi->status === 'ditolak'
+                                                                                    ? 'bg-danger'
+                                                                                    : 'bg-secondary'))) }}">
                                                                     {{ ucfirst(str_replace('_', ' ', $absensi->status)) }}
                                                                 </span>
                                                             </td>
@@ -503,7 +511,12 @@
 
         // Fungsi untuk konfirmasi absensi individual - FIXED
         function konfirmasiAbsensi(pendingId, status) {
-            if (!confirm(`Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} absensi ini?`)) {
+            if (status === 'ditolak') {
+                konfirmasiTolakAbsensi(pendingId);
+                return;
+            }
+
+            if (!confirm(`Apakah Anda yakin ingin menyetujui absensi ini?`)) {
                 return;
             }
 
@@ -564,6 +577,93 @@
                         </td>
                     </tr>
                 `;
+                        }
+
+                    } else {
+                        showAlert('error', data.message || 'Terjadi kesalahan');
+                        // Restore row
+                        if (row) {
+                            row.style.opacity = '1';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('error', 'Terjadi kesalahan koneksi: ' + error.message);
+                    // Restore row
+                    if (row) {
+                        row.style.opacity = '1';
+                    }
+                });
+        }
+
+        // Fungsi khusus untuk menolak absensi
+        function konfirmasiTolakAbsensi(pendingId) {
+            const alasan = prompt('Masukkan alasan penolakan absensi:');
+
+            if (alasan === null) {
+                return; // User membatalkan
+            }
+
+            if (alasan.trim() === '') {
+                alert('Alasan penolakan harus diisi!');
+                return;
+            }
+
+            if (!confirm(`Apakah Anda yakin ingin menolak absensi ini?\nAlasan: ${alasan}`)) {
+                return;
+            }
+
+            // Show loading
+            const row = document.getElementById(`row-pending-${pendingId}`);
+            if (row) {
+                row.style.opacity = '0.5';
+            }
+
+            // Gunakan route tolak-absen yang baru
+            fetch(`{{ route('iduka.tolak-absen', ':id') }}`.replace(':id', pendingId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        catatan: alasan
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response:', data);
+
+                    if (data.success) {
+                        // Show success message
+                        showAlert('success', data.message);
+
+                        // Remove row from pending table
+                        if (row) {
+                            row.remove();
+                        }
+
+                        // Update badge counter
+                        updatePendingCounter();
+
+                        // Check if no more pending data
+                        const tbody = document.getElementById('tbody-absensi-pending');
+                        const remainingRows = tbody.querySelectorAll('tr:not(#no-data-pending)');
+                        if (remainingRows.length === 0) {
+                            tbody.innerHTML = `
+                        <tr id="no-data-pending">
+                            <td colspan="7" class="text-center text-muted">
+                                Tidak ada absensi yang perlu dikonfirmasi
+                            </td>
+                        </tr>
+                    `;
                         }
 
                     } else {
@@ -680,13 +780,17 @@
                        <td>${formatTime(absensi.jam_masuk)}</td>
 <td>${formatTime(absensi.jam_pulang)}</td>
                         <td>
-                            <span class="badge ${
-                                absensi.status === 'tepat_waktu' ? 'bg-success' :
-                                absensi.status === 'terlambat' ? 'bg-warning' :
-                                absensi.status === 'izin' ? 'bg-info' : 'bg-danger'
-                            }">
-                                ${absensi.status.replace('_',' ').toUpperCase()}
-                            </span>
+                           <span class="badge {{ $absensi->status === 'tepat_waktu'
+                               ? 'bg-success'
+                               : ($absensi->status === 'terlambat'
+                                   ? 'bg-warning'
+                                   : ($absensi->status === 'izin'
+                                       ? 'bg-info'
+                                       : ($absensi->status === 'ditolak'
+                                           ? 'bg-danger'
+                                           : 'bg-secondary'))) }}">
+    {{ ucfirst(str_replace('_', ' ', $absensi->status)) }}
+</span>
                         </td>
                     </tr>
                 `;
@@ -819,44 +923,6 @@
                     badge.style.display = 'none';
                 }
             }
-        }
-
-        // Fungsi untuk menampilkan alert
-        function showAlert(type, message) {
-            // Remove existing alerts
-            const existingAlerts = document.querySelectorAll('.alert');
-            existingAlerts.forEach(alert => {
-                if (alert.classList.contains('alert-success') || alert.classList.contains('alert-danger') || alert
-                    .classList.contains('alert-warning')) {
-                    alert.remove();
-                }
-            });
-
-            // Create new alert
-            const alertClass = type === 'success' ? 'alert-success' : (type === 'error' ? 'alert-danger' : 'alert-warning');
-            const iconClass = type === 'success' ? 'bi-check-circle' : (type === 'error' ? 'bi-exclamation-triangle' :
-                'bi-info-circle');
-
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-        <i class="${iconClass} me-2"></i>
-        <strong>${type === 'success' ? 'Berhasil!' : 'Error!'}</strong> ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-
-            // Insert at top of content
-            const container = document.querySelector('.container-xxl');
-            if (container) {
-                container.insertBefore(alertDiv, container.firstChild);
-            }
-
-            // Auto hide after 3 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 3000);
         }
     </script>
 @endsection

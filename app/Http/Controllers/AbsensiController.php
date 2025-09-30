@@ -55,127 +55,139 @@ class AbsensiController extends Controller
         ));
     }
 
+
     public function masuk(Request $request)
     {
-        Log::info('=== ABSEN MASUK DIPANGGIL ===', [
-            'user_id' => Auth::id(),
-            'request_data' => $request->all()
-        ]);
-
-        $request->validate([
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
-        ]);
-
-        Log::info('Validasi request berhasil');
-
         try {
             DB::beginTransaction();
-            Log::info('Database transaction dimulai');
 
             $user = Auth::user();
-            Log::info('User data', ['user_id' => $user->id]);
+            $today = Carbon::today();
+            $now = Carbon::now();
 
-            // Check if user has IDUKA assignment
+            // Validasi apakah user sudah terdaftar di IDUKA
             if (!$user->idukaDiterima) {
-                Log::warning('User tidak memiliki IDUKA assignment');
-                return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun. Silakan hubungi administrator.');
+                return redirect()->back()->with('error', 'Anda belum terdaftar di IDUKA. Silakan hubungi administrator.');
             }
 
-            $iduka = $user->idukaDiterima;
-            Log::info('IDUKA data', [
-                'iduka_id' => $iduka->id,
-                'nama' => $iduka->nama,
-                'latitude' => $iduka->latitude,
-                'longitude' => $iduka->longitude,
-                'radius' => $iduka->radius
-            ]);
+            // VALIDASI: Pastikan user memiliki pembimbing_id yang valid
+            if (!$user->pembimbing_id) {
+                return redirect()->back()->with('error', 'Anda belum memiliki pembimbing. Silakan hubungi administrator.');
+            }
 
-            // Check if there's any attendance record today
-            $absensiHariIni = Absensi::where('user_id', $user->id)
-                ->whereDate('tanggal', Carbon::today())
+            // VALIDASI: Pastikan pembimbing_id ada di tabel gurus
+            $pembimbingExists = \App\Models\Guru::where('id', $user->pembimbing_id)->exists();
+            if (!$pembimbingExists) {
+                Log::error('Pembimbing tidak ditemukan di tabel gurus', [
+                    'user_id' => $user->id,
+                    'pembimbing_id' => $user->pembimbing_id
+                ]);
+                return redirect()->back()->with('error', 'Data pembimbing tidak valid. Silakan hubungi administrator.');
+            }
+
+            // Cek apakah sudah ada absensi masuk hari ini
+            $existingAbsensi = Absensi::where('user_id', $user->id)
+                ->whereDate('tanggal', $today)
                 ->first();
 
-            Log::info('Check absensi hari ini', [
-                'ada_absensi' => $absensiHariIni ? true : false,
-                'absensi_data' => $absensiHariIni
-            ]);
-
-            // Prevent multiple attendance on same day
-            if ($absensiHariIni) {
-                if ($absensiHariIni->status === 'izin') {
-                    Log::info('User sedang izin hari ini');
-                    return redirect()->back()->with('error', 'Anda sedang izin hari ini. Tidak bisa melakukan absensi.');
-                }
-
-                if ($absensiHariIni->jam_masuk) {
-                    Log::info('User sudah absen masuk hari ini');
-                    return redirect()->back()->with('error', 'Anda sudah melakukan absen masuk hari ini pada ' . $absensiHariIni->jam_masuk->format('H:i'));
-                }
+            if ($existingAbsensi) {
+                return redirect()->back()->with('error', 'Anda sudah melakukan absensi masuk hari ini.');
             }
 
-            // Check if there's pending attendance
-            $absensiPendingHariIni = AbsensiPending::where('user_id', $user->id)
-                ->whereDate('tanggal', Carbon::today())
+            // Cek apakah sudah ada pending absensi masuk hari ini
+            $existingPending = AbsensiPending::where('user_id', $user->id)
+                ->whereDate('tanggal', $today)
                 ->where('jenis', 'masuk')
                 ->first();
 
-            if ($absensiPendingHariIni) {
-                Log::info('User sudah memiliki absen masuk pending');
-                return redirect()->back()->with('info', 'Anda sudah mengajukan absen masuk. Menunggu konfirmasi IDUKA.');
+            if ($existingPending) {
+                return redirect()->back()->with('info', 'Anda sudah memiliki absensi masuk yang menunggu konfirmasi.');
             }
 
-            // Validate location
-            $locationValidation = $this->validateLocation(
-                $request->latitude,
-                $request->longitude,
-                $iduka->latitude,
-                $iduka->longitude,
-                $iduka->radius ?? 100
-            );
-
-            Log::info('Hasil validasi lokasi', $locationValidation);
-
-            if (!$locationValidation['isWithinRadius']) {
-                Log::warning('User di luar radius IDUKA');
-                return redirect()->back()->with(
-                    'error',
-                    'Anda berada di luar radius IDUKA ' . $iduka->nama . '. ' .
-                    'Jarak Anda: ' . round($locationValidation['distance']) . ' meter. ' .
-                    'Radius maksimal: ' . ($iduka->radius ?? 100) . ' meter.'
-                );
+            // Validasi koordinat jika dikirim
+            if ($request->has('latitude') && $request->has('longitude')) {
+                $request->validate([
+                    'latitude' => 'numeric|between:-90,90',
+                    'longitude' => 'numeric|between:-180,180',
+                ]);
             }
 
-            // Determine attendance status
-            $status = $this->getStatusAbsensi(Carbon::now());
-            Log::info('Status absensi ditentukan', ['status' => $status]);
+            // Tentukan status berdasarkan waktu
+            $status = $this->getStatusAbsensi($now);
 
-            // Save to pending table instead of main table
-            AbsensiPending::create([
+            // Create pending absensi dengan SEMUA field yang diperlukan
+            $pendingData = [
                 'user_id' => $user->id,
-                'iduka_id' => $iduka->id,
-                'tanggal' => Carbon::today(),
+                'iduka_id' => $user->idukaDiterima->id,
+                'pembimbing_id' => $user->pembimbing_id, // Merujuk ke tabel gurus
+                'tanggal' => $today->format('Y-m-d'),
                 'jenis' => 'masuk',
-                'jam' => Carbon::now(),
-                'latitude' => $request->latitude,
-                'longitude' => $request->longitude,
+                'jam' => $now->format('Y-m-d H:i:s'),
                 'status' => $status,
                 'status_konfirmasi' => 'pending',
-                'keterangan' => 'Menunggu konfirmasi IDUKA'
-            ]);
+                'validasi_iduka' => 'pending',              // BARU
+                'validasi_pembimbing' => 'pending',
+                'approved_iduka_at' => null,                // BARU
+                'approved_pembimbing_at' => null,
+            ];
+
+            // Tambahkan field opsional jika ada
+            if ($request->filled('latitude')) {
+                $pendingData['latitude'] = $request->latitude;
+            }
+
+            if ($request->filled('longitude')) {
+                $pendingData['longitude'] = $request->longitude;
+            }
+
+            if ($request->filled('keterangan')) {
+                $pendingData['keterangan'] = $request->keterangan;
+            }
+
+            AbsensiPending::create($pendingData);
 
             DB::commit();
-            Log::info('Transaction committed successfully');
 
-            return redirect()->back()->with('success', 'Absensi masuk berhasil diajukan. Menunggu konfirmasi IDUKA.');
+            Log::info('Absensi masuk pending berhasil dibuat', [
+                'user_id' => $user->id,
+                'pembimbing_id' => $user->pembimbing_id,
+                'pembimbing_name' => $user->pembimbing->nama ?? 'N/A',
+                'jam' => $now->format('Y-m-d H:i:s'),
+                'status' => $status
+            ]);
+
+            return redirect()->back()->with('success', 'Absen masuk berhasil, menunggu konfirmasi IDUKA dan Pembimbing.');
 
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('ERROR saat menyimpan absensi', [
-                'error' => $e->getMessage(),
+            Log::error('Error in absen masuk: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan absensi: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat absen masuk: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Determine attendance status based on current time
+     */
+    private function getStatusAbsensi($waktu)
+    {
+        $jamMasuk = Carbon::createFromTime(8, 0, 0); // Default: 08:00
+        $batasLambat = Carbon::createFromTime(8, 15, 0); // Default: 08:15
+
+        // You can make these configurable per IDUKA if needed
+        $user = Auth::user();
+        if ($user->idukaDiterima && $user->idukaDiterima->jam_masuk) {
+            $jamMasuk = Carbon::createFromTimeString($user->idukaDiterima->jam_masuk);
+            $batasLambat = $jamMasuk->copy()->addMinutes(15);
+        }
+
+        if ($waktu->format('H:i:s') <= $jamMasuk->format('H:i:s')) {
+            return 'tepat_waktu';
+        } elseif ($waktu->format('H:i:s') <= $batasLambat->format('H:i:s')) {
+            return 'terlambat';
+        } else {
+            return 'terlambat';
         }
     }
 
@@ -396,36 +408,6 @@ class AbsensiController extends Controller
             'distance' => $distance,
             'isWithinRadius' => $isWithinRadius,
         ];
-    }
-
-    /**
-     * Determine attendance status based on current time
-     */
-    private function getStatusAbsensi($waktu)
-    {
-        $jamMasuk = Carbon::createFromTime(8, 0, 0); // Default: 08:00
-        $batasLambat = Carbon::createFromTime(8, 15, 0); // Default: 08:15
-
-        // You can make these configurable per IDUKA if needed
-        $user = Auth::user();
-        if ($user->idukaDiterima && $user->idukaDiterima->jam_masuk) {
-            $jamMasuk = Carbon::createFromTimeString($user->idukaDiterima->jam_masuk);
-            $batasLambat = $jamMasuk->copy()->addMinutes(15);
-        }
-
-        Log::info('Penentuan status absensi', [
-            'waktu_sekarang' => $waktu->format('H:i:s'),
-            'jam_masuk' => $jamMasuk->format('H:i:s'),
-            'batas_lambat' => $batasLambat->format('H:i:s')
-        ]);
-
-        if ($waktu->format('H:i:s') <= $jamMasuk->format('H:i:s')) {
-            return 'tepat_waktu';
-        } elseif ($waktu->format('H:i:s') <= $batasLambat->format('H:i:s')) {
-            return 'terlambat';
-        } else {
-            return 'terlambat'; // Still counted as late, not absent
-        }
     }
 
     /**

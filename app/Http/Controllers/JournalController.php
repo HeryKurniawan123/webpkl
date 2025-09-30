@@ -13,21 +13,65 @@ class JournalController extends Controller
 {
     public function index()
     {
-        // Ambil user yang sedang login
         $user = Auth::user();
-        
-        // Ambil jurnal milik siswa ini saja dengan relasi yang benar
-        $jurnals = Jurnal::where('user_id', $user->id)
-            ->orWhere('nis', $user->nip) // Jika menggunakan NIS
+
+        // Get all journals for both active and history
+        $jurnalsQuery = Jurnal::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->orWhere('nis', $user->nip);
+        })
             ->with([
-                'user.idukaDiterima', // Memuat relasi IDUKA
-                'user.pembimbing'     // Memuat relasi pembimbing (Guru)
+                'user.idukaDiterima',
+                'user.pembimbing'
+            ])
+            ->orderBy('tgl', 'desc')
+            ->orderBy('jam_mulai', 'desc');
+
+        // Get all journals
+        $jurnals = $jurnalsQuery->get();
+
+        // Split into active and history collections
+        $activeJurnals = $jurnals->filter(function ($jurnal) {
+            return $jurnal->validasi_pembimbing === 'belum' ||
+                $jurnal->validasi_iduka === 'belum' ||
+                $jurnal->status === 'rejected';
+        });
+
+        $historyJurnals = $jurnals->filter(function ($jurnal) {
+            return $jurnal->validasi_pembimbing === 'sudah' &&
+                $jurnal->validasi_iduka === 'sudah' &&
+                $jurnal->status !== 'rejected';
+        });
+
+        return view('siswa.jurnal.index', compact('activeJurnals', 'historyJurnals'));
+    }
+
+    // Tambahkan method baru untuk riwayat
+    public function riwayat()
+    {
+        $user = Auth::user();
+
+        // Ambil jurnal yang sudah divalidasi atau ditolak
+        $jurnals = Jurnal::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->orWhere('nis', $user->nip);
+        })
+            ->where(function ($query) {
+                $query->where(function ($q) {
+                    $q->where('validasi_pembimbing', 'sudah')
+                        ->where('validasi_iduka', 'sudah');
+                })
+                    ->orWhere('status', 'rejected');
+            })
+            ->with([
+                'user.idukaDiterima',
+                'user.pembimbing'
             ])
             ->orderBy('tgl', 'desc')
             ->orderBy('jam_mulai', 'desc')
             ->paginate(10);
 
-        return view('siswa.jurnal.index', compact('jurnals'));
+        return view('siswa.jurnal.riwayat', compact('jurnals'));
     }
 
     public function store(Request $request)
@@ -42,7 +86,7 @@ class JournalController extends Controller
 
         // Ambil user yang sedang login
         $user = Auth::user();
-        
+
         $data = $request->only(['tgl', 'uraian', 'jam_mulai', 'jam_selesai']);
         $data['user_id'] = $user->id;
         $data['nis'] = $user->nip; // Gunakan NIP sebagai NIS
@@ -62,111 +106,37 @@ class JournalController extends Controller
         return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil ditambahkan dan menunggu persetujuan.');
     }
 
-    public function show($id)
-    {
-        // Ambil jurnal dengan relasi yang benar
-        $jurnal = Jurnal::with([
-            'user.idukaDiterima', // Memuat relasi IDUKA
-            'user.pembimbing'     // Memuat relasi pembimbing (Guru)
-        ])->findOrFail($id);
+public function show($id)
+{
+    try {
+        Log::info('Loading journal detail for ID: ' . $id);
 
-        // Authorization - cek apakah jurnal ini milik siswa yang sedang login
-        $user = Auth::user();
-        if ($jurnal->user_id !== $user->id && $jurnal->nis !== $user->nip) {
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['error' => 'Unauthorized access'], 403);
-            }
-            abort(403, 'Unauthorized access');
+        $jurnal = Jurnal::with(['user', 'user.idukaDiterima', 'user.pembimbing'])
+                        ->findOrFail($id);
+
+        if ($jurnal->user_id !== auth()->id()) {
+            Log::warning('Unauthorized journal access attempt: ' . $id);
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
         }
 
-        // Return HTML content untuk modal
-        if (request()->ajax() || request()->wantsJson()) {
-            try {
-                $html = view('siswa.jurnal.partials.view', compact('jurnal'))->render();
-                return response($html, 200);
-            } catch (\Exception $e) {
-                $formattedDate = \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY');
+        $html = view('siswa.jurnal.view', compact('jurnal'))->render();
 
-                $html = '
-                <div class="row">
-                    <div class="col-md-6">
-                        <div style="margin-bottom: 20px;">
-                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Tanggal</label>
-                            <div style="color: #4a5568;">' . $formattedDate . '</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div style="margin-bottom: 20px;">
-                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Waktu</label>
-                            <div style="color: #4a5568;">' . $jurnal->jam_mulai . ' - ' . $jurnal->jam_selesai . '</div>
-                        </div>
-                    </div>
-                </div>
+        return response()->json([
+            'success' => true,
+            'data' => $html
+        ]);
 
-                <div style="margin-bottom: 20px;">
-                    <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Uraian Kegiatan</label>
-                    <div style="color: #4a5568; line-height: 1.6; white-space: pre-wrap;">' . $jurnal->uraian . '</div>
-                </div>';
-
-                if ($jurnal->foto) {
-                    $html .= '
-                    <div style="margin-bottom: 20px;">
-                        <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Foto Kegiatan</label>
-                        <img src="' . $jurnal->foto . '" alt="Foto Kegiatan" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0;">
-                    </div>';
-                }
-
-                // Informasi IDUKA dan Pembimbing dari user siswa
-                $html .= '
-                <div class="row">
-                    <div class="col-md-6">
-                        <div style="margin-bottom: 15px;">
-                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">IDUKA</label>
-                            <div style="color: #4a5568;">' . ($jurnal->user->idukaDiterima ? $jurnal->user->idukaDiterima->nama : '-') . '</div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div style="margin-bottom: 15px;">
-                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Pembimbing</label>
-                            <div style="color: #4a5568;">' . ($jurnal->user->pembimbing ? $jurnal->user->pembimbing->nama : '-') . '</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div style="margin-bottom: 15px;">
-                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Status Pembimbing</label>';
-
-                if ($jurnal->isApprovedByPembimbing()) {
-                    $html .= '<span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">✅ Disetujui</span>';
-                } else {
-                    $html .= '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">⏳ Menunggu Persetujuan</span>';
-                }
-
-                $html .= '</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div style="margin-bottom: 15px;">
-                            <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Status IDUKA</label>';
-
-                if ($jurnal->isApprovedByIduka()) {
-                    $html .= '<span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">✅ Disetujui</span>';
-                } else {
-                    $html .= '<span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;">⏳ Menunggu Persetujuan</span>';
-                }
-
-                $html .= '</div>
-                    </div>
-                </div>';
-
-                return response($html, 200);
-            }
-        }
-
-        return view('siswa.jurnal.show', compact('jurnal'));
+    } catch (\Exception $e) {
+        Log::error('Error in show journal: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Terjadi kesalahan saat memuat detail jurnal: ' . $e->getMessage()
+        ], 500);
     }
-
+}
     public function edit($id)
     {
         $jurnal = Jurnal::findOrFail($id);

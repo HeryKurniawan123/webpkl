@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
-    data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+    data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -144,35 +144,31 @@
                     @if (auth()->user()->role == 'iduka')
                         <li class="menu-item {{ Request::routeIs('iduka.pribadi') ? 'active' : '' }}">
                             <a href="{{ route('iduka.pribadi') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <i class="menu-icon tf-icons bx bx-buildings"></i>
                                 <div data-i18n="Basic">Data Pribadi Institusi</div>
                             </a>
                         </li>
+
                         <li class="menu-item {{ Request::routeIs('data.institusi') ? 'active' : '' }}">
                             <a href="{{ route('data.institusi') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <i class="menu-icon tf-icons bx bx-buildings"></i>
                                 <div data-i18n="Basic">Data Institusi / Perusahaan</div>
                             </a>
                         </li>
                         <li class="menu-item {{ Request::routeIs('tp.iduka') ? 'active' : '' }}">
                             <a href="{{ route('tp.iduka') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <i class="menu-icon tf-icons bx bx-map-pin"></i>
                                 <div data-i18n="Basic">TP</div>
                             </a>
                         </li>
+
                         <li class="menu-item {{ Request::routeIs('iduka.siswa.diterima') ? 'active' : '' }}">
                             <a href="{{ route('iduka.siswa.diterima') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Basic">Daftar Siswa</div>
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('konfir.absen.index') ? 'active' : '' }}">
-                            <a href="{{ route('konfir.absen.index') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                <div data-i18n="Basic">Absensi</div>
-                            </a>
-                        </li>
 
 
 
@@ -192,20 +188,27 @@
                                 <div data-i18n="Basic">Konfir Journal</div>
                             </a>
                         </li>
+
+                        <li class="menu-item {{ Request::routeIs('konfir.absen.index') ? 'active' : '' }}">
+                            <a href="{{ route('konfir.absen.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-check-square"></i>
+                                <div data-i18n="Basic">Absensi</div>
+                            </a>
+                        </li>
                     @endif
 
                     @if (auth()->user()->role == 'guru')
                         <li class="menu-item {{ Request::routeIs('pembimbing.dashboard') ? 'active' : '' }}">
                             <a href="{{ route('pembimbing.dashboard') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Basic">Siswa Dibimbing</div>
                             </a>
+
                             {{-- <a href="{{ route('absensi.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar-check"></i>
                                 <div data-i18n="Basic">Absensi</div>
                             </a> --}}
                         </li>
-
                     @endif
 
 
@@ -274,7 +277,8 @@
                         </li>
                     @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -282,10 +286,11 @@
                         </li>
                         <li class="menu-item {{ Request::routeIs('pengajuan') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.review') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <i class="menu-icon tf-icons bx bx-file-find"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
                         </li>
+
                         <li class="menu-item {{ Request::routeIs('cetak.iduka.index') ? 'active' : '' }}">
                             <a href="{{ route('cetak.iduka.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -578,7 +583,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function (event) {
+                button.addEventListener('click', function(event) {
                     event.preventDefault();
 
                     Swal.fire({
@@ -640,8 +645,8 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <script>
-            $(document).ready(function () {
-                $('.select2').each(function () {
+            $(document).ready(function() {
+                $('.select2').each(function() {
                     $(this).select2({
                         dropdownParent: $(this).closest('.modal'),
                         placeholder: "-- Pilih siswa --",

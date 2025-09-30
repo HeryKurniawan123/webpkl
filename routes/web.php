@@ -16,6 +16,7 @@ use App\Http\Controllers\PengajuanIzinSiswaController;
 use App\Http\Controllers\ProgresSiswaController;
 use App\Http\Controllers\UsersController;
 use App\Models\Cp;
+use App\Models\Guru;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DataController;
@@ -115,10 +116,12 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     //jurnal
     Route::get('/jurnal', [JournalController::class, 'index'])->name('jurnal.index');
     Route::post('/jurnal', [JournalController::class, 'store'])->name('jurnal.store');
-    Route::get('/jurnal/{jurnal}', [JournalController::class, 'show'])->name('jurnal.show');
+    Route::get('/jurnal/{id}/show', [JournalController::class, 'show'])->name('jurnal.show');
     Route::get('/jurnal/{jurnal}/edit', [JournalController::class, 'edit'])->name('jurnal.edit');
     Route::put('/jurnal/{jurnal}', [JournalController::class, 'update'])->name('jurnal.update');
     Route::delete('/jurnal/{jurnal}', [JournalController::class, 'destroy'])->name('jurnal.destroy');
+    Route::get('/jurnal/riwayat', [JournalController::class, 'riwayat'])->name('jurnal.riwayat');
+
 });
 
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
@@ -358,7 +361,14 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/review/pengajuan/ditolak', [PengajuanPklController::class, 'reviewPengajuanDitolak'])->name('review.pengajuanditolak');
 
     Route::get('/iduka/daftar/siswa-diterima', [IdukaController::class, 'siswaDiterima'])->name('iduka.siswa.diterima');
+
+});
+
+
+Route::middleware(['auth', 'hakakses:iduka,guru'])->group(function () {
+
     Route::get('/konfir/absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfir.absen.index');
+
 
     Route::prefix('iduka')->name('iduka.')->group(function () {
         // tampil halaman konfirmasi
@@ -396,9 +406,12 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
         Route::get('/detail-izin/{id}', [KonfirAbsenSiswaController::class, 'detailIzin'])
             ->name('detail-izin');
 
+        // Route untuk tolak absen - TAMBAHKAN INI
+        Route::post('/tolak-absen/{id}', [KonfirAbsenSiswaController::class, 'tolakAbsensi'])
+            ->name('tolak-absen');
+
         //filter riwayat absen
-        // routes/web.php
-        Route::get('/iduka/riwayat-absensi', [KonfirAbsenSiswaController::class, 'filterRiwayat'])
+        Route::get('/riwayat-absensi', [KonfirAbsenSiswaController::class, 'filterRiwayat'])
             ->name('filter-riwayat');
     });
 });
@@ -593,7 +606,16 @@ Route::middleware(['auth', 'hakakses:guru,iduka'])->group(function () {
     Route::get('/approval/riwayat', [JournalApprovalController::class, 'riwayat'])->name('approval.riwayat');
     Route::post('/approval/{id}/approve', [JournalApprovalController::class, 'approve'])->name('approval.approve');
     Route::post('/approval/{id}/reject', [JournalApprovalController::class, 'reject'])->name('approval.reject');
-    Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])->name('approval.showDetail');
+    Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])->name('approval.detail');
+
+    // Di routes/web.php
+    Route::get('/debug-absensi-pending', function () {
+        $pendings = \App\Models\AbsensiPending::with(['user', 'iduka', 'pembimbing'])->get();
+
+        return response()->json([
+            'absensi_pending' => $pendings->toArray()
+        ]);
+    });
 });
 
 

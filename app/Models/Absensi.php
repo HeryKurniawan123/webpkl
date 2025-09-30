@@ -23,11 +23,11 @@ class Absensi extends Model
         'longitude',
         'lokasi',
         'lokasi_iduka_id',
-        // Add these missing fields that your controller is trying to save:
+        'alasan_penolakan',
         'latitude_masuk',
         'longitude_masuk',
         'lokasi_masuk',
-        'latitude_pulang', 
+        'latitude_pulang',
         'longitude_pulang',
         'lokasi_pulang',
         'jenis_izin',

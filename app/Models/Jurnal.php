@@ -26,6 +26,7 @@ class Jurnal extends Model
         'validasi_iduka',
         'validasi_pembimbing',
         'rejected_reason',
+        'rejected_at',
         'approved_iduka_at',
         'approved_pembimbing_at'
     ];
@@ -34,6 +35,7 @@ class Jurnal extends Model
         'tgl' => 'date',
         'approved_iduka_at' => 'datetime',
         'approved_pembimbing_at' => 'datetime',
+        'rejected_at' => 'datetime',
     ];
 
     // Relasi dengan User (siswa)
@@ -63,17 +65,17 @@ class Jurnal extends Model
     // Scope untuk filter berdasarkan validasi
     public function scopeNeedIduka($query)
     {
-        return $query->where(function($q) {
+        return $query->where(function ($q) {
             $q->where('validasi_iduka', 'belum')
-              ->orWhereNull('validasi_iduka');
+                ->orWhereNull('validasi_iduka');
         });
     }
 
     public function scopeNeedPembimbing($query)
     {
-        return $query->where(function($q) {
+        return $query->where(function ($q) {
             $q->where('validasi_pembimbing', 'belum')
-              ->orWhereNull('validasi_pembimbing');
+                ->orWhereNull('validasi_pembimbing');
         });
     }
 
@@ -96,6 +98,22 @@ class Jurnal extends Model
     public function isRejected()
     {
         return $this->status === 'rejected';
+    }
+
+    public function getStatusPembimbingAttribute()
+    {
+        if ($this->isRejected()) {
+            return 'ditolak';
+        }
+        return $this->validasi_pembimbing;
+    }
+
+    public function getStatusIdukaAttribute()
+    {
+        if ($this->isRejected()) {
+            return 'ditolak';
+        }
+        return $this->validasi_iduka;
     }
 
     // Boot method untuk set default values

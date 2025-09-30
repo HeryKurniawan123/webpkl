@@ -1,465 +1,124 @@
 @extends('layout.main')
 
 @section('content')
-    <style>
-        .journal-header {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .journal-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea20, #764ba220);
-            border-radius: 50%;
-            transform: translate(50px, -50px);
-        }
-
-        .welcome-text {
-            font-size: 28px;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-
-        .subtitle {
-            color: #718096;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        .add-entry-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-size: 14px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .add-entry-btn:hover {
-            transform: translateY(-2px);
-            color: white;
-            text-decoration: none;
-        }
-
-        .journal-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 30px;
-        }
-
-        .journal-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .journal-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 24px;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .journal-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
-        }
-
-        .journal-date {
-            font-size: 14px;
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .journal-subject {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 12px;
-        }
-
-        .journal-content {
-            color: #4a5568;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-
-        .journal-tags {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            background: #edf2f7;
-            color: #4a5568;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .tag.learning {
-            background: #e6fffa;
-            color: #047857;
-        }
-
-        .tag.task {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .tag.reflection {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        .tag.prakerin {
-            background: #fce7f3;
-            color: #be185d;
-        }
-
-        .journal-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.2s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-view {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        .btn-edit {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .btn-delete {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-1px);
-            text-decoration: none;
-        }
-
-        .btn-view:hover {
-            color: #3730a3;
-        }
-
-        .btn-edit:hover {
-            color: #92400e;
-        }
-
-        .btn-delete:hover {
-            color: #dc2626;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #718096;
-        }
-
-        .empty-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        .filter-section {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            color: #4a5568;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .filter-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .filter-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .filter-btn.active:hover {
-            color: white;
-        }
-
-        /* Modal Styles */
-        .modal-content {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-            border-bottom: none;
-            padding: 20px 30px;
-        }
-
-        .modal-title {
-            font-weight: 700;
-            font-size: 20px;
-        }
-
-        .modal-body {
-            padding: 30px;
-        }
-
-        .modal-footer {
-            border-top: 1px solid #e2e8f0;
-            padding: 20px 30px;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 8px;
-        }
-
-        .form-control {
-            border-radius: 8px;
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-        }
-
-        .journal-image {
-            width: 100%;
-            border-radius: 8px;
-            margin-top: 10px;
-            max-height: 200px;
-            object-fit: cover;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .journal-header {
-                padding: 20px;
-            }
-
-            .welcome-text {
-                font-size: 24px;
-            }
-
-            .journal-section {
-                padding: 20px;
-            }
-
-            .journal-actions {
-                justify-content: center;
-            }
-
-            .modal-body {
-                padding: 20px;
-            }
-        }
-    </style>
-
-    <!-- Header Section -->
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="journal-header">
-            <div class="welcome-text">
-                Jurnal Siswa 📖
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#tab-jurnal" role="tab">
+                            <i class="bi bi-journal-text me-1"></i>
+                            Jurnal Aktif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#tab-riwayat" role="tab">
+                            <i class="bi bi-clock-history me-1"></i>
+                            Riwayat
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <div class="subtitle">
-                Catatan pembelajaran dan aktivitas harian Anda
+
+            <div class="card-body">
+                <div class="tab-content">
+                    <!-- Tab Jurnal Aktif -->
+                    <div class="tab-pane fade show active" id="tab-jurnal" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Jurnal PKL</h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createJournalModal">
+                                <i class="bi bi-plus-circle me-1"></i>
+                                Tambah Jurnal
+                            </button>
+                        </div>
+
+                        <!-- List jurnal aktif -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Waktu</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($activeJurnals as $jurnal)
+                                        <tr>
+                                            <td>{{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                                            </td>
+                                            <td>{{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</td>
+                                            <td>
+                                                @if ($jurnal->status === 'rejected')
+                                                    <span class="badge bg-danger">Ditolak</span>
+                                                @else
+                                                    <span class="badge bg-warning">Menunggu Validasi</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="showJournalDetail({{ $jurnal->id }})">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                <i class="bi bi-journal-text fs-1 text-muted"></i>
+                                                <p class="mt-3">Belum ada jurnal aktif</p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab Riwayat -->
+                    <div class="tab-pane fade" id="tab-riwayat" role="tabpanel">
+                        <h5 class="mb-4">Riwayat Jurnal</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal</th>
+                                        <th>Waktu</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($historyJurnals as $jurnal)
+                                        <tr>
+                                            <td>{{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                                            </td>
+                                            <td>{{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</td>
+                                            <td>
+                                                <span class="badge bg-success">Disetujui</span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="showJournalDetail({{ $jurnal->id }})">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                <i class="bi bi-clock-history fs-1 text-muted"></i>
+                                                <p class="mt-3">Belum ada riwayat jurnal</p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button type="button" class="add-entry-btn" data-bs-toggle="modal" data-bs-target="#createJournalModal">
-                + Tambah Jurnal Baru
-            </button>
-        </div>
-
-        <!-- Journal Section -->
-        <div class="journal-section">
-            <h2 class="section-title">Jurnal PKL</h2>
-
-            @if ($jurnals->count() > 0)
-                <div class="journal-grid">
-                    @foreach ($jurnals as $jurnal)
-                        <!-- Di dalam loop foreach jurnal -->
-<div class="journal-card">
-    <div class="journal-date">
-        {{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
-    </div>
-    <div class="journal-subject">Kegiatan Harian</div>
-    <div class="journal-content">
-        {{ Str::limit($jurnal->uraian, 150) }}
-    </div>
-    
-    <!-- Informasi waktu dan foto -->
-    <div style="display: flex; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #718096;">
-        <span>🕐 {{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</span>
-        @if ($jurnal->foto)
-            <span>📷 Dengan foto</span>
-        @endif
-    </div>
-    
-    <!-- Informasi IDUKA dan Pembimbing yang TEPAT -->
-    <div style="display: flex; gap: 15px; margin-bottom: 15px; font-size: 14px; color: #718096;">
-        @if ($jurnal->user && $jurnal->user->idukaDiterima)
-            <span>🏢 {{ $jurnal->user->idukaDiterima->nama }}</span>
-        @endif
-        @if ($jurnal->user && $jurnal->user->pembimbing)
-            <span>👨‍🏫 {{ $jurnal->user->pembimbing->nama }}</span>
-        @endif
-    </div>
-    
-    <!-- Status validasi -->
-    <div class="journal-tags">
-        @if ($jurnal->isRejected())
-            <span class="tag" style="background: #fee2e2; color: #dc2626;">❌ Ditolak</span>
-            @if ($jurnal->rejected_reason)
-                <small class="text-muted">Alasan: {{ $jurnal->rejected_reason }}</small>
-            @endif
-        @elseif ($jurnal->isFullyApproved())
-            <span class="tag" style="background: #d1fae5; color: #065f46;">✅ Disetujui</span>
-        @else
-            @if ($jurnal->isApprovedByIduka())
-                <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui IDUKA</span>
-            @else
-                <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu Persetujuan IDUKA</span>
-            @endif
-
-            @if ($jurnal->isApprovedByPembimbing())
-                <span class="tag" style="background: #e0e7ff; color: #3730a3;">✅ Disetujui Pembimbing</span>
-            @else
-                <span class="tag" style="background: #fef3c7; color: #92400e;">⏳ Menunggu Persetujuan Pembimbing</span>
-            @endif
-        @endif
-    </div>
-    
-    <!-- Tombol aksi -->
-    <div class="journal-actions">
-        <button type="button" class="action-btn btn-view" data-bs-toggle="modal"
-            data-bs-target="#viewJournalModal" data-id="{{ $jurnal->id }}">
-            Lihat Detail
-        </button>
-        <button type="button" class="action-btn btn-edit" data-bs-toggle="modal"
-            data-bs-target="#editJournalModal" data-id="{{ $jurnal->id }}">
-            Edit
-        </button>
-        <form action="{{ route('jurnal.destroy', $jurnal->id) }}" method="POST" class="d-inline">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="action-btn btn-delete"
-                onclick="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?')">
-                Hapus
-            </button>
-        </form>
-    </div>
-</div>
-                    @endforeach
-                </div>
-            @else
-                <div class="empty-state">
-                    <div class="empty-icon">📝</div>
-                    <h4>Belum ada jurnal</h4>
-                    <p>Mulai tambah jurnal harian Anda untuk mencatat aktivitas PKL.</p>
-                    <button type="button" class="add-entry-btn mt-3" data-bs-toggle="modal"
-                        data-bs-target="#createJournalModal">
-                        + Tambah Jurnal Baru
-                    </button>
-                </div>
-            @endif
-
-            {{-- Pagination --}}
-            @if ($jurnals && method_exists($jurnals, 'links'))
-                <div class="mt-4">
-                    {{ $jurnals->links() }}
-                </div>
-            @endif
         </div>
     </div>
 
@@ -522,23 +181,16 @@
     </div>
 
     <!-- View Journal Modal -->
+    <!-- View Journal Modal -->
     <div class="modal fade" id="viewJournalModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-white">Detail Jurnal</h5>
+                    <h5 class="modal-title">Detail Jurnal</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="viewJournalContent">
-                    <!-- Content will be loaded via AJAX -->
-                    <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <div class="modal-body" id="journalDetailContent">
+                    <!-- Content will be loaded here -->
                 </div>
             </div>
         </div>
@@ -605,12 +257,12 @@
 
                 // Reset content
                 document.getElementById('viewJournalContent').innerHTML = `
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
-            `;
+            </div>
+        `;
 
                 // Load content via AJAX
                 const url = `/jurnal/${journalId}`;
@@ -619,7 +271,8 @@
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'text/html',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
                         }
                     })
                     .then(response => {
@@ -637,11 +290,11 @@
                     .catch(error => {
                         console.error('Error:', error);
                         document.getElementById('viewJournalContent').innerHTML = `
-                    <div class="alert alert-danger">
-                        <h6>Error</h6>
-                        <p>${error.message || 'Tidak dapat memuat detail jurnal. Silakan coba lagi.'}</p>
-                    </div>
-                `;
+                <div class="alert alert-danger">
+                    <h6>Error</h6>
+                    <p>${error.message || 'Tidak dapat memuat detail jurnal. Silakan coba lagi.'}</p>
+                </div>
+            `;
                     });
             });
 
@@ -656,12 +309,12 @@
 
                 // Reset content
                 document.getElementById('editJournalContent').innerHTML = `
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
-            `;
+            </div>
+        `;
 
                 // Load content via AJAX
                 const url = `/jurnal/${journalId}/edit`;
@@ -670,7 +323,8 @@
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest',
                             'Accept': 'text/html',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
                         }
                     })
                     .then(response => {
@@ -686,13 +340,17 @@
                         document.getElementById('editJournalContent').innerHTML = data;
 
                         // Tambahkan validasi client-side setelah form dimuat
-                        const jamMulaiInput = document.querySelector('#editJournalContent input[name="jam_mulai"]');
-                        const jamSelesaiInput = document.querySelector('#editJournalContent input[name="jam_selesai"]');
+                        const jamMulaiInput = document.querySelector(
+                            '#editJournalContent input[name="jam_mulai"]');
+                        const jamSelesaiInput = document.querySelector(
+                            '#editJournalContent input[name="jam_selesai"]');
 
                         if (jamMulaiInput && jamSelesaiInput) {
                             jamSelesaiInput.addEventListener('change', function() {
-                                if (jamMulaiInput.value && this.value && this.value <= jamMulaiInput.value) {
-                                    this.setCustomValidity('Jam selesai harus setelah jam mulai');
+                                if (jamMulaiInput.value && this.value && this.value <=
+                                    jamMulaiInput.value) {
+                                    this.setCustomValidity(
+                                        'Jam selesai harus setelah jam mulai');
                                 } else {
                                     this.setCustomValidity('');
                                 }
@@ -702,11 +360,11 @@
                     .catch(error => {
                         console.error('Error:', error);
                         document.getElementById('editJournalContent').innerHTML = `
-                    <div class="alert alert-danger">
-                        <h6>Error</h6>
-                        <p>${error.message || 'Tidak dapat memuat form edit. Silakan coba lagi.'}</p>
-                    </div>
-                `;
+                <div class="alert alert-danger">
+                    <h6>Error</h6>
+                    <p>${error.message || 'Tidak dapat memuat form edit. Silakan coba lagi.'}</p>
+                </div>
+            `;
                     });
             });
 
@@ -737,7 +395,8 @@
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
@@ -746,7 +405,8 @@
                         if (!response.ok) {
                             // Try to get error message from response
                             return response.text().then(text => {
-                                throw new Error(`HTTP ${response.status}: ${text || 'Unknown error'}`);
+                                throw new Error(
+                                    `HTTP ${response.status}: ${text || 'Unknown error'}`);
                             });
                         }
 
@@ -819,6 +479,70 @@
                     }
                 });
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle tab persistence
+            const hash = window.location.hash;
+            if (hash) {
+                const tab = document.querySelector(`[href="${hash}"]`);
+                if (tab) {
+                    new bootstrap.Tab(tab).show();
+                }
+            }
+
+            // Function to show journal detail
+            window.showJournalDetail = function(id) {
+                const modal = new bootstrap.Modal(document.getElementById('viewJournalModal'));
+                const modalBody = document.getElementById('journalDetailContent');
+
+                // Show loading state
+                modalBody.innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Memuat detail jurnal...</p>
+                    </div>
+                `;
+
+                modal.show();
+
+                // Fetch journal detail
+                fetch(`/jurnal/${id}/show`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modalBody.innerHTML = data.data;
+                    } else {
+                        throw new Error(data.message || 'Failed to load journal details');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger m-3">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            ${error.message}
+                            <button onclick="showJournalDetail(${id})" class="btn btn-sm btn-outline-danger mt-2 d-block">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Coba Lagi
+                            </button>
+                        </div>
+                    `;
+                });
+            };
+
+            // Update URL when tab changes
+            document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function(e) {
+                    history.pushState(null, null, e.target.getAttribute('href'));
+                });
+            });
         });
     </script>
 @endsection
