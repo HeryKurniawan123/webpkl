@@ -2,6 +2,7 @@
 
 use App\Exports\DataAbsenKaprog;
 use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AbsensiGuruController;
 use App\Http\Controllers\DataAbsensiController;
 use App\Http\Controllers\JournalApprovalController;
 use App\Http\Controllers\JournalController;
@@ -167,7 +168,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     //pembimbing siswa
     Route::get('/pembimbing-siswa', [PembimbingSiswaController::class, 'index'])->name('pembimbing.siswa.index');
 
-    
+
     Route::prefix('pembimbing-siswa')->name('pembimbing.')->group(function () {
         Route::get('/{id}', [PembimbingSiswaController::class, 'show'])->name('show');
         Route::post('/{id}/tambah-siswa', [PembimbingSiswaController::class, 'store'])->name('store');
@@ -414,6 +415,24 @@ Route::middleware(['auth', 'hakakses:iduka,guru'])->group(function () {
         Route::get('/riwayat-absensi', [KonfirAbsenSiswaController::class, 'filterRiwayat'])
             ->name('filter-riwayat');
     });
+
+     Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
+        ->name('pembimbing.dashboard');
+
+    Route::get('/approval', [JournalApprovalController::class, 'index'])->name('approval.index');
+    Route::get('/approval/riwayat', [JournalApprovalController::class, 'riwayat'])->name('approval.riwayat');
+    Route::post('/approval/{id}/approve', [JournalApprovalController::class, 'approve'])->name('approval.approve');
+    Route::post('/approval/{id}/reject', [JournalApprovalController::class, 'reject'])->name('approval.reject');
+    Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])->name('approval.detail');
+
+    // Di routes/web.php
+    Route::get('/debug-absensi-pending', function () {
+        $pendings = \App\Models\AbsensiPending::with(['user', 'iduka', 'pembimbing'])->get();
+
+        return response()->json([
+            'absensi_pending' => $pendings->toArray()
+        ]);
+    });
 });
 
 
@@ -508,13 +527,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard/kaprog', [HakAksesController::class, 'kaprog'])->name('kaprog.dashboard');
     Route::get('/dashboard/iduka', [HakAksesController::class, 'iduka'])->name('iduka.dashboard');
-    Route::get('/dashboard/guru', [HakAksesController::class, 'guru'])->name('guru.dashboard');
     Route::get('/dashboard/persuratan', [HakAksesController::class, 'persuratan'])->name('persuratan.dashboard');
     Route::get('/dashboard/pembmbingpkl', [HakAksesController::class, 'ppkl'])->name('ppkl.dashboard');
     Route::get('/dashboard/orangtua', [HakAksesController::class, 'orangtua'])->name('orangtua.dashboard');
     Route::get('/dashboard/pembimbingsekolah', [HakAksesController::class, 'psekolah'])->name('psekolah.dashboard');
     Route::get('/dashboard/kepsek', [HakAksesController::class, 'kepsek'])->name('kepsek.dashboard');
     Route::get('/dashboard/pendamping', [HakAksesController::class, 'pendamping'])->name('pendamping.dashboard');
+    Route::get('/dashboard/guru', [HakAksesController::class, 'guru'])->name('guru.dashboard');
+
 
     //mengajukan pkl
     Route::post('/pengajuan/{iduka}', [PengajuanPklController::class, 'ajukan'])->name('pengajuan.ajukan');
@@ -598,27 +618,16 @@ Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
 
 
 
-Route::middleware(['auth', 'hakakses:guru,iduka'])->group(function () {
-    Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
-        ->name('pembimbing.dashboard');
+// Route::middleware(['auth', 'hakakses:guru'])->group(function () {
 
-    Route::get('/approval', [JournalApprovalController::class, 'index'])->name('approval.index');
-    Route::get('/approval/riwayat', [JournalApprovalController::class, 'riwayat'])->name('approval.riwayat');
-    Route::post('/approval/{id}/approve', [JournalApprovalController::class, 'approve'])->name('approval.approve');
-    Route::post('/approval/{id}/reject', [JournalApprovalController::class, 'reject'])->name('approval.reject');
-    Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])->name('approval.detail');
+// });
 
-    // Di routes/web.php
-    Route::get('/debug-absensi-pending', function () {
-        $pendings = \App\Models\AbsensiPending::with(['user', 'iduka', 'pembimbing'])->get();
-
-        return response()->json([
-            'absensi_pending' => $pendings->toArray()
-        ]);
-    });
+Route::middleware(['auth', 'hakakses:guru'])->group(function () {
+    Route::post('/absensi-guru', [AbsensiGuruController::class, 'store'])->name('absensi.guru.store');
+    Route::get('/absensi-guru/riwayat', [AbsensiGuruController::class, 'getRiwayat'])->name('absensi.guru.riwayat');
+    Route::put('/absensi-guru/{id}/pulang', [AbsensiGuruController::class, 'updateJamPulang'])
+    ->name('absensi.pulang');
 });
-
-
 
 
 

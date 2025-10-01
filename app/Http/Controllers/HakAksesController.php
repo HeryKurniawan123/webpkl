@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AbsensiGuru;
 use App\Models\PengajuanPkl;
 use App\Models\PengajuanUsulan;
 use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class HakAksesController extends Controller
@@ -14,19 +16,21 @@ class HakAksesController extends Controller
     {
         // Data Usulan dari dua tabel
         $jumlahUsulan = PengajuanUsulan::count() + UsulanIduka::count();
-    
+
         // Status Diterima
         $jumlahDiterima = PengajuanUsulan::where('status', 'diterima')->count()
-                          + UsulanIduka::where('status', 'diterima')->count();
-    
+            + UsulanIduka::where('status', 'diterima')->count();
+
         // Status Ditolak
         $jumlahDitolak = PengajuanUsulan::where('status', 'ditolak')->count()
-                          + UsulanIduka::where('status', 'ditolak')->count();
-    
-      
-    
+            + UsulanIduka::where('status', 'ditolak')->count();
+
+
+
         return view('hubin.dashboard', compact(
-            'jumlahUsulan', 'jumlahDiterima', 'jumlahDitolak'
+            'jumlahUsulan',
+            'jumlahDiterima',
+            'jumlahDitolak'
         ));
     }
 
@@ -57,11 +61,50 @@ class HakAksesController extends Controller
         $statusAjukan = UsulanIduka::where('user_id', $user->id)
             ->whereIn('status', ['proses', 'diterima'])
             ->value('status') ?? PengajuanUsulan::where('user_id', $user->id)
-            ->whereIn('status', ['proses', 'diterima'])
-            ->value('status');
+                ->whereIn('status', ['proses', 'diterima'])
+                ->value('status');
 
-        return view('siswa.dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima', 'sudahAjukan',  'statusAjukan'));
+        return view('siswa.dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima', 'sudahAjukan', 'statusAjukan'));
     }
+
+    function guru()
+    {
+        $user = auth()->user();
+
+        // Cek status absensi hari ini
+        $todayAbsensi = AbsensiGuru::where('user_id', $user->id)
+            ->where('tanggal', Carbon::today()->toDateString())
+            ->first();
+
+        $sudahAbsen = $todayAbsensi ? true : false;
+        $sudahPulang = $todayAbsensi && $todayAbsensi->jam_pulang ? true : false;
+        $statusHariIni = $todayAbsensi ? $todayAbsensi->status : null;
+
+        // Ambil riwayat absensi guru (7 hari terakhir)
+        $riwayatAbsensi = AbsensiGuru::where('user_id', $user->id)
+            ->orderBy('tanggal', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->take(7)
+            ->get();
+
+        // Data lokasi sekolah
+        $lokasiSekolah = [
+            'latitude' => -7.161891,
+            'longitude' => 108.328864,
+            'radius' => 1000 // dalam meter
+        ];
+
+        return view('dashboard', compact(
+            'sudahAbsen',
+            'sudahPulang',
+            'statusHariIni',
+            'riwayatAbsensi',
+            'lokasiSekolah',
+            'todayAbsensi'
+        ));
+    }
+
+
     function iduka()
     {
         return view('iduka.dashboard');
@@ -74,10 +117,8 @@ class HakAksesController extends Controller
     {
         return view('persuratan.dashboard');
     }
-    function guru()
-    {
-        return view('dashboard');
-    }
+
+
     function ppkl()
     {
         return view('dashboard');
@@ -136,9 +177,9 @@ class HakAksesController extends Controller
                 return redirect()->route('orangtua.dashboard');
             } elseif (Auth::user()->role == 'persuratan') {
                 return redirect()->route('persuratan.dashboard');
-            }elseif (Auth::user()->role == 'kepsek') {
+            } elseif (Auth::user()->role == 'kepsek') {
                 return redirect()->route('kepsek.dashboard');
-            }elseif (Auth::user()->role == 'pendamping') {
+            } elseif (Auth::user()->role == 'pendamping') {
                 return redirect()->route('pendamping.dashboard');
             }
         } else {

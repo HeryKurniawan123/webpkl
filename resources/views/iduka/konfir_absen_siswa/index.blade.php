@@ -754,6 +754,7 @@
         }
 
         //filter
+        //filter
         function loadRiwayat(params = {}) {
             let url = "{{ route('iduka.filter-riwayat') }}?" + new URLSearchParams(params);
 
@@ -773,24 +774,40 @@
                     }
 
                     res.data.forEach(absensi => {
+                        // Tentukan class badge berdasarkan status
+                        let badgeClass = 'bg-secondary';
+                        let statusText = 'UNKNOWN';
+
+                        if (absensi.status === 'tepat_waktu') {
+                            badgeClass = 'bg-success';
+                            statusText = 'TEPAT WAKTU';
+                        } else if (absensi.status === 'terlambat') {
+                            badgeClass = 'bg-warning';
+                            statusText = 'TERLAMBAT';
+                        } else if (absensi.status === 'izin') {
+                            badgeClass = 'bg-info';
+                            statusText = 'IZIN';
+                        } else if (absensi.status === 'ditolak') {
+                            badgeClass = 'bg-danger';
+                            statusText = 'DITOLAK';
+                        } else if (absensi.status === 'sakit') {
+                            badgeClass = 'bg-secondary';
+                            statusText = 'SAKIT';
+                        } else if (absensi.status === 'alpha') {
+                            badgeClass = 'bg-dark';
+                            statusText = 'ALPHA';
+                        }
+
                         tbody.innerHTML += `
                     <tr>
                         <td>${new Date(absensi.tanggal).toLocaleDateString('id-ID')}</td>
                         <td>${absensi.user.name}</td>
-                       <td>${formatTime(absensi.jam_masuk)}</td>
-<td>${formatTime(absensi.jam_pulang)}</td>
+                        <td>${formatTime(absensi.jam_masuk)}</td>
+                        <td>${formatTime(absensi.jam_pulang)}</td>
                         <td>
-                           <span class="badge {{ $absensi->status === 'tepat_waktu'
-                               ? 'bg-success'
-                               : ($absensi->status === 'terlambat'
-                                   ? 'bg-warning'
-                                   : ($absensi->status === 'izin'
-                                       ? 'bg-info'
-                                       : ($absensi->status === 'ditolak'
-                                           ? 'bg-danger'
-                                           : 'bg-secondary'))) }}">
-    {{ ucfirst(str_replace('_', ' ', $absensi->status)) }}
-</span>
+                            <span class="badge ${badgeClass}">
+                                ${statusText}
+                            </span>
                         </td>
                     </tr>
                 `;
