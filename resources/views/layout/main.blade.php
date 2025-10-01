@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
-    data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -10,6 +10,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="" />
+    <meta name="theme-color" content="#0d6efd">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -41,6 +42,9 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('snet/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
     <link rel="stylesheet" href="{{ asset('snet/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Page CSS -->
 
@@ -94,7 +98,7 @@
                         @elseif(auth()->user()->role == 'psekolah') /dashboard/psekolah
                         @elseif(auth()->user()->role == 'iduka') /dashboard/iduka
                         @elseif(auth()->user()->role == 'orangtua') /dashboard/orangtua
-                                @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan
+                        @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan
                                 @elseif(auth()->user()->role == 'kepsek') /dashboard/kepsek
                                 @elseif(auth()->user()->role == 'pendamping') /dashboard/pendamping @endif"
                             class="menu-link">
@@ -173,11 +177,11 @@
 
 
                         <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                                                    <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
-                                                        <i class="menu-icon tf-icons bx bx-collection"></i>
-                                                        <div data-i18n="Basic">Pembimbing</div>
-                                                    </a>
-                                                </li> -->
+                                                        <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
+                                                            <i class="menu-icon tf-icons bx bx-collection"></i>
+                                                            <div data-i18n="Basic">Pembimbing</div>
+                                                        </a>
+                                                    </li> -->
                     @endif
 
 
@@ -232,14 +236,14 @@
                         </li>
                     @endif
 
-                    @if (in_array(auth()->user()->role, [ 'kaprog', 'guru', 'hubin']))
-    <li class="menu-item {{ Request::routeIs('monitoring.index') ? 'active' : '' }}">
-        <a href="{{ route('monitoring.index') }}" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-calendar-check"></i>
-            <div data-i18n="Basic">monitoring</div>
-        </a>
-    </li>
-@endif
+                    @if (in_array(auth()->user()->role, ['kaprog', 'guru', 'hubin']))
+                        <li class="menu-item {{ Request::routeIs('monitoring.index') ? 'active' : '' }}">
+                            <a href="{{ route('monitoring.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar-check"></i>
+                                <div data-i18n="Basic">monitoring</div>
+                            </a>
+                        </li>
+                    @endif
 
                     @if (in_array(auth()->user()->role, ['hubin', 'psekolah']))
                         <li class="menu-item {{ Request::routeIs('data.siswa') ? 'active' : '' }}">
@@ -277,8 +281,7 @@
                         </li>
                     @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li
-                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -583,7 +586,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function(event) {
+                button.addEventListener('click', function (event) {
                     event.preventDefault();
 
                     Swal.fire({
@@ -645,8 +648,8 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <script>
-            $(document).ready(function() {
-                $('.select2').each(function() {
+            $(document).ready(function () {
+                $('.select2').each(function () {
                     $(this).select2({
                         dropdownParent: $(this).closest('.modal'),
                         placeholder: "-- Pilih siswa --",
@@ -657,6 +660,15 @@
             });
         </script>
 
+        <script>
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", () => {
+                    navigator.serviceWorker.register("/service-worker.js")
+                        .then(reg => console.log("Service Worker registered:", reg))
+                        .catch(err => console.log("SW registration failed:", err));
+                });
+            }
+        </script>
 
 
 
