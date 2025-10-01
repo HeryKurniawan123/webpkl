@@ -9,8 +9,8 @@
     <meta name="keywords" content="">
 
     <!-- Favicons -->
-    <link href="{{ asset('tmp_landing/assets/img/favicon.png') }}" rel="icon">
-    <link href="{{ asset('tmp_landing/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <link href="{{ asset('tmp_landing/assets/img/favicon.png')}}" rel="icon">
+    <link href="{{ asset('tmp_landing/assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -22,15 +22,18 @@
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
-    <link href="{{ asset('tmp_landing/assets/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('tmp_landing/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
-    <link href="{{ asset('tmp_landing/assets/vendor/aos/aos.css') }}" rel="stylesheet">
-    <link href="{{ asset('tmp_landing/assets/vendor/animate.css/animate.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('tmp_landing/assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('tmp_landing/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet') }}">
+    <link href="{{ asset('tmp_landing/assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('tmp_landing/assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
+    <link href="{{ asset('tmp_landing/assets/vendor/aos/aos.css')}}" rel="stylesheet">
+    <link href="{{ asset('tmp_landing/assets/vendor/animate.css/animate.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('tmp_landing/assets/vendor/glightbox/css/glightbox.min.css')}}" rel="stylesheet">
+    <link href="{{ asset('tmp_landing/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet')}}">
 
     <!-- Main CSS File -->
-    <link href="{{ asset('tmp_landing/assets/css/main.css') }}" rel="stylesheet">
+    <link href="{{ asset('tmp_landing/assets/css/main.css')}}" rel="stylesheet">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
 
     <!-- =======================================================
   * Template Name: Avilon
@@ -250,25 +253,29 @@
                     <li><a href="#keunggulan">Keunggulan</a></li>
                     <li><a href="#data">Data</a></li>
                     <li><a href="#grafik">Grafik</a></li>
-                    {{-- <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li> --}}
+                    {{-- <li class="dropdown"><a href="#"><span>Dropdown</span> <i
+                                class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <ul>
+                            <li><a href="#">Dropdown 1</a></li>
+                            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i
+                                        class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                <ul>
+                                    <li><a href="#">Deep Dropdown 1</a></li>
+                                    <li><a href="#">Deep Dropdown 2</a></li>
+                                    <li><a href="#">Deep Dropdown 3</a></li>
+                                    <li><a href="#">Deep Dropdown 4</a></li>
+                                    <li><a href="#">Deep Dropdown 5</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Dropdown 2</a></li>
+                            <li><a href="#">Dropdown 3</a></li>
+                            <li><a href="#">Dropdown 4</a></li>
+                        </ul>
+                    </li> --}}
                     <li><a href="#contact">Kontak</a></li>
-                    <li><a href="{{ route('login') }}">Masuk</a></li>
+                    <li><a href="https://drive.google.com/drive/folders/1DAPpFI0mBAiZTafR9esk0auuuUySANG3?usp=sharing"
+                            target="_blank">Download</a></li>
+                    <li><a href="{{ route('login')}}">Log In</a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
@@ -293,10 +300,14 @@
                             mudah, cepat, dan praktis!</p>
                         <div class="button-group">
                             <a href="{{ route('login') }}"
-                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
+                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
+                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA"
+                                href="javascript:void(0)" style="display:none; background:#28a745;">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -309,10 +320,14 @@
                             beberapa langkah sederhana, kapan saja dan di mana saja.</p>
                         <div class="button-group">
                             <a href="{{ route('login') }}"
-                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
+                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
+                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA"
+                                href="javascript:void(0)" style="display:none; background:#28a745;">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -325,10 +340,14 @@
                             bekal menghadapi dunia kerja setelah lulus.</p>
                         <div class="button-group">
                             <a href="{{ route('login') }}"
-                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
+                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
+                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA"
+                                href="javascript:void(0)" style="display:none; background:#28a745;">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -341,10 +360,14 @@
                         </p>
                         <div class="button-group">
                             <a href="{{ route('login') }}"
-                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Masuk</a>
+                                class="btn-get-started animate__animated animate__fadeInUp scrollto">Log In</a>
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
+                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA"
+                                href="javascript:void(0)" style="display:none; background:#28a745;">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -388,7 +411,7 @@
                 <div class="row position-relative">
 
                     <div class="col-lg-7 about-img" data-aos="zoom-out" data-aos-delay="200"><img
-                            src="{{ asset('images/bljrr.png') }}"></div>
+                            src="{{ asset('images/bljrr.png')}}"></div>
 
                     <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
                         <h2 class="inner-title">Tentang PKL SMKN 1 Kawali</h2>
@@ -396,7 +419,7 @@
                             <h4>Sejak 2025</h4>
                             <h3>Cerita Kita</h3>
                             <p><b>PKL SMKN 1 Kawali</b> hadir untuk membantu siswa memulai perjalanan PKL mereka dengan
-                                mudah dan lancar. Kami memahami pentingnya pengalaman PKL yang tepat untuk membangun
+                                mudah dan lancar.Kami memahami pentingnya pengalaman PKL yang tepat untuk membangun
                                 keterampilan dan pengetahuan di dunia profesional. Kami bekerja sama dengan berbagai
                                 perusahaan terkemuka untuk memberikan kesempatan terbaik bagi setiap siswa.</p>
                             <ul>
@@ -439,8 +462,7 @@
 
                 <div class="row gy-4 justify-content-between">
                     <div class="features-image col-lg-4 d-flex align-items-center" data-aos="fade-up">
-                        <img src="{{ asset('tmp_landing/assets/img/features.png') }}" class="img-fluid"
-                            alt="">
+                        <img src="{{ asset('tmp_landing/assets/img/features.png')}}" class="img-fluid" alt="">
                     </div>
                     <div class="col-lg-7 d-flex flex-column justify-content-center">
 
@@ -493,42 +515,34 @@
                 <div class="clients-slider">
                     <div class="clients-track">
                         <!-- LOGO LOGO -->
-                        <div class="client-logo"><img src="{{ asset('images/daihatsu.jpg') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/inovindo.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/oracle.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/skyline.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/pptik itb.png') }}" alt="">
-                        </div>
-                        <div class="client-logo"><img src="{{ asset('images/logopupr.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/mikrotikjpeg.jpeg') }}" alt="">
-                        </div>
-                        <div class="client-logo"><img src="{{ asset('images/isi.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/pixy.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/balai budaya.jpeg') }}" alt="">
-                        </div>
-                        <div class="client-logo"><img src="{{ asset('images/asn.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/UNY.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/sanggarseni.jpeg') }}" alt="">
-                        </div>
+                        <div class="client-logo"><img src="{{ asset('images/daihatsu.jpg')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/inovindo.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/oracle.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/skyline.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/pptik itb.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/logopupr.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/mikrotikjpeg.jpeg')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/isi.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/pixy.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/balai budaya.jpeg')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/asn.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/UNY.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/sanggarseni.jpeg')}}" alt=""></div>
 
                         <!-- DUPLIKAT supaya infinite tanpa putus -->
-                        <div class="client-logo"><img src="{{ asset('images/daihatsu.jpg') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/inovindo.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/oracle.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/skyline.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/pptik itb.png') }}" alt="">
-                        </div>
-                        <div class="client-logo"><img src="{{ asset('images/logopupr.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/mikrotikjpeg.jpeg') }}" alt="">
-                        </div>
-                        <div class="client-logo"><img src="{{ asset('images/isi.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/pixy.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/balai budaya.jpeg') }}" alt="">
-                        </div>
-                        <div class="client-logo"><img src="{{ asset('images/asn.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/UNY.png') }}" alt=""></div>
-                        <div class="client-logo"><img src="{{ asset('images/sanggarseni.jpeg') }}" alt="">
-                        </div>
+                        <div class="client-logo"><img src="{{ asset('images/daihatsu.jpg')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/inovindo.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/oracle.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/skyline.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/pptik itb.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/logopupr.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/mikrotikjpeg.jpeg')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/isi.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/pixy.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/balai budaya.jpeg')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/asn.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/UNY.png')}}" alt=""></div>
+                        <div class="client-logo"><img src="{{ asset('images/sanggarseni.jpeg')}}" alt=""></div>
                     </div>
                 </div>
             </div>
@@ -672,153 +686,172 @@
         <!-- Faq Section -->
         {{-- <section id="faq" class="faq section">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Frequently Asked Questions</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Frequently Asked Questions</h2>
+                <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+            </div><!-- End Section Title -->
 
-      <div class="container">
+            <div class="container">
 
-        <div class="row justify-content-center">
+                <div class="row justify-content-center">
 
-          <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
+                    <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
 
-            <div class="faq-container">
+                        <div class="faq-container">
 
-              <div class="faq-item faq-active">
-                <h3>Non consectetur a erat nam at lectus urna duis?</h3>
-                <div class="faq-content">
-                  <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor rhoncus dolor purus non.</p>
+                            <div class="faq-item faq-active">
+                                <h3>Non consectetur a erat nam at lectus urna duis?</h3>
+                                <div class="faq-content">
+                                    <p>Feugiat pretium nibh ipsum consequat. Tempus iaculis urna id volutpat lacus
+                                        laoreet non curabitur gravida. Venenatis lectus magna fringilla urna porttitor
+                                        rhoncus dolor purus non.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Feugiat scelerisque varius morbi enim nunc faucibus?</h3>
+                                <div class="faq-content">
+                                    <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id
+                                        interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus
+                                        scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim.
+                                        Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
+                                <div class="faq-content">
+                                    <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci.
+                                        Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl
+                                        suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis
+                                        convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis
+                                    </p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?</h3>
+                                <div class="faq-content">
+                                    <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id
+                                        interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus
+                                        scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim.
+                                        Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Tempus quam pellentesque nec nam aliquam sem et tortor?</h3>
+                                <div class="faq-content">
+                                    <p>Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse
+                                        in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl
+                                        suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in
+                                    </p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                            <div class="faq-item">
+                                <h3>Perspiciatis quod quo quos nulla quo illum ullam?</h3>
+                                <div class="faq-content">
+                                    <p>Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed
+                                        in suscipit sequi. Distinctio ipsam dolore et.</p>
+                                </div>
+                                <i class="faq-toggle bi bi-chevron-right"></i>
+                            </div><!-- End Faq item-->
+
+                        </div>
+
+                    </div><!-- End Faq Column-->
+
                 </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Feugiat scelerisque varius morbi enim nunc faucibus?</h3>
-                <div class="faq-content">
-                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Dolor sit amet consectetur adipiscing elit pellentesque?</h3>
-                <div class="faq-content">
-                  <p>Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Faucibus pulvinar elementum integer enim. Sem nulla pharetra diam sit amet nisl suscipit. Rutrum tellus pellentesque eu tincidunt. Lectus urna duis convallis convallis tellus. Urna molestie at elementum eu facilisis sed odio morbi quis</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla?</h3>
-                <div class="faq-content">
-                  <p>Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Tempus quam pellentesque nec nam aliquam sem et tortor?</h3>
-                <div class="faq-content">
-                  <p>Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
-
-              <div class="faq-item">
-                <h3>Perspiciatis quod quo quos nulla quo illum ullam?</h3>
-                <div class="faq-content">
-                  <p>Enim ea facilis quaerat voluptas quidem et dolorem. Quis et consequatur non sed in suscipit sequi. Distinctio ipsam dolore et.</p>
-                </div>
-                <i class="faq-toggle bi bi-chevron-right"></i>
-              </div><!-- End Faq item-->
 
             </div>
 
-          </div><!-- End Faq Column-->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Faq Section --> --}}
+        </section><!-- /Faq Section --> --}}
 
         <!-- Team Section -->
         {{-- <section id="team" class="team section">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Team</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Team</h2>
+                <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+            </div><!-- End Section Title -->
 
-      <div class="container">
+            <div class="container">
 
-        <div class="row">
+                <div class="row">
 
-          <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
-            <div class="member">
-              <img src="{{ asset('tmp_landing/assets/img/team/team-1.jpg')}}" class="img-fluid" alt="">
-              <div class="member-content">
-                <h4>Walter White</h4>
-                <span>Web Development</span>
-                <p>
-                  Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis quaerat qui aut aut aut
-                </p>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
+                    <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+                        <div class="member">
+                            <img src="{{ asset('tmp_landing/assets/img/team/team-1.jpg')}}" class="img-fluid" alt="">
+                            <div class="member-content">
+                                <h4>Walter White</h4>
+                                <span>Web Development</span>
+                                <p>
+                                    Magni qui quod omnis unde et eos fuga et exercitationem. Odio veritatis perspiciatis
+                                    quaerat qui aut aut aut
+                                </p>
+                                <div class="social">
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-facebook"></i></a>
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""><i class="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+
+                    <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
+                        <div class="member">
+                            <img src="{{ asset('tmp_landing/assets/img/team/team-2.jpg')}}" class="img-fluid" alt="">
+                            <div class="member-content">
+                                <h4>Sarah Jhinson</h4>
+                                <span>Marketing</span>
+                                <p>
+                                    Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto
+                                    rerum rerum temporibus
+                                </p>
+                                <div class="social">
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-facebook"></i></a>
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""><i class="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+
+                    <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
+                        <div class="member">
+                            <img src="{{ asset('tmp_landing/assets/img/team/team-3.jpg')}}" class="img-fluid" alt="">
+                            <div class="member-content">
+                                <h4>William Anderson</h4>
+                                <span>Content</span>
+                                <p>
+                                    Voluptas necessitatibus occaecati quia. Earum totam consequuntur qui porro et
+                                    laborum toro des clara
+                                </p>
+                                <div class="social">
+                                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                                    <a href=""><i class="bi bi-facebook"></i></a>
+                                    <a href=""><i class="bi bi-instagram"></i></a>
+                                    <a href=""><i class="bi bi-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Team Member -->
+
                 </div>
-              </div>
+
             </div>
-          </div><!-- End Team Member -->
 
-          <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="{{ asset('tmp_landing/assets/img/team/team-2.jpg')}}" class="img-fluid" alt="">
-              <div class="member-content">
-                <h4>Sarah Jhinson</h4>
-                <span>Marketing</span>
-                <p>
-                  Repellat fugiat adipisci nemo illum nesciunt voluptas repellendus. In architecto rerum rerum temporibus
-                </p>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-4 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
-            <div class="member">
-              <img src="{{ asset('tmp_landing/assets/img/team/team-3.jpg')}}" class="img-fluid" alt="">
-              <div class="member-content">
-                <h4>William Anderson</h4>
-                <span>Content</span>
-                <p>
-                  Voluptas necessitatibus occaecati quia. Earum totam consequuntur qui porro et laborum toro des clara
-                </p>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Team Section --> --}}
+        </section><!-- /Team Section --> --}}
 
         <!-- Gallery Section -->
         <section id="gallery" class="gallery section">
@@ -835,72 +868,64 @@
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl1.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl1.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl1.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl1.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl2.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl2.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl2.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl2.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl8.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl8.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl8.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl8.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl4.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl4.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl4.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl4.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl5.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl5.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl5.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl5.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl6.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl6.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl6.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl6.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl7.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl7.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl7.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl7.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
 
                     <div class="col-lg-3 col-md-4">
                         <div class="gallery-item">
-                            <a href="{{ asset('images/pkl8.jpg') }}" class="glightbox"
-                                data-gallery="images-gallery">
-                                <img src="{{ asset('images/pkl8.jpg') }}" alt="" class="img-fluid">
+                            <a href="{{ asset('images/pkl8.jpg')}}" class="glightbox" data-gallery="images-gallery">
+                                <img src="{{ asset('images/pkl8.jpg')}}" alt="" class="img-fluid">
                             </a>
                         </div>
                     </div><!-- End Gallery Item -->
@@ -960,13 +985,13 @@
                             <div class="row gy-4">
 
                                 <div class="col-md-6">
-                                    <input type="text" name="name" class="form-control"
-                                        placeholder="Nama Anda" required>
+                                    <input type="text" name="name" class="form-control" placeholder="Nama Anda"
+                                        required>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <input type="email" class="form-control" name="email"
-                                        placeholder="Email Anda" required>
+                                    <input type="email" class="form-control" name="email" placeholder="Email Anda"
+                                        required>
                                 </div>
 
                                 <div class="col-md-12">
@@ -975,7 +1000,8 @@
                                 </div>
 
                                 <div class="col-md-12">
-                                    <textarea class="form-control" name="message" rows="6" placeholder="Pesan Anda" required></textarea>
+                                    <textarea class="form-control" name="message" rows="6" placeholder="Pesan Anda"
+                                        required></textarea>
                                 </div>
 
                                 <div class="col-md-12 text-center">
@@ -1019,7 +1045,7 @@
                     &copy; <strong class="sitename">PKL SMKN 1 Kawali</strong> | All Rights Reserved
                 </div>
                 <div class="credits text-center">
-                    Designed with ❤️ for K-One students.
+                    Designed with ?? for K-One students.
                 </div>
             </div>
         </div>
@@ -1038,7 +1064,7 @@
 
     <!-- Chart Script -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const ctx = document.getElementById('pklChart').getContext('2d');
             const loadingSpinner = document.getElementById('loadingSpinner');
             const chartCanvas = document.getElementById('pklChart');
@@ -1092,10 +1118,10 @@
                                     cornerRadius: 10,
                                     displayColors: false,
                                     callbacks: {
-                                        title: function(context) {
+                                        title: function (context) {
                                             return context[0].label;
                                         },
-                                        label: function(context) {
+                                        label: function (context) {
                                             return `${context.parsed.y} siswa`;
                                         }
                                     }
@@ -1114,7 +1140,7 @@
                                             size: 12,
                                             weight: '500'
                                         },
-                                        callback: function(value) {
+                                        callback: function (value) {
                                             return value + ' siswa';
                                         }
                                     }
@@ -1150,15 +1176,48 @@
         });
     </script>
 
+    <!-- PWA -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/serviceworker.js")
+                    .then(reg => console.log("Service Worker registered:", reg))
+                    .catch(err => console.log("SW registration failed:", err));
+            });
+        }
+    </script>
+
+    <!-- Download App -->
+    <script>
+        let deferredPrompt;
+        const installButtons = document.querySelectorAll(".installPWA");
+
+        window.addEventListener("beforeinstallprompt", (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installButtons.forEach(btn => btn.style.display = "inline-block");
+
+            installButtons.forEach((btn) => {
+                btn.addEventListener("click", async () => {
+                    btn.style.display = "none";
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to the install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                });
+            });
+        });
+    </script>
+
     <!-- Vendor JS Files -->
-    <script src="{{ asset('tmp_landing/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('tmp_landing/assets/vendor/php-email-form/validate.js') }}"></script>
-    <script src="{{ asset('tmp_landing/assets/vendor/aos/aos.js') }}"></script>
-    <script src="{{ asset('tmp_landing/assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
-    <script src="{{ asset('tmp_landing/assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ asset('tmp_landing/assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{ asset('tmp_landing/assets/vendor/php-email-form/validate.js')}}"></script>
+    <script src="{{ asset('tmp_landing/assets/vendor/aos/aos.js')}}"></script>
+    <script src="{{ asset('tmp_landing/assets/vendor/glightbox/js/glightbox.min.js')}}"></script>
+    <script src="{{ asset('tmp_landing/assets/vendor/swiper/swiper-bundle.min.js')}}"></script>
 
     <!-- Main JS File -->
-    <script src="{{ asset('tmp_landing/assets/js/main.js') }}"></script>
+    <script src="{{ asset('tmp_landing/assets/js/main.js')}}"></script>
 
 </body>
 
