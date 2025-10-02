@@ -164,18 +164,16 @@
                                             @csrf
                                             <div class="d-flex justify-content-between mb-3">
                                                 <div>
-                                                    <input type="checkbox" id="check-all" onchange="toggleAll(this)">
-                                                    <label for="check-all" class="ms-1">Pilih Semua</label>
+                                                    <input type="checkbox" id="check-all" class="form-check-input">
+                                                    <label for="check-all" class="ms-2">Pilih Semua</label>
                                                 </div>
                                                 <div>
                                                     <button type="submit" name="status" value="disetujui"
-                                                        class="btn btn-sm btn-success me-1"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menyetujui absensi yang dipilih?')">
+                                                        class="btn btn-sm btn-success me-1">
                                                         <i class="bi bi-check-lg"></i> Setujui yang Dipilih
                                                     </button>
                                                     <button type="submit" name="status" value="ditolak"
-                                                        class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menolak absensi yang dipilih?')">
+                                                        class="btn btn-sm btn-danger">
                                                         <i class="bi bi-x-lg"></i> Tolak yang Dipilih
                                                     </button>
                                                 </div>
@@ -185,11 +183,15 @@
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>
-                                                            <th width="50"></th>
+                                                            <th width="50">
+                                                                <input type="checkbox" id="check-all-header"
+                                                                    class="form-check-input">
+                                                            </th>
                                                             <th>Nama Siswa</th>
                                                             <th>Tanggal</th>
                                                             <th>Jenis</th>
                                                             <th>Waktu</th>
+                                                            <th>Status Konfirmasi</th>
                                                             <th width="150">Aksi</th>
                                                         </tr>
                                                     </thead>
@@ -198,7 +200,9 @@
                                                             <tr id="row-pending-{{ $absensi->id }}">
                                                                 <td>
                                                                     <input type="checkbox" name="absen_ids[]"
-                                                                        value="{{ $absensi->id }}" class="absen-check">
+                                                                        value="{{ $absensi->id }}"
+                                                                        class="form-check-input absen-check"
+                                                                        data-id="{{ $absensi->id }}">
                                                                 </td>
                                                                 <td>{{ $absensi->user->name }}</td>
                                                                 <td>{{ \Carbon\Carbon::parse($absensi->tanggal)->format('d M Y') }}
@@ -210,6 +214,16 @@
                                                                     </span>
                                                                 </td>
                                                                 <td>{{ \Carbon\Carbon::parse($absensi->jam)->format('H:i') }}
+                                                                </td>
+                                                                <td>
+                                                                    @if ($absensi->dikonfirmasi_oleh)
+                                                                        <span class="badge bg-info">
+                                                                            {{ $absensi->dikonfirmasi_oleh === 'keduanya' ? 'IDUKA & Guru' : ucfirst($absensi->dikonfirmasi_oleh) }}
+                                                                        </span>
+                                                                    @else
+                                                                        <span class="badge bg-warning">Belum
+                                                                            dikonfirmasi</span>
+                                                                    @endif
                                                                 </td>
                                                                 <td>
                                                                     <div class="btn-group" role="group">
@@ -263,6 +277,7 @@
                                                         <th>Status</th>
                                                     </tr>
                                                 </thead>
+                                                <!-- Di dalam tbody untuk izin pending -->
                                                 <tbody>
                                                     @forelse($izinPending as $izin)
                                                         <tr data-izin-id="{{ $izin->id }}">
@@ -313,14 +328,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="btn-group" role="group">
-                                                                    <button type="button" class="btn btn-sm btn-success"
-                                                                        onclick="konfirmasiIzin({{ $izin->id }}, 'disetujui')"
-                                                                        title="Setujui">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-success btn-konfirmasi-izin"
+                                                                        data-izin-id="{{ $izin->id }}"
+                                                                        data-status="disetujui" title="Setujui">
                                                                         <i class="bi bi-check-lg"></i>
                                                                     </button>
-                                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                                        onclick="konfirmasiIzin({{ $izin->id }}, 'ditolak')"
-                                                                        title="Tolak">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-danger btn-konfirmasi-izin"
+                                                                        data-izin-id="{{ $izin->id }}"
+                                                                        data-status="ditolak" title="Tolak">
                                                                         <i class="bi bi-x-lg"></i>
                                                                     </button>
                                                                     <a href="{{ route('iduka.detail-izin', $izin->id) }}"
@@ -501,15 +518,186 @@
     </div>
 
     <script>
-        // Fungsi untuk toggle semua checkbox - IMPROVED
-        function toggleAll(source) {
-            const checkboxes = document.querySelectorAll('.absen-check');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = source.checked;
-            });
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi untuk toggle semua checkbox
+            function toggleAll(source) {
+                const checkboxes = document.querySelectorAll('.absen-check');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = source.checked;
+                });
+            }
 
-        // Fungsi untuk konfirmasi absensi individual - FIXED
+            // Event listener untuk checkbox "Pilih Semua" di header
+            const checkAllHeader = document.getElementById('check-all-header');
+            if (checkAllHeader) {
+                checkAllHeader.addEventListener('change', function() {
+                    toggleAll(this);
+                    // Sinkronkan dengan checkbox di luar tabel
+                    const checkAllOutside = document.getElementById('check-all');
+                    if (checkAllOutside) {
+                        checkAllOutside.checked = this.checked;
+                    }
+                });
+            }
+
+            // Event listener untuk checkbox "Pilih Semua" di luar tabel
+            const checkAllOutside = document.getElementById('check-all');
+            if (checkAllOutside) {
+                checkAllOutside.addEventListener('change', function() {
+                    toggleAll(this);
+                    // Sinkronkan dengan checkbox di header
+                    const checkAllHeader = document.getElementById('check-all-header');
+                    if (checkAllHeader) {
+                        checkAllHeader.checked = this.checked;
+                    }
+                });
+            }
+
+            // Event listener untuk checkbox individual
+            const individualCheckboxes = document.querySelectorAll('.absen-check');
+            individualCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateCheckAllState();
+                });
+            });
+
+            // Fungsi untuk memperbarui state checkbox "Pilih Semua"
+            function updateCheckAllState() {
+                const allCheckboxes = document.querySelectorAll('.absen-check');
+                const checkedCheckboxes = document.querySelectorAll('.absen-check:checked');
+
+                const checkAllHeader = document.getElementById('check-all-header');
+                const checkAllOutside = document.getElementById('check-all');
+
+                if (allCheckboxes.length === 0) return;
+
+                const allChecked = allCheckboxes.length === checkedCheckboxes.length;
+                const someChecked = checkedCheckboxes.length > 0;
+
+                if (checkAllHeader) {
+                    checkAllHeader.checked = allChecked;
+                    checkAllHeader.indeterminate = someChecked && !allChecked;
+                }
+
+                if (checkAllOutside) {
+                    checkAllOutside.checked = allChecked;
+                    checkAllOutside.indeterminate = someChecked && !allChecked;
+                }
+            }
+
+            // Validasi form sebelum submit
+            document.getElementById('formKonfirmasiBanyak')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const checkedBoxes = document.querySelectorAll('.absen-check:checked');
+                if (checkedBoxes.length === 0) {
+                    showAlert('warning', 'Silakan pilih minimal satu absensi untuk dikonfirmasi');
+                    return false;
+                }
+
+                const formData = new FormData(this);
+                const status = formData.get('status');
+
+                if (!confirm(
+                        `Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} ${checkedBoxes.length} absensi yang dipilih?`
+                    )) {
+                    return false;
+                }
+
+                // Tampilkan loading
+                const submitButtons = this.querySelectorAll('button[type="submit"]');
+                submitButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+                });
+
+                fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            showAlert('success', data.message);
+
+                            // Hapus baris yang berhasil diproses
+                            checkedBoxes.forEach(checkbox => {
+                                const row = checkbox.closest('tr');
+                                if (row) {
+                                    row.remove();
+                                }
+                            });
+
+                            // Update badge counter
+                            updatePendingCounter();
+
+                            // Periksa apakah masih ada data
+                            const tbody = document.getElementById('tbody-absensi-pending');
+                            const remainingRows = tbody.querySelectorAll('tr:not(#no-data-pending)');
+                            if (remainingRows.length === 0) {
+                                tbody.innerHTML = `
+                        <tr id="no-data-pending">
+                            <td colspan="7" class="text-center text-muted">
+                                Tidak ada absensi yang perlu dikonfirmasi
+                            </td>
+                        </tr>
+                    `;
+                            }
+
+                            // Reset form
+                            this.reset();
+                            updateCheckAllState();
+                        } else {
+                            showAlert('error', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('error', 'Terjadi kesalahan koneksi: ' + error.message);
+                    })
+                    .finally(() => {
+                        // Kembalikan tombol ke keadaan semula
+                        submitButtons.forEach(btn => {
+                            btn.disabled = false;
+                            if (btn.name === 'status' && btn.value === 'disetujui') {
+                                btn.innerHTML =
+                                    '<i class="bi bi-check-lg"></i> Setujui yang Dipilih';
+                            } else if (btn.name === 'status' && btn.value === 'ditolak') {
+                                btn.innerHTML = '<i class="bi bi-x-lg"></i> Tolak yang Dipilih';
+                            }
+                        });
+                    });
+            });
+
+            // Event delegation untuk tombol konfirmasi izin
+            document.addEventListener('click', function(e) {
+                // Cek apakah yang diklik adalah tombol konfirmasi izin
+                if (e.target.closest('.btn-konfirmasi-izin')) {
+                    e.preventDefault();
+                    const button = e.target.closest('.btn-konfirmasi-izin');
+                    const izinId = button.getAttribute('data-izin-id');
+                    const status = button.getAttribute('data-status');
+
+                    konfirmasiIzin(izinId, status);
+                }
+            });
+
+            // Inisialisasi state awal
+            updateCheckAllState();
+        });
+
+        // Fungsi untuk konfirmasi individual
         function konfirmasiAbsensi(pendingId, status) {
             if (status === 'ditolak') {
                 konfirmasiTolakAbsensi(pendingId);
@@ -526,18 +714,18 @@
                 row.style.opacity = '0.5';
             }
 
-            fetch(`{{ route('iduka.konfirmasi-absen.proses', ':id') }}`.replace(':id', pendingId), {
+            // Gunakan route yang benar
+            fetch(`{{ route('iduka.konfirmasi-absen.proses', ['id' => ':id']) }}`.replace(':id', pendingId), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
                         status: status
                     })
                 })
-
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -559,13 +747,6 @@
                         // Update badge counter
                         updatePendingCounter();
 
-                        // Reload absen hari ini jika perlu
-                        if (status === 'disetujui') {
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1500);
-                        }
-
                         // Check if no more pending data
                         const tbody = document.getElementById('tbody-absensi-pending');
                         const remainingRows = tbody.querySelectorAll('tr:not(#no-data-pending)');
@@ -578,7 +759,6 @@
                     </tr>
                 `;
                         }
-
                     } else {
                         showAlert('error', data.message || 'Terjadi kesalahan');
                         // Restore row
@@ -597,7 +777,7 @@
                 });
         }
 
-        // Fungsi khusus untuk menolak absensi
+        // Fungsi untuk menolak absensi
         function konfirmasiTolakAbsensi(pendingId) {
             const alasan = prompt('Masukkan alasan penolakan absensi:');
 
@@ -620,12 +800,12 @@
                 row.style.opacity = '0.5';
             }
 
-            // Gunakan route tolak-absen yang baru
-            fetch(`{{ route('iduka.tolak-absen', ':id') }}`.replace(':id', pendingId), {
+            // Gunakan route tolak-absen yang benar
+            fetch(`{{ route('iduka.tolak-absen', ['id' => ':id']) }}`.replace(':id', pendingId), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
@@ -658,14 +838,13 @@
                         const remainingRows = tbody.querySelectorAll('tr:not(#no-data-pending)');
                         if (remainingRows.length === 0) {
                             tbody.innerHTML = `
-                        <tr id="no-data-pending">
-                            <td colspan="7" class="text-center text-muted">
-                                Tidak ada absensi yang perlu dikonfirmasi
-                            </td>
-                        </tr>
-                    `;
+                    <tr id="no-data-pending">
+                        <td colspan="7" class="text-center text-muted">
+                            Tidak ada absensi yang perlu dikonfirmasi
+                        </td>
+                    </tr>
+                `;
                         }
-
                     } else {
                         showAlert('error', data.message || 'Terjadi kesalahan');
                         // Restore row
@@ -684,166 +863,19 @@
                 });
         }
 
-        // Fungsi untuk menampilkan alert
-        function showAlert(type, message) {
-            // Remove existing alerts
-            const existingAlerts = document.querySelectorAll('.alert');
-            existingAlerts.forEach(alert => {
-                if (alert.classList.contains('alert-success') || alert.classList.contains('alert-danger') || alert
-                    .classList.contains('alert-warning')) {
-                    alert.remove();
-                }
-            });
-
-            // Create new alert
-            const alertClass = type === 'success' ? 'alert-success' : (type === 'error' ? 'alert-danger' : 'alert-warning');
-            const iconClass = type === 'success' ? 'bi-check-circle' : (type === 'error' ? 'bi-exclamation-triangle' :
-                'bi-info-circle');
-
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-        <i class="${iconClass} me-2"></i>
-        <strong>${type === 'success' ? 'Berhasil!' : 'Error!'}</strong> ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-
-            // Insert at top of content
-            const container = document.querySelector('.container-xxl');
-            if (container) {
-                container.insertBefore(alertDiv, container.firstChild);
-            }
-
-            // Auto hide after 3 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 3000);
-        }
-
-        // Update badge counter
-        function updatePendingCounter() {
-            const badge = document.getElementById('badge-absen-pending');
-            if (badge) {
-                const currentCount = parseInt(badge.textContent) || 0;
-                const newCount = Math.max(0, currentCount - 1);
-                badge.textContent = newCount;
-
-                if (newCount === 0) {
-                    badge.style.display = 'none';
-                }
-            }
-        }
-
-        // Handle form submission for bulk confirmation
-        document.getElementById('formKonfirmasiBanyak')?.addEventListener('submit', function(e) {
-            const checkedBoxes = document.querySelectorAll('.absen-check:checked');
-            if (checkedBoxes.length === 0) {
-                e.preventDefault();
-                showAlert('warning', 'Silakan pilih minimal satu absensi untuk dikonfirmasi');
-                return false;
-            }
-        });
-
-        function formatTime(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            const pad = n => n.toString().padStart(2, '0');
-            return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-        }
-
-        //filter
-        //filter
-        function loadRiwayat(params = {}) {
-            let url = "{{ route('iduka.filter-riwayat') }}?" + new URLSearchParams(params);
-
-            fetch(url, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(res => res.json())
-                .then(res => {
-                    let tbody = document.getElementById('riwayatBody');
-                    tbody.innerHTML = "";
-
-                    if (!res.success || res.data.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Tidak ada data</td></tr>`;
-                        return;
-                    }
-
-                    res.data.forEach(absensi => {
-                        // Tentukan class badge berdasarkan status
-                        let badgeClass = 'bg-secondary';
-                        let statusText = 'UNKNOWN';
-
-                        if (absensi.status === 'tepat_waktu') {
-                            badgeClass = 'bg-success';
-                            statusText = 'TEPAT WAKTU';
-                        } else if (absensi.status === 'terlambat') {
-                            badgeClass = 'bg-warning';
-                            statusText = 'TERLAMBAT';
-                        } else if (absensi.status === 'izin') {
-                            badgeClass = 'bg-info';
-                            statusText = 'IZIN';
-                        } else if (absensi.status === 'ditolak') {
-                            badgeClass = 'bg-danger';
-                            statusText = 'DITOLAK';
-                        } else if (absensi.status === 'sakit') {
-                            badgeClass = 'bg-secondary';
-                            statusText = 'SAKIT';
-                        } else if (absensi.status === 'alpha') {
-                            badgeClass = 'bg-dark';
-                            statusText = 'ALPHA';
-                        }
-
-                        tbody.innerHTML += `
-                    <tr>
-                        <td>${new Date(absensi.tanggal).toLocaleDateString('id-ID')}</td>
-                        <td>${absensi.user.name}</td>
-                        <td>${formatTime(absensi.jam_masuk)}</td>
-                        <td>${formatTime(absensi.jam_pulang)}</td>
-                        <td>
-                            <span class="badge ${badgeClass}">
-                                ${statusText}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-                    });
-                })
-                .catch(err => console.error(err));
-        }
-
-        // ✅ load data default saat halaman dibuka
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default tanggal (7 hari terakhir)
-            const tanggalSampai = new Date().toISOString().split('T')[0];
-            const tanggalDari = new Date();
-            tanggalDari.setDate(tanggalDari.getDate() - 7);
-            const tanggalDariFormatted = tanggalDari.toISOString().split('T')[0];
-
-            document.getElementById('tanggal_dari').value = tanggalDariFormatted;
-            document.getElementById('tanggal_sampai').value = tanggalSampai;
-
-            // Load data dengan filter default
-            loadRiwayat({
-                tanggal_dari: tanggalDariFormatted,
-                tanggal_sampai: tanggalSampai
-            });
-        });
-
-        // ✅ jika ada form filter
-        document.getElementById('filterRiwayatForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            let formData = new FormData(this);
-            loadRiwayat(Object.fromEntries(formData.entries()));
-        });
-
-        //konfir izin
+        // Fungsi untuk konfirmasi izin oleh IDUKA atau Guru
         function konfirmasiIzin(izinId, status) {
-            if (!confirm(`Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} izin ini?`)) {
+            console.log('konfirmasiIzin called:', izinId, status); // Debug
+
+            if (!izinId) {
+                console.error('izinId is undefined'); // Debug
+                alert('ID izin tidak ditemukan');
+                return;
+            }
+
+            const actionText = status === 'disetujui' ? 'menyetujui' : 'menolak';
+
+            if (!confirm(`Apakah Anda yakin ingin ${actionText} izin ini?`)) {
                 return;
             }
 
@@ -861,16 +893,40 @@
             const row = document.querySelector(`tr[data-izin-id="${izinId}"]`);
             if (row) {
                 row.style.opacity = '0.5';
+
+                // Disable all buttons in the row
+                const buttons = row.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                });
             }
 
-            // Kirim permintaan AJAX untuk konfirmasi izin
-            fetch(`{{ route('iduka.konfirmasi-izin', '') }}/${izinId}`, {
+            // Ambil CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (!csrfToken) {
+                console.error('CSRF token not found'); // Debug
+                alert('CSRF token tidak ditemukan. Silakan refresh halaman.');
+                if (row) {
+                    row.style.opacity = '1';
+                    const buttons = row.querySelectorAll('button');
+                    buttons.forEach(btn => {
+                        btn.disabled = false;
+                    });
+                }
+                return;
+            }
+
+            // Buat URL dengan route yang benar
+            const url = `{{ route('iduka.konfirmasi-izin', ['id' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', izinId);
+            console.log('Fetch URL:', url); // Debug
+
+            fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         status: status,
@@ -878,19 +934,20 @@
                     })
                 })
                 .then(response => {
+                    console.log('Fetch response status:', response.status); // Debug
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Response:', data);
+                    console.log('Response data:', data); // Debug
 
                     if (data.success) {
-                        // Show success message
-                        showAlert('success', data.message);
+                        // Tampilkan pesan sukses
+                        alert(data.message);
 
-                        // Remove row from table
+                        // Hapus baris dari tabel
                         if (row) {
                             row.remove();
                         }
@@ -898,32 +955,45 @@
                         // Update badge counter
                         updateIzinPendingCounter();
 
-                        // Check if no more pending data
+                        // Periksa apakah masih ada data
                         const tbody = document.querySelector('#v-pills-perlu-konfirmasi tbody');
-                        const remainingRows = tbody.querySelectorAll('tr');
-                        if (remainingRows.length === 0) {
-                            tbody.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">
-                            Tidak ada izin yang perlu dikonfirmasi
-                        </td>
-                    </tr>
-                `;
+                        if (tbody) {
+                            const remainingRows = tbody.querySelectorAll('tr');
+                            if (remainingRows.length === 0) {
+                                tbody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    Tidak ada izin yang perlu dikonfirmasi
+                                </td>
+                            </tr>
+                        `;
+                            }
                         }
                     } else {
-                        showAlert('error', data.message || 'Terjadi kesalahan');
-                        // Restore row
+                        // Tampilkan pesan error
+                        alert(data.message || 'Terjadi kesalahan');
+
+                        // Kembalikan state row
                         if (row) {
                             row.style.opacity = '1';
+                            const buttons = row.querySelectorAll('button');
+                            buttons.forEach(btn => {
+                                btn.disabled = false;
+                            });
                         }
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('error', 'Terjadi kesalahan koneksi: ' + error.message);
-                    // Restore row
+                    console.error('Error:', error); // Debug
+                    alert('Terjadi kesalahan koneksi: ' + error.message);
+
+                    // Kembalikan state row
                     if (row) {
                         row.style.opacity = '1';
+                        const buttons = row.querySelectorAll('button');
+                        buttons.forEach(btn => {
+                            btn.disabled = false;
+                        });
                     }
                 });
         }
@@ -941,5 +1011,97 @@
                 }
             }
         }
+
+        // Update badge counter
+        function updatePendingCounter() {
+            const badge = document.getElementById('badge-absen-pending');
+            if (badge) {
+                const currentCount = parseInt(badge.textContent) || 0;
+                const newCount = Math.max(0, currentCount - 1);
+                badge.textContent = newCount;
+
+                if (newCount === 0) {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // Fungsi untuk menampilkan alert
+        function showAlert(type, message) {
+            // Hapus alert sebelumnya
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => {
+                if (alert.classList.contains('alert-success') ||
+                    alert.classList.contains('alert-danger') ||
+                    alert.classList.contains('alert-warning')) {
+                    alert.remove();
+                }
+            });
+
+            // Buat alert baru
+            const alertClass = type === 'success' ? 'alert-success' :
+                type === 'error' ? 'alert-danger' : 'alert-warning';
+            const iconClass = type === 'success' ? 'bi-check-circle' :
+                type === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle';
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+    <i class="${iconClass} me-2"></i>
+    <strong>${type === 'success' ? 'Berhasil!' : type === 'error' ? 'Error!' : 'Peringatan!'}</strong> ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+`;
+
+            // Sisipkan di bagian atas container
+            const container = document.querySelector('.container-xxl');
+            if (container) {
+                container.insertBefore(alertDiv, container.firstChild);
+            }
+
+            // Auto hide setelah 3 detik
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 3000);
+        }
     </script>
+
+    <style>
+        /* Perbaiki tampilan checkbox */
+        .form-check-input {
+            width: 1.2em;
+            height: 1.2em;
+            margin-top: 0.3em;
+            cursor: pointer;
+        }
+
+        /* Beri efek hover pada baris tabel */
+        tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Perbesar area klik untuk checkbox di header */
+        th:first-child {
+            cursor: pointer;
+        }
+
+        /* Animasi untuk checkbox */
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        /* Style untuk indeterminate state */
+        .form-check-input:indeterminate {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        /* Loading spinner */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
 @endsection

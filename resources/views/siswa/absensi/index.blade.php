@@ -227,7 +227,7 @@
 
                                     {{-- Tombol Absen Pulang --}}
                                     <div class="col-md-4">
-                                        <form method="POST" action="{{ route('absensi.pulang') }}" id="formPulang">
+                                        <form method="POST" action="{{ route('absensi.pulang.siswa') }}" id="formPulang">
                                             @csrf
                                             <input type="hidden" name="latitude" id="latitudePulang">
                                             <input type="hidden" name="longitude" id="longitudePulang">
