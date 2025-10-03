@@ -11,12 +11,21 @@ use Illuminate\Support\Facades\Hash;
 
 class GuruController extends Controller
 {
-    public function dataguru()
+    public function dataguru(Request $request)
     {
         $user = User::where('role', 'guru')->with('konke')->get();
-        $guru = Guru::orderBy('created_at', 'desc')->paginate(10); // Urutkan berdasarkan created_at descending
         $konkes = Konke::all(); // Ambil data konsentrasi keahlian
-        return view('hubin.dataguru.dataguru', compact('guru', 'konkes', 'user')); 
+
+        $query = Guru::with('konke')->orderBy('created_at', 'desc');
+
+        // Kalau ada input search
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        $guru = $query->paginate(10)->withQueryString();
+
+        return view('hubin.dataguru.dataguru', compact('guru', 'konkes', 'user'));
     }
 
     public function create()
@@ -37,7 +46,7 @@ class GuruController extends Controller
             'konke_id' => 'nullable|exists:konkes,id', // Opsional
             'role' => 'required|in:guru,kaprog,hubin,psekolah', // Validasi role
         ]);
-    
+
         DB::transaction(function () use ($request) {
             // Simpan data ke tabel users terlebih dahulu
             $user = User::create([
@@ -48,7 +57,7 @@ class GuruController extends Controller
                 'role' => $request->role,
                 'konke_id' => $request->konke_id,
             ]);
-    
+
             // Simpan data ke tabel gurus dengan user_id yang baru dibuat
             Guru::create([
                 'nama' => $request->nama,
@@ -65,10 +74,10 @@ class GuruController extends Controller
                 'user_id' => $user->id, // Menyimpan user_id ke tabel gurus
             ]);
         });
-    
+
         return redirect()->route('guru.index')->with('success', 'Data Guru berhasil ditambahkan!');
     }
-    
+
 
     public function edit(Guru $guru)
     {
@@ -78,67 +87,67 @@ class GuruController extends Controller
 
 
     public function update(Request $request, Guru $guru)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'nik' => 'required|string|unique:gurus,nik,' . $guru->id,
-        'email' => 'required|email|unique:gurus,email,' . $guru->id,
-        'tempat_lahir' => 'required|string',
-        'tanggal_lahir' => 'required|date',
-        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-        'alamat' => 'required|string',
-        'no_hp' => 'required|string',
-        'konke_id' => 'nullable|exists:konkes,id', // Opsional
-    ]);
-
-    DB::transaction(function () use ($request, $guru) {
-        // Update data guru
-        $guru->update([
-            'nama' => $request->nama,
-            'nik' => $request->nik,
-            'email' => $request->email,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
-            'konke_id' => $request->konke_id,
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'nik' => 'required|string|unique:gurus,nik,' . $guru->id,
+            'email' => 'required|email|unique:gurus,email,' . $guru->id,
+            'tempat_lahir' => 'required|string',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'alamat' => 'required|string',
+            'no_hp' => 'required|string',
+            'konke_id' => 'nullable|exists:konkes,id', // Opsional
         ]);
 
-        // Update password jika diisi
-        if ($request->filled('password')) {
-            $guru->update(['password' => Hash::make($request->password)]);
-        }
-
-        // Update data di tabel users (sinkronisasi)
-        $user = User::where('email', $guru->email)->first();
-        if ($user) {
-            $user->update([
-                'name' => $request->nama,
-                'nip' => $request->nik,
+        DB::transaction(function () use ($request, $guru) {
+            // Update data guru
+            $guru->update([
+                'nama' => $request->nama,
+                'nik' => $request->nik,
                 'email' => $request->email,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'alamat' => $request->alamat,
+                'no_hp' => $request->no_hp,
+                'konke_id' => $request->konke_id,
             ]);
 
+            // Update password jika diisi
             if ($request->filled('password')) {
-                $user->update(['password' => Hash::make($request->password)]);
+                $guru->update(['password' => Hash::make($request->password)]);
             }
-        }
-    });
 
-    return redirect()->route('guru.index')->with('success', 'Data Guru berhasil diperbarui!');
-}
+            // Update data di tabel users (sinkronisasi)
+            $user = User::where('email', $guru->email)->first();
+            if ($user) {
+                $user->update([
+                    'name' => $request->nama,
+                    'nip' => $request->nik,
+                    'email' => $request->email,
+                ]);
+
+                if ($request->filled('password')) {
+                    $user->update(['password' => Hash::make($request->password)]);
+                }
+            }
+        });
+
+        return redirect()->route('guru.index')->with('success', 'Data Guru berhasil diperbarui!');
+    }
 
     public function destroy(Guru $guru)
     {
         DB::transaction(function () use ($guru) {
             // Hapus data dari tabel Users
             User::where('email', $guru->email)->delete();
-    
+
             // Hapus data dari tabel Guru
             $guru->delete();
         });
-    
+
         return redirect()->route('guru.index')->with('success', 'Data Guru berhasil dihapus!');
     }
-    
+
 }

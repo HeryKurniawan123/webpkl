@@ -96,9 +96,12 @@ class JournalController extends Controller
         $data['iduka_id'] = $user->iduka_id;
         $data['pembimbing_id'] = $user->pembimbing_id;
 
+        // Simpan gambar ke public/uploads/jurnals
         if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('public/jurnals');
-            $data['foto'] = Storage::url($path);
+            $file = $request->file('foto');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/jurnals'), $fileName);
+            $data['foto'] = 'uploads/jurnals/' . $fileName;
         }
 
         Jurnal::create($data);
@@ -106,37 +109,38 @@ class JournalController extends Controller
         return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil ditambahkan dan menunggu persetujuan.');
     }
 
-public function show($id)
-{
-    try {
-        Log::info('Loading journal detail for ID: ' . $id);
 
-        $jurnal = Jurnal::with(['user', 'user.idukaDiterima', 'user.pembimbing'])
-                        ->findOrFail($id);
+    public function show($id)
+    {
+        try {
+            Log::info('Loading journal detail for ID: ' . $id);
 
-        if ($jurnal->user_id !== auth()->id()) {
-            Log::warning('Unauthorized journal access attempt: ' . $id);
+            $jurnal = Jurnal::with(['user', 'user.idukaDiterima', 'user.pembimbing'])
+                ->findOrFail($id);
+
+            if ($jurnal->user_id !== auth()->id()) {
+                Log::warning('Unauthorized journal access attempt: ' . $id);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
+            }
+
+            $html = view('siswa.jurnal.view', compact('jurnal'))->render();
+
+            return response()->json([
+                'success' => true,
+                'data' => $html
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in show journal: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access'
-            ], 403);
+                'message' => 'Terjadi kesalahan saat memuat detail jurnal: ' . $e->getMessage()
+            ], 500);
         }
-
-        $html = view('siswa.jurnal.view', compact('jurnal'))->render();
-
-        return response()->json([
-            'success' => true,
-            'data' => $html
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Error in show journal: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Terjadi kesalahan saat memuat detail jurnal: ' . $e->getMessage()
-        ], 500);
     }
-}
     public function edit($id)
     {
         $jurnal = Jurnal::findOrFail($id);

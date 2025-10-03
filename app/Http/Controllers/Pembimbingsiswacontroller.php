@@ -10,15 +10,25 @@ use Illuminate\Support\Facades\Log;
 class PembimbingSiswaController extends Controller
 {
     // Daftar semua pembimbing
-    public function index()
+    public function index(Request $request)
     {
-        $pembimbings = Guru::with('konke')->paginate(6);
+        $query = Guru::with('konke');
+
+        // Jika ada input pencarian
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        $pembimbings = $query->paginate(6)->withQueryString();
+
         $siswas = User::where('role', 'siswa')->get();
 
         return view('pembimbing_siswa.index', compact('pembimbings', 'siswas'));
     }
 
-    // Lihat detail pembimbing
+
+    // Lihat detail pembimbingeb
+    
     public function show($id)
     {
         $pembimbing = Guru::with('siswas')->findOrFail($id);

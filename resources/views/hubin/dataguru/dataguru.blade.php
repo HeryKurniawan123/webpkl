@@ -36,13 +36,16 @@
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#">
-                                            <input type="text" name="search" class="form-control"
-                                                placeholder="Cari Guru...">
+                                        <form method="GET" action="{{ route('guru.index') }}" class="mb-3">
+                                            <div class="input-group">
+                                                <input type="text" name="search" class="form-control"
+                                                    placeholder="Cari nama guru..." value="{{ request('search') }}">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-search"></i> Cari
+                                                </button>
+                                            </div>
                                         </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +96,7 @@
                                                             <!-- Tombol untuk membuka modal -->
                                                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                                                 data-bs-target="#detailGuruModal{{ $g->id }}">
-                                                                <i class="bi bi-eye"></i> 
+                                                                <i class="bi bi-eye"></i>
                                                             </button>
 
                                                             <!-- Modal -->
@@ -148,7 +151,8 @@
                                                                             pastikan sesuai dengan data di KTP!</i></small>
                                                                 </div>
                                                                 <div class="mb-3">
-                                                                    <label class="form-label">NIP/NUPTK ( opsional )</label>
+                                                                    <label class="form-label">NIP/NUPTK ( opsional
+                                                                        )</label>
                                                                     <input type="text" class="form-control"
                                                                         name="nip" value="{{ $g->nip }}">
                                                                     <small class="form-text text-muted"><i>Isi NIP atau
@@ -213,14 +217,14 @@
                                                                             hp aktif. Pastikan bisa diakses!</i></small>
                                                                 </div>
                                                                 <!-- <div class="mb-3">
-                                                                <label class="form-label">Role</label>
-                                                                <select class="form-control" name="role" required>
-                                                                    <option value="guru" {{ $g->role == 'guru' ? 'selected' : '' }}>Guru</option>
-                                                                    <option value="kaprog" {{ $g->role == 'kaprog' ? 'selected' : '' }}>Kaprog</option>
-                                                                    <option value="hubin" {{ $g->role == 'hubin' ? 'selected' : '' }}>Hubin</option>
-                                                                    <option value="psekolah" {{ $g->role == 'psekolah' ? 'selected' : '' }}>Pembimbing Sekolah</option>
-                                                                </select>
-                                                            </div> -->
+                                                                    <label class="form-label">Role</label>
+                                                                    <select class="form-control" name="role" required>
+                                                                        <option value="guru" {{ $g->role == 'guru' ? 'selected' : '' }}>Guru</option>
+                                                                        <option value="kaprog" {{ $g->role == 'kaprog' ? 'selected' : '' }}>Kaprog</option>
+                                                                        <option value="hubin" {{ $g->role == 'hubin' ? 'selected' : '' }}>Hubin</option>
+                                                                        <option value="psekolah" {{ $g->role == 'psekolah' ? 'selected' : '' }}>Pembimbing Sekolah</option>
+                                                                    </select>
+                                                                </div> -->
                                                                 <div class="mb-3">
                                                                     <label class="form-label">Password (Opsional)</label>
                                                                     <div class="input-group">
@@ -393,7 +397,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             this.closest('form')
-                        .submit(); // Kirim form jika user mengonfirmasi
+                                .submit(); // Kirim form jika user mengonfirmasi
                         }
                     });
                 });
@@ -428,19 +432,7 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const searchInput = document.querySelector("input[name='search']");
-            const tableRows = document.querySelectorAll("tbody tr");
 
-            searchInput.addEventListener("keyup", function() {
-                const searchValue = this.value.toLowerCase();
-
-                tableRows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(searchValue) ? "" : "none";
-                });
-            });
-        });
 
         document.querySelectorAll('.toggle-password').forEach(button => {
             button.addEventListener('click', function() {

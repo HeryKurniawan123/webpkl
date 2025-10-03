@@ -14,6 +14,18 @@
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
 
+        <!-- Form Search -->
+        <form method="GET" action="{{ route('pembimbing.siswa.index') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                    placeholder="Cari nama pembimbing...">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i> Cari
+                </button>
+            </div>
+        </form>
+
+
         <div class="row">
             @foreach ($pembimbings as $pembimbing)
                 <div class="col-md-6 col-lg-4 mb-4">
