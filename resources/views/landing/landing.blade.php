@@ -304,13 +304,12 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-           hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
-           transition duration-300 ease-in-out
-           hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg"
-   href="javascript:void(0)">
-   <i class="bi bi-download"></i> Install Aplikasi
-</a>
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
+   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+   transition duration-300 ease-in-out
+   hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -327,13 +326,12 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-           hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
-           transition duration-300 ease-in-out
-           hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg"
-   href="javascript:void(0)">
-   <i class="bi bi-download"></i> Install Aplikasi
-</a>
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
+   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+   transition duration-300 ease-in-out
+   hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -350,13 +348,12 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-           hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
-           transition duration-300 ease-in-out
-           hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg"
-   href="javascript:void(0)">
-   <i class="bi bi-download"></i> Install Aplikasi
-</a>
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
+   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+   transition duration-300 ease-in-out
+   hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -373,13 +370,12 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-           hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
-           transition duration-300 ease-in-out
-           hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg"
-   href="javascript:void(0)">
-   <i class="bi bi-download"></i> Install Aplikasi
-</a>
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
+   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+   transition duration-300 ease-in-out
+   hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
+                                <i class="bi bi-download"></i> Install Aplikasi
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1190,36 +1186,64 @@
 
     <!-- PWA -->
     <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/serviceworker.js")
-                    .then(reg => console.log("Service Worker registered:", reg))
-                    .catch(err => console.log("SW registration failed:", err));
+    let deferredPrompt;
+    const installBtn = document.getElementById('install-btn');
+
+    // Fungsi cek apakah sudah di PWA standalone mode
+    function isInStandaloneMode() {
+        return (window.matchMedia('(display-mode: standalone)').matches) // Chrome, Edge, dll
+            || (window.navigator.standalone === true); // iOS Safari
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Sembunyikan tombol kalau sudah terinstall / dibuka via PWA
+        if (isInStandaloneMode() || localStorage.getItem('pwaInstalled')) {
+            installBtn.classList.add('hidden');
+        }
+    });
+
+    // Event sebelum install prompt muncul
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+
+        // Tampilkan tombol kalau belum terinstall dan bukan standalone
+        if (!isInStandaloneMode() && !localStorage.getItem('pwaInstalled')) {
+            installBtn.classList.remove('hidden');
+        }
+    });
+
+    // Klik tombol install
+    installBtn.addEventListener('click', () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('✅ User accepted PWA install');
+                } else {
+                    console.log('❌ User dismissed PWA install');
+                }
+                deferredPrompt = null;
             });
         }
-    </script>
+    });
 
-    <!-- Download App -->
-    <script>
-        let deferredPrompt;
-        const installButtons = document.querySelectorAll(".installPWA");
+    // Kalau aplikasi berhasil terinstall
+    window.addEventListener('appinstalled', () => {
+        console.log('📲 PWA sudah terinstall');
+        localStorage.setItem('pwaInstalled', 'true');
+        installBtn.classList.add('hidden');
+    });
 
-        window.addEventListener("beforeinstallprompt", (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installButtons.forEach(btn => btn.style.display = "inline-block");
-
-            installButtons.forEach((btn) => {
-                btn.addEventListener("click", async () => {
-                    btn.style.display = "none";
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response to the install prompt: ${outcome}`);
-                    deferredPrompt = null;
-                });
-            });
+    // Daftarkan Service Worker
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/serviceworker.js")
+                .then(reg => console.log("Service Worker registered:", reg))
+                .catch(err => console.log("SW registration failed:", err));
         });
-    </script>
+    }
+</script>
 
     <!-- Vendor JS Files -->
     <script src="{{ asset('tmp_landing/assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
