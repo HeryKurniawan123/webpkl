@@ -1,13 +1,8 @@
-const CACHE_NAME = "smkn1-v1";
+const CACHE_NAME = "smkn1-v2";
 
 const urlsToCache = [
-
   "/",
-
-  "/manifest.json",
-
   "/images/logo.png"
-
 ];
 
 
@@ -29,10 +24,14 @@ self.addEventListener("install", event => {
 // Fetch
 
 self.addEventListener("fetch", event => {
+  // jangan cache manifest.json
+  if (event.request.url.includes("manifest.json")) {
+    return event.respondWith(fetch(event.request));
+  }
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Simpan response terbaru ke cache
         const resClone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, resClone));
         return response;
@@ -40,7 +39,6 @@ self.addEventListener("fetch", event => {
       .catch(() => caches.match(event.request))
   );
 });
-
 
 // Update SW
 
@@ -61,3 +59,4 @@ self.addEventListener("activate", event => {
   );
 
 });
+

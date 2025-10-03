@@ -304,8 +304,8 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA hidden 
+   bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
    transition duration-300 ease-in-out
    hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
                                 <i class="bi bi-download"></i> Install Aplikasi
@@ -326,8 +326,8 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA hidden 
+   bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
    transition duration-300 ease-in-out
    hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
                                 <i class="bi bi-download"></i> Install Aplikasi
@@ -348,8 +348,8 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA hidden 
+   bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
    transition duration-300 ease-in-out
    hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
                                 <i class="bi bi-download"></i> Install Aplikasi
@@ -370,8 +370,8 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
-   hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+                            <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA hidden 
+   bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
    transition duration-300 ease-in-out
    hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
                                 <i class="bi bi-download"></i> Install Aplikasi
@@ -1186,64 +1186,56 @@
 
     <!-- PWA -->
     <script>
-    let deferredPrompt;
-    const installBtn = document.getElementById('install-btn');
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
 
-    // Fungsi cek apakah sudah di PWA standalone mode
-    function isInStandaloneMode() {
-        return (window.matchMedia('(display-mode: standalone)').matches) // Chrome, Edge, dll
-            || (window.navigator.standalone === true); // iOS Safari
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        // Sembunyikan tombol kalau sudah terinstall / dibuka via PWA
-        if (isInStandaloneMode() || localStorage.getItem('pwaInstalled')) {
+        // kalau udah standalone → jangan tampilkan
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
             installBtn.classList.add('hidden');
         }
-    });
 
-    // Event sebelum install prompt muncul
-    window.addEventListener('beforeinstallprompt', (event) => {
-        event.preventDefault();
-        deferredPrompt = event;
+        // event before install prompt
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
 
-        // Tampilkan tombol kalau belum terinstall dan bukan standalone
-        if (!isInStandaloneMode() && !localStorage.getItem('pwaInstalled')) {
-            installBtn.classList.remove('hidden');
-        }
-    });
+            // munculin tombol kalau belum PWA
+            if (!(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true)) {
+                installBtn.classList.remove('hidden');
+            }
+        });
 
-    // Klik tombol install
-    installBtn.addEventListener('click', () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('✅ User accepted PWA install');
-                } else {
-                    console.log('❌ User dismissed PWA install');
-                }
-                deferredPrompt = null;
+        // klik install
+        installBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ User accepted install');
+                    } else {
+                        console.log('❌ User dismissed install');
+                    }
+                    deferredPrompt = null;
+                    installBtn.classList.add('hidden'); // hide setelah dicoba
+                });
+            }
+        });
+
+        // event setelah berhasil install
+        window.addEventListener('appinstalled', () => {
+            console.log('📱 PWA sudah terinstall');
+            installBtn.classList.add('hidden'); // pastikan tombol ilang
+        });
+
+        // Daftarkan Service Worker
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/serviceworker.js")
+                    .then(reg => console.log("Service Worker registered:", reg))
+                    .catch(err => console.log("SW registration failed:", err));
             });
         }
-    });
-
-    // Kalau aplikasi berhasil terinstall
-    window.addEventListener('appinstalled', () => {
-        console.log('📲 PWA sudah terinstall');
-        localStorage.setItem('pwaInstalled', 'true');
-        installBtn.classList.add('hidden');
-    });
-
-    // Daftarkan Service Worker
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-            navigator.serviceWorker.register("/serviceworker.js")
-                .then(reg => console.log("Service Worker registered:", reg))
-                .catch(err => console.log("SW registration failed:", err));
-        });
-    }
-</script>
+    </script>
 
     <!-- Vendor JS Files -->
     <script src="{{ asset('tmp_landing/assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
