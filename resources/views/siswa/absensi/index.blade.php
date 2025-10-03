@@ -1,4 +1,4 @@
-@extends('layout.main')
+\@extends('layout.main')
 
 @section('content')
     <div class="container-fluid"><br>
@@ -113,6 +113,18 @@
                                                     Waktu pengajuan: {{ $absensiHariIni->created_at->format('d/m/Y H:i') }}
                                                 </div>
                                             </div>
+                                        @elseif ($absensiHariIni->status_dinas === 'disetujui')
+                                            <div class="col-12">
+                                                <div class="alert alert-primary">
+                                                    <i class="bi bi-briefcase me-2"></i>
+                                                    <strong>Anda sedang dinas luar hari ini</strong><br>
+                                                    Jenis:
+                                                    {{ ucfirst(str_replace('_', ' ', $absensiHariIni->jenis_dinas)) }}<br>
+                                                    Alasan: {{ $absensiHariIni->keterangan_dinas }}<br>
+                                                    <small class="text-muted">Anda bisa langsung absen pulang tanpa harus
+                                                        absen masuk terlebih dahulu</small>
+                                                </div>
+                                            </div>
                                         @else
                                             @if ($absensiHariIni->jam_masuk)
                                                 <div class="col-md-6">
@@ -132,6 +144,9 @@
                                                                 @else
                                                                     <span class="badge bg-warning">Terlambat</span>
                                                                 @endif
+                                                                @if ($absensiHariIni->status_dinas === 'disetujui')
+                                                                    <span class="badge bg-primary ms-1">Dinas Luar</span>
+                                                                @endif
                                                             </small>
                                                         </div>
                                                     </div>
@@ -149,7 +164,11 @@
                                                             <h6 class="mb-1">Absen Pulang</h6>
                                                             <p class="mb-0 text-warning">
                                                                 {{ $absensiHariIni->jam_pulang->format('H:i') }}</p>
-                                                            <small class="text-muted">Absensi hari ini sudah lengkap</small>
+                                                            <small class="text-muted">
+                                                                @if ($absensiHariIni->status_dinas === 'disetujui')
+                                                                    <span class="badge bg-primary">Dinas Luar</span>
+                                                                @endif
+                                                            </small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -162,7 +181,7 @@
                     </div>
                 @endif
 
-                {{-- Tombol Absensi dan Izin --}}
+                {{-- Tombol Absensi, Izin, dan Dinas Luar --}}
                 <div class="row mb-4">
                     <div class="col-lg-12">
                         <div class="card">
@@ -177,7 +196,9 @@
                                 <small id="locationStatus" class="text-muted">
                                     @if ($absensiHariIni && $absensiHariIni->status === 'izin')
                                         Anda sedang izin hari ini
-                                    @elseif($absensiHariIni && $absensiHariIni->jam_masuk && $absensiHariIni->jam_pulang)
+                                    @elseif ($absensiHariIni && $absensiHariIni->status_dinas === 'disetujui')
+                                        Anda sedang dinas luar hari ini - wajib absensi masuk dan pulang
+                                    @elseif ($absensiHariIni && $absensiHariIni->jam_masuk && $absensiHariIni->jam_pulang)
                                         Absensi hari ini sudah lengkap
                                     @else
                                         Menunggu akses lokasi...
@@ -200,79 +221,102 @@
                                 @endauth
 
                                 <div class="row g-3">
+
                                     {{-- Tombol Absen Masuk --}}
-                                    <div class="col-md-4">
+                                    <div class="col-md-3 col-6">
                                         <form method="POST" action="{{ route('absensi.masuk') }}" id="formMasuk">
                                             @csrf
                                             <input type="hidden" name="latitude" id="latitudeMasuk">
                                             <input type="hidden" name="longitude" id="longitudeMasuk">
-                                            <button type="submit" class="btn btn-success w-100 btn-lg" id="btnMasuk"
-                                                {{ $absensiHariIni && ($absensiHariIni->jam_masuk || $absensiHariIni->status === 'izin') ? 'disabled' : '' }}>
-                                                <i class="bi bi-clock me-2"></i>
-                                                <div>
-                                                    <strong>Absen Masuk</strong>
-                                                    <br><small>
-                                                        @if ($absensiHariIni && $absensiHariIni->jam_masuk)
-                                                            Sudah absen: {{ $absensiHariIni->jam_masuk->format('H:i') }}
-                                                        @elseif($absensiHariIni && $absensiHariIni->status === 'izin')
-                                                            Sedang izin
-                                                        @else
-                                                            Klik untuk absen masuk
-                                                        @endif
-                                                    </small>
-                                                </div>
+
+                                            <button type="submit" class="btn btn-success w-100 h-100 py-4"
+                                                id="btnMasuk"
+                                                {{ $absensiHariIni && ($absensiHariIni->jam_masuk || $absensiHariIni->status === 'izin' || $absensiHariIni->status === 'dinas') ? 'disabled' : '' }}>
+                                                <i class="bi bi-clock me-2 fs-4"></i><br>
+                                                <strong>Absen Masuk</strong><br>
+                                                <small>
+                                                    @if ($absensiHariIni && $absensiHariIni->jam_masuk)
+                                                        Sudah absen: {{ $absensiHariIni->jam_masuk->format('H:i') }}
+                                                    @elseif ($absensiHariIni && ($absensiHariIni->status === 'izin' || $absensiHariIni->status === 'dinas'))
+                                                        Sedang
+                                                        {{ $absensiHariIni->status === 'izin' ? 'izin' : 'dinas luar' }}
+                                                    @else
+                                                        Klik untuk absen masuk
+                                                    @endif
+                                                </small>
                                             </button>
                                         </form>
                                     </div>
 
                                     {{-- Tombol Absen Pulang --}}
-                                    <div class="col-md-4">
-                                        <form method="POST" action="{{ route('absensi.pulang') }}" id="formPulang">
+                                    <div class="col-md-3 col-6">
+                                        <form method="POST" action="{{ route('absensi.pulang.siswa') }}"
+                                            id="formPulang">
                                             @csrf
                                             <input type="hidden" name="latitude" id="latitudePulang">
                                             <input type="hidden" name="longitude" id="longitudePulang">
-                                            <button type="submit" class="btn btn-warning w-100 btn-lg" id="btnPulang"
-                                                {{ !$absensiHariIni || !$absensiHariIni->jam_masuk || $absensiHariIni->jam_pulang || $absensiHariIni->status === 'izin' ? 'disabled' : '' }}>
-                                                <i class="bi bi-clock-history me-2"></i>
-                                                <div>
-                                                    <strong>Absen Pulang</strong>
-                                                    <br><small>
-                                                        @if ($absensiHariIni && $absensiHariIni->jam_pulang)
-                                                            Sudah absen: {{ $absensiHariIni->jam_pulang->format('H:i') }}
-                                                        @elseif($absensiHariIni && $absensiHariIni->status === 'izin')
-                                                            Sedang izin
-                                                        @elseif(!$absensiHariIni || !$absensiHariIni->jam_masuk)
-                                                            Absen masuk dulu
-                                                        @else
-                                                            Klik untuk absen pulang
-                                                        @endif
-                                                    </small>
-                                                </div>
+
+                                            <button type="submit" class="btn btn-warning w-100 h-100 py-4"
+                                                id="btnPulang"
+                                                {{ !$absensiHariIni || !$absensiHariIni->jam_masuk || $absensiHariIni->jam_pulang || $absensiHariIni->status === 'izin' || $absensiHariIni->status === 'dinas' ? 'disabled' : '' }}>
+                                                <i class="bi bi-clock-history me-2 fs-4"></i><br>
+                                                <strong>Absen Pulang</strong><br>
+                                                <small>
+                                                    @if ($absensiHariIni && $absensiHariIni->jam_pulang)
+                                                        Sudah absen: {{ $absensiHariIni->jam_pulang->format('H:i') }}
+                                                    @elseif ($absensiHariIni && ($absensiHariIni->status === 'izin' || $absensiHariIni->status === 'dinas'))
+                                                        Sedang
+                                                        {{ $absensiHariIni->status === 'izin' ? 'izin' : 'dinas luar' }}
+                                                    @elseif (!$absensiHariIni || !$absensiHariIni->jam_masuk)
+                                                        Absen masuk dulu
+                                                    @else
+                                                        Klik untuk absen pulang
+                                                    @endif
+                                                </small>
                                             </button>
                                         </form>
                                     </div>
 
                                     {{-- Tombol Izin --}}
-                                    <div class="col-md-4">
-                                        <button type="button" class="btn btn-info w-100 btn-lg" id="btnIzin"
+                                    <div class="col-md-3 col-6">
+                                        <button type="button" class="btn btn-info w-100 h-100 py-4" id="btnIzin"
                                             data-bs-toggle="modal" data-bs-target="#modalIzin"
                                             {{ $absensiHariIni ? 'disabled' : '' }}>
-                                            <i class="bi bi-file-earmark-text me-2"></i>
-                                            <div>
-                                                <strong>Ajukan Izin</strong>
-                                                <br><small>
-                                                    @if ($absensiHariIni && $absensiHariIni->status === 'izin')
-                                                        Sudah mengajukan izin
-                                                    @elseif($absensiHariIni)
-                                                        Sudah absen hari ini
-                                                    @else
-                                                        Klik untuk izin tidak masuk
-                                                    @endif
-                                                </small>
-                                            </div>
+                                            <i class="bi bi-file-earmark-text me-2 fs-4"></i><br>
+                                            <strong>Izin</strong><br>
+                                            <small>
+                                                @if ($absensiHariIni && $absensiHariIni->status === 'izin')
+                                                    Sudah izin
+                                                @elseif ($absensiHariIni)
+                                                    Ada absensi
+                                                @else
+                                                    Tidak masuk
+                                                @endif
+                                            </small>
                                         </button>
                                     </div>
+
+                                    {{-- Tombol Dinas Luar --}}
+                                    <div class="col-md-3 col-6">
+                                        <button type="button" class="btn btn-primary w-100 h-100 py-4" id="btnDinas"
+                                            data-bs-toggle="modal" data-bs-target="#modalDinas"
+                                            {{ $absensiHariIni ? 'disabled' : '' }}>
+                                            <i class="bi bi-briefcase me-2 fs-4"></i><br>
+                                            <strong>Dinas Luar</strong><br>
+                                            <small>
+                                                @if ($absensiHariIni && $absensiHariIni->status === 'dinas')
+                                                    Sedang dinas
+                                                @elseif ($absensiHariIni)
+                                                    Ada absensi
+                                                @else
+                                                    Tugas luar
+                                                @endif
+                                            </small>
+                                        </button>
+                                    </div>
+
                                 </div>
+
 
                                 {{-- Info Lokasi --}}
                                 <div class="row mt-4">
@@ -332,7 +376,6 @@
                                 placeholder="Jelaskan alasan izin Anda..." required></textarea>
                             <div class="form-text">Minimal 10 karakter, maksimal 500 karakter</div>
                         </div>
-                        <!-- Tempat untuk alert status izin akan ditambahkan di sini oleh JavaScript -->
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <strong>Perhatian:</strong> Setelah mengajukan izin, Anda tidak bisa melakukan absensi
@@ -348,8 +391,51 @@
         </div>
     </div>
 
+    {{-- Modal Dinas Luar --}}
+    <div class="modal fade" id="modalDinas" tabindex="-1" aria-labelledby="modalDinasLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDinasLabel">Ajukan Dinas Luar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ route('absensi.dinas-luar') }}" id="formDinas">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="jenisDinas" class="form-label">Jenis Dinas</label>
+                            <select class="form-select" id="jenisDinas" name="jenis_dinas" required>
+                                <option value="">Pilih jenis dinas</option>
+                                <option value="perusahaan">Perusahaan</option>
+                                <option value="sekolah">Sekolah</option>
+                                <option value="instansi_pemerintah">Instansi Pemerintah</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="keteranganDinas" class="form-label">Keterangan/Alasan</label>
+                            <textarea class="form-control" id="keteranganDinas" name="keterangan" rows="3"
+                                placeholder="Jelaskan alasan dinas luar Anda..." required></textarea>
+                            <div class="form-text">Minimal 10 karakter, maksimal 500 karakter</div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Informasi:</strong> Setelah mengajukan dinas luar dan disetujui, Anda tetap wajib
+                            melakukan absensi masuk dan pulang seperti biasa.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Ajukan Dinas Luar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <style>
-        .izin-status-alert {
+        .izin-status-alert,
+        .dinas-status-alert {
             margin-bottom: 1rem;
         }
     </style>
@@ -364,6 +450,7 @@
         const sudahAbsenMasuk = absensiHariIni && absensiHariIni.jam_masuk;
         const sudahAbsenPulang = absensiHariIni && absensiHariIni.jam_pulang;
         const sedangIzin = absensiHariIni && absensiHariIni.status === 'izin';
+        const sedangDinas = absensiHariIni && absensiHariIni.status_dinas === 'disetujui';
 
         // Elemen UI
         const locationSwitch = document.getElementById('locationSwitch');
@@ -374,6 +461,7 @@
         const btnMasuk = document.getElementById('btnMasuk');
         const btnPulang = document.getElementById('btnPulang');
         const btnIzin = document.getElementById('btnIzin');
+        const btnDinas = document.getElementById('btnDinas');
         const latitudeMasuk = document.getElementById('latitudeMasuk');
         const longitudeMasuk = document.getElementById('longitudeMasuk');
         const latitudePulang = document.getElementById('latitudePulang');
@@ -417,7 +505,6 @@
             return deg * (Math.PI / 180);
         }
 
-        // Fungsi untuk mendapatkan lokasi
         function getLocation() {
             // Jika sudah lengkap absensi atau sedang izin, jangan ambil lokasi
             if ((sudahAbsenMasuk && sudahAbsenPulang) || sedangIzin) {
@@ -425,8 +512,10 @@
                 return;
             }
 
+            // Jika sedang dinas luar, tetap ambil lokasi untuk absensi pulang
             if (navigator.geolocation) {
-                locationStatus.textContent = "Mengambil lokasi...";
+                locationStatus.textContent = sedangDinas ? "Sedang dinas luar, siap untuk absen pulang..." :
+                    "Mengambil lokasi...";
 
                 // Dapatkan posisi sekali
                 navigator.geolocation.getCurrentPosition(
@@ -574,6 +663,7 @@
         });
 
         // Validasi form absen masuk
+        // Di bagian validasi form absen masuk
         document.getElementById('formMasuk').addEventListener('submit', function(e) {
             if (sudahAbsenMasuk || sedangIzin) {
                 e.preventDefault();
@@ -581,6 +671,12 @@
                 return false;
             }
 
+            // Periksa apakah sedang dinas luar
+            if (sedangDinas) {
+                // Izinkan absen masuk meskipun sedang dinas luar
+                console.log('Siswa sedang dinas luar, tetap diizinkan absen masuk');
+            }
+
             if (!currentPosition) {
                 e.preventDefault();
                 alert('Lokasi tidak terdeteksi. Silakan aktifkan akses lokasi.');
@@ -606,19 +702,30 @@
                 return false;
             }
         });
+
 
         // Validasi form absen pulang
         document.getElementById('formPulang').addEventListener('submit', function(e) {
-            if (!sudahAbsenMasuk) {
-                e.preventDefault();
-                alert('Anda belum melakukan absen masuk hari ini.');
-                return false;
-            }
+            const absensiHariIni = @json($absensiHariIni);
+            const sedangDinas = absensiHariIni && absensiHariIni.status_dinas === 'disetujui';
 
-            if (sudahAbsenPulang || sedangIzin) {
-                e.preventDefault();
-                alert(sedangIzin ? 'Anda sedang izin hari ini.' : 'Anda sudah melakukan absen pulang hari ini.');
-                return false;
+            // Kalau sedang dinas luar, skip pengecekan absen masuk
+            if (sedangDinas) {
+                console.log('Siswa sedang dinas luar, langsung diizinkan absen pulang tanpa absen masuk');
+            } else {
+                // Hanya berlaku kalau BUKAN dinas
+                if (!sudahAbsenMasuk) {
+                    e.preventDefault();
+                    alert('Anda belum melakukan absen masuk hari ini.');
+                    return false;
+                }
+
+                if (sudahAbsenPulang || sedangIzin) {
+                    e.preventDefault();
+                    alert(sedangIzin ? 'Anda sedang izin hari ini.' :
+                        'Anda sudah melakukan absen pulang hari ini.');
+                    return false;
+                }
             }
 
             if (!currentPosition) {
@@ -647,14 +754,22 @@
             }
         });
 
+
         document.addEventListener('DOMContentLoaded', function() {
             const formIzin = document.getElementById('formIzin');
+            const formDinas = document.getElementById('formDinas');
             const modalIzin = new bootstrap.Modal(document.getElementById('modalIzin'));
+            const modalDinas = new bootstrap.Modal(document.getElementById('modalDinas'));
             let absensiHariIni = false; // Variabel untuk menyimpan status absensi
 
             // Cek status izin saat modal dibuka
             document.getElementById('modalIzin').addEventListener('show.bs.modal', function() {
                 cekStatusIzin();
+            });
+
+            // Cek status dinas saat modal dibuka
+            document.getElementById('modalDinas').addEventListener('show.bs.modal', function() {
+                cekStatusDinas();
             });
 
             // Fungsi untuk cek status izin
@@ -683,6 +798,40 @@
                         } else {
                             // Jika tidak ada izin, enable form
                             enableIzinForm();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Fungsi untuk cek status dinas
+            function cekStatusDinas() {
+                fetch('{{ route('absensi.cek-dinas') }}', {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update variabel absensiHariIni
+                        absensiHariIni = data.has_attendance || data.has_approved_dinas;
+
+                        if (data.has_attendance) {
+                            // Jika sudah ada absensi
+                            disableDinasForm(
+                                'Anda sudah memiliki record absensi hari ini. Tidak bisa mengajukan dinas luar.'
+                            );
+                        } else if (data.has_approved_dinas) {
+                            // Jika sudah ada dinas disetujui
+                            disableDinasForm('Anda sudah mengajukan dinas luar hari ini.');
+                        } else if (data.has_pending_dinas) {
+                            // Jika ada dinas pending
+                            disableDinasForm('Anda sudah mengajukan dinas luar. Menunggu konfirmasi IDUKA.');
+                        } else {
+                            // Jika tidak ada dinas, enable form
+                            enableDinasForm();
                         }
                     })
                     .catch(error => {
@@ -719,6 +868,35 @@
                 }
             }
 
+            function disableDinasForm(message) {
+                // Nonaktifkan form
+                formDinas.querySelectorAll('select, textarea, button[type="submit"]').forEach(el => {
+                    el.disabled = true;
+                });
+
+                // Tampilkan pesan
+                let alertDiv = formDinas.querySelector('.dinas-status-alert');
+                if (!alertDiv) {
+                    alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-info mt-3 dinas-status-alert';
+                    formDinas.querySelector('.modal-body').appendChild(alertDiv);
+                }
+                alertDiv.innerHTML = `<i class="bi bi-info-circle me-2"></i> ${message}`;
+            }
+
+            function enableDinasForm() {
+                // Aktifkan form
+                formDinas.querySelectorAll('select, textarea, button[type="submit"]').forEach(el => {
+                    el.disabled = false;
+                });
+
+                // Hapus pesan alert jika ada
+                const alertDiv = formDinas.querySelector('.dinas-status-alert');
+                if (alertDiv) {
+                    alertDiv.remove();
+                }
+            }
+
             // Validasi form izin
             document.getElementById('formIzin').addEventListener('submit', function(e) {
                 // Cek jika sudah ada absensi (dari hasil fetch sebelumnya)
@@ -739,6 +917,32 @@
                 // Konfirmasi pengajuan izin
                 if (!confirm(
                         'Apakah Anda yakin ingin mengajukan izin? Setelah izin diajukan, Anda tidak bisa melakukan absensi hari ini.'
+                    )) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Validasi form dinas
+            document.getElementById('formDinas').addEventListener('submit', function(e) {
+                // Cek jika sudah ada absensi (dari hasil fetch sebelumnya)
+                if (absensiHariIni) {
+                    e.preventDefault();
+                    alert('Anda sudah memiliki record absensi hari ini. Tidak bisa mengajukan dinas luar.');
+                    return false;
+                }
+
+                // Validasi keterangan
+                const keterangan = document.getElementById('keteranganDinas').value.trim();
+                if (keterangan.length < 10) {
+                    e.preventDefault();
+                    alert('Keterangan dinas minimal 10 karakter.');
+                    return false;
+                }
+
+                // Konfirmasi pengajuan dinas
+                if (!confirm(
+                        'Apakah Anda yakin ingin mengajukan dinas luar? Setelah dinas diajukan dan disetujui, Anda tetap wajib melakukan absensi masuk dan pulang seperti biasa.'
                     )) {
                     e.preventDefault();
                     return false;
@@ -772,6 +976,7 @@
                 }, 5000);
             }
         });
+
         // Auto-check jika tidak ada IDUKA yang valid
         document.addEventListener('DOMContentLoaded', function() {
             if (!hasValidIduka) {
@@ -788,22 +993,40 @@
             }
         });
 
-        // Update status tombol berdasarkan kondisi
         function updateButtonStates() {
+            // Status dari server
+            const absensiHariIni = @json($absensiHariIni);
+            const sedangDinas = absensiHariIni && absensiHariIni.status_dinas === 'disetujui';
+            const sudahAbsenMasuk = absensiHariIni && absensiHariIni.jam_masuk;
+            const sudahAbsenPulang = absensiHariIni && absensiHariIni.jam_pulang;
+            const sedangIzin = absensiHariIni && absensiHariIni.status === 'izin';
+
             // Tombol Masuk
             if (sudahAbsenMasuk || sedangIzin) {
                 btnMasuk.disabled = true;
                 btnMasuk.classList.remove('btn-success');
                 btnMasuk.classList.add('btn-secondary');
+            } else if (sedangDinas) {
+                // Jika sedang dinas, tombol masuk tidak aktif karena bisa langsung pulang
+                btnMasuk.disabled = true;
+                btnMasuk.classList.remove('btn-success');
+                btnMasuk.classList.add('btn-secondary');
             }
 
-            // Tombol Pulang
-            if (!sudahAbsenMasuk || sudahAbsenPulang || sedangIzin) {
+            // Tombol Pulang - LOGIKA UTAMA PERUBAHAN
+            if (sedangDinas && !sudahAbsenPulang) {
+                // Jika sedang dinas luar dan belum pulang, tombol pulang aktif
+                btnPulang.disabled = false;
+                btnPulang.classList.add('btn-warning');
+            } else if (!sudahAbsenMasuk || sudahAbsenPulang || sedangIzin) {
                 btnPulang.disabled = true;
                 if (sudahAbsenPulang) {
                     btnPulang.classList.remove('btn-warning');
                     btnPulang.classList.add('btn-secondary');
                 }
+            } else if (sudahAbsenMasuk && !sudahAbsenPulang && !sedangIzin) {
+                btnPulang.disabled = false;
+                btnPulang.classList.add('btn-warning');
             }
 
             // Tombol Izin
@@ -811,6 +1034,13 @@
                 btnIzin.disabled = true;
                 btnIzin.classList.remove('btn-info');
                 btnIzin.classList.add('btn-secondary');
+            }
+
+            // Tombol Dinas
+            if (absensiHariIni) {
+                btnDinas.disabled = true;
+                btnDinas.classList.remove('btn-primary');
+                btnDinas.classList.add('btn-secondary');
             }
         }
 

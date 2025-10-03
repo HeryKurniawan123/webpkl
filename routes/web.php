@@ -103,15 +103,16 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
 
     Route::prefix('absensi')->name('absensi.')->group(function () {
-        Route::get('/absensi', [AbsensiController::class, 'index'])->name('index');
-        Route::post('/absensi/izin', [AbsensiController::class, 'izin'])->name('izin');
-        Route::delete('/absensi/batal-izin', [AbsensiController::class, 'batalIzin'])->name('batal-izin');
+        Route::get('/', [AbsensiController::class, 'index'])->name('index');
+        Route::post('/izin', [AbsensiController::class, 'izin'])->name('izin');
+        Route::post('/dinas-luar', [AbsensiController::class, 'dinasLuar'])->name('dinas-luar');
+        Route::delete('/batal-izin', [AbsensiController::class, 'batalIzin'])->name('batal-izin');
         Route::post('/masuk', [AbsensiController::class, 'masuk'])->name('masuk');
-        Route::post('/pulang', [AbsensiController::class, 'pulang'])->name('pulang');
+        Route::post('/pulang', [AbsensiController::class, 'pulang'])->name('pulang.siswa');
         Route::get('/status', [AbsensiController::class, 'getStatus'])->name('status');
         Route::get('/riwayat', [AbsensiController::class, 'riwayat'])->name('riwayat');
-        Route::get('/absensi/cek-izin', [AbsensiController::class, 'cekStatusIzin'])
-            ->name('cek-izin');
+        Route::get('/cek-izin', [AbsensiController::class, 'cekStatusIzin'])->name('cek-izin');
+        Route::get('/cek-dinas', [AbsensiController::class, 'cekStatusDinas'])->name('cek-dinas');
     });
 
     //jurnal
@@ -369,7 +370,9 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 Route::middleware(['auth', 'hakakses:iduka,guru'])->group(function () {
 
     Route::get('/konfir/absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfir.absen.index');
-
+    // Route::get('/test-dinas', function () {
+    //     return 'Route test dinas works!';
+    // });
 
     Route::prefix('iduka')->name('iduka.')->group(function () {
         // tampil halaman konfirmasi
@@ -394,7 +397,7 @@ Route::middleware(['auth', 'hakakses:iduka,guru'])->group(function () {
         Route::get('/detail-izin/{id}', [KonfirAbsenSiswaController::class, 'detailIzin'])
             ->name('detail-izin');
 
-        // Route untuk API endpoints (untuk refresh data)
+        // Route untuk API endpoints
         Route::get('/api/absensi-hari-ini', [KonfirAbsenSiswaController::class, 'getAbsensiHariIni'])
             ->name('api.absensi-hari-ini');
         Route::get('/api/absensi-pending', [KonfirAbsenSiswaController::class, 'getAbsensiPending'])
@@ -402,21 +405,21 @@ Route::middleware(['auth', 'hakakses:iduka,guru'])->group(function () {
         Route::get('/api/izin-pending', [KonfirAbsenSiswaController::class, 'getIzinPending'])
             ->name('api.izin-pending');
 
-        Route::get('/detail-absen/{id}', [KonfirAbsenSiswaController::class, 'detailAbsen'])
-            ->name('detail-absen');
-        Route::get('/detail-izin/{id}', [KonfirAbsenSiswaController::class, 'detailIzin'])
-            ->name('detail-izin');
-
-        // Route untuk tolak absen - TAMBAHKAN INI
+        // Route untuk tolak absen
         Route::post('/tolak-absen/{id}', [KonfirAbsenSiswaController::class, 'tolakAbsensi'])
             ->name('tolak-absen');
 
         //filter riwayat absen
         Route::get('/riwayat-absensi', [KonfirAbsenSiswaController::class, 'filterRiwayat'])
             ->name('filter-riwayat');
+
+        Route::post('/konfirmasi-dinas/{id}', [KonfirAbsenSiswaController::class, 'konfirmasiDinas'])
+            ->name('konfirmasi-dinas');
+
     });
 
-     Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
+
+    Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
         ->name('pembimbing.dashboard');
 
     Route::get('/approval', [JournalApprovalController::class, 'index'])->name('approval.index');
@@ -626,7 +629,7 @@ Route::middleware(['auth', 'hakakses:guru'])->group(function () {
     Route::post('/absensi-guru', [AbsensiGuruController::class, 'store'])->name('absensi.guru.store');
     Route::get('/absensi-guru/riwayat', [AbsensiGuruController::class, 'getRiwayat'])->name('absensi.guru.riwayat');
     Route::put('/absensi-guru/{id}/pulang', [AbsensiGuruController::class, 'updateJamPulang'])
-    ->name('absensi.pulang');
+        ->name('absensi.pulang');
 });
 
 

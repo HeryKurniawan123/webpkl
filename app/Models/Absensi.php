@@ -17,7 +17,7 @@ class Absensi extends Model
         'tanggal',
         'jam_masuk',
         'jam_pulang',
-        'status',
+        'status', // tetap 'hadir' untuk dinas luar
         'keterangan',
         'latitude',
         'longitude',
@@ -31,12 +31,14 @@ class Absensi extends Model
         'longitude_pulang',
         'lokasi_pulang',
         'jenis_izin',
-        'keterangan_izin'
+        'keterangan_izin',
+        'jenis_dinas',
+        'keterangan_dinas',
+        'status_dinas' // 'disetujui', 'pending', 'ditolak'
     ];
 
     protected $dates = ['tanggal'];
 
-    // Add casts for datetime fields
     protected $casts = [
         'tanggal' => 'date',
         'jam_masuk' => 'datetime',
