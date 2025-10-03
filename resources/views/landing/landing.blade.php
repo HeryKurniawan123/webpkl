@@ -304,10 +304,13 @@
                             <a href="#about"
                                 class="btn-get-started animate__animated animate__fadeInUp scrollto">Pelajari Lebih
                                 Lanjut</a>
-                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA"
-                                href="javascript:void(0)" style="display:none; background:#28a745;">
-                                <i class="bi bi-download"></i> Install Aplikasi
-                            </a>
+                            <a class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA
+           hidden bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
+           transition duration-300 ease-in-out
+           hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg"
+   href="javascript:void(0)">
+   <i class="bi bi-download"></i> Install Aplikasi
+</a>
                         </div>
                     </div>
                 </div>
