@@ -79,8 +79,8 @@
                         <form method="GET" action="{{ route('monitoring.index') }}">
                             <div class="row g-3 align-items-end">
                                 <div class="col-md-6">
-                                    <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}" 
-                                           class="form-control" placeholder="Cari IDUKA...">
+                                    <input type="text" name="nama_iduka" value="{{ request('nama_iduka') }}"
+                                        class="form-control" placeholder="Cari IDUKA...">
                                 </div>
                                 <div class="col-md-6 d-flex gap-2">
                                     <button type="submit" class="btn btn-primary">
@@ -94,13 +94,13 @@
                         </form>
                     </div>
                     {{-- Tombol Tambah hanya untuk selain kaprog --}}
-            <div class="col-md-4 text-md-end">
-                @if (auth()->user()->role !== 'kaprog')
-                    <a href="{{ route('monitoring.create') }}" class="btn btn-success">
-                        <i class="fas fa-plus me-2"></i> Tambah Monitoring
-                    </a>
-                @endif
-            </div>
+                    <div class="col-md-4 text-md-end">
+                        @if (in_array(auth()->user()->role , ['kaprog' , 'guru' , 'hubin']))
+                            <a href="{{ route('monitoring.create') }}" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i> Tambah Monitoring
+                            </a>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,88 +124,88 @@
                                 <th class="border-0 fw-semibold text-muted small py-3">SARAN / CATATAN</th>
                                 <th class="border-0 fw-semibold text-muted small py-3">PERKIRAAN SISWA DITERIMA</th>
                                 <th class="border-0 fw-semibold text-muted small py-3">FOTO</th>
-                                <th class="border-0 fw-semibold text-muted small py-3">TANGGAL UPDATE</th>
+                                <th class="border-0 fw-semibold text-muted small py-3">TANGGAL</th>
                                 <th class="border-0 fw-semibold text-muted small py-3 text-center">AKSI</th>
                             </tr>
                         </thead>
-                       <tbody>
-    @forelse ($monitoring as $index => $item)
-        <tr>
-            <td class="px-4">{{ $monitoring->firstItem() + $index }}</td>
-            <td>
-                <div class="fw-semibold">{{ $item->iduka->nama ?? '-' }}</div>
-                <small class="text-muted">{{ $item->iduka->alamat ?? '-' }}</small>
-            </td>
-            <td>
-                <div style="max-width: 250px;">
-                    {{ Str::limit($item->saran, 100) ?: '-' }}
-                </div>
-            </td>
-            <td class="text-center">
-                <span class="badge bg-info fs-6">
-                    {{ $item->perkiraan_siswa_diterima ?? 0 }} siswa
-                </span>
-            </td>
-            <td class="text-center">
-                @if ($item->foto)
-                    <button class="btn btn-outline-primary btn-sm" 
-                            onclick="showImage('{{ Storage::url('monitoring/' . $item->foto) }}', '{{ $item->iduka->nama }}')">
-                        <i class="fas fa-image"></i> Lihat
-                    </button>
-                @else
-                    <span class="text-muted">-</span>
-                @endif
-            </td>
-            <td>
-                <small class="text-muted">
-                    {{ $item->updated_at->format('d/m/Y H:i') }}
-                </small>
-            </td>
+                        <tbody>
+                            @forelse ($monitoring as $index => $item)
+                                <tr>
+                                    <td class="px-4">{{ $monitoring->firstItem() + $index }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ $item->iduka->nama ?? '-' }}</div>
+                                        <small class="text-muted">{{ $item->iduka->alamat ?? '-' }}</small>
+                                    </td>
+                                    <td>
+                                        <div style="max-width: 250px;">
+                                            {{ Str::limit($item->saran, 100) ?: '-' }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info fs-6">
+                                            {{ $item->perikiraan_siswa_diterima ?? '-' }} siswa
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($item->foto)
+                                            <button class="btn btn-outline-primary btn-sm"
+                                                onclick="showImage('{{ Storage::url('monitoring/' . $item->foto) }}', '{{ $item->iduka->nama }}')">
+                                                <i class="fas fa-image"></i> Lihat
+                                            </button>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ \Carbon\Carbon::parse($item->tgl)->format('d-m-Y') }}
+                                        </small>
+                                    </td>
 
-            {{-- Tombol Aksi --}}
-            <td class="text-center">
-                <div class="btn-group" role="group">
-                    {{-- Tombol lihat selalu tampil --}}
-                    <a href="{{ route('monitoring.show', $item->id) }}" 
-                       class="btn btn-outline-info btn-sm">
-                        <i class="fas fa-eye"></i>
-                    </a>
+                                    {{-- Tombol Aksi --}}
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            {{-- Tombol lihat selalu tampil --}}
+                                            <a href="{{ route('monitoring.show', $item->id) }}"
+                                                class="btn btn-outline-info btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
 
-                    {{-- Tombol edit & hapus hanya tampil jika bukan kaprog --}}
-                    @if (auth()->user()->role !== 'kaprog')
-                        <a href="{{ route('monitoring.edit', $item->id) }}" 
-                           class="btn btn-outline-warning btn-sm">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <button class="btn btn-outline-danger btn-sm" 
-                                onclick="confirmDelete({{ $item->id }}, '{{ $item->iduka->nama }}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    @endif
-                </div>
-            </td>
-        </tr>
-    @empty
-        <tr>
-            <td colspan="7" class="text-center py-4">
-                <div class="text-muted">
-                    <i class="bx bx-folder-open fs-1"></i>
-                    <div class="mt-2">Belum ada data monitoring</div>
-                </div>
-            </td>
-        </tr>
-    @endforelse
-</tbody>
+                                            {{-- Tombol edit & hapus hanya tampil jika bukan kaprog --}}
+                                             @if (in_array(auth()->user()->role , ['kaprog' , 'guru' , 'hubin']))
+                                                <a href="{{ route('monitoring.edit', $item->id) }}"
+                                                    class="btn btn-outline-warning btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="confirmDelete({{ $item->id }}, '{{ $item->iduka->nama }}')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <div class="text-muted">
+                                            <i class="bx bx-folder-open fs-1"></i>
+                                            <div class="mt-2">Belum ada data monitoring</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
 
                     </table>
                 </div>
             </div>
 
-            @if($monitoring->hasPages())
+            @if ($monitoring->hasPages())
                 <div class="card-footer bg-transparent border-0">
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">
-                            Menampilkan {{ $monitoring->firstItem() }} - {{ $monitoring->lastItem() }} 
+                            Menampilkan {{ $monitoring->firstItem() }} - {{ $monitoring->lastItem() }}
                             dari {{ $monitoring->total() }} data
                         </small>
                         <nav>

@@ -65,6 +65,7 @@ class MonitoringController extends Controller
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tgl' => 'required'
         ]);
 
         $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima']);
@@ -75,6 +76,7 @@ class MonitoringController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('public/monitoring', $filename);
             $data['foto'] = $filename;
+            $data['tgl'] = $request->tgl;
         }
 
         Monitoring::create($data);
@@ -111,9 +113,10 @@ class MonitoringController extends Controller
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tgl' => 'required'
         ]);
 
-        $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima']);
+        $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima' , 'tgl']);
 
         // Handle file upload
         if ($request->hasFile('foto')) {
@@ -150,5 +153,5 @@ class MonitoringController extends Controller
             ->with('success', 'Data monitoring berhasil dihapus.');
     }
 
-    
+
 }

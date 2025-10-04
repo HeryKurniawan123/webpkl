@@ -178,7 +178,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 });
 
 // Route monitoring hanya untuk login dan role kaprog, hubin, pembimbing
-Route::middleware(['auth', 'hakakses:kaprog,hubin,guru'])->prefix('monitoring')->group(function () {
+Route::middleware(['auth', 'hakakses:kaprog,hubin,guru,kepsek'])->prefix('monitoring')->group(function () {
     Route::get('/', [MonitoringController::class, 'index'])->name('monitoring.index');
     Route::get('/create', [MonitoringController::class, 'create'])->name('monitoring.create');
     Route::post('/', [MonitoringController::class, 'store'])->name('monitoring.store');

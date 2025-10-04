@@ -236,7 +236,7 @@
                         </li>
                     @endif
 
-                    @if (in_array(auth()->user()->role, ['kaprog', 'guru', 'hubin']))
+                    @if (in_array(auth()->user()->role, ['kaprog', 'guru', 'hubin' , 'kepsek']))
                         <li class="menu-item {{ Request::routeIs('monitoring.index') ? 'active' : '' }}">
                             <a href="{{ route('monitoring.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar-check"></i>

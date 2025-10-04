@@ -1,7 +1,7 @@
 @extends('layout.main')
 
 @section('content')
-    <div class="container">
+    <div class="container my-4">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm">
@@ -23,7 +23,7 @@
                                 <a href="{{ route('monitoring.edit', $monitoring->id) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit me-1"></i> Edit
                                 </a>
-                                <button class="btn btn-danger btn-sm" 
+                                <button class="btn btn-danger btn-sm"
                                         onclick="confirmDelete({{ $monitoring->id }}, '{{ $monitoring->iduka->nama }}')">
                                     <i class="fas fa-trash me-1"></i> Hapus
                                 </button>
@@ -70,12 +70,12 @@
                                             <td>: {{ $monitoring->created_at->format('d F Y, H:i') }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted">Terakhir Update</td>
+                                            <td class="text-muted">Terakhir     </td>
                                             <td>: {{ $monitoring->updated_at->format('d F Y, H:i') }}</td>
                                         </tr>
                                         <tr>
                                             <td class="text-muted">Perkiraan Siswa</td>
-                                            <td>: 
+                                            <td>:
                                                 <span class="badge bg-info fs-6">
                                                     {{ $monitoring->perikiraan_siswa_diterima ?? 0 }} siswa
                                                 </span>
@@ -93,8 +93,8 @@
                                             <i class="bx bx-camera me-2"></i>Foto Monitoring
                                         </h6>
                                         <div class="text-center">
-                                            <img src="{{ Storage::url('monitoring/' . $monitoring->foto) }}" 
-                                                 alt="Foto Monitoring" 
+                                            <img src="{{ Storage::url('monitoring/' . $monitoring->foto) }}"
+                                                 alt="Foto Monitoring"
                                                  class="img-fluid rounded shadow-sm"
                                                  style="max-height: 300px; cursor: pointer;"
                                                  onclick="showImageModal('{{ Storage::url('monitoring/' . $monitoring->foto) }}', '{{ $monitoring->iduka->nama }}')">

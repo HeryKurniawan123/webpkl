@@ -16,7 +16,12 @@ class Monitoring extends Model
         'saran',
         'perikiraan_siswa_diterima',
         'foto',
+        'tgl'
     ];
+
+    protected $casts = [
+    'tgl' => 'date',
+];
 
     /**
      * Relationship with Iduka
