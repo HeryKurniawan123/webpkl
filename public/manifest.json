@@ -1,8 +1,8 @@
 {
 
-  "name": "SMKN 1 Kawali App",
+  "name": "SMKN 1 Kawali PKL",
 
-  "short_name": "KONE",
+  "short_name": "MyPKL K-ONE",
 
   "start_url": "/login",
 
@@ -10,7 +10,7 @@
 
   "background_color": "#ffffff",
 
-  "theme_color": "#0d6efd",
+  "theme_color": "#ffffff",
 
   "orientation": "portrait",
 
