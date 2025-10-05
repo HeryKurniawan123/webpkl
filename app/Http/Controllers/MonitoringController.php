@@ -4,15 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Monitoring;
 use App\Models\Iduka;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MonitoringController extends Controller
 {
-    /**
-     * Display a listing of monitoring data.
-     */
+
     public function index(Request $request)
     {
         $query = Monitoring::with('iduka');
@@ -27,14 +26,19 @@ class MonitoringController extends Controller
 
         $monitoring = $query->orderByDesc('id')->paginate(10);
 
-        // Hitung statistik
+        // === Statistik lama (biarkan tetap ada) ===
         $totalMonitoring = Monitoring::count();
         $totalIduka = Iduka::count();
         $totalIdukaWithMonitoring = Monitoring::distinct('iduka_id')->count();
         $totalIdukaWithoutMonitoring = $totalIduka - $totalIdukaWithMonitoring;
-
-        // Perkiraan total siswa yang akan diterima
         $totalPerkiraanSiswa = Monitoring::sum('perikiraan_siswa_diterima');
+
+        $guruBelumMonitoringData = User::whereIn('role', ['guru', 'kaprog'])
+            ->whereDoesntHave('monitoring')
+            ->get();
+
+        $guruBelumMonitoring = $guruBelumMonitoringData->count();
+
 
         return view('monitoring.index', compact(
             'monitoring',
@@ -42,22 +46,21 @@ class MonitoringController extends Controller
             'totalIduka',
             'totalIdukaWithMonitoring',
             'totalIdukaWithoutMonitoring',
-            'totalPerkiraanSiswa'
+            'totalPerkiraanSiswa',
+            'guruBelumMonitoring',
+            'guruBelumMonitoringData'
         ));
+
     }
 
-    /**
-     * Show the form for creating a new monitoring record.
-     */
+
+
     public function create()
     {
         $idukas = Iduka::orderBy('nama')->get();
         return view('monitoring.create', compact('idukas'));
     }
 
-    /**
-     * Store a newly created monitoring record in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -65,47 +68,41 @@ class MonitoringController extends Controller
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tgl' => 'required'
+            'tgl' => 'required|date',
         ]);
 
-        $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima']);
+        $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima', 'tgl']);
 
-        // Handle file upload
+        // Ambil guru_id dari user login
+        $guru = \App\Models\Guru::where('user_id', auth()->id())->first();
+        if ($guru) {
+            $data['guru_id'] = $guru->id;
+        }
+
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('public/monitoring', $filename);
             $data['foto'] = $filename;
-            $data['tgl'] = $request->tgl;
         }
 
         Monitoring::create($data);
 
-        return redirect()->route('monitoring.index')
-            ->with('success', 'Data monitoring berhasil ditambahkan.');
+        return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified monitoring record.
-     */
     public function show(Monitoring $monitoring)
     {
-        $monitoring->load('iduka');
+        $monitoring->load(['iduka', 'user']);
         return view('monitoring.show', compact('monitoring'));
     }
 
-    /**
-     * Show the form for editing the specified monitoring record.
-     */
     public function edit(Monitoring $monitoring)
     {
         $idukas = Iduka::orderBy('nama')->get();
         return view('monitoring.edit', compact('monitoring', 'idukas'));
     }
 
-    /**
-     * Update the specified monitoring record in storage.
-     */
     public function update(Request $request, Monitoring $monitoring)
     {
         $request->validate([
@@ -113,14 +110,12 @@ class MonitoringController extends Controller
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tgl' => 'required'
+            'tgl' => 'required|date'
         ]);
 
-        $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima' , 'tgl']);
+        $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima', 'tgl']);
 
-        // Handle file upload
         if ($request->hasFile('foto')) {
-            // Delete old photo if exists
             if ($monitoring->foto && Storage::exists('public/monitoring/' . $monitoring->foto)) {
                 Storage::delete('public/monitoring/' . $monitoring->foto);
             }
@@ -133,25 +128,17 @@ class MonitoringController extends Controller
 
         $monitoring->update($data);
 
-        return redirect()->route('monitoring.index')
-            ->with('success', 'Data monitoring berhasil diperbarui.');
+        return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified monitoring record from storage.
-     */
     public function destroy(Monitoring $monitoring)
     {
-        // Delete photo if exists
         if ($monitoring->foto && Storage::exists('public/monitoring/' . $monitoring->foto)) {
             Storage::delete('public/monitoring/' . $monitoring->foto);
         }
 
         $monitoring->delete();
 
-        return redirect()->route('monitoring.index')
-            ->with('success', 'Data monitoring berhasil dihapus.');
+        return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil dihapus.');
     }
-
-
 }

@@ -106,7 +106,10 @@ class User extends Authenticatable
         return $this->belongsTo(Guru::class, 'pembimbing_id');
     }
 
-    
+     public function monitoring()
+    {
+        return $this->hasMany(Monitoring::class, 'guru_id');
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

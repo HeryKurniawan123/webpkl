@@ -32,14 +32,12 @@
         /* Warna hijau jika checkbox tercentang */
         .custom-checkbox:checked {
             background-color: #28a745;
-            /* Warna hijau */
             border-color: #28a745;
         }
 
         /* Tambahkan centang */
         .custom-checkbox:checked::after {
             content: '\2713';
-            /* Unicode untuk tanda centang ✓ */
             font-size: 14px;
             color: white;
             font-weight: bold;
@@ -48,10 +46,44 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
         .modal-body {
-        max-height: 60vh;
-        overflow-y: auto;
-    }
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        /* Style untuk tampilan yang lebih rapi */
+        .atp-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .atp-content {
+            flex-grow: 1;
+            padding-right: 15px;
+        }
+
+        .atp-checkbox {
+            flex-shrink: 0;
+        }
+
+        /* Style untuk modal tambah */
+        .tp-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .tp-content {
+            flex-grow: 1;
+            padding-left: 20px;
+        }
+
+        .tp-checkbox {
+            width: 30px;
+            text-align: end;
+        }
     </style>
 </head>
 
@@ -72,6 +104,9 @@
                                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahTpModal">
                                         <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah TP</span>
                                     </button>
+                                    <button type="button" class="btn btn-success btn-sm" id="btnCetak">
+                                        <i class="bi bi-printer"></i> <span class="d-none d-md-inline">Cetak</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +116,6 @@
                         <span style="text-align: center">Belum mengisi CP & ATP</span>
                     </div>
                     @else
-                    
 
 
                     @foreach($idukaAtps->groupBy('konke_id') as $konke_id => $konke_items)
@@ -96,14 +130,16 @@
 
                                 @foreach($items as $item)
 
-                                <div class="d-flex justify-content-between align-items-center ms-3">
-                                    <span><b>{{ $item->atp->kode_atp }}</b> {{ $item->atp->atp }}</span>
-                                    <input type="checkbox"
-                                        name="tp_check[]"
-                                        value="{{ $item->atp->id }}"
-                                        class="tp-check custom-checkbox"
-                                        {{ $item->is_selected ? 'checked' : '' }}
-                                        disabled>
+                                <div class="atp-item ms-3">
+                                    <span class="atp-content"><b>{{ $item->atp->kode_atp }}</b> {{ $item->atp->atp }}</span>
+                                    <div class="atp-checkbox">
+                                        <input type="checkbox"
+                                            name="tp_check[]"
+                                            value="{{ $item->atp->id }}"
+                                            class="tp-check custom-checkbox"
+                                            {{ $item->is_selected ? 'checked' : '' }}
+                                            disabled>
+                                    </div>
                                 </div>
 
                                 @endforeach
@@ -182,8 +218,7 @@
         Swal.fire({
             icon: 'success',
             title: 'Berhasil!',
-            text: '{{ session('
-            success ') }}',
+            text: '{{ session('success') }}',
             showConfirmButton: false,
             timer: 2000
         });
@@ -237,12 +272,12 @@
                             // Looping data ATP di dalam CP
                             cp.atp.forEach(atp => {
                                 let atpRow = `
-                            <tr>
-                                <td style='padding-left: 20px;'><b>${atp.kode_atp}</b> ${atp.atp}</td>
-                                <td class="text-end">
-                                    <input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}' ${atp.is_selected ? 'checked' : ''}>
-                                </td>
-                            </tr>`;
+                                    <tr>
+                                        <td class="tp-content"><b>${atp.kode_atp}</b> ${atp.atp}</td>
+                                        <td class="tp-checkbox text-end">
+                                            <input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}' ${atp.is_selected ? 'checked' : ''}>
+                                        </td>
+                                    </tr>`;
                                 tpTambahBody.innerHTML += atpRow;
                             });
                         });
@@ -254,6 +289,11 @@
             }
         });
 
+        // Tombol Cetak
+        document.getElementById("btnCetak").addEventListener("click", function() {
+            // Langsung cetak tanpa modal
+            window.open('/cetak-atp-langsung', '_blank');
+        });
     });
 </script>
 

@@ -2,77 +2,99 @@
 
 @section('content')
     <div class="container">
-        <h5 class="fw-bold mt-5">
-            <i class="bx bx-desktop text-primary"></i>
-            Monitoring IDUKA
-        </h5>
 
-        {{-- Alert Messages --}}
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bx bx-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        @if (in_array(auth()->user()->role, ['kepsek', 'hubin']))
+            <h5 class="fw-bold mt-5">
+                <i class="bx bx-desktop text-primary"></i>
+                Monitoring IDUKA
+            </h5>
+
+            {{-- Alert Messages --}}
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bx bx-check-circle me-2"></i>
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+
+            {{-- Kartu Statistik --}}
+            <div class="row mb-4 g-3">
+                <div class="col-md-3">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bx bx-desktop text-primary fs-2 mb-2"></i>
+                            <h6 class="text-muted">Total Monitoring</h6>
+                            <h3 class="fw-bold text-primary">{{ $totalMonitoring }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bx bx-buildings text-info fs-2 mb-2"></i>
+                            <h6 class="text-muted">Total IDUKA</h6>
+                            <h3 class="fw-bold text-info">{{ $totalIduka }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bx bx-check-circle text-success fs-2 mb-2"></i>
+                            <h6 class="text-muted">IDUKA Termonitor</h6>
+                            <h3 class="fw-bold text-success">{{ $totalIdukaWithMonitoring }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bx bx-x-circle text-warning fs-2 mb-2"></i>
+                            <h6 class="text-muted">Belum Termonitor</h6>
+                            <h3 class="fw-bold text-warning">{{ $totalIdukaWithoutMonitoring }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bx bx-user-check text-success fs-2 mb-2"></i>
+                            <h6 class="text-muted">Perkiraan Siswa Diterima</h6>
+                            <h3 class="fw-bold text-success">{{ $totalPerkiraanSiswa }}</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tambahan baru -->
+                <div class="col-md-3">
+                    <div class="card text-center border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <i class="bx bx-user-x text-danger fs-2 mb-2"></i>
+                            <h6 class="text-muted">Pembimbing Belum Monitoring</h6>
+
+                            <h3 class="fw-bold text-danger">{{ $guruBelumMonitoring }}</h3>
+                            <button class="btn btn-outline-danger btn-sm mt-2" data-bs-toggle="modal"
+                                data-bs-target="#modalBelumMonitoring">
+                                Lihat Daftar
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         @endif
 
-        {{-- Kartu Statistik --}}
-        <div class="row mb-4 g-3">
-            <div class="col-md-3">
-                <div class="card text-center border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bx bx-desktop text-primary fs-2 mb-2"></i>
-                        <h6 class="text-muted">Total Monitoring</h6>
-                        <h3 class="fw-bold text-primary">{{ $totalMonitoring }}</h3>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="card text-center border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bx bx-buildings text-info fs-2 mb-2"></i>
-                        <h6 class="text-muted">Total IDUKA</h6>
-                        <h3 class="fw-bold text-info">{{ $totalIduka }}</h3>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="card text-center border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bx bx-check-circle text-success fs-2 mb-2"></i>
-                        <h6 class="text-muted">IDUKA Termonitor</h6>
-                        <h3 class="fw-bold text-success">{{ $totalIdukaWithMonitoring }}</h3>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="card text-center border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bx bx-x-circle text-warning fs-2 mb-2"></i>
-                        <h6 class="text-muted">Belum Termonitor</h6>
-                        <h3 class="fw-bold text-warning">{{ $totalIdukaWithoutMonitoring }}</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mb-4 g-3">
-            <div class="col-md-4">
-                <div class="card text-center border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bx bx-user-check text-success fs-2 mb-2"></i>
-                        <h6 class="text-muted">Perkiraan Siswa Diterima</h6>
-                        <h3 class="fw-bold text-success">{{ $totalPerkiraanSiswa }}</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         {{-- Filter dan Tambah Data --}}
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card border-0 shadow-sm mb-4 my-4">
             <div class="card-body">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-8">
@@ -95,7 +117,7 @@
                     </div>
                     {{-- Tombol Tambah hanya untuk selain kaprog --}}
                     <div class="col-md-4 text-md-end">
-                        @if (in_array(auth()->user()->role , ['kaprog' , 'guru' , 'hubin']))
+                        @if (in_array(auth()->user()->role, ['kaprog', 'guru']))
                             <a href="{{ route('monitoring.create') }}" class="btn btn-success">
                                 <i class="fas fa-plus me-2"></i> Tambah Monitoring
                             </a>
@@ -120,33 +142,51 @@
                         <thead class="bg-light">
                             <tr>
                                 <th class="border-0 fw-semibold text-muted small px-4 py-3">NO</th>
+                                <th class="border-0 fw-semibold text-muted small py-3">PEMONITORING</th>
                                 <th class="border-0 fw-semibold text-muted small py-3">NAMA IDUKA</th>
                                 <th class="border-0 fw-semibold text-muted small py-3">SARAN / CATATAN</th>
-                                <th class="border-0 fw-semibold text-muted small py-3">PERKIRAAN SISWA DITERIMA</th>
-                                <th class="border-0 fw-semibold text-muted small py-3">FOTO</th>
-                                <th class="border-0 fw-semibold text-muted small py-3">TANGGAL</th>
+                                <th class="border-0 fw-semibold text-muted small py-3 text-center">PERKIRAAN SISWA DITERIMA
+                                </th>
+                                <th class="border-0 fw-semibold text-muted small py-3 text-center">FOTO</th>
+                                <th class="border-0 fw-semibold text-muted small py-3 text-center">TANGGAL</th>
                                 <th class="border-0 fw-semibold text-muted small py-3 text-center">AKSI</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($monitoring as $index => $item)
                                 <tr>
-                                    <td class="px-4">{{ $monitoring->firstItem() + $index }}</td>
-                                    <td>
+                                    {{-- Nomor --}}
+                                    <td class="px-4 align-middle">{{ $monitoring->firstItem() + $index }}</td>
+
+                                    {{-- Dibuat oleh --}}
+                                    <td class="align-middle">
+                                        <div class="fw-semibold">{{ $item->guru->nama ?? '-' }}</div>
+                                        <small class="text-muted">
+                                            {{ $item->guru->konke->name_konke ?? '-' }}
+                                        </small>
+                                    </td>
+
+
+                                    {{-- Nama IDUKA --}}
+                                    <td class="align-middle">
                                         <div class="fw-semibold">{{ $item->iduka->nama ?? '-' }}</div>
                                         <small class="text-muted">{{ $item->iduka->alamat ?? '-' }}</small>
                                     </td>
-                                    <td>
-                                        <div style="max-width: 250px;">
-                                            {{ Str::limit($item->saran, 100) ?: '-' }}
-                                        </div>
+
+                                    {{-- Saran --}}
+                                    <td class="align-middle" style="max-width: 250px;">
+                                        {{ Str::limit($item->saran, 100) ?: '-' }}
                                     </td>
-                                    <td class="text-center">
+
+                                    {{-- Perkiraan siswa diterima --}}
+                                    <td class="text-center align-middle">
                                         <span class="badge bg-info fs-6">
                                             {{ $item->perikiraan_siswa_diterima ?? '-' }} siswa
                                         </span>
                                     </td>
-                                    <td class="text-center">
+
+                                    {{-- Foto --}}
+                                    <td class="text-center align-middle">
                                         @if ($item->foto)
                                             <button class="btn btn-outline-primary btn-sm"
                                                 onclick="showImage('{{ Storage::url('monitoring/' . $item->foto) }}', '{{ $item->iduka->nama }}')">
@@ -156,14 +196,18 @@
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
-                                    <td>
+
+                                    {{-- Tanggal --}}
+                                    <td class="text-center align-middle">
                                         <small class="text-muted">
                                             {{ \Carbon\Carbon::parse($item->tgl)->format('d-m-Y') }}
                                         </small>
                                     </td>
 
+
+
                                     {{-- Tombol Aksi --}}
-                                    <td class="text-center">
+                                    <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
                                             {{-- Tombol lihat selalu tampil --}}
                                             <a href="{{ route('monitoring.show', $item->id) }}"
@@ -171,8 +215,8 @@
                                                 <i class="fas fa-eye"></i>
                                             </a>
 
-                                            {{-- Tombol edit & hapus hanya tampil jika bukan kaprog --}}
-                                             @if (in_array(auth()->user()->role , ['kaprog' , 'guru' , 'hubin']))
+                                            {{-- Tombol edit & hapus hanya tampil untuk guru atau kaprog --}}
+                                            @if (in_array(auth()->user()->role, ['guru', 'kaprog']))
                                                 <a href="{{ route('monitoring.edit', $item->id) }}"
                                                     class="btn btn-outline-warning btn-sm">
                                                     <i class="fas fa-edit"></i>
@@ -187,7 +231,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-4">
+                                    <td colspan="8" class="text-center py-4">
                                         <div class="text-muted">
                                             <i class="bx bx-folder-open fs-1"></i>
                                             <div class="mt-2">Belum ada data monitoring</div>
@@ -196,8 +240,8 @@
                                 </tr>
                             @endforelse
                         </tbody>
-
                     </table>
+
                 </div>
             </div>
 
@@ -231,6 +275,51 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalBelumMonitoring" tabindex="-1" aria-labelledby="modalBelumMonitoringLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBelumMonitoringLabel">Pembimbing Belum Monitoring</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    @if ($guruBelumMonitoringData->isNotEmpty())
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama</th>
+                                    <th>NIP</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($guruBelumMonitoringData as $i => $guru)
+                                    <tr>
+                                        <td>{{ $i + 1 }}</td>
+                                        <td>{{ $guru->name ?? '-' }}</td>
+                                        <td>{{ $guru->nip ?? '-' }}</td>
+                                        <td>{{ $guru->email ?? '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <p class="text-muted">Semua guru/kaprog sudah membuat monitoring âœ…</p>
+                    @endif
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     {{-- Modal konfirmasi hapus --}}
     <div class="modal fade" id="deleteModal" tabindex="-1">
