@@ -53,17 +53,21 @@ use App\Http\Controllers\MonitoringController;
 use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/PKL SMKN 1 Kawali', function () {
+    if (Auth::check()) {
+        return redirect()->route(Auth::user()->role . '.dashboard');
+    }
     return view('landing.landing');
 });
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route(Auth::user()->role . '.dashboard');
+    }
     return redirect('/PKL SMKN 1 Kawali');
 });
 
-Route::middleware(['guest'])->group(function () {
-    Route::get('/login', [HakAksesController::class, 'index'])->name('login');
-    Route::post('/login', [HakAksesController::class, 'login']);
-});
+Route::get('/login', [HakAksesController::class, 'index'])->name('login');
+Route::post('/login', [HakAksesController::class, 'login']);
 
 Route::get('/home', function () {
     return redirect('/logout');
