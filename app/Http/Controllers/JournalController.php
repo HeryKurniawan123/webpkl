@@ -12,103 +12,164 @@ use Illuminate\Support\Facades\Validator;
 class JournalController extends Controller
 {
     public function index()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        // Get all journals for both active and history
-        $jurnalsQuery = Jurnal::where(function ($query) use ($user) {
-            $query->where('user_id', $user->id)
-                ->orWhere('nis', $user->nip);
-        })
-            ->with([
-                'user.idukaDiterima',
-                'user.pembimbing'
-            ])
-            ->orderBy('tgl', 'desc')
-            ->orderBy('jam_mulai', 'desc');
+    // Get all journals for both active and history
+    $jurnalsQuery = Jurnal::where(function ($query) use ($user) {
+        $query->where('user_id', $user->id)
+            ->orWhere('nis', $user->nip);
+    })
+        ->with([
+            'user.idukaDiterima',
+            'user.pembimbing'
+        ])
+        ->orderBy('tgl', 'desc')
+        ->orderBy('jam_mulai', 'desc');
 
-        // Get all journals
-        $jurnals = $jurnalsQuery->get();
+    // Get all journals
+    $jurnals = $jurnalsQuery->get();
 
-        // Split into active and history collections
-        $activeJurnals = $jurnals->filter(function ($jurnal) {
-            return $jurnal->validasi_pembimbing === 'belum' ||
-                $jurnal->validasi_iduka === 'belum' ||
-                $jurnal->status === 'rejected';
-        });
+    // PERUBAHAN: Split berdasarkan status baru
+    // Active journals = yang belum disetujui atau ditolak
+    $activeJurnals = $jurnals->filter(function ($jurnal) {
+        return $jurnal->status === 'pending' || $jurnal->status === 'rejected';
+    });
 
-        $historyJurnals = $jurnals->filter(function ($jurnal) {
-            return $jurnal->validasi_pembimbing === 'sudah' &&
-                $jurnal->validasi_iduka === 'sudah' &&
-                $jurnal->status !== 'rejected';
-        });
+    // History journals = yang sudah disetujui
+    $historyJurnals = $jurnals->filter(function ($jurnal) {
+        return $jurnal->status === 'approved';
+    });
 
-        return view('siswa.jurnal.index', compact('activeJurnals', 'historyJurnals'));
+    return view('siswa.jurnal.index', compact('activeJurnals', 'historyJurnals'));
+}
+
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'tgl' => 'required|date',
+        'uraian' => 'required|string|max:1000',
+        'jam_mulai' => 'required|date_format:H:i',
+        'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'is_pengetahuan_baru' => 'nullable',
+        'is_dalam_mapel' => 'nullable',
+    ]);
+
+    // Ambil user yang sedang login
+    $user = Auth::user();
+
+    $data = [
+        'tgl' => $validated['tgl'],
+        'uraian' => $validated['uraian'],
+        'jam_mulai' => $validated['jam_mulai'],
+        'jam_selesai' => $validated['jam_selesai'],
+        'user_id' => $user->id,
+        'nis' => $user->nip,
+        'status' => 'pending',
+        'validasi_iduka' => 'belum',
+        'validasi_pembimbing' => 'belum',
+        'iduka_id' => $user->iduka_id,
+        'pembimbing_id' => $user->pembimbing_id,
+        // Handle checkbox dengan benar
+        'is_pengetahuan_baru' => $request->has('is_pengetahuan_baru') ? 1 : 0,
+        'is_dalam_mapel' => $request->has('is_dalam_mapel') ? 1 : 0,
+    ];
+
+    // Simpan gambar ke public/uploads/jurnals
+    if ($request->hasFile('foto')) {
+        $file = $request->file('foto');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/jurnals'), $fileName);
+        $data['foto'] = 'uploads/jurnals/' . $fileName;
     }
 
-    // Tambahkan method baru untuk riwayat
-    public function riwayat()
-    {
+    Jurnal::create($data);
+
+    return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil ditambahkan dan menunggu persetujuan.');
+}
+
+public function update(Request $request, $id)
+{
+    try {
+        $jurnal = Jurnal::findOrFail($id);
+
+        // Authorization
         $user = Auth::user();
+        if ($jurnal->user_id !== $user->id && $jurnal->nis !== $user->nip) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'error' => 'Unauthorized access'], 403);
+            }
+            abort(403, 'Unauthorized access');
+        }
 
-        // Ambil jurnal yang sudah divalidasi atau ditolak
-        $jurnals = Jurnal::where(function ($query) use ($user) {
-            $query->where('user_id', $user->id)
-                ->orWhere('nis', $user->nip);
-        })
-            ->where(function ($query) {
-                $query->where(function ($q) {
-                    $q->where('validasi_pembimbing', 'sudah')
-                        ->where('validasi_iduka', 'sudah');
-                })
-                    ->orWhere('status', 'rejected');
-            })
-            ->with([
-                'user.idukaDiterima',
-                'user.pembimbing'
-            ])
-            ->orderBy('tgl', 'desc')
-            ->orderBy('jam_mulai', 'desc')
-            ->paginate(10);
-
-        return view('siswa.jurnal.riwayat', compact('jurnals'));
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'tgl' => 'required|date',
             'uraian' => 'required|string|max:1000',
             'jam_mulai' => 'required|date_format:H:i',
             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_pengetahuan_baru' => 'nullable',
+            'is_dalam_mapel' => 'nullable',
         ]);
 
-        // Ambil user yang sedang login
-        $user = Auth::user();
-
-        $data = $request->only(['tgl', 'uraian', 'jam_mulai', 'jam_selesai']);
-        $data['user_id'] = $user->id;
-        $data['nis'] = $user->nip; // Gunakan NIP sebagai NIS
-        $data['status'] = 'pending';
-        $data['validasi_iduka'] = 'belum';
-        $data['validasi_pembimbing'] = 'belum';
-        $data['iduka_id'] = $user->iduka_id;
-        $data['pembimbing_id'] = $user->pembimbing_id;
-
-        // Simpan gambar ke public/uploads/jurnals
-        if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/jurnals'), $fileName);
-            $data['foto'] = 'uploads/jurnals/' . $fileName;
+        if ($validator->fails()) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors(),
+                    'message' => 'Data yang dimasukkan tidak valid'
+                ], 422);
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        Jurnal::create($data);
+        $data = [
+            'tgl' => $request->tgl,
+            'uraian' => $request->uraian,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            // Handle checkbox dengan benar
+            'is_pengetahuan_baru' => $request->has('is_pengetahuan_baru') ? 1 : 0,
+            'is_dalam_mapel' => $request->has('is_dalam_mapel') ? 1 : 0,
+        ];
 
-        return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil ditambahkan dan menunggu persetujuan.');
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($jurnal->foto) {
+                $oldPath = str_replace('/storage', 'public', $jurnal->foto);
+                Storage::delete($oldPath);
+            }
+
+            $path = $request->file('foto')->store('public/jurnals');
+            $data['foto'] = Storage::url($path);
+        }
+
+        $jurnal->update($data);
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Jurnal berhasil diperbarui.',
+                'data' => $jurnal
+            ]);
+        }
+
+        return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil diperbarui.');
+
+    } catch (\Exception $e) {
+        Log::error('Error updating journal: ' . $e->getMessage());
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengupdate jurnal: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat mengupdate jurnal.');
     }
-
+}
 
     public function show($id)
     {
@@ -141,6 +202,7 @@ class JournalController extends Controller
             ], 500);
         }
     }
+
     public function edit($id)
     {
         $jurnal = Jurnal::findOrFail($id);
@@ -195,85 +257,27 @@ class JournalController extends Controller
                 <div style="margin-bottom: 20px;">
                     <label style="font-weight: 600; color: #2d3748; display: block; margin-bottom: 8px;">Uraian Kegiatan</label>
                     <textarea class="form-control" name="uraian" rows="5" required>' . htmlspecialchars($jurnal->uraian) . '</textarea>
-                </div>';
+                </div>
 
+                <div class="form-check" style="margin-bottom: 10px;">
+                    <input type="checkbox" class="form-check-input" name="is_pengetahuan_baru" id="is_pengetahuan_baru" value="1" ' . ($jurnal->is_pengetahuan_baru ? 'checked' : '') . '>
+                    <label class="form-check-label" for="is_pengetahuan_baru">
+                        Termasuk pengetahuan baru
+                    </label>
+                </div>
+
+                <div class="form-check" style="margin-bottom: 20px;">
+                    <input type="checkbox" class="form-check-input" name="is_dalam_mapel" id="is_dalam_mapel" value="1" ' . ($jurnal->is_dalam_mapel ? 'checked' : '') . '>
+                    <label class="form-check-label" for="is_dalam_mapel">
+                        Kegiatan ada dalam mapel sekolah
+                    </label>
+                </div>
+                ';
                 return response($html, 200);
             }
         }
 
         return view('siswa.jurnal.edit', compact('jurnal'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        try {
-            $jurnal = Jurnal::findOrFail($id);
-
-            // Authorization
-            $user = Auth::user();
-            if ($jurnal->user_id !== $user->id && $jurnal->nis !== $user->nip) {
-                if (request()->ajax() || request()->wantsJson()) {
-                    return response()->json(['success' => false, 'error' => 'Unauthorized access'], 403);
-                }
-                abort(403, 'Unauthorized access');
-            }
-
-            $validator = Validator::make($request->all(), [
-                'tgl' => 'required|date',
-                'uraian' => 'required|string|max:1000',
-                'jam_mulai' => 'required|date_format:H:i',
-                'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-                'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            ]);
-
-            if ($validator->fails()) {
-                if (request()->ajax() || request()->wantsJson()) {
-                    return response()->json([
-                        'success' => false,
-                        'errors' => $validator->errors(),
-                        'message' => 'Data yang dimasukkan tidak valid'
-                    ], 422);
-                }
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $data = $request->only(['tgl', 'uraian', 'jam_mulai', 'jam_selesai']);
-
-            if ($request->hasFile('foto')) {
-                // Hapus foto lama jika ada
-                if ($jurnal->foto) {
-                    $oldPath = str_replace('/storage', 'public', $jurnal->foto);
-                    Storage::delete($oldPath);
-                }
-
-                $path = $request->file('foto')->store('public/jurnals');
-                $data['foto'] = Storage::url($path);
-            }
-
-            $jurnal->update($data);
-
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Jurnal berhasil diperbarui.',
-                    'data' => $jurnal
-                ]);
-            }
-
-            return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil diperbarui.');
-
-        } catch (\Exception $e) {
-            Log::error('Error updating journal: ' . $e->getMessage());
-
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Terjadi kesalahan saat mengupdate jurnal: ' . $e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengupdate jurnal.');
-        }
     }
 
     public function destroy($id)

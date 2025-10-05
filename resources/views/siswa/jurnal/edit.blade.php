@@ -9,8 +9,8 @@
         <div class="form-group">
             <label class="form-label">Foto Kegiatan</label>
             <input type="file" class="form-control" name="foto" accept="image/*">
-            @if($jurnal->foto)
-                <small class="text-muted">Foto saat ini: 
+            @if ($jurnal->foto)
+                <small class="text-muted">Foto saat ini:
                     <a href="{{ $jurnal->foto }}" target="_blank">Lihat foto</a>
                 </small>
             @endif
@@ -38,14 +38,28 @@
     <textarea class="form-control" name="uraian" rows="5" required>{{ $jurnal->uraian }}</textarea>
 </div>
 
-@if($jurnal->foto)
-    <div class="form-group">
+<div class="form-check mt-2">
+    <input type="checkbox" class="form-check-input" name="is_pengetahuan_baru" id="is_pengetahuan_baru" value="1"
+        {{ old('is_pengetahuan_baru', $jurnal->is_pengetahuan_baru ?? 0) ? 'checked' : '' }}>
+    <label class="form-check-label" for="is_pengetahuan_baru">
+        Termasuk pengetahuan baru
+    </label>
+</div>
+
+<div class="form-check mt-2">
+    <input type="checkbox" class="form-check-input" name="is_dalam_mapel" id="is_dalam_mapel" value="1"
+        {{ old('is_dalam_mapel', $jurnal->is_dalam_mapel ?? 0) ? 'checked' : '' }}>
+    <label class="form-check-label" for="is_dalam_mapel">
+        Kegiatan ada dalam mapel sekolah
+    </label>
+</div>
+
+@if ($jurnal->foto)
+    <div class="form-group mt-3">
         <label class="form-label">Foto Saat Ini</label>
         <div class="text-center">
-            <img src="{{ $jurnal->foto }}" 
-                 alt="Foto Kegiatan" 
-                 class="img-fluid rounded shadow-sm"
-                 style="max-height: 200px; object-fit: cover;">
+            <img src="{{ $jurnal->foto }}" alt="Foto Kegiatan" class="img-fluid rounded shadow-sm"
+                style="max-height: 200px; object-fit: cover;">
         </div>
         <small class="text-muted">Upload foto baru jika ingin mengganti foto yang ada</small>
     </div>

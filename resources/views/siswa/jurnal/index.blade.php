@@ -39,6 +39,8 @@
                                     <tr>
                                         <th>Tanggal</th>
                                         <th>Waktu</th>
+                                        <th>Pengetahuan Baru</th>
+                                        <th>Dalam Mapel</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -46,11 +48,25 @@
                                 <tbody>
                                     @forelse($activeJurnals as $jurnal)
                                         <tr>
-                                            <td>{{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
-                                            </td>
+                                            <td>{{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
                                             <td>{{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</td>
                                             <td>
-                                                @if ($jurnal->status === 'rejected')
+                                                @if($jurnal->is_pengetahuan_baru)
+                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                @else
+                                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($jurnal->is_dalam_mapel)
+                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                @else
+                                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{-- PERUBAHAN: Tampilkan status yang sesuai --}}
+                                                @if($jurnal->status === 'rejected')
                                                     <span class="badge bg-danger">Ditolak</span>
                                                 @else
                                                     <span class="badge bg-warning">Menunggu Validasi</span>
@@ -65,7 +81,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center py-4">
+                                            <td colspan="6" class="text-center py-4">
                                                 <i class="bi bi-journal-text fs-1 text-muted"></i>
                                                 <p class="mt-3">Belum ada jurnal aktif</p>
                                             </td>
@@ -85,6 +101,8 @@
                                     <tr>
                                         <th>Tanggal</th>
                                         <th>Waktu</th>
+                                        <th>Pengetahuan Baru</th>
+                                        <th>Dalam Mapel</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -92,11 +110,28 @@
                                 <tbody>
                                     @forelse($historyJurnals as $jurnal)
                                         <tr>
-                                            <td>{{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
-                                            </td>
+                                            <td>{{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</td>
                                             <td>{{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</td>
                                             <td>
+                                                @if($jurnal->is_pengetahuan_baru)
+                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                @else
+                                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($jurnal->is_dalam_mapel)
+                                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                                @else
+                                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{-- PERUBAHAN: Tampilkan status yang sesuai --}}
                                                 <span class="badge bg-success">Disetujui</span>
+                                                @if($jurnal->approved_by)
+                                                    <small class="text-muted d-block">Oleh: {{ $jurnal->approved_by }}</small>
+                                                @endif
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-sm btn-info"
@@ -107,7 +142,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center py-4">
+                                            <td colspan="6" class="text-center py-4">
                                                 <i class="bi bi-clock-history fs-1 text-muted"></i>
                                                 <p class="mt-3">Belum ada riwayat jurnal</p>
                                             </td>
@@ -170,6 +205,20 @@
                             <label class="form-label">Uraian Kegiatan</label>
                             <textarea class="form-control" name="uraian" rows="5" required>{{ old('uraian') }}</textarea>
                         </div>
+
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input" name="is_pengetahuan_baru" id="is_pengetahuan_baru" value="1" {{ old('is_pengetahuan_baru') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_pengetahuan_baru">
+                                Termasuk pengetahuan baru
+                            </label>
+                        </div>
+
+                        <div class="form-check mt-2">
+                            <input type="checkbox" class="form-check-input" name="is_dalam_mapel" id="is_dalam_mapel" value="1" {{ old('is_dalam_mapel') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_dalam_mapel">
+                                Kegiatan ada dalam mapel sekolah
+                            </label>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -180,7 +229,6 @@
         </div>
     </div>
 
-    <!-- View Journal Modal -->
     <!-- View Journal Modal -->
     <div class="modal fade" id="viewJournalModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -249,248 +297,6 @@
                 });
             }
 
-            // JavaScript untuk menangani modal view
-            const viewJournalModal = document.getElementById('viewJournalModal');
-            viewJournalModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                const journalId = button.getAttribute('data-id');
-
-                // Reset content
-                document.getElementById('viewJournalContent').innerHTML = `
-            <div class="text-center py-5">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `;
-
-                // Load content via AJAX
-                const url = `/jurnal/${journalId}`;
-
-                fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'text/html',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 403) {
-                                throw new Error('Unauthorized access');
-                            }
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                        document.getElementById('viewJournalContent').innerHTML = data;
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        document.getElementById('viewJournalContent').innerHTML = `
-                <div class="alert alert-danger">
-                    <h6>Error</h6>
-                    <p>${error.message || 'Tidak dapat memuat detail jurnal. Silakan coba lagi.'}</p>
-                </div>
-            `;
-                    });
-            });
-
-            // JavaScript untuk menangani modal edit
-            const editJournalModal = document.getElementById('editJournalModal');
-            editJournalModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                const journalId = button.getAttribute('data-id');
-
-                // Set form action
-                document.getElementById('editJournalForm').action = `/jurnal/${journalId}`;
-
-                // Reset content
-                document.getElementById('editJournalContent').innerHTML = `
-            <div class="text-center py-5">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        `;
-
-                // Load content via AJAX
-                const url = `/jurnal/${journalId}/edit`;
-
-                fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'text/html',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 403) {
-                                throw new Error('Unauthorized access');
-                            }
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                        document.getElementById('editJournalContent').innerHTML = data;
-
-                        // Tambahkan validasi client-side setelah form dimuat
-                        const jamMulaiInput = document.querySelector(
-                            '#editJournalContent input[name="jam_mulai"]');
-                        const jamSelesaiInput = document.querySelector(
-                            '#editJournalContent input[name="jam_selesai"]');
-
-                        if (jamMulaiInput && jamSelesaiInput) {
-                            jamSelesaiInput.addEventListener('change', function() {
-                                if (jamMulaiInput.value && this.value && this.value <=
-                                    jamMulaiInput.value) {
-                                    this.setCustomValidity(
-                                        'Jam selesai harus setelah jam mulai');
-                                } else {
-                                    this.setCustomValidity('');
-                                }
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        document.getElementById('editJournalContent').innerHTML = `
-                <div class="alert alert-danger">
-                    <h6>Error</h6>
-                    <p>${error.message || 'Tidak dapat memuat form edit. Silakan coba lagi.'}</p>
-                </div>
-            `;
-                    });
-            });
-
-            // Menangani submit form edit
-            document.getElementById('editJournalForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const form = this;
-                const formData = new FormData(form);
-                const url = form.action;
-
-                // Validasi client-side untuk jam selesai
-                const jamMulai = formData.get('jam_mulai');
-                const jamSelesai = formData.get('jam_selesai');
-
-                if (jamMulai && jamSelesai && jamSelesai <= jamMulai) {
-                    alert('Jam selesai harus setelah jam mulai.');
-                    return false;
-                }
-
-                // Disable submit button to prevent double submission
-                const submitBtn = form.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Memproses...';
-
-                fetch(url, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content'),
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => {
-                        // Check if response is ok
-                        if (!response.ok) {
-                            // Try to get error message from response
-                            return response.text().then(text => {
-                                throw new Error(
-                                    `HTTP ${response.status}: ${text || 'Unknown error'}`);
-                            });
-                        }
-
-                        // Check if response is JSON
-                        const contentType = response.headers.get("content-type");
-                        if (contentType && contentType.indexOf("application/json") !== -1) {
-                            return response.json();
-                        } else {
-                            // If not JSON, assume success and reload
-                            return {
-                                success: true
-                            };
-                        }
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            // Show success message
-                            alert('Jurnal berhasil diperbarui!');
-
-                            // Close modal and reload page
-                            $('#editJournalModal').modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 500);
-                        } else {
-                            // Menampilkan error validasi khusus
-                            if (data.errors && data.errors.jam_selesai) {
-                                throw new Error(data.errors.jam_selesai[0]);
-                            }
-                            throw new Error(data.message || 'Terjadi kesalahan saat mengupdate jurnal');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-
-                        // Show specific error message
-                        let errorMessage = 'Terjadi kesalahan saat mengupdate jurnal.';
-
-                        if (error.message.includes('jam selesai') || error.message.includes('after')) {
-                            errorMessage = 'Jam selesai harus setelah jam mulai.';
-                        } else if (error.message.includes('422')) {
-                            errorMessage = 'Data yang dimasukkan tidak valid. Silakan periksa kembali.';
-                        } else if (error.message.includes('403')) {
-                            errorMessage = 'Anda tidak memiliki akses untuk mengupdate jurnal ini.';
-                        } else if (error.message.includes('500')) {
-                            errorMessage = 'Terjadi kesalahan server. Silakan coba lagi.';
-                        } else {
-                            errorMessage = error.message;
-                        }
-
-                        alert(errorMessage);
-                    })
-                    .finally(() => {
-                        // Re-enable submit button
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = originalText;
-                    });
-            });
-
-            // Validasi real-time untuk form create
-            const jamMulaiCreate = document.querySelector('#createJournalModal input[name="jam_mulai"]');
-            const jamSelesaiCreate = document.querySelector('#createJournalModal input[name="jam_selesai"]');
-
-            if (jamSelesaiCreate) {
-                jamSelesaiCreate.addEventListener('change', function() {
-                    if (jamMulaiCreate.value && this.value && this.value <= jamMulaiCreate.value) {
-                        this.setCustomValidity('Jam selesai harus setelah jam mulai');
-                    } else {
-                        this.setCustomValidity('');
-                    }
-                });
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle tab persistence
-            const hash = window.location.hash;
-            if (hash) {
-                const tab = document.querySelector(`[href="${hash}"]`);
-                if (tab) {
-                    new bootstrap.Tab(tab).show();
-                }
-            }
-
             // Function to show journal detail
             window.showJournalDetail = function(id) {
                 const modal = new bootstrap.Modal(document.getElementById('viewJournalModal'));
@@ -536,6 +342,15 @@
                     `;
                 });
             };
+
+            // Handle tab persistence
+            const hash = window.location.hash;
+            if (hash) {
+                const tab = document.querySelector(`[href="${hash}"]`);
+                if (tab) {
+                    new bootstrap.Tab(tab).show();
+                }
+            }
 
             // Update URL when tab changes
             document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(tab => {

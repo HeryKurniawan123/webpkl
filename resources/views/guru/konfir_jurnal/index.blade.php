@@ -64,11 +64,8 @@
                                         @endif
                                     </div>
                                     <div class="mb-3">
-                                        @if ($jurnal->validasi_iduka === 'sudah')
-                                            <span class="badge bg-info text-white">✅ Disetujui IDUKA</span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">⏳ Menunggu IDUKA</span>
-                                        @endif
+                                        {{-- PERUBAHAN: Tampilkan status tunggal --}}
+                                        <span class="badge bg-warning text-dark">⏳ Menunggu Persetujuan</span>
                                     </div>
                                     <div class="mt-auto d-flex gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-primary view-detail"

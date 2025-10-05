@@ -28,7 +28,9 @@ class Jurnal extends Model
         'rejected_reason',
         'rejected_at',
         'approved_iduka_at',
-        'approved_pembimbing_at'
+        'approved_pembimbing_at',
+        'is_pengetahuan_baru',
+        'is_dalam_mapel'
     ];
 
     protected $casts = [
@@ -36,6 +38,8 @@ class Jurnal extends Model
         'approved_iduka_at' => 'datetime',
         'approved_pembimbing_at' => 'datetime',
         'rejected_at' => 'datetime',
+        'is_pengetahuan_baru' => 'boolean',
+        'is_dalam_mapel' => 'boolean'
     ];
 
     // Relasi dengan User (siswa)
@@ -62,58 +66,51 @@ class Jurnal extends Model
         return $this->belongsTo(Guru::class);
     }
 
-    // Scope untuk filter berdasarkan validasi
-    public function scopeNeedIduka($query)
+    // Method untuk mengecek apakah jurnal sudah disetujui (oleh siapa saja)
+    public function isApproved()
     {
-        return $query->where(function ($q) {
-            $q->where('validasi_iduka', 'belum')
-                ->orWhereNull('validasi_iduka');
-        });
+        return $this->validasi_iduka === 'sudah' || $this->validasi_pembimbing === 'sudah';
     }
 
-    public function scopeNeedPembimbing($query)
+    // Method untuk mendapatkan siapa yang menyetujui
+    public function getApprovedByAttribute()
     {
-        return $query->where(function ($q) {
-            $q->where('validasi_pembimbing', 'belum')
-                ->orWhereNull('validasi_pembimbing');
-        });
-    }
-
-    // Method untuk mengecek status approval
-    public function isApprovedByIduka()
-    {
-        return $this->validasi_iduka === 'sudah';
-    }
-
-    public function isApprovedByPembimbing()
-    {
-        return $this->validasi_pembimbing === 'sudah';
-    }
-
-    public function isFullyApproved()
-    {
-        return $this->isApprovedByIduka() && $this->isApprovedByPembimbing();
-    }
-
-    public function isRejected()
-    {
-        return $this->status === 'rejected';
-    }
-
-    public function getStatusPembimbingAttribute()
-    {
-        if ($this->isRejected()) {
-            return 'ditolak';
+        if ($this->validasi_iduka === 'sudah' && $this->validasi_pembimbing === 'sudah') {
+            return 'Keduanya';
+        } elseif ($this->validasi_iduka === 'sudah') {
+            return 'IDUKA';
+        } elseif ($this->validasi_pembimbing === 'sudah') {
+            return 'Pembimbing';
         }
-        return $this->validasi_pembimbing;
+        return null;
     }
 
-    public function getStatusIdukaAttribute()
+    // Method untuk mendapatkan status teks
+    public function getStatusTextAttribute()
     {
-        if ($this->isRejected()) {
-            return 'ditolak';
+        if ($this->status === 'rejected') {
+            return 'Ditolak';
         }
-        return $this->validasi_iduka;
+
+        if ($this->isApproved()) {
+            return 'Disetujui oleh ' . $this->approved_by;
+        }
+
+        return 'Menunggu Persetujuan';
+    }
+
+    // Method untuk mendapatkan status badge HTML
+    public function getStatusBadgeAttribute()
+    {
+        if ($this->status === 'rejected') {
+            return '<span class="badge bg-danger">❌ Ditolak</span>';
+        }
+
+        if ($this->isApproved()) {
+            return '<span class="badge bg-success">✅ Disetujui</span>';
+        }
+
+        return '<span class="badge bg-warning">⏳ Menunggu Persetujuan</span>';
     }
 
     // Boot method untuk set default values
@@ -130,6 +127,22 @@ class Jurnal extends Model
             }
             if (empty($jurnal->validasi_pembimbing)) {
                 $jurnal->validasi_pembimbing = 'belum';
+            }
+
+            // Set default untuk kolom baru
+            if (!isset($jurnal->is_pengetahuan_baru)) {
+                $jurnal->is_pengetahuan_baru = false;
+            }
+            if (!isset($jurnal->is_dalam_mapel)) {
+                $jurnal->is_dalam_mapel = false;
+            }
+        });
+
+        // Event ketika jurnal diupdate
+        static::updating(function ($jurnal) {
+            // Update status berdasarkan persetujuan
+            if ($jurnal->isApproved()) {
+                $jurnal->status = 'approved';
             }
         });
     }

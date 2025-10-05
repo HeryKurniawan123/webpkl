@@ -68,13 +68,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h3 class="fw-bold mb-0">
-                                            @if (auth()->user()->role === 'guru')
-                                                {{ $jurnals->where('validasi_pembimbing', 'sudah')->count() }}
-                                            @elseif(auth()->user()->role === 'iduka')
-                                                {{ $jurnals->where('validasi_iduka', 'sudah')->count() }}
-                                            @else
-                                                {{ $jurnals->where('status', '!=', 'rejected')->count() }}
-                                            @endif
+                                            {{ $jurnals->where('status', 'approved')->count() }}
                                         </h3>
                                         <span class="text-muted small">Disetujui</span>
                                     </div>
@@ -94,13 +88,7 @@
                                     </div>
                                     <div class="flex-grow-1">
                                         <h3 class="fw-bold mb-0">
-                                            @if (auth()->user()->role === 'guru')
-                                                {{ $jurnals->where('validasi_pembimbing', 'ditolak')->count() }}
-                                            @elseif(auth()->user()->role === 'iduka')
-                                                {{ $jurnals->where('validasi_iduka', 'ditolak')->count() }}
-                                            @else
-                                                {{ $jurnals->where('status', 'rejected')->count() }}
-                                            @endif
+                                            {{ $jurnals->where('status', 'rejected')->count() }}
                                         </h3>
                                         <span class="text-muted small">Ditolak</span>
                                     </div>
@@ -119,15 +107,7 @@
                                         <i class="bi bi-clock-fill"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h3 class="fw-bold mb-0">
-                                            @if (auth()->user()->role === 'guru')
-                                                {{ $jurnals->where('validasi_pembimbing', 'belum')->count() }}
-                                            @elseif(auth()->user()->role === 'iduka')
-                                                {{ $jurnals->where('validasi_iduka', 'belum')->count() }}
-                                            @else
-                                                {{ $jurnals->where('status', 'pending')->count() }}
-                                            @endif
-                                        </h3>
+                                        <h3 class="fw-bold mb-0">0</h3>
                                         <span class="text-muted small">Menunggu</span>
                                     </div>
                                     <div class="stats-arrow">
@@ -188,29 +168,20 @@
                                     <table class="table table-hover align-middle mb-0">
                                         <thead class="table-light">
                                             <tr>
-                                                <th class="ps-4 py-3 text-uppercase fw-medium small text-muted border-0">No
-                                                </th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Tanggal
-                                                </th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Nama
-                                                    Siswa</th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Waktu
-                                                </th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Status
-                                                </th>
-                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">
-                                                    Diperbarui</th>
-                                                <th
-                                                    class="pe-4 py-3 text-uppercase fw-medium small text-muted border-0 text-end">
-                                                    Aksi</th>
+                                                <th class="ps-4 py-3 text-uppercase fw-medium small text-muted border-0">No</th>
+                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Tanggal</th>
+                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Nama Siswa</th>
+                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Waktu</th>
+                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Status</th>
+                                                <th class="py-3 text-uppercase fw-medium small text-muted border-0">Diperbarui</th>
+                                                <th class="pe-4 py-3 text-uppercase fw-medium small text-muted border-0 text-end">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach ($jurnals as $journal)
                                                 <tr class="journal-row border-bottom">
                                                     <td class="ps-4 py-3">
-                                                        <span
-                                                            class="fw-medium text-dark">{{ ($jurnals->currentPage() - 1) * $jurnals->perPage() + $loop->iteration }}</span>
+                                                        <span class="fw-medium text-dark">{{ ($jurnals->currentPage() - 1) * $jurnals->perPage() + $loop->iteration }}</span>
                                                     </td>
                                                     <td class="py-3">
                                                         <div class="d-flex flex-column">
@@ -240,104 +211,25 @@
                                                     </td>
                                                     <td class="py-3">
                                                         <div class="d-flex flex-column gap-2">
-                                                            <!-- Main Status -->
-                                                            @if (auth()->user()->role === 'guru')
-                                                                @if ($journal->validasi_pembimbing === 'sudah')
-                                                                    <span
-                                                                        class="badge bg-success bg-opacity-15 text-success border-0 px-3 py-2 d-inline-flex align-items-center text-white">
-                                                                        <i
-                                                                            class="bi bi-check-circle-fill me-1 small text-white"></i>Disetujui
-                                                                    </span>
-                                                                @elseif($journal->validasi_pembimbing === 'ditolak')
-                                                                    <span
-                                                                        class="badge bg-danger bg-opacity-15 text-danger border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-x-circle-fill me-1 small"></i>Ditolak
-                                                                    </span>
-                                                                @else
-                                                                    <span
-                                                                        class="badge bg-warning bg-opacity-15 text-warning border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i class="bi bi-clock-fill me-1 small"></i>Menunggu
-                                                                    </span>
-                                                                @endif
-                                                            @elseif(auth()->user()->role === 'iduka')
-                                                                @if ($journal->validasi_iduka === 'sudah')
-                                                                    <span
-                                                                        class="badge bg-success bg-opacity-15 text-success border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-check-circle-fill me-1 small"></i>Disetujui
-                                                                    </span>
-                                                                @elseif($journal->validasi_iduka === 'ditolak')
-                                                                    <span
-                                                                        class="badge bg-danger bg-opacity-15 text-danger border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-x-circle-fill me-1 small"></i>Ditolak
-                                                                    </span>
-                                                                @else
-                                                                    <span
-                                                                        class="badge bg-warning bg-opacity-15 text-warning border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i class="bi bi-clock-fill me-1 small"></i>Menunggu
-                                                                    </span>
+                                                            <!-- PERUBAHAN: Tampilkan status yang sesuai dengan sistem baru -->
+                                                            @if ($journal->status === 'rejected')
+                                                                <span class="badge bg-danger bg-opacity-15 text-danger border-0 px-3 py-2 d-inline-flex align-items-center">
+                                                                    <i class="bi bi-x-circle-fill me-1 small"></i>Ditolak
+                                                                </span>
+                                                            @elseif ($journal->status === 'approved')
+                                                                <span class="badge bg-success bg-opacity-15 text-success border-0 px-3 py-2 d-inline-flex align-items-center">
+                                                                    <i class="bi bi-check-circle-fill me-1 small"></i>Disetujui
+                                                                </span>
+                                                                <!-- PERUBAHAN: Tampilkan siapa yang menyetujui -->
+                                                                @if ($journal->approved_by)
+                                                                    <small class="text-success d-flex align-items-center">
+                                                                        <i class="bi bi-check-circle-fill me-1 small"></i>Disetujui oleh: {{ $journal->approved_by }}
+                                                                    </small>
                                                                 @endif
                                                             @else
-                                                                @if ($journal->status === 'rejected')
-                                                                    <span
-                                                                        class="badge bg-danger bg-opacity-15 text-danger border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-x-circle-fill me-1 small"></i>Ditolak
-                                                                    </span>
-                                                                @elseif($journal->validasi_pembimbing === 'sudah' && $journal->validasi_iduka === 'sudah')
-                                                                    <span
-                                                                        class="badge bg-success bg-opacity-15 text-success border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-check-circle-fill me-1 small"></i>Disetujui
-                                                                    </span>
-                                                                @else
-                                                                    <span
-                                                                        class="badge bg-warning bg-opacity-15 text-warning border-0 px-3 py-2 d-inline-flex align-items-center">
-                                                                        <i class="bi bi-clock-fill me-1 small"></i>Menunggu
-                                                                    </span>
-                                                                @endif
-                                                            @endif
-
-                                                            <!-- Status Indicator -->
-                                                            @if (auth()->user()->role === 'guru')
-                                                                @if ($journal->validasi_iduka === 'sudah')
-                                                                    <small class="text-success d-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-check-circle-fill me-1 small"></i>IDUKA
-                                                                        disetujui
-                                                                    </small>
-                                                                @elseif($journal->validasi_iduka === 'ditolak')
-                                                                    <small class="text-danger d-flex align-items-center">
-                                                                        <i class="bi bi-x-circle-fill me-1 small"></i>IDUKA
-                                                                        ditolak
-                                                                    </small>
-                                                                @else
-                                                                    <small class="text-muted d-flex align-items-center">
-                                                                        <i class="bi bi-clock-fill me-1 small"></i>Menunggu
-                                                                        IDUKA
-                                                                    </small>
-                                                                @endif
-                                                            @elseif(auth()->user()->role === 'iduka')
-                                                                @if ($journal->validasi_pembimbing === 'sudah')
-                                                                    <small class="text-success d-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-check-circle-fill me-1 small"></i>Pembimbing
-                                                                        disetujui
-                                                                    </small>
-                                                                @elseif($journal->validasi_pembimbing === 'ditolak')
-                                                                    <small class="text-danger d-flex align-items-center">
-                                                                        <i
-                                                                            class="bi bi-x-circle-fill me-1 small"></i>Pembimbing
-                                                                        ditolak
-                                                                    </small>
-                                                                @else
-                                                                    <small class="text-muted d-flex align-items-center">
-                                                                        <i class="bi bi-clock-fill me-1 small"></i>Menunggu
-                                                                        Pembimbing
-                                                                    </small>
-                                                                @endif
+                                                                <span class="badge bg-warning bg-opacity-15 text-warning border-0 px-3 py-2 d-inline-flex align-items-center">
+                                                                    <i class="bi bi-clock-fill me-1 small"></i>Menunggu
+                                                                </span>
                                                             @endif
                                                         </div>
                                                     </td>

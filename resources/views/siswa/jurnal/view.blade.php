@@ -17,6 +17,26 @@
         </div>
     </div>
 
+    <!-- Tambahkan 2 field baru -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h6 class="text-muted">Termasuk Pengetahuan Baru</h6>
+            @if($jurnal->is_pengetahuan_baru)
+                <span class="badge bg-success">Ya</span>
+            @else
+                <span class="badge bg-secondary">Tidak</span>
+            @endif
+        </div>
+        <div class="col-md-6">
+            <h6 class="text-muted">Kegiatan dalam Mapel Sekolah</h6>
+            @if($jurnal->is_dalam_mapel)
+                <span class="badge bg-success">Ya</span>
+            @else
+                <span class="badge bg-secondary">Tidak</span>
+            @endif
+        </div>
+    </div>
+
     @if($jurnal->foto)
         <div class="mb-4">
             <h6 class="text-muted">Foto Kegiatan</h6>
@@ -24,14 +44,16 @@
                 <img src="{{ $jurnal->foto }}"
                      alt="Foto Kegiatan"
                      class="img-fluid rounded shadow-sm"
-                     style="max-height: 300px; object-fit: cover;">
+                     style="max-height: 300px; object-fit: cover;"
+                     onclick="showImageModal(this.src)">
             </div>
         </div>
     @endif
 
-    <div class="row">
-        <div class="col-md-6">
-            <h6 class="text-muted">Status Validasi Pembimbing</h6>
+    <!-- PERUBAHAN: Tampilkan status yang disederhanakan -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <h6 class="text-muted">Status Jurnal</h6>
             @if($jurnal->status == 'rejected')
                 <span class="badge bg-danger">❌ Ditolak</span>
                 @if($jurnal->rejected_reason)
@@ -39,27 +61,31 @@
                         <i class="bi bi-info-circle"></i> Alasan: {{ $jurnal->rejected_reason }}
                     </div>
                 @endif
-            @elseif($jurnal->validasi_pembimbing == 'sudah')
-                <span class="badge bg-success">✅ Sudah Disetujui</span>
+            @elseif($jurnal->status == 'approved')
+                <span class="badge bg-success">✅ Disetujui</span>
+                @if($jurnal->approved_by)
+                    <div class="mt-2 small text-success">
+                        <i class="bi bi-check-circle"></i> Disetujui oleh: {{ $jurnal->approved_by }}
+                    </div>
+                @endif
             @else
                 <span class="badge bg-warning">⏳ Menunggu Persetujuan</span>
             @endif
         </div>
+    </div>
+</div>
 
-        <div class="col-md-6">
-            <h6 class="text-muted">Status Validasi IDUKA</h6>
-            @if($jurnal->status == 'rejected')
-                <span class="badge bg-danger">❌ Ditolak</span>
-                @if($jurnal->rejected_reason)
-                    <div class="mt-2 small text-danger">
-                        <i class="bi bi-info-circle"></i> Alasan: {{ $jurnal->rejected_reason }}
-                    </div>
-                @endif
-            @elseif($jurnal->validasi_iduka == 'sudah')
-                <span class="badge bg-success">✅ Sudah Disetujui</span>
-            @else
-                <span class="badge bg-warning">⏳ Menunggu Persetujuan</span>
-            @endif
+<!-- Modal untuk menampilkan gambar besar -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Foto Kegiatan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Foto Kegiatan" class="img-fluid">
+            </div>
         </div>
     </div>
 </div>

@@ -78,10 +78,16 @@ class JournalApprovalController extends Controller
                 }
 
                 // Query menggunakan relasi langsung
+                // Hanya tampilkan jurnal yang belum disetujui oleh IDUKA dan belum disetujui oleh Pembimbing
                 $jurnals = Jurnal::with('user')
                     ->where('iduka_id', $iduka->id)
                     ->where('validasi_iduka', 'belum')
                     ->where('status', '!=', 'rejected')
+                    ->where(function ($q) {
+                        // Jika pembimbing sudah menyetujui, jurnal tidak perlu ditampilkan lagi
+                        $q->where('validasi_pembimbing', '!=', 'sudah')
+                            ->orWhereNull('validasi_pembimbing');
+                    })
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
 
@@ -94,10 +100,16 @@ class JournalApprovalController extends Controller
                 $pembimbing = $this->findOrCreateGuru($user);
 
                 // Query menggunakan relasi langsung
+                // Hanya tampilkan jurnal yang belum disetujui oleh Pembimbing dan belum disetujui oleh IDUKA
                 $jurnals = Jurnal::with('user')
                     ->where('pembimbing_id', $pembimbing->id)
                     ->where('validasi_pembimbing', 'belum')
                     ->where('status', '!=', 'rejected')
+                    ->where(function ($q) {
+                        // Jika IDUKA sudah menyetujui, jurnal tidak perlu ditampilkan lagi
+                        $q->where('validasi_iduka', '!=', 'sudah')
+                            ->orWhereNull('validasi_iduka');
+                    })
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
 
@@ -113,9 +125,6 @@ class JournalApprovalController extends Controller
         }
     }
 
-    /**
-     * Tampilkan riwayat persetujuan
-     */
     public function riwayat()
     {
         try {
@@ -127,11 +136,11 @@ class JournalApprovalController extends Controller
                     return redirect()->back()->with('error', 'Data IDUKA tidak ditemukan.');
                 }
 
-                // Query menggunakan relasi langsung
+                // PERUBAHAN: Tampilkan semua jurnal yang sudah disetujui atau ditolak
                 $jurnals = Jurnal::with('user')
                     ->where('iduka_id', $iduka->id)
                     ->where(function ($q) {
-                        $q->where('validasi_iduka', 'sudah')
+                        $q->where('status', 'approved')
                             ->orWhere('status', 'rejected');
                     })
                     ->orderBy('updated_at', 'desc')
@@ -144,11 +153,11 @@ class JournalApprovalController extends Controller
                 // Gunakan helper method untuk mencari/membuat data guru
                 $pembimbing = $this->findOrCreateGuru($user);
 
-                // Query menggunakan relasi langsung
+                // PERUBAHAN: Tampilkan semua jurnal yang sudah disetujui atau ditolak
                 $jurnals = Jurnal::with('user')
                     ->where('pembimbing_id', $pembimbing->id)
                     ->where(function ($q) {
-                        $q->where('validasi_pembimbing', 'sudah')
+                        $q->where('status', 'approved')
                             ->orWhere('status', 'rejected');
                     })
                     ->orderBy('updated_at', 'desc')
@@ -164,9 +173,6 @@ class JournalApprovalController extends Controller
         }
     }
 
-    /**
-     * Approve jurnal
-     */
     public function approve($id)
     {
         DB::beginTransaction();
@@ -180,7 +186,6 @@ class JournalApprovalController extends Controller
                     return redirect()->back()->with('error', 'Data IDUKA tidak ditemukan.');
                 }
 
-                // Periksa kepemilikan dengan menggunakan relasi langsung
                 if ($journal->iduka_id !== $iduka->id) {
                     Log::warning("Unauthorized approval attempt by IDUKA {$iduka->id} for journal {$id}");
                     return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui jurnal ini.');
@@ -188,12 +193,13 @@ class JournalApprovalController extends Controller
 
                 $journal->validasi_iduka = 'sudah';
                 $journal->approved_iduka_at = now();
-                $journal->status = $journal->validasi_pembimbing === 'sudah' ? 'approved' : 'approved_iduka';
+
+                // PERUBAHAN: Status langsung menjadi 'approved' jika salah satu menyetujui
+                $journal->status = 'approved';
+
             } elseif ($user->role === 'guru') {
-                // Gunakan helper method untuk mencari/membuat data guru
                 $pembimbing = $this->findOrCreateGuru($user);
 
-                // Periksa kepemilikan dengan menggunakan relasi langsung
                 if ($journal->pembimbing_id !== $pembimbing->id) {
                     Log::warning("Unauthorized approval attempt by Guru {$pembimbing->id} for journal {$id}");
                     return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui jurnal ini.');
@@ -201,7 +207,9 @@ class JournalApprovalController extends Controller
 
                 $journal->validasi_pembimbing = 'sudah';
                 $journal->approved_pembimbing_at = now();
-                $journal->status = $journal->validasi_iduka === 'sudah' ? 'approved' : 'approved_pembimbing';
+
+                // PERUBAHAN: Status langsung menjadi 'approved' jika salah satu menyetujui
+                $journal->status = 'approved';
             } else {
                 return redirect()->back()->with('error', 'Akses tidak diizinkan.');
             }
@@ -243,7 +251,7 @@ class JournalApprovalController extends Controller
                 }
 
                 $journal->update([
-                    'validasi_iduka' => 'belum', // Ubah ke 'belum' bukan 'ditolak'
+                    'validasi_iduka' => 'belum', // Tetap 'belum' bukan 'ditolak'
                     'status' => 'rejected',
                     'rejected_reason' => $request->rejected_reason,
                     'rejected_at' => now()
@@ -258,7 +266,7 @@ class JournalApprovalController extends Controller
                 }
 
                 $journal->update([
-                    'validasi_pembimbing' => 'belum', // Ubah ke 'belum' bukan 'ditolak'
+                    'validasi_pembimbing' => 'belum', // Tetap 'belum' bukan 'ditolak'
                     'status' => 'rejected',
                     'rejected_reason' => $request->rejected_reason,
                     'rejected_at' => now()
@@ -279,12 +287,12 @@ class JournalApprovalController extends Controller
     /**
      * Detail jurnal untuk modal
      */
-
     public function showDetail($id)
     {
         try {
             Log::info('Accessing journal detail: ' . $id);
 
+            // Pastikan nama variabel adalah $journal (bukan $jurnal)
             $journal = Jurnal::with(['user'])->findOrFail($id);
             $user = auth()->user();
 
@@ -318,7 +326,21 @@ class JournalApprovalController extends Controller
             }
 
             Log::info('Rendering detail view for journal ' . $id);
-            $html = view('guru.konfir_jurnal.detail_jurnal', compact('journal'))->render();
+
+            // Tentukan view berdasarkan role
+            $viewName = $user->role === 'guru' ? 'guru.konfir_jurnal.detail_jurnal' : 'iduka.konfir_jurnal.detail_jurnal';
+
+            // Pastikan view ada
+            if (!view()->exists($viewName)) {
+                Log::error('View not found: ' . $viewName);
+                throw new \Exception('View tidak ditemukan: ' . $viewName);
+            }
+
+            // Debug: Tambahkan log untuk memastikan variabel terkirim
+            Log::info('Sending journal to view: ', ['id' => $journal->id, 'tgl' => $journal->tgl]);
+
+            // Render view dengan compact('journal')
+            $html = view($viewName, compact('journal'))->render();
 
             return response()->json([
                 'success' => true,
@@ -332,10 +354,10 @@ class JournalApprovalController extends Controller
                 'message' => 'Jurnal tidak ditemukan'
             ], 404);
         } catch (\Exception $e) {
-            Log::error('Error in showDetail: ' . $e->getMessage());
+            Log::error('Error in showDetail: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ' | Line: ' . $e->getLine());
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memuat detail jurnal'
+                'message' => 'Terjadi kesalahan saat memuat detail jurnal: ' . $e->getMessage()
             ], 500);
         }
     }
