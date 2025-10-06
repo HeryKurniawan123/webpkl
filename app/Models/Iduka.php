@@ -34,6 +34,9 @@ class Iduka extends Model
         'mulai_kerjasama',
         'akhir_kerjasama',
         'hidden',
+        'latitude',
+        'longitude',
+        'radius',
     ];
 
 

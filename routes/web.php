@@ -157,6 +157,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
 
     Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
+    Route::put('/hubin/iduka/{id}', [DaftarIdukaController::class, 'update']);
     Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
     Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
 
@@ -437,6 +438,8 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
 
         Route::post('/konfirmasi-dinas/{id}', [KonfirAbsenSiswaController::class, 'konfirmasiDinas'])
             ->name('konfirmasi-dinas');
+
+        Route::post('/kordinat' , [KonfirAbsenSiswaController::class, 'kordinat'])->name('tambah.kordinat');
 
     });
 

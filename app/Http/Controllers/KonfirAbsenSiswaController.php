@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\DinasPending;
+use App\Models\Iduka;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\AbsensiPending;
@@ -121,6 +122,7 @@ class KonfirAbsenSiswaController extends Controller
 
             // Calculate statistics
             $statistik = $this->hitungStatistik($user);
+            $idukas = Iduka::all();
 
             return view('iduka.konfir_absen_siswa.index', compact(
                 'absensiHariIni',
@@ -128,7 +130,8 @@ class KonfirAbsenSiswaController extends Controller
                 'izinPending',
                 'dinasPending',
                 'siswaList',
-                'statistik'
+                'statistik',
+                'idukas'
             ));
 
         } catch (\Exception $e) {
@@ -1112,4 +1115,25 @@ class KonfirAbsenSiswaController extends Controller
             ], 500);
         }
     }
+
+    public function kordinat(Request $request)
+    {
+        $request->validate([
+            'iduka_id' => 'required|exists:idukas,id',
+            'latitude' => 'required',
+            'longitude' => 'required',
+            'radius' => 'required',
+        ]);
+
+        $iduka = Iduka::find($request->iduka_id);
+        $iduka->update([
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'radius' => $request->radius,
+        ]);
+
+        return redirect()->back()->with('success', 'Koordinat berhasil diperbarui!');
+    }
+
+
 }

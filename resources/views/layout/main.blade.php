@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
-    data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+    data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -54,6 +54,9 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file. -->
     <script src="{{ asset('snet/assets/js/config.js') }}"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 
     <style>
         .sidebar,
@@ -185,7 +188,7 @@
                     @endif
 
 
-                    @if (in_array(auth()->user()->role, ['iduka', 'guru' , 'kaprog']))
+                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
                             <a href="{{ route('approval.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar-check"></i>
@@ -201,7 +204,7 @@
                         </li>
                     @endif
 
-                    @if (in_array(auth()->user()->role , ['guru' , 'kaprog']))
+                    @if (in_array(auth()->user()->role, ['guru', 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('pembimbing.dashboard') ? 'active' : '' }}">
                             <a href="{{ route('pembimbing.dashboard') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
@@ -236,7 +239,7 @@
                         </li>
                     @endif
 
-                    @if (in_array(auth()->user()->role, ['kaprog', 'guru', 'hubin' , 'kepsek']))
+                    @if (in_array(auth()->user()->role, ['kaprog', 'guru', 'hubin', 'kepsek']))
                         <li class="menu-item {{ Request::routeIs('monitoring.index') ? 'active' : '' }}">
                             <a href="{{ route('monitoring.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar-check"></i>
@@ -281,7 +284,8 @@
                         </li>
                     @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -586,7 +590,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function (event) {
+                button.addEventListener('click', function(event) {
                     event.preventDefault();
 
                     Swal.fire({
@@ -647,9 +651,12 @@
         <!-- Select2 JS -->
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
         <script>
-            $(document).ready(function () {
-                $('.select2').each(function () {
+            $(document).ready(function() {
+                $('.select2').each(function() {
                     $(this).select2({
                         dropdownParent: $(this).closest('.modal'),
                         placeholder: "-- Pilih siswa --",
