@@ -185,7 +185,7 @@
                     @endif
 
 
-                    @if (in_array(auth()->user()->role, ['iduka', 'guru']))
+                    @if (in_array(auth()->user()->role, ['iduka', 'guru' , 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
                             <a href="{{ route('approval.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-calendar-check"></i>
@@ -201,7 +201,7 @@
                         </li>
                     @endif
 
-                    @if (auth()->user()->role == 'guru')
+                    @if (in_array(auth()->user()->role , ['guru' , 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('pembimbing.dashboard') ? 'active' : '' }}">
                             <a href="{{ route('pembimbing.dashboard') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-group"></i>

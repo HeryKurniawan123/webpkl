@@ -67,6 +67,34 @@ class IdukaAtpController extends Controller
         return redirect()->back()->with('success', 'Tujuan Pembelajaran berhasil disimpan.');
     }
 
+    public function updateBulk(Request $request)
+    {
+        Log::info('Update Request Data:', $request->all());
+
+        $iduka_id = auth()->user()->iduka_id ?? null;
+        if (!$iduka_id) {
+            return back()->withErrors(['error' => 'IDUKA tidak ditemukan untuk user ini.']);
+        }
+
+        $tp_check = $request->tp_check ?? [];
+
+        // Ambil semua data IdukaAtp yang ada untuk user ini
+        $existingIdukaAtps = IdukaAtp::where('iduka_id', $iduka_id)->get();
+
+        // Update semua record yang ada
+        foreach ($existingIdukaAtps as $idukaAtp) {
+            // Cek apakah ATP ini di-check atau tidak
+            $isSelected = in_array($idukaAtp->atp_id, $tp_check);
+
+            // Update is_selected
+            $idukaAtp->update([
+                'is_selected' => $isSelected
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Tujuan Pembelajaran berhasil diupdate.');
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -99,6 +127,120 @@ class IdukaAtpController extends Controller
         $selected_atps = IdukaAtp::where('iduka_id', $iduka_id)->pluck('atp_id')->toArray();
 
         return view('iduka.tp.tp_show', compact('iduka', 'cp_atps', 'selected_atps'));
+    }
+
+    public function getAllIdukaAtp()
+    {
+        try {
+            $iduka_id = auth()->user()->iduka_id;
+
+            if (!$iduka_id) {
+                return response()->json(['error' => 'IDUKA ID tidak ditemukan'], 404);
+            }
+
+            // Ambil semua data IdukaAtp yang sudah tersimpan
+            $idukaAtps = IdukaAtp::with(['atp.cp.konke', 'konke'])
+                ->where('iduka_id', $iduka_id)
+                ->get();
+
+            if ($idukaAtps->isEmpty()) {
+                return response()->json([]);
+            }
+
+            // Group by konke_id
+            $groupedByKonke = $idukaAtps->groupBy('konke_id');
+
+            $result = [];
+
+            foreach ($groupedByKonke as $konke_id => $items) {
+                $konke_name = $items->first()->konke->name_konke ?? 'Unknown';
+
+                // Group by CP
+                $groupedByCp = $items->groupBy('cp_id');
+
+                $cpsData = [];
+
+                foreach ($groupedByCp as $cp_id => $cpItems) {
+                    $firstItem = $cpItems->first();
+                    $cp_name = $firstItem->cp->cp ?? 'Unknown CP';
+
+                    $atpsData = [];
+
+                    foreach ($cpItems as $item) {
+                        if ($item->atp) {
+                            $atpsData[] = [
+                                'id' => $item->atp_id,
+                                'kode_atp' => $item->atp->kode_atp ?? '',
+                                'atp' => $item->atp->atp ?? '',
+                                'is_selected' => $item->is_selected ? true : false
+                            ];
+                        }
+                    }
+
+                    if (!empty($atpsData)) {
+                        $cpsData[] = [
+                            'cp' => $cp_name,
+                            'atps' => $atpsData
+                        ];
+                    }
+                }
+
+                if (!empty($cpsData)) {
+                    $result[] = [
+                        'konke_id' => $konke_id,
+                        'konke_name' => $konke_name,
+                        'cps' => $cpsData
+                    ];
+                }
+            }
+
+            return response()->json($result);
+
+        } catch (\Exception $e) {
+            Log::error('Error in getAllIdukaAtp: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getCpAtp($konke_id)
+    {
+        // Ambil semua CP beserta ATP berdasarkan konke_id
+        $cps = Cp::where('konke_id', $konke_id)
+            ->with(['atps' => function($query) {
+                $query->orderBy('kode_atp');
+            }])
+            ->get();
+
+        $iduka_id = auth()->user()->iduka_id;
+
+        // Ambil data ATP yang sudah dipilih oleh IDUKA
+        $selectedAtps = IdukaAtp::where('iduka_id', $iduka_id)
+            ->where('konke_id', $konke_id)
+            ->pluck('is_selected', 'atp_id');
+
+        $result = [];
+
+        foreach ($cps as $cp) {
+            $atpData = [];
+
+            foreach ($cp->atps as $atp) {
+                $atpData[] = [
+                    'id' => $atp->id,
+                    'kode_atp' => $atp->kode_atp,
+                    'atp' => $atp->atp,
+                    'is_selected' => isset($selectedAtps[$atp->id]) ? $selectedAtps[$atp->id] : false
+                ];
+            }
+
+            if (count($atpData) > 0) {
+                $result[] = [
+                    'cp' => $cp->cp,
+                    'atp' => $atpData
+                ];
+            }
+        }
+
+        return response()->json($result);
     }
 
     public function cetakAtpLangsung()

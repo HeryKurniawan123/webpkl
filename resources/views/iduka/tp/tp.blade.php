@@ -84,6 +84,11 @@
             width: 30px;
             text-align: end;
         }
+
+        .jurusan-btn.active {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
     </style>
 </head>
 
@@ -103,6 +108,9 @@
                                     </button>
                                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahTpModal">
                                         <i class="bi bi-plus-lg"></i> <span class="d-none d-md-inline">Tambah TP</span>
+                                    </button>
+                                    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#updateTpModal">
+                                        <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Update TP</span>
                                     </button>
                                     <button type="button" class="btn btn-success btn-sm" id="btnCetak">
                                         <i class="bi bi-printer"></i> <span class="d-none d-md-inline">Cetak</span>
@@ -161,7 +169,7 @@
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambah dan Edit Tujuan Pembelajaran Institusi</h5>
+                    <h5 class="modal-title">Tambah Tujuan Pembelajaran Institusi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form action="{{ route('iduka_atp.store') }}" method="POST">
@@ -211,6 +219,61 @@
         </div>
     </div>
 
+    <!-- Modal Update -->
+    <div class="modal fade" id="updateTpModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Tujuan Pembelajaran Institusi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ route('iduka_atp.update') }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="iduka_id" value="{{ auth()->user()->iduka_id }}">
+                    <input type="hidden" name="konke_id" id="konke_id_update">
+
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center mb-3">
+                            <!-- Wrapper for sliding konke buttons -->
+                            <div class="d-flex flex-nowrap overflow-auto" id="konke-buttons-update">
+                                @foreach($konkes as $konke)
+                                <button type="button" class="btn btn-outline-primary m-1 jurusan-btn-update" data-konke-id="{{ $konke->id }}">
+                                    {{ $konke->name_konke }}
+                                </button>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div id="cpTpContainerUpdate">
+                            <label class="d-flex justify-content-end me-2">Check All
+                                <input type="checkbox" id="checkAllUpdate">
+                            </label>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Tujuan Pembelajaran</th>
+                                        <th>Checklist</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tp-update-body">
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-info btn-sm">Update Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </body>
 @if(session('success'))
 <script>
@@ -228,48 +291,132 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // Check All untuk Modal Tambah
         document.getElementById("checkAllTambah").addEventListener("click", function() {
-            document.querySelectorAll(".tp-check").forEach(checkbox => {
+            document.querySelectorAll("#tp-tambah-body .tp-check").forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
         });
 
-        // Event delegation untuk menangani klik jurusan/konke
+        // Check All untuk Modal Update
+        document.getElementById("checkAllUpdate").addEventListener("click", function() {
+            document.querySelectorAll("#tp-update-body .tp-check").forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Fungsi untuk load semua data TP saat modal Update dibuka
+        const updateModal = document.getElementById('updateTpModal');
+        updateModal.addEventListener('show.bs.modal', function () {
+            // Reset button states
+            document.querySelectorAll(".jurusan-btn-update").forEach(btn => {
+                btn.classList.remove("active");
+                btn.classList.add("btn-outline-primary");
+                btn.classList.remove("btn-primary");
+            });
+
+            loadAllUpdateData();
+        });
+
+        // Fungsi untuk load semua data TP yang sudah ada
+        function loadAllUpdateData() {
+            const tpUpdateBody = document.getElementById("tp-update-body");
+            tpUpdateBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading semua data...</td></tr>";
+
+            fetch('/get-all-iduka-atp')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("All data received:", data);
+                    tpUpdateBody.innerHTML = "";
+
+                    if (!data || data.length === 0) {
+                        tpUpdateBody.innerHTML = "<tr><td colspan='2' class='text-center text-warning'>Belum ada data TP yang tersimpan. Silakan tambah data terlebih dahulu.</td></tr>";
+                        return;
+                    }
+
+                    // Simpan semua konke_id dalam array untuk form submission
+                    let allKonkeIds = [];
+
+                    // Tampilkan data berdasarkan konke
+                    data.forEach(konkeData => {
+                        allKonkeIds.push(konkeData.konke_id);
+
+                        // Header Konke
+                        let konkeHeader = `<tr><td colspan="2"><b style="font-size: 16px; color: #0d6efd;">${konkeData.konke_name}</b></td></tr>`;
+                        tpUpdateBody.innerHTML += konkeHeader;
+
+                        // Loop CP
+                        konkeData.cps.forEach(cp => {
+                            let cpRow = `<tr><td colspan="2"><b style="margin-left: 20px;">${cp.cp}</b></td></tr>`;
+                            tpUpdateBody.innerHTML += cpRow;
+
+                            // Loop ATP
+                            cp.atps.forEach(atp => {
+                                let atpRow = `
+                                    <tr>
+                                        <td class="tp-content" style="padding-left: 40px;"><b>${atp.kode_atp}</b> ${atp.atp}</td>
+                                        <td class="tp-checkbox text-end">
+                                            <input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}' ${atp.is_selected ? 'checked' : ''} data-konke-id="${konkeData.konke_id}">
+                                        </td>
+                                    </tr>`;
+                                tpUpdateBody.innerHTML += atpRow;
+                            });
+                        });
+                    });
+
+                    // Set konke_id pertama sebagai default (untuk single konke update)
+                    if (allKonkeIds.length > 0) {
+                        document.getElementById("konke_id_update").value = allKonkeIds[0];
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    tpUpdateBody.innerHTML = `<tr><td colspan='2' class='text-danger text-center'>
+                        <i class="bi bi-exclamation-triangle"></i> Gagal memuat data.<br>
+                        <small>Error: ${error.message}</small><br>
+                        <small>Pastikan route '/get-all-iduka-atp' sudah terdaftar di web.php</small>
+                    </td></tr>`;
+                });
+        }
+
+        // Event delegation untuk Modal TAMBAH
         document.addEventListener("click", function(event) {
             if (event.target.classList.contains("jurusan-btn")) {
                 event.preventDefault();
 
+                // Remove active class from all buttons
+                document.querySelectorAll(".jurusan-btn").forEach(btn => {
+                    btn.classList.remove("active");
+                });
+
+                // Add active class to clicked button
+                event.target.classList.add("active");
+
                 const konke_id = event.target.getAttribute("data-konke-id");
                 document.getElementById("konke_id").value = konke_id;
 
-                console.log("Konke diklik! ID:", konke_id); // Debug log
-
                 const tpTambahBody = document.getElementById("tp-tambah-body");
-
-                // Tampilkan loading sementara
                 tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
 
-                // Fetch data dari server
                 fetch(`/get-cp-atp/${konke_id}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log("Data diterima:", data); // Debug respons dari server
+                        tpTambahBody.innerHTML = "";
 
-                        tpTambahBody.innerHTML = ""; // Kosongkan data sebelumnya
-
-                        // Jika tidak ada data, tampilkan pesan
                         if (data.length === 0) {
                             tpTambahBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Tidak ada data CP & ATP.</td></tr>";
                             return;
                         }
 
-                        // Looping data CP
                         data.forEach(cp => {
-                            // Tambahkan baris CP
                             let cpRow = `<tr><td><b>${cp.cp}</b></td><td></td></tr>`;
                             tpTambahBody.innerHTML += cpRow;
 
-                            // Looping data ATP di dalam CP
                             cp.atp.forEach(atp => {
                                 let atpRow = `
                                     <tr>
@@ -289,9 +436,70 @@
             }
         });
 
+        // Event delegation untuk Modal UPDATE - filter by konke
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("jurusan-btn-update")) {
+                event.preventDefault();
+
+                // Remove active class from all update buttons
+                document.querySelectorAll(".jurusan-btn-update").forEach(btn => {
+                    btn.classList.remove("active");
+                    btn.classList.add("btn-outline-primary");
+                    btn.classList.remove("btn-primary");
+                });
+
+                // Add active class to clicked button
+                event.target.classList.remove("btn-outline-primary");
+                event.target.classList.add("btn-primary");
+                event.target.classList.add("active");
+
+                const konke_id = event.target.getAttribute("data-konke-id");
+                document.getElementById("konke_id_update").value = konke_id;
+
+                // Filter tampilan berdasarkan konke_id
+                filterUpdateDataByKonke(konke_id);
+            }
+        });
+
+        // Fungsi untuk filter data berdasarkan konke
+        function filterUpdateDataByKonke(konke_id) {
+            const tpUpdateBody = document.getElementById("tp-update-body");
+            tpUpdateBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Loading...</td></tr>";
+
+            fetch(`/get-cp-atp/${konke_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    tpUpdateBody.innerHTML = "";
+
+                    if (data.length === 0) {
+                        tpUpdateBody.innerHTML = "<tr><td colspan='2' class='text-center text-muted'>Tidak ada data CP & ATP.</td></tr>";
+                        return;
+                    }
+
+                    data.forEach(cp => {
+                        let cpRow = `<tr><td><b>${cp.cp}</b></td><td></td></tr>`;
+                        tpUpdateBody.innerHTML += cpRow;
+
+                        cp.atp.forEach(atp => {
+                            let atpRow = `
+                                <tr>
+                                    <td class="tp-content"><b>${atp.kode_atp}</b> ${atp.atp}</td>
+                                    <td class="tp-checkbox text-end">
+                                        <input type='checkbox' class='tp-check' name='tp_check[]' value='${atp.id}' ${atp.is_selected ? 'checked' : ''}>
+                                    </td>
+                                </tr>`;
+                            tpUpdateBody.innerHTML += atpRow;
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    tpUpdateBody.innerHTML = "<tr><td colspan='2' class='text-danger'>Gagal memuat data.</td></tr>";
+                });
+        }
+
         // Tombol Cetak
         document.getElementById("btnCetak").addEventListener("click", function() {
-            // Langsung cetak tanpa modal
             window.open('/cetak-atp-langsung', '_blank');
         });
     });

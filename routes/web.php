@@ -328,12 +328,26 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/iduka/edit', [IdukaController::class, 'edit'])->name('iduka.edit');
     Route::put('/iduka/updatePribadi/{id}', [IdukaController::class, 'updatePribadi'])->name('iduka.updatePribadi');
 
+    // Route untuk halaman TP
     Route::get('/iduka-atp', [IdukaAtpController::class, 'index'])->name('tp.iduka');
+
+    // Route untuk menyimpan TP baru (HAPUS DUPLIKAT, CUKUP 1 SAJA)
     Route::post('/iduka-atp/store', [IdukaAtpController::class, 'store'])->name('iduka_atp.store');
-    Route::put('/iduka-atp/update/{id}', [IdukaAtpController::class, 'update'])->name('iduka_atp.update');
+
+    // Route untuk update TP (bulk update)
+    Route::put('/iduka-atp/update', [IdukaAtpController::class, 'updateBulk'])->name('iduka_atp.update');
+
+    // Route untuk delete TP
     Route::delete('/iduka-atp/destroy/{id}', [IdukaAtpController::class, 'destroy'])->name('iduka_atp.destroy');
+
+    // Route untuk cetak
     Route::get('/cetak-atp-langsung', [IdukaAtpController::class, 'cetakAtpLangsung'])->name('cetak.atp.langsung');
 
+    // ✅ Route untuk get semua data IdukaAtp (TAMBAHKAN INI - PENTING untuk Modal Update!)
+    Route::get('/get-all-iduka-atp', [IdukaAtpController::class, 'getAllIdukaAtp']);
+
+    // ✅ Route untuk get CP & ATP berdasarkan konke_id (GANTI dengan method controller, bukan closure!)
+    Route::get('/get-cp-atp/{konke_id}', [IdukaAtpController::class, 'getCpAtp']);
 
     Route::get('/get-cp-atp/{konke_id}', function ($konke_id) {
         $cps = Cp::where('konke_id', $konke_id)->with('atp')->get();
@@ -344,6 +358,7 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
 
     });
+    // Route untuk show TP berdasarkan iduka_id
     Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
 
     //PEMBIMBING IDUKA
@@ -374,7 +389,7 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 });
 
 
-Route::middleware(['auth', 'hakakses:iduka,guru'])->group(function () {
+Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
 
     Route::get('/konfir/absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfir.absen.index');
     // Route::get('/test-dinas', function () {
