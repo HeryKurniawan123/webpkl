@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AbsensiGuru;
 use App\Models\PengajuanPkl;
 use App\Models\PengajuanUsulan;
+use App\Models\User;
 use App\Models\UsulanIduka;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -57,6 +58,9 @@ class HakAksesController extends Controller
 
         $sudahAjukan = $usulanAktif || $pengajuanAktif;
 
+        $user = Auth::user()->load('pembimbing');
+
+
         // ✅ Cek status spesifik: proses atau diterima
         $statusAjukan = UsulanIduka::where('user_id', $user->id)
             ->whereIn('status', ['proses', 'diterima'])
@@ -64,7 +68,7 @@ class HakAksesController extends Controller
                 ->whereIn('status', ['proses', 'diterima'])
                 ->value('status');
 
-        return view('siswa.dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima', 'sudahAjukan', 'statusAjukan'));
+        return view('siswa.dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima', 'sudahAjukan', 'statusAjukan', 'user'));
     }
 
     function guru()
