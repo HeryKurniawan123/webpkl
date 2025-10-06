@@ -75,7 +75,7 @@
                     <div class="card text-center border-0 shadow-sm h-100">
                         <div class="card-body">
                             <i class="bx bx-user-x text-danger fs-2 mb-2"></i>
-                            <h6 class="text-muted">Pembimbing Belum Monitoring</h6>
+                            <h6 class="text-muted">Petugas Belum Monitoring</h6>
 
                             <h3 class="fw-bold text-danger">{{ $guruBelumMonitoring }}</h3>
                             <button class="btn btn-outline-danger btn-sm mt-2" data-bs-toggle="modal"

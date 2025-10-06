@@ -24,123 +24,116 @@ class KonfirAbsenSiswaController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index()
-    {
-        try {
-            $user = Auth::user();
+  public function index()
+{
+    try {
+        $user = Auth::user();
 
-            if (!in_array($user->role, ['iduka', 'guru'])) {
-                return redirect()->back()->with('error', 'Akses tidak diizinkan');
-            }
-
-            // For IDUKA
-            if ($user->role === 'iduka') {
-                $absensiHariIni = Absensi::with(['user', 'iduka'])
-                    ->where('iduka_id', $user->iduka_id)
-                    ->whereDate('tanggal', Carbon::today())
-                    ->get();
-
-                $absensiPending = AbsensiPending::with(['user', 'iduka'])
-                    ->where('iduka_id', $user->iduka_id)
-                    ->where('status_konfirmasi', 'pending')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                $izinPending = IzinPending::with(['user', 'iduka'])
-                    ->where('iduka_id', $user->iduka_id)
-                    ->where('status_konfirmasi', 'pending')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                $dinasPending = DinasPending::with(['user', 'iduka'])
-                    ->where('iduka_id', $user->iduka_id)
-                    ->where('status_konfirmasi', 'pending')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                $siswaList = User::where('role', 'siswa')
-                    ->where('iduka_id', $user->iduka_id)
-                    ->orderBy('name')
-                    ->get();
-
-            } else { // For Guru/Pembimbing
-                // Ambil data guru dari tabel gurus berdasarkan user_id
-                $guru = Guru::where('user_id', $user->id)->first();
-
-                if (!$guru) {
-                    Log::warning('Data guru tidak ditemukan', ['user_id' => $user->id]);
-                    return redirect()->back()->with('error', 'Data guru tidak ditemukan. Silakan hubungi administrator.');
-                }
-
-                // Ambil siswa yang dibimbing (users.pembimbing_id = gurus.id)
-                $siswaIds = User::where('role', 'siswa')
-                    ->where('pembimbing_id', $guru->id)
-                    ->pluck('id')
-                    ->toArray();
-
-                Log::info('DEBUG GURU - Siswa yang dibimbing', [
-                    'user_id' => $user->id,
-                    'guru_id' => $guru->id,
-                    'guru_name' => $user->name,
-                    'siswa_ids' => $siswaIds,
-                    'jumlah_siswa' => count($siswaIds)
-                ]);
-
-                // Query absensi hari ini
-                $absensiHariIni = Absensi::with(['user', 'iduka'])
-                    ->whereIn('user_id', $siswaIds)
-                    ->whereDate('tanggal', Carbon::today())
-                    ->get();
-
-                // Query absensi pending (pembimbing_id di absensi_pending = gurus.id)
-                $absensiPending = AbsensiPending::with(['user', 'iduka', 'pembimbing'])
-                    ->where('pembimbing_id', $guru->id)
-                    ->where('status_konfirmasi', 'pending')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                // Query izin pending
-                $izinPending = IzinPending::with(['user', 'iduka'])
-                    ->whereIn('user_id', $siswaIds)
-                    ->where('status_konfirmasi', 'pending')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                // Query dinas pending
-                $dinasPending = DinasPending::with(['user', 'iduka'])
-                    ->whereIn('user_id', $siswaIds)
-                    ->where('status_konfirmasi', 'pending')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                // List siswa bimbingan
-                $siswaList = User::where('role', 'siswa')
-                    ->where('pembimbing_id', $guru->id)
-                    ->orderBy('name')
-                    ->get();
-            }
-
-            // Calculate statistics
-            $statistik = $this->hitungStatistik($user);
-            $idukas = Iduka::all();
-
-            return view('iduka.konfir_absen_siswa.index', compact(
-                'absensiHariIni',
-                'absensiPending',
-                'izinPending',
-                'dinasPending',
-                'siswaList',
-                'statistik',
-                'idukas'
-            ));
-
-        } catch (\Exception $e) {
-            Log::error('Error in KonfirAbsenSiswaController@index: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        if (!in_array($user->role, ['iduka', 'guru'])) {
+            return redirect()->back()->with('error', 'Akses tidak diizinkan');
         }
+
+        // === Untuk IDUKA ===
+        if ($user->role === 'iduka') {
+            $absensiHariIni = Absensi::with(['user', 'iduka'])
+                ->where('iduka_id', $user->iduka_id)
+                ->whereDate('tanggal', Carbon::today())
+                ->get();
+
+            $absensiPending = AbsensiPending::with(['user', 'iduka'])
+                ->where('iduka_id', $user->iduka_id)
+                ->where('status_konfirmasi', 'pending')
+                ->latest()
+                ->get();
+
+            $izinPending = IzinPending::with(['user', 'iduka'])
+                ->where('iduka_id', $user->iduka_id)
+                ->where('status_konfirmasi', 'pending')
+                ->latest()
+                ->get();
+
+            $dinasPending = DinasPending::with(['user', 'iduka'])
+                ->where('iduka_id', $user->iduka_id)
+                ->where('status_konfirmasi', 'pending')
+                ->latest()
+                ->get();
+
+            $siswaList = User::where('role', 'siswa')
+                ->where('iduka_id', $user->iduka_id)
+                ->orderBy('name')
+                ->get();
+
+            // ambil data iduka yang login untuk kordinat
+            $iduka = Iduka::find($user->iduka_id);
+
+        } else {
+            // === Untuk Guru/Pembimbing ===
+            $guru = Guru::where('user_id', $user->id)->first();
+
+            if (!$guru) {
+                Log::warning('Data guru tidak ditemukan', ['user_id' => $user->id]);
+                return redirect()->back()->with('error', 'Data guru tidak ditemukan.');
+            }
+
+            $siswaIds = User::where('role', 'siswa')
+                ->where('pembimbing_id', $guru->id)
+                ->pluck('id')
+                ->toArray();
+
+            $absensiHariIni = Absensi::with(['user', 'iduka'])
+                ->whereIn('user_id', $siswaIds)
+                ->whereDate('tanggal', Carbon::today())
+                ->get();
+
+            $absensiPending = AbsensiPending::with(['user', 'iduka', 'pembimbing'])
+                ->where('pembimbing_id', $guru->id)
+                ->where('status_konfirmasi', 'pending')
+                ->latest()
+                ->get();
+
+            $izinPending = IzinPending::with(['user', 'iduka'])
+                ->whereIn('user_id', $siswaIds)
+                ->where('status_konfirmasi', 'pending')
+                ->latest()
+                ->get();
+
+            $dinasPending = DinasPending::with(['user', 'iduka'])
+                ->whereIn('user_id', $siswaIds)
+                ->where('status_konfirmasi', 'pending')
+                ->latest()
+                ->get();
+
+            $siswaList = User::where('role', 'siswa')
+                ->where('pembimbing_id', $guru->id)
+                ->orderBy('name')
+                ->get();
+
+            // guru bisa lihat semua iduka
+            $iduka = null;
+        }
+
+        // Hitung statistik (fungsi kamu sendiri)
+        $statistik = $this->hitungStatistik($user);
+        $idukas = Iduka::all(); // untuk dropdown
+
+        return view('iduka.konfir_absen_siswa.index', compact(
+            'absensiHariIni',
+            'absensiPending',
+            'izinPending',
+            'dinasPending',
+            'siswaList',
+            'statistik',
+            'idukas',
+            'iduka'
+        ));
+    } catch (\Exception $e) {
+        Log::error('Error in KonfirAbsenSiswaController@index: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString()
+        ]);
+        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
+}
+
 
     /**
      * Konfirmasi izin siswa - FIXED VERSION
@@ -1123,6 +1116,8 @@ class KonfirAbsenSiswaController extends Controller
             'latitude' => 'required',
             'longitude' => 'required',
             'radius' => 'required',
+            'jam_masuk' => 'nullable|date_format:H:i',
+            'jam_pulang' => 'nullable|date_format:H:i',
         ]);
 
         $iduka = Iduka::find($request->iduka_id);
@@ -1130,6 +1125,8 @@ class KonfirAbsenSiswaController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'radius' => $request->radius,
+            'jam_masuk' => $request->jam_masuk,
+            'jam_pulang' => $request->jam_pulang
         ]);
 
         return redirect()->back()->with('success', 'Koordinat berhasil diperbarui!');

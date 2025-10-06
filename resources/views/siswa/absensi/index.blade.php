@@ -1,4 +1,4 @@
-\@extends('layout.main')
+@extends('layout.main')
 
 @section('content')
     <div class="container-fluid"><br>
@@ -69,7 +69,17 @@
                                                     <strong>IDUKA Anda:</strong> {{ Auth::user()->idukaDiterima->nama }}<br>
                                                     <strong>Lokasi:</strong> {{ Auth::user()->idukaDiterima->alamat }}<br>
                                                     <strong>Radius:</strong>
-                                                    {{ Auth::user()->idukaDiterima->radius ?? 'Belum diatur' }} meter
+                                                    {{ Auth::user()->idukaDiterima->radius ?? 'Belum diatur' }} meter<br>
+                                                    <strong>Jam Masuk:</strong>
+                                                    {{ Auth::user()->idukaDiterima->jam_masuk
+                                                        ? date('H:i', strtotime(Auth::user()->idukaDiterima->jam_masuk))
+                                                        : '08:00 (default)' }}
+
+                                                    <strong>Jam Pulang:</strong>
+                                                    {{ Auth::user()->idukaDiterima->jam_pulang
+                                                        ? date('H:i', strtotime(Auth::user()->idukaDiterima->jam_pulang))
+                                                        : '15:00 (default)' }}
+
                                                 </div>
                                             @else
                                                 <div class="alert alert-warning">
@@ -147,6 +157,10 @@
                                                                 @if ($absensiHariIni->status_dinas === 'disetujui')
                                                                     <span class="badge bg-primary ms-1">Dinas Luar</span>
                                                                 @endif
+                                                                <span class="text-muted ms-2">
+                                                                    Batas:
+                                                                    {{ Auth::user()->idukaDiterima->jam_masuk ? Auth::user()->idukaDiterima->jam_masuk->format('H:i') : '08:00' }}
+                                                                </span>
                                                             </small>
                                                         </div>
                                                     </div>
@@ -168,6 +182,8 @@
                                                                 @if ($absensiHariIni->status_dinas === 'disetujui')
                                                                     <span class="badge bg-primary">Dinas Luar</span>
                                                                 @endif
+                                                                Minimal:
+                                                                {{ Auth::user()->idukaDiterima->jam_pulang ? Auth::user()->idukaDiterima->jam_pulang->format('H:i') : '15:00' }}
                                                             </small>
                                                         </div>
                                                     </div>
@@ -216,6 +232,12 @@
                                             <p>IDUKA Longitude: {{ Auth::user()->idukaDiterima->longitude ?? 'Tidak diatur' }}
                                             </p>
                                             <p>Radius: {{ Auth::user()->idukaDiterima->radius ?? 'Tidak diatur' }} meter</p>
+                                            <p>Jam Masuk:
+                                                {{ Auth::user()->idukaDiterima->jam_masuk ? Auth::user()->idukaDiterima->jam_masuk->format('H:i') : '08:00 (default)' }}
+                                            </p>
+                                            <p>Jam Pulang:
+                                                {{ Auth::user()->idukaDiterima->jam_pulang ? Auth::user()->idukaDiterima->jam_pulang->format('H:i') : '15:00 (default)' }}
+                                            </p>
                                         </div>
                                     @endif
                                 @endauth
@@ -474,17 +496,26 @@
             const idukaLng = {{ Auth::user()->idukaDiterima->longitude }};
             const allowedRadius = {{ Auth::user()->idukaDiterima->radius ?? 100 }};
             const hasValidIduka = true;
+            // Ambil jam operasional dari IDUKA
+            const jamMasukIduka =
+                "{{ Auth::user()->idukaDiterima->jam_masuk ? Auth::user()->idukaDiterima->jam_masuk->format('H:i') : '08:00' }}";
+            const jamPulangIduka =
+                "{{ Auth::user()->idukaDiterima->jam_pulang ? Auth::user()->idukaDiterima->jam_pulang->format('H:i') : '15:00' }}";
         @else
             const idukaLat = null;
             const idukaLng = null;
             const allowedRadius = 100;
             const hasValidIduka = false;
+            const jamMasukIduka = "08:00";
+            const jamPulangIduka = "15:00";
         @endif
         @else
             const idukaLat = null;
             const idukaLng = null;
             const allowedRadius = 100;
             const hasValidIduka = false;
+            const jamMasukIduka = "08:00";
+            const jamPulangIduka = "15:00";
         @endauth
 
         // Fungsi untuk menghitung jarak antara dua titik (Haversine formula)
@@ -503,6 +534,34 @@
 
         function deg2rad(deg) {
             return deg * (Math.PI / 180);
+        }
+
+        // Fungsi untuk validasi jam pulang
+        function validateJamPulang() {
+            const now = new Date();
+            const [jam, menit] = jamPulangIduka.split(':');
+            const jamPulangDate = new Date();
+            jamPulangDate.setHours(parseInt(jam), parseInt(menit), 0, 0);
+
+            // Jika sedang dinas luar, skip validasi jam
+            if (sedangDinas) {
+                return {
+                    valid: true,
+                    message: ''
+                };
+            }
+
+            if (now < jamPulangDate) {
+                return {
+                    valid: false,
+                    message: `Belum waktunya absen pulang. Absen pulang dibuka pukul ${jamPulangIduka}.`
+                };
+            }
+
+            return {
+                valid: true,
+                message: ''
+            };
         }
 
         function getLocation() {
@@ -594,7 +653,14 @@
                     btnMasuk.disabled = false;
                 }
                 if (sudahAbsenMasuk && !sudahAbsenPulang && !sedangIzin) {
-                    btnPulang.disabled = false;
+                    // Cek validasi jam pulang
+                    const jamValidation = validateJamPulang();
+                    btnPulang.disabled = !jamValidation.valid;
+                    if (!jamValidation.valid) {
+                        btnPulang.title = jamValidation.message;
+                    } else {
+                        btnPulang.title = "";
+                    }
                 }
             } else {
                 distanceStatus.textContent = "❌ Anda berada di luar radius yang diizinkan";
@@ -663,7 +729,6 @@
         });
 
         // Validasi form absen masuk
-        // Di bagian validasi form absen masuk
         document.getElementById('formMasuk').addEventListener('submit', function(e) {
             if (sudahAbsenMasuk || sedangIzin) {
                 e.preventDefault();
@@ -703,11 +768,18 @@
             }
         });
 
-
         // Validasi form absen pulang
         document.getElementById('formPulang').addEventListener('submit', function(e) {
             const absensiHariIni = @json($absensiHariIni);
             const sedangDinas = absensiHariIni && absensiHariIni.status_dinas === 'disetujui';
+
+            // Validasi jam pulang
+            const jamValidation = validateJamPulang();
+            if (!jamValidation.valid) {
+                e.preventDefault();
+                alert(jamValidation.message);
+                return false;
+            }
 
             // Kalau sedang dinas luar, skip pengecekan absen masuk
             if (sedangDinas) {
@@ -753,7 +825,6 @@
                 return false;
             }
         });
-
 
         document.addEventListener('DOMContentLoaded', function() {
             const formIzin = document.getElementById('formIzin');
@@ -949,32 +1020,29 @@
                 }
             });
 
-            function showAlert(type, message) {
-                // Hapus alert sebelumnya
-                const existingAlert = document.querySelector('.alert-dismissible');
-                if (existingAlert) {
-                    existingAlert.remove();
-                }
+            // Fungsi untuk update status tombol berdasarkan waktu
+            function updateButtonStatusBasedOnTime() {
+                // Update status tombol pulang jika sudah absen masuk
+                if (sudahAbsenMasuk && !sudahAbsenPulang && !sedangIzin && !sedangDinas) {
+                    const jamValidation = validateJamPulang();
+                    btnPulang.disabled = !jamValidation.valid || !locationSwitch.checked;
+                    btnPulang.title = jamValidation.valid ? "" : jamValidation.message;
 
-                const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
-                alertDiv.innerHTML = `
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        `;
-
-                // Tempatkan alert di bagian atas halaman
-                const container = document.querySelector('.container-fluid');
-                container.insertBefore(alertDiv, container.firstChild);
-
-                // Auto hide setelah 5 detik
-                setTimeout(() => {
-                    if (alertDiv.parentNode) {
-                        alertDiv.remove();
+                    // Update teks pada tombol jika perlu
+                    const smallText = btnPulang.querySelector('small');
+                    if (smallText && !jamValidation.valid) {
+                        smallText.textContent = `Belum waktunya (absen pulang dapat dilakukan  ${jamPulangIduka})`;
+                    } else if (smallText && jamValidation.valid) {
+                        smallText.textContent = 'Klik untuk absen pulang';
                     }
-                }, 5000);
+                }
             }
+
+            // Panggil fungsi update status tombol
+            updateButtonStatusBasedOnTime();
+
+            // Set interval untuk update status tombol setiap menit
+            setInterval(updateButtonStatusBasedOnTime, 60000);
         });
 
         // Auto-check jika tidak ada IDUKA yang valid
@@ -1025,8 +1093,17 @@
                     btnPulang.classList.add('btn-secondary');
                 }
             } else if (sudahAbsenMasuk && !sudahAbsenPulang && !sedangIzin) {
-                btnPulang.disabled = false;
-                btnPulang.classList.add('btn-warning');
+                // Cek validasi jam pulang
+                const jamValidation = validateJamPulang();
+                btnPulang.disabled = !jamValidation.valid || !locationSwitch.checked;
+                btnPulang.title = jamValidation.valid ? "" : jamValidation.message;
+
+                if (jamValidation.valid) {
+                    btnPulang.classList.add('btn-warning');
+                } else {
+                    btnPulang.classList.remove('btn-warning');
+                    btnPulang.classList.add('btn-secondary');
+                }
             }
 
             // Tombol Izin

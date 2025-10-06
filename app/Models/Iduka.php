@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Iduka extends Model
 {
+
+
     use HasFactory;
+
+    protected $table = "idukas";
+
     protected $fillable = [
         'nama',
         'user_id',
@@ -37,6 +42,14 @@ class Iduka extends Model
         'latitude',
         'longitude',
         'radius',
+        'jam_masuk',
+        'jam_pulang'
+    ];
+
+
+    protected $casts = [
+        'jam_masuk' => 'datetime:H:i',
+        'jam_pulang' => 'datetime:H:i',
     ];
 
 

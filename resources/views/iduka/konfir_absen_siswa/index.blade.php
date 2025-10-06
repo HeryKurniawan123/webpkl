@@ -605,7 +605,7 @@
                                 </div>
                             </div>
 
-                            {{-- tab Kordinat --}}
+                            {{-- Tab Koordinat --}}
                             <div class="tab-pane fade" id="v-pills-kordinat" role="tabpanel"
                                 aria-labelledby="v-pills-kordinat-tab">
                                 <div class="row">
@@ -624,7 +624,9 @@
                                                             class="form-select select2">
                                                             <option value="">-- Pilih IDUKA --</option>
                                                             @foreach ($idukas as $item)
-                                                                <option value="{{ $item->id }}">{{ $item->nama }}
+                                                                <option value="{{ $item->id }}"
+                                                                    {{ isset($iduka) && $iduka && $iduka->id == $item->id ? 'selected' : '' }}>
+                                                                    {{ $item->nama }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
@@ -632,29 +634,55 @@
 
                                                     <div class="mb-3">
                                                         <label>Latitude</label>
-                                                        <input type="text" name="latitude" class="form-control">
+                                                        <input type="text" name="latitude" class="form-control"
+                                                            value="{{ old('latitude', $iduka->latitude ?? '') }}">
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label>Longitude</label>
-                                                        <input type="text" name="longitude" class="form-control">
+                                                        <input type="text" name="longitude" class="form-control"
+                                                            value="{{ old('longitude', $iduka->longitude ?? '') }}">
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label>Radius</label>
-                                                        <input type="text" name="radius" class="form-control">
+                                                        <label>Radius (meter)</label>
+                                                        <input type="text" name="radius" class="form-control"
+                                                            value="{{ old('radius', $iduka->radius ?? '') }}">
                                                     </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="jam_masuk" class="form-label">Jam Masuk (WIB)</label>
+                                                        <div class="input-group">
+                                                            <input type="time" class="form-control" id="jam_masuk"
+                                                                name="jam_masuk"
+                                                                value="{{ old('jam_masuk', $iduka->jam_masuk ?? '08:00') }}">
+                                                            <span class="input-group-text">WIB</span>
+                                                        </div>
+                                                        <div class="form-text">Default: 08:00</div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="jam_pulang" class="form-label">Jam Pulang
+                                                            (WIB)</label>
+                                                        <div class="input-group">
+                                                            <input type="time" class="form-control" id="jam_pulang"
+                                                                name="jam_pulang"
+                                                                value="{{ old('jam_pulang', $iduka->jam_pulang ?? '15:00') }}">
+                                                            <span class="input-group-text">WIB</span>
+                                                        </div>
+                                                        <div class="form-text">Default: 15:00</div>
+                                                    </div>
+
 
                                                     <button type="submit" class="btn btn-outline-primary">Simpan</button>
                                                 </form>
-
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             {{-- end --}}
+
                         </div>
                     </div>
                 </div>

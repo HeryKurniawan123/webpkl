@@ -39,6 +39,8 @@ class DaftarIdukaController extends Controller
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'radius' => 'nullable|integer|min:0',
+            'jam_masuk' => 'nullable|date_format:H:i',
+            'jam_pulang' => 'nullable|date_format:H:i',
         ]);
 
         $iduka = Iduka::findOrFail($id);

@@ -68,6 +68,7 @@ class AbsensiController extends Controller
             'canPulang'
         ));
     }
+
     public function masuk(Request $request)
     {
         try {
@@ -180,17 +181,22 @@ class AbsensiController extends Controller
     }
 
     /**
-     * Determine attendance status based on current time
+     * Determine attendance status based on current time and IDUKA settings
      */
     private function getStatusAbsensi($waktu)
     {
-        $jamMasuk = Carbon::createFromTime(8, 0, 0); // Default: 08:00
-        $batasLambat = Carbon::createFromTime(8, 15, 0); // Default: 08:15
+        // Default jam masuk dan batas terlambat
+        $jamMasukDefault = Carbon::createFromTime(8, 0, 0); // 08:00
+        $batasLambatDefault = Carbon::createFromTime(8, 15, 0); // 08:15
 
-        // You can make these configurable per IDUKA if needed
+        // Ambil pengaturan jam dari IDUKA siswa
         $user = Auth::user();
+        $jamMasuk = $jamMasukDefault;
+        $batasLambat = $batasLambatDefault;
+
         if ($user->idukaDiterima && $user->idukaDiterima->jam_masuk) {
             $jamMasuk = Carbon::createFromTimeString($user->idukaDiterima->jam_masuk);
+            // Berikan toleransi 15 menit dari jam masuk yang ditetapkan
             $batasLambat = $jamMasuk->copy()->addMinutes(15);
         }
 
@@ -242,7 +248,7 @@ class AbsensiController extends Controller
 
             // Jika sudah absen pulang
             if ($absensiHariIni->jam_pulang) {
-                return redirect()->back()->with('error', 'Anda sudah melakukan absen pulang hari ini pada ' . $absensiHariIni->jam_pulang->format('H:i'));
+                return redirect()->back()->with('error', 'Anda sudah melakukan absensi pulang hari ini pada ' . $absensiHariIni->jam_pulang->format('H:i'));
             }
 
             // Logika utama untuk dinas luar
@@ -252,16 +258,23 @@ class AbsensiController extends Controller
             } else {
                 // Untuk kasus normal, harus sudah absen masuk
                 if (!$absensiHariIni->jam_masuk) {
-                    return redirect()->back()->with('error', 'Anda belum melakukan absen masuk hari ini.');
+                    return redirect()->back()->with('error', 'Anda belum melakukan absensi masuk hari ini.');
                 }
             }
 
-            // Validasi jam pulang minimal jam 15:00 untuk normal, tapi fleksibel untuk dinas luar
+            // Validasi jam pulang minimal jam pulang yang ditetapkan IDUKA
             if ($absensiHariIni->status_dinas !== 'disetujui') {
-                if (Carbon::now()->lt(Carbon::today()->setHour(15))) {
+                $jamPulangMinimal = Carbon::today()->setHour(15); // default jam 15:00
+
+                // Gunakan jam pulang dari IDUKA jika ada
+                if ($user->idukaDiterima && $user->idukaDiterima->jam_pulang) {
+                    $jamPulangMinimal = Carbon::createFromTimeString($user->idukaDiterima->jam_pulang);
+                }
+
+                if (Carbon::now()->lt($jamPulangMinimal)) {
                     return redirect()->back()->with(
                         'error',
-                        'Absen pulang hanya dapat dilakukan setelah jam 15:00.'
+                        'Absen pulang hanya dapat dilakukan setelah jam ' . $jamPulangMinimal->format('H:i') . '.'
                     );
                 }
             }
@@ -353,6 +366,8 @@ class AbsensiController extends Controller
 
             $jenisIzinText = [
                 'sakit' => 'Sakit',
+                'keperluan_keluarga' => 'Keperluan Keluarga',
+                'keperluan_sekolah' => 'Keperluan Sekolah',
                 'lainnya' => 'Lainnya'
             ];
 

@@ -48,7 +48,7 @@ class Absensi extends Model
         'latitude_masuk' => 'decimal:8',
         'longitude_masuk' => 'decimal:11',
         'latitude_pulang' => 'decimal:8',
-        'longitude_pulang' => 'decimal:11'
+        'longitude_pulang' => 'decimal:11',
     ];
 
     public function user()
