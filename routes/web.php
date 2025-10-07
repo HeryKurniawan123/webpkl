@@ -442,8 +442,7 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
             ->name('konfirmasi-dinas');
     });
 
-    Route::post('/iduka/tambah-kordinat', [IdukaController::class, 'kordinat'])->name('iduka.tambah.kordinat');
-    // Route::post('/iduka/create-cabang', [IdukaController::class, 'createCabang'])->name('iduka.create.cabang');
+    Route::post('/iduka/tambah-kordinat', [KonfirAbsenSiswaController::class, 'kordinat'])->name('iduka.tambah.kordinat');
 
 
     Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
