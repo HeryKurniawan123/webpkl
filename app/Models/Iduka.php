@@ -7,17 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Iduka extends Model
 {
-
-
     use HasFactory;
 
     protected $table = "idukas";
 
     protected $fillable = [
-        'nama',
         'user_id',
+        'nama',
         'nama_pimpinan',
         'nip_pimpinan',
+        'no_hp_pimpinan',
         'jabatan',
         'alamat',
         'kode_pos',
@@ -26,54 +25,98 @@ class Iduka extends Model
         'password',
         'bidang_industri',
         'kerjasama',
-        'kerjasama_lainnya',
         'kuota_pkl',
+        'kerjasama_lainnya',
         'rekomendasi',
-        'no_hp_pimpinan',
+        'hidden',
         'kolom6',
         'kolom7',
         'kolom8',
-        'foto',
         'tanggal_awal',
         'tanggal_akhir',
+        'foto',
         'mulai_kerjasama',
         'akhir_kerjasama',
-        'hidden',
         'latitude',
         'longitude',
         'radius',
         'jam_masuk',
-        'jam_pulang'
+        'jam_pulang',
+        'is_pusat',
+        'id_pusat'
     ];
-
 
     protected $casts = [
         'jam_masuk' => 'datetime:H:i',
         'jam_pulang' => 'datetime:H:i',
+        'latitude' => 'float',
+        'longitude' => 'float',
+        'radius' => 'float',
+        'is_pusat' => 'boolean',
+        'tanggal_awal' => 'date',
+        'tanggal_akhir' => 'date',
+        'mulai_kerjasama' => 'date',
+        'akhir_kerjasama' => 'date',
     ];
 
-
-    public function usulan()
+    // Relasi ke diri sendiri (untuk pusat-cabang)
+    public function pusat()
     {
-        return $this->hasOne(UsulanIduka::class, 'iduka_id');
+        return $this->belongsTo(Iduka::class, 'id_pusat');
     }
 
+    public function cabangs()
+    {
+        return $this->hasMany(Iduka::class, 'id_pusat');
+    }
 
+    // Relasi ke user yang memiliki IDUKA ini
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-
-    public function pembimbing()
+    // Relasi ke siswa yang diterima di IDUKA ini
+    public function siswa()
     {
-        return $this->hasMany(Pembimbing::class, 'user_id');
+        return $this->hasMany(User::class, 'iduka_diterima_id', 'id')
+            ->where('role', 'siswa');
     }
 
-    // Model: Iduka.php
+    // Relasi ke semua users yang terkait dengan IDUKA ini
+    public function users()
+    {
+        return $this->hasMany(User::class, 'iduka_diterima_id', 'id');
+    }
+
+    // Relasi ke pembimbing di IDUKA ini
+    public function pembimbing()
+    {
+        return $this->hasMany(Pembimbing::class, 'iduka_id', 'id');
+    }
+
+    // Relasi ke absensi di IDUKA ini
+    public function absensis()
+    {
+        return $this->hasMany(Absensi::class, 'iduka_id', 'id');
+    }
+
+    // Relasi ke absensi pending di IDUKA ini
+    public function absensisPending()
+    {
+        return $this->hasMany(AbsensiPending::class, 'iduka_id', 'id');
+    }
+
+    // Relasi ke usulan IDUKA
+    public function usulan()
+    {
+        return $this->hasOne(UsulanIduka::class, 'iduka_id', 'id');
+    }
+
+    // Relasi ke ATP IDUKA
     public function atps()
     {
-        return $this->hasMany(IdukaAtp::class, 'iduka_id');
+        return $this->hasMany(IdukaAtp::class, 'iduka_id', 'id');
     }
 
     // Relasi ke Kompetensi Keahlian (Konkes)
@@ -83,8 +126,6 @@ class Iduka extends Model
     }
 
     // Relasi ke CP (Capaian Pembelajaran)
-    // IdukaAtp.php
-
     public function cp()
     {
         return $this->belongsTo(Cp::class);
@@ -95,22 +136,15 @@ class Iduka extends Model
         return $this->belongsTo(Atp::class);
     }
 
-
+    // Relasi ke pengajuan usulan
     public function pengajuanUsulans()
     {
-        return $this->hasMany(PengajuanUsulan::class, 'iduka_id');
+        return $this->hasMany(PengajuanUsulan::class, 'iduka_id', 'id');
     }
 
-
-    //laporan
-    public function siswa()
-    {
-        return $this->hasMany(User::class, 'iduka_id', 'id')
-            ->where('role', 'siswa');
-    }
-
+    // Relasi ke lokasi IDUKA
     public function lokasi()
     {
-        return $this->hasMany(LokasiIduka::class, 'iduka_id');
+        return $this->hasMany(LokasiIduka::class, 'iduka_id', 'id');
     }
 }

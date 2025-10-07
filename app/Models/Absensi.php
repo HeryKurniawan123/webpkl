@@ -22,7 +22,6 @@ class Absensi extends Model
         'latitude',
         'longitude',
         'lokasi',
-        'lokasi_iduka_id',
         'alasan_penolakan',
         'latitude_masuk',
         'longitude_masuk',

@@ -46,6 +46,8 @@
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
     <!-- Page CSS -->
 
     <!-- Helpers -->
@@ -651,22 +653,9 @@
         <!-- Select2 JS -->
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
-        <script>
-            $(document).ready(function() {
-                $('.select2').each(function() {
-                    $(this).select2({
-                        dropdownParent: $(this).closest('.modal'),
-                        placeholder: "-- Pilih siswa --",
-                        allowClear: true,
-                        width: '100%'
-                    });
-                });
-            });
-        </script>
-
+      
         <script>
             if ("serviceWorker" in navigator) {
                 window.addEventListener("load", () => {

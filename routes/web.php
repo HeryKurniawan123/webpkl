@@ -117,6 +117,7 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
         Route::get('/riwayat', [AbsensiController::class, 'riwayat'])->name('riwayat');
         Route::get('/cek-izin', [AbsensiController::class, 'cekStatusIzin'])->name('cek-izin');
         Route::get('/cek-dinas', [AbsensiController::class, 'cekStatusDinas'])->name('cek-dinas');
+        Route::get('/absensi/get-status', [AbsensiController::class, 'getStatus'])->name('get-status');
     });
 
     //jurnal
@@ -157,7 +158,8 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
 
 
     Route::get('/daftar/data-iduka', [DaftarIdukaController::class, 'index'])->name('hubin.iduka.daftar');
-    Route::put('/hubin/iduka/{id}', [DaftarIdukaController::class, 'update']);
+    Route::put('/hubin/iduka/{id}', [DaftarIdukaController::class, 'update'])->name('hubin.iduka.update');
+    Route::post('/hubin/iduka/store-cabang', [DaftarIdukaController::class, 'storeCabang'])->name('hubin.iduka.store-cabang');
     Route::get('/hubin/daftarcetak', [DaftarCetakController::class, 'index'])->name('hubin.daftarcetak');
     Route::get('/hubin/daftarcetak/download', [DaftarCetakController::class, 'downloadExcel'])->name('hubin.daftarcetak.download');
 
@@ -438,10 +440,10 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
 
         Route::post('/konfirmasi-dinas/{id}', [KonfirAbsenSiswaController::class, 'konfirmasiDinas'])
             ->name('konfirmasi-dinas');
-
-        Route::post('/kordinat' , [KonfirAbsenSiswaController::class, 'kordinat'])->name('tambah.kordinat');
-
     });
+
+    Route::post('/iduka/tambah-kordinat', [IdukaController::class, 'kordinat'])->name('iduka.tambah.kordinat');
+    // Route::post('/iduka/create-cabang', [IdukaController::class, 'createCabang'])->name('iduka.create.cabang');
 
 
     Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])

@@ -65,11 +65,11 @@
                                         aria-controls="v-pills-statistik" aria-selected="false">
                                         <i class="bi bi-bar-chart me-2"></i>Statistik
                                     </button>
-                                    <button class="nav-link" id="v-pills-kordinat-tab" data-bs-toggle="pill"
-                                        data-bs-target="#v-pills-kordinat" type="button" role="tab"
-                                        aria-controls="v-pills-kordinat" aria-selected="false">
+                                    <button class="nav-link" id="v-pills-kordinat-tab" type="button"
+                                        onclick="alert('Fitur ini sedang dalam perbaikan, silakan coba lagi nanti!')">
                                         <i class="bi bi-bar-chart me-2"></i>Kordinat / Lokasi
                                     </button>
+
                                 </div>
 
                                 <hr>

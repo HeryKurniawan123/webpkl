@@ -58,14 +58,33 @@ class AbsensiController extends Controller
 
         $izinPending = IzinPending::where('user_id', $user->id)
             ->whereDate('tanggal', Carbon::today())
-            ->get();
+            ->first();
+
+        $dinasPending = DinasPending::where('user_id', $user->id)
+            ->whereDate('tanggal', Carbon::today())
+            ->first();
+
+        // Status untuk menentukan apakah tombol harus disabled
+        $hasPendingIzin = $izinPending ? true : false;
+        $hasPendingDinas = $dinasPending ? true : false;
+        $hasApprovedIzin = $absensiHariIni && $absensiHariIni->status === 'izin';
+        $hasApprovedDinas = $absensiHariIni && $absensiHariIni->status_dinas === 'disetujui';
+        $hasPendingMasuk = $absensiPending->where('jenis', 'masuk')->count() > 0;
+        $hasPendingPulang = $absensiPending->where('jenis', 'pulang')->count() > 0;
 
         return view('siswa.absensi.index', compact(
             'absensiHariIni',
             'riwayatAbsensi',
             'absensiPending',
             'izinPending',
-            'canPulang'
+            'dinasPending',
+            'canPulang',
+            'hasPendingIzin',
+            'hasPendingDinas',
+            'hasApprovedIzin',
+            'hasApprovedDinas',
+            'hasPendingMasuk',
+            'hasPendingPulang'
         ));
     }
 
@@ -120,27 +139,53 @@ class AbsensiController extends Controller
             // Validasi koordinat jika dikirim
             if ($request->has('latitude') && $request->has('longitude')) {
                 $request->validate([
-                    'latitude' => 'numeric|between:-90,90',
-                    'longitude' => 'numeric|between:-180,180',
+                    'latitude' => 'required|numeric|between:-90,90',
+                    'longitude' => 'required|numeric|between:-180,180',
+                    'lokasi_id' => 'required|string',
+                    'accuracy' => 'required|numeric|min:0'
                 ]);
             }
 
+            // Tentukan lokasi yang digunakan (pusat atau cabang)
+            $lokasi = $this->getSelectedLocation($request->lokasi_id, $user);
+
+            // Validasi lokasi user
+            if ($request->has('latitude') && $request->has('longitude')) {
+                $validation = $this->validateLocation(
+                    $request->latitude,
+                    $request->longitude,
+                    $lokasi->latitude,
+                    $lokasi->longitude,
+                    $lokasi->radius,
+                    $request->accuracy
+                );
+
+                if (!$validation['isWithinRadius']) {
+                    $lokasiName = $request->lokasi_id === 'pusat' ? 'Pusat' : $lokasi->nama;
+                    return redirect()->back()->with(
+                        'error',
+                        "Anda berada di luar radius yang diizinkan untuk absensi di {$lokasiName}. Jarak Anda: " . round($validation['distance']) . " meter, Radius maksimal: " . $lokasi->radius . " meter, Akurasi GPS: ±" . round($request->accuracy) . "m"
+                    );
+                }
+            }
+
             // Tentukan status berdasarkan waktu
-            $status = $this->getStatusAbsensi($now);
+            $status = $this->getStatusAbsensi($now, $lokasi->jam_masuk);
 
             // Create pending absensi dengan SEMUA field yang diperlukan
             $pendingData = [
                 'user_id' => $user->id,
                 'iduka_id' => $user->idukaDiterima->id,
-                'pembimbing_id' => $user->pembimbing_id, // Merujuk ke tabel gurus
+                'pembimbing_id' => $user->pembimbing_id,
+                'lokasi_iduka_id' => $lokasi->id,
                 'tanggal' => $today->format('Y-m-d'),
                 'jenis' => 'masuk',
                 'jam' => $now->format('Y-m-d H:i:s'),
                 'status' => $status,
                 'status_konfirmasi' => 'pending',
-                'validasi_iduka' => 'pending',              // BARU
+                'validasi_iduka' => 'pending',
                 'validasi_pembimbing' => 'pending',
-                'approved_iduka_at' => null,                // BARU
+                'approved_iduka_at' => null,
                 'approved_pembimbing_at' => null,
             ];
 
@@ -165,6 +210,8 @@ class AbsensiController extends Controller
                 'user_id' => $user->id,
                 'pembimbing_id' => $user->pembimbing_id,
                 'pembimbing_name' => $user->pembimbing->nama ?? 'N/A',
+                'lokasi_id' => $lokasi->id,
+                'lokasi_nama' => $lokasi->nama,
                 'jam' => $now->format('Y-m-d H:i:s'),
                 'status' => $status
             ]);
@@ -180,35 +227,6 @@ class AbsensiController extends Controller
         }
     }
 
-    /**
-     * Determine attendance status based on current time and IDUKA settings
-     */
-    private function getStatusAbsensi($waktu)
-    {
-        // Default jam masuk dan batas terlambat
-        $jamMasukDefault = Carbon::createFromTime(8, 0, 0); // 08:00
-        $batasLambatDefault = Carbon::createFromTime(8, 15, 0); // 08:15
-
-        // Ambil pengaturan jam dari IDUKA siswa
-        $user = Auth::user();
-        $jamMasuk = $jamMasukDefault;
-        $batasLambat = $batasLambatDefault;
-
-        if ($user->idukaDiterima && $user->idukaDiterima->jam_masuk) {
-            $jamMasuk = Carbon::createFromTimeString($user->idukaDiterima->jam_masuk);
-            // Berikan toleransi 15 menit dari jam masuk yang ditetapkan
-            $batasLambat = $jamMasuk->copy()->addMinutes(15);
-        }
-
-        if ($waktu->format('H:i:s') <= $jamMasuk->format('H:i:s')) {
-            return 'tepat_waktu';
-        } elseif ($waktu->format('H:i:s') <= $batasLambat->format('H:i:s')) {
-            return 'terlambat';
-        } else {
-            return 'terlambat';
-        }
-    }
-
     public function pulang(Request $request)
     {
         Log::info('=== ABSEN PULANG DIPANGGIL ===', [
@@ -219,6 +237,8 @@ class AbsensiController extends Controller
         $request->validate([
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
+            'lokasi_id' => 'required|string',
+            'accuracy' => 'required|numeric|min:0'
         ]);
 
         try {
@@ -230,7 +250,38 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun.');
             }
 
-            $iduka = $user->idukaDiterima;
+            // Tentukan lokasi yang digunakan (pusat atau cabang)
+            try {
+                $lokasi = $this->getSelectedLocation($request->lokasi_id, $user);
+                Log::info('Lokasi yang dipilih', [
+                    'lokasi_id' => $lokasi->id,
+                    'lokasi_nama' => $lokasi->nama,
+                    'is_pusat' => $lokasi->is_pusat
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Error saat memilih lokasi', [
+                    'error' => $e->getMessage()
+                ]);
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+
+            // Validasi lokasi user
+            $validation = $this->validateLocation(
+                $request->latitude,
+                $request->longitude,
+                $lokasi->latitude,
+                $lokasi->longitude,
+                $lokasi->radius,
+                $request->accuracy
+            );
+
+            if (!$validation['isWithinRadius']) {
+                $lokasiName = $request->lokasi_id === 'pusat' ? 'Pusat' : $lokasi->nama;
+                return redirect()->back()->with(
+                    'error',
+                    "Anda berada di luar radius yang diizinkan untuk absensi di {$lokasiName}. Jarak Anda: " . round($validation['distance']) . " meter, Radius maksimal: " . $lokasi->radius . " meter, Akurasi GPS: ±" . round($request->accuracy) . "m"
+                );
+            }
 
             // Cari record absensi hari ini
             $absensiHariIni = Absensi::where('user_id', $user->id)
@@ -258,7 +309,7 @@ class AbsensiController extends Controller
             } else {
                 // Untuk kasus normal, harus sudah absen masuk
                 if (!$absensiHariIni->jam_masuk) {
-                    return redirect()->back()->with('error', 'Anda belum melakukan absensi masuk hari ini.');
+                    return redirect()->back()->with('error', 'Anda belum melakukan absen masuk hari ini.');
                 }
             }
 
@@ -266,9 +317,9 @@ class AbsensiController extends Controller
             if ($absensiHariIni->status_dinas !== 'disetujui') {
                 $jamPulangMinimal = Carbon::today()->setHour(15); // default jam 15:00
 
-                // Gunakan jam pulang dari IDUKA jika ada
-                if ($user->idukaDiterima && $user->idukaDiterima->jam_pulang) {
-                    $jamPulangMinimal = Carbon::createFromTimeString($user->idukaDiterima->jam_pulang);
+                // Gunakan jam pulang dari lokasi yang dipilih
+                if ($lokasi->jam_pulang) {
+                    $jamPulangMinimal = Carbon::createFromTimeString($lokasi->jam_pulang);
                 }
 
                 if (Carbon::now()->lt($jamPulangMinimal)) {
@@ -280,15 +331,37 @@ class AbsensiController extends Controller
             }
 
             // Simpan absensi pulang
-            $absensiHariIni->update([
-                'jam_pulang' => Carbon::now(),
-                'latitude_pulang' => $request->latitude,
-                'longitude_pulang' => $request->longitude,
-            ]);
+            try {
+                $absensiHariIni->update([
+                    'jam_pulang' => Carbon::now(),
+                    'latitude_pulang' => $request->latitude,
+                    'longitude_pulang' => $request->longitude,
+                    'lokasi_iduka_id' => $lokasi->id,
+                ]);
+
+                Log::info('Absensi pulang berhasil disimpan', [
+                    'user_id' => $user->id,
+                    'lokasi_id' => $lokasi->id,
+                    'lokasi_nama' => $lokasi->nama,
+                    'jam_pulang' => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Error saat menyimpan absensi pulang', [
+                    'error' => $e->getMessage(),
+                    'lokasi_id' => $lokasi->id,
+                    'absensi_id' => $absensiHariIni->id
+                ]);
+
+                // Cek apakah error karena foreign key
+                if (strpos($e->getMessage(), 'foreign key constraint') !== false) {
+                    return redirect()->back()->with('error', 'Lokasi absensi tidak valid. Silakan pilih lokasi yang tersedia.');
+                }
+
+                throw $e; // Re-throw exception untuk ditangkap di outer catch
+            }
 
             DB::commit();
 
-            Log::info('Absensi pulang berhasil disimpan');
             return redirect()->back()->with('success', 'Absensi pulang berhasil disimpan.');
 
         } catch (\Exception $e) {
@@ -352,6 +425,15 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('info', 'Anda sudah mengajukan izin. Menunggu konfirmasi IDUKA.');
             }
 
+            // Check if there's pending attendance
+            $absensiPendingHariIni = AbsensiPending::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->first();
+
+            if ($absensiPendingHariIni) {
+                return redirect()->back()->with('error', 'Anda memiliki absensi yang menunggu konfirmasi. Tidak bisa mengajukan izin.');
+            }
+
             // Save to pending table instead of main table
             IzinPending::create([
                 'user_id' => $user->id,
@@ -390,7 +472,7 @@ class AbsensiController extends Controller
     /**
      * Validate if user location is within IDUKA radius
      */
-    private function validateLocation($latUser, $longUser, $latTarget, $longTarget, $radius)
+    private function validateLocation($latUser, $longUser, $latTarget, $longTarget, $radius, $accuracy = 0)
     {
         // Ensure all inputs are float
         $latUser = floatval($latUser);
@@ -398,21 +480,24 @@ class AbsensiController extends Controller
         $latTarget = floatval($latTarget);
         $longTarget = floatval($longTarget);
         $radius = floatval($radius);
+        $accuracy = floatval($accuracy);
 
         Log::info('Validasi lokasi', [
             'user_lat' => $latUser,
             'user_lng' => $longUser,
             'target_lat' => $latTarget,
             'target_lng' => $longTarget,
-            'radius' => $radius
+            'radius' => $radius,
+            'accuracy' => $accuracy
         ]);
 
         // Check if target coordinates are valid
         if ($latTarget == 0 && $longTarget == 0) {
-            Log::warning('Koordinat IDUKA tidak valid');
+            Log::warning('Koordinat target tidak valid');
             return [
                 'distance' => 0,
-                'isWithinRadius' => true,
+                'isWithinRadius' => false,
+                'error' => 'Koordinat target tidak valid'
             ];
         }
 
@@ -434,15 +519,19 @@ class AbsensiController extends Controller
 
         $distance = $earthRadius * $c;
 
-        $isWithinRadius = $distance <= $radius;
+        // Gunakan akurasi GPS sebagai toleransi
+        $effectiveRadius = $radius + $accuracy;
+        $isWithinRadius = $distance <= $effectiveRadius;
 
         Log::info('Hasil kalkulasi jarak', [
             'distance' => $distance,
+            'effective_radius' => $effectiveRadius,
             'is_within_radius' => $isWithinRadius
         ]);
 
         return [
             'distance' => $distance,
+            'effectiveRadius' => $effectiveRadius,
             'isWithinRadius' => $isWithinRadius,
         ];
     }
@@ -510,6 +599,8 @@ class AbsensiController extends Controller
                     'has_attendance' => false,
                     'has_approved_izin' => false,
                     'has_pending_izin' => false,
+                    'has_pending_masuk' => false,
+                    'has_pending_pulang' => false,
                     'error' => 'Anda tidak terdaftar di IDUKA manapun'
                 ]);
             }
@@ -527,10 +618,20 @@ class AbsensiController extends Controller
                 ->whereDate('tanggal', Carbon::today())
                 ->exists();
 
+            // Check if there's pending attendance
+            $absensiPending = AbsensiPending::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->get();
+
+            $hasPendingMasuk = $absensiPending->where('jenis', 'masuk')->count() > 0;
+            $hasPendingPulang = $absensiPending->where('jenis', 'pulang')->count() > 0;
+
             return response()->json([
                 'has_attendance' => $hasAttendance,
                 'has_approved_izin' => $hasApprovedIzin,
-                'has_pending_izin' => $hasPendingIzin
+                'has_pending_izin' => $hasPendingIzin,
+                'has_pending_masuk' => $hasPendingMasuk,
+                'has_pending_pulang' => $hasPendingPulang
             ]);
 
         } catch (\Exception $e) {
@@ -539,6 +640,8 @@ class AbsensiController extends Controller
                 'has_attendance' => false,
                 'has_approved_izin' => false,
                 'has_pending_izin' => false,
+                'has_pending_masuk' => false,
+                'has_pending_pulang' => false,
                 'error' => 'Terjadi kesalahan sistem'
             ], 500);
         }
@@ -596,6 +699,15 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('info', 'Anda sudah mengajukan dinas luar. Menunggu konfirmasi IDUKA.');
             }
 
+            // Check if there's pending attendance
+            $absensiPendingHariIni = AbsensiPending::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->first();
+
+            if ($absensiPendingHariIni) {
+                return redirect()->back()->with('error', 'Anda memiliki absensi yang menunggu konfirmasi. Tidak bisa mengajukan dinas luar.');
+            }
+
             // Save to pending table
             DinasPending::create([
                 'user_id' => $user->id,
@@ -641,6 +753,8 @@ class AbsensiController extends Controller
                     'has_attendance' => false,
                     'has_approved_dinas' => false,
                     'has_pending_dinas' => false,
+                    'has_pending_masuk' => false,
+                    'has_pending_pulang' => false,
                     'error' => 'Anda tidak terdaftar di IDUKA manapun'
                 ]);
             }
@@ -658,10 +772,20 @@ class AbsensiController extends Controller
                 ->whereDate('tanggal', Carbon::today())
                 ->exists();
 
+            // Check if there's pending attendance
+            $absensiPending = AbsensiPending::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->get();
+
+            $hasPendingMasuk = $absensiPending->where('jenis', 'masuk')->count() > 0;
+            $hasPendingPulang = $absensiPending->where('jenis', 'pulang')->count() > 0;
+
             return response()->json([
                 'has_attendance' => $hasAttendance,
                 'has_approved_dinas' => $hasApprovedDinas,
-                'has_pending_dinas' => $hasPendingDinas
+                'has_pending_dinas' => $hasPendingDinas,
+                'has_pending_masuk' => $hasPendingMasuk,
+                'has_pending_pulang' => $hasPendingPulang
             ]);
 
         } catch (\Exception $e) {
@@ -670,8 +794,76 @@ class AbsensiController extends Controller
                 'has_attendance' => false,
                 'has_approved_dinas' => false,
                 'has_pending_dinas' => false,
+                'has_pending_masuk' => false,
+                'has_pending_pulang' => false,
                 'error' => 'Terjadi kesalahan sistem'
             ], 500);
+        }
+    }
+
+    /**
+     * Get selected location object based on lokasi_id parameter
+     */
+    private function getSelectedLocation($lokasiId, $user)
+    {
+        // Jika lokasi_id adalah 'pusat', cari lokasi pusat
+        if ($lokasiId === 'pusat') {
+            $lokasi = Iduka::where('id', $user->idukaDiterima->id)
+                ->where('is_pusat', 1)
+                ->first();
+
+            if (!$lokasi) {
+                throw new \Exception('Lokasi pusat tidak ditemukan untuk IDUKA Anda.');
+            }
+
+            return $lokasi;
+        }
+
+        // Jika lokasi_id adalah ID cabang, cari lokasi cabang
+        $lokasi = Iduka::find($lokasiId);
+
+        if (!$lokasi) {
+            throw new \Exception("Lokasi dengan ID {$lokasiId} tidak ditemukan.");
+        }
+
+        // Pastikan cabang ini terkait dengan IDUKA user
+        if ($lokasi->id_pusat && $lokasi->id_pusat != $user->idukaDiterima->id) {
+            throw new \Exception('Lokasi cabang ini tidak terkait dengan IDUKA Anda.');
+        }
+
+        // Jika lokasi adalah pusat, pastikan itu adalah pusat dari IDUKA user
+        if ($lokasi->is_pusat && $lokasi->id != $user->idukaDiterima->id) {
+            throw new \Exception('Lokasi pusat ini bukan merupakan IDUKA Anda.');
+        }
+
+        return $lokasi;
+    }
+
+    /**
+     * Determine attendance status based on current time and IDUKA settings
+     */
+    private function getStatusAbsensi($waktu, $jamMasuk = null)
+    {
+        // Default jam masuk dan batas terlambat
+        $jamMasukDefault = Carbon::createFromTime(8, 0, 0); // 08:00
+        $batasLambatDefault = Carbon::createFromTime(8, 15, 0); // 08:15
+
+        // Gunakan jam masuk dari parameter jika ada
+        if ($jamMasuk) {
+            $jamMasuk = Carbon::createFromTimeString($jamMasuk);
+            // Berikan toleransi 15 menit dari jam masuk yang ditetapkan
+            $batasLambat = $jamMasuk->copy()->addMinutes(15);
+        } else {
+            $jamMasuk = $jamMasukDefault;
+            $batasLambat = $batasLambatDefault;
+        }
+
+        if ($waktu->format('H:i:s') <= $jamMasuk->format('H:i:s')) {
+            return 'tepat_waktu';
+        } elseif ($waktu->format('H:i:s') <= $batasLambat->format('H:i:s')) {
+            return 'terlambat';
+        } else {
+            return 'terlambat';
         }
     }
 }

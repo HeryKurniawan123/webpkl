@@ -9,13 +9,9 @@ class DaftarIdukaController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil parameter pencarian dari request
         $search = $request->input('search');
+        $query = Iduka::with(['pusat', 'cabangs']);
 
-        // Query dasar untuk tabel iduka
-        $query = Iduka::query();
-
-        // Jika ada parameter pencarian, tambahkan kondisi where
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', '%' . $search . '%')
@@ -23,14 +19,15 @@ class DaftarIdukaController extends Controller
             });
         }
 
-        // Tambahkan paginasi (10 data per halaman)
         $data = $query->orderBy('nama', 'asc')
             ->paginate(10)
-            ->withQueryString(); // Mempertahankan parameter pencarian saat paginasi
+            ->withQueryString();
 
-        return view('hubin.iduka.daftar', compact('data', 'search'));
+        // Tambahkan data lengkap untuk modal
+        $allIduka = Iduka::orderBy('nama', 'asc')->get();
+
+        return view('hubin.iduka.daftar', compact('data', 'search', 'allIduka'));
     }
-
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -41,6 +38,8 @@ class DaftarIdukaController extends Controller
             'radius' => 'nullable|integer|min:0',
             'jam_masuk' => 'nullable|date_format:H:i',
             'jam_pulang' => 'nullable|date_format:H:i',
+            'is_pusat' => 'nullable|boolean',
+            'id_pusat' => 'nullable|exists:idukas,id',
         ]);
 
         $iduka = Iduka::findOrFail($id);
@@ -50,5 +49,61 @@ class DaftarIdukaController extends Controller
             'success' => true,
             'message' => 'Data IDUKA berhasil diperbarui.'
         ]);
+    }
+
+    // Tambahkan method untuk membuat lokasi cabang baru
+    public function storeCabang(Request $request)
+    {
+        try {
+            $request->validate([
+                'nama' => 'required|string|max:255',
+                'latitude' => 'required|numeric|between:-90,90',
+                'longitude' => 'required|numeric|between:-180,180',
+                'radius' => 'required|integer|min:0',
+                'jam_masuk' => 'required|date_format:H:i',
+                'jam_pulang' => 'required|date_format:H:i',
+                'id_pusat' => 'required|exists:idukas,id',
+            ]);
+
+            // Cek apakah lokasi pusat benar-benar ada dan merupakan pusat
+            $pusat = Iduka::find($request->id_pusat);
+            if (!$pusat || $pusat->is_pusat != 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Lokasi pusat tidak valid atau bukan merupakan lokasi pusat.'
+                ], 422);
+            }
+
+            // Buat lokasi cabang baru
+            $cabang = Iduka::create([
+                'nama' => $request->nama,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'radius' => $request->radius,
+                'jam_masuk' => $request->jam_masuk,
+                'jam_pulang' => $request->jam_pulang,
+                'is_pusat' => 0, // Tandai sebagai cabang
+                'id_pusat' => $request->id_pusat,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Lokasi cabang berhasil ditambahkan.',
+                'data' => $cabang
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Error creating cabang: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

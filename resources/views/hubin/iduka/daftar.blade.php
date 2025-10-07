@@ -10,11 +10,43 @@
                         <div class="col">
                             <h3 class="mb-0 text-primary">Daftar IDUKA</h3>
                         </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCabangModal">
+                                <i class="bi bi-plus-circle me-1"></i> Tambah Cabang
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card Body -->
                 <div class="card-body">
+                    <!-- Flash Messages -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Validasi gagal:</strong>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     <!-- Search Box -->
                     <div class="row mb-4">
                         <div class="col-md-6">
@@ -48,13 +80,14 @@
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col" width="5%">No</th>
-                                    <th scope="col" width="30%">Nama</th>
+                                    <th scope="col" width="25%">Nama</th>
+                                    <th scope="col" width="10%">Tipe</th>
                                     <th scope="col" width="15%">Latitude</th>
                                     <th scope="col" width="15%">Longitude</th>
                                     <th scope="col" width="10%">Radius (m)</th>
-                                    <th scope="col" width="10%">Jam Masuk Iduka</th>
-                                    <th scope="col" width="10%">Jam Pulang Iduka</th>
-                                    <th scope="col" width="10%" class="text-center">Aksi</th>
+                                    <th scope="col" width="10%">Jam Masuk</th>
+                                    <th scope="col" width="10%">Jam Pulang</th>
+                                    <th scope="col" width="5%" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -64,15 +97,29 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar avatar-sm me-3">
-                                                    <div class="avatar-title rounded-circle bg-primary text-white">
+                                                    <div
+                                                        class="avatar-title rounded-circle {{ $iduka->is_pusat ? 'bg-primary' : 'bg-info' }} text-white">
                                                         {{ strtoupper(substr($iduka->nama, 0, 1)) }}
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <div class="fw-semibold">{{ $iduka->nama }}</div>
                                                     <div class="small text-muted">{{ $iduka->email ?? '-' }}</div>
+                                                    @if (!$iduka->is_pusat && $iduka->pusat)
+                                                        <div class="small text-primary">
+                                                            <i class="bi bi-building"></i> Cabang dari:
+                                                            {{ $iduka->pusat->nama }}
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td>
+                                            @if ($iduka->is_pusat)
+                                                <span class="badge bg-primary">Pusat</span>
+                                            @else
+                                                <span class="badge bg-info">Cabang</span>
+                                            @endif
                                         </td>
                                         <td>
                                             <span class="text-monospace">{{ $iduka->latitude ?? '-' }}</span>
@@ -87,9 +134,6 @@
                                             WIB</td>
                                         <td>{{ $iduka->jam_pulang ? \Carbon\Carbon::parse($iduka->jam_pulang)->format('H:i') : '15:00' }}
                                             WIB</td>
-
-
-
                                         <td class="text-center">
                                             <div class="btn-group btn-group-sm" role="group">
                                                 <button type="button" class="btn btn-outline-warning btn-edit"
@@ -99,16 +143,25 @@
                                                     data-longitude="{{ $iduka->longitude ?? '' }}"
                                                     data-radius="{{ $iduka->radius ?? '' }}"
                                                     data-jam_masuk="{{ $iduka->jam_masuk ?? '08:00' }}"
-                                                    data-jam_pulang="{{ $iduka->jam_pulang ?? '15:00' }}" title="Edit">
+                                                    data-jam_pulang="{{ $iduka->jam_pulang ?? '15:00' }}"
+                                                    data-is_pusat="{{ $iduka->is_pusat ? 1 : 0 }}"
+                                                    data-id_pusat="{{ $iduka->id_pusat ?? '' }}" title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
 
+                                                @if ($iduka->is_pusat)
+                                                    <button type="button" class="btn btn-outline-info btn-add-cabang"
+                                                        data-id="{{ $iduka->id }}" data-nama="{{ $iduka->nama }}"
+                                                        title="Tambah Cabang">
+                                                        <i class="bi bi-building-add"></i>
+                                                    </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center py-4">
+                                        <td colspan="9" class="text-center py-4">
                                             <div class="text-muted">
                                                 <i class="bi bi-inbox display-4 d-block"></i>
                                                 <span>Tidak ada data IDUKA</span>
@@ -154,6 +207,36 @@
                             </div>
 
                             <div class="mb-3">
+                                <label for="tipeLokasi" class="form-label">Tipe Lokasi</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_pusat" id="is_pusat1"
+                                        value="1">
+                                    <label class="form-check-label" for="is_pusat1">
+                                        Lokasi Pusat
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="is_pusat" id="is_pusat0"
+                                        value="0">
+                                    <label class="form-check-label" for="is_pusat0">
+                                        Lokasi Cabang
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3" id="idPusatField" style="display: none;">
+                                <label for="id_pusat" class="form-label">Lokasi Pusat</label>
+                                <select class="form-select" id="id_pusat" name="id_pusat">
+                                    <option value="">-- Pilih Lokasi Pusat --</option>
+                                    @foreach ($data as $item)
+                                        @if ($item->is_pusat)
+                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="editLatitude" class="form-label">Latitude</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
@@ -184,8 +267,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="jam_masuk" class="form-label">Jam
-                                    Masuk</label>
+                                <label for="jam_masuk" class="form-label">Jam Masuk</label>
                                 <input type="time" class="form-control" id="jam_masuk" name="jam_masuk">
                                 <div class="form-text">Default: 08:00</div>
                             </div>
@@ -201,6 +283,93 @@
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle me-1"></i> Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Tambah Cabang -->
+        <div class="modal fade" id="addCabangModal" tabindex="-1" aria-labelledby="addCabangModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCabangModalLabel">Tambah Lokasi Cabang Baru</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="addCabangForm">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="cabangNama" class="form-label">Nama Cabang <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="cabangNama" name="nama" required>
+                            </div>
+
+                            <select class="form-select select2 form-control" id="id_pusat_cabang" name="id_pusat" required>
+                                <option value="">-- Pilih Lokasi Pusat --</option>
+                                @foreach ($allIduka as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+
+
+
+                            <div class="mb-3">
+                                <label for="cabangLatitude" class="form-label">Latitude <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    <input type="number" class="form-control" id="cabangLatitude" name="latitude"
+                                        step="any" placeholder="-6.2088" required>
+                                </div>
+                                <small class="form-text text-muted">Contoh: -6.2088</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cabangLongitude" class="form-label">Longitude <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    <input type="number" class="form-control" id="cabangLongitude" name="longitude"
+                                        step="any" placeholder="106.8456" required>
+                                </div>
+                                <small class="form-text text-muted">Contoh: 106.8456</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cabangRadius" class="form-label">Radius (meter) <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-rulers"></i></span>
+                                    <input type="number" class="form-control" id="cabangRadius" name="radius"
+                                        placeholder="100" required>
+                                </div>
+                                <small class="form-text text-muted">Jari-jari area dalam meter</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cabangJamMasuk" class="form-label">Jam Masuk <span
+                                        class="text-danger">*</span></label>
+                                <input type="time" class="form-control" id="cabangJamMasuk" name="jam_masuk"
+                                    value="08:00" required>
+                                <div class="form-text">Default: 08:00</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cabangJamPulang" class="form-label">Jam Pulang <span
+                                        class="text-danger">*</span></label>
+                                <input type="time" class="form-control" id="cabangJamPulang" name="jam_pulang"
+                                    value="15:00" required>
+                                <div class="form-text">Default: 15:00</div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i> Tambah Cabang
                             </button>
                         </div>
                     </form>
@@ -311,9 +480,43 @@
         }
     </style>
 
+
+@endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.select2').each(function() {
+                $(this).select2({
+                    placeholder: "-- Pilih Lokasi Pusat --",
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $(this).closest('.modal') // kalau di modal
+                });
+            });
+        });
+    </script>
+
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Handle tipe lokasi change
+            const isPusatRadios = document.querySelectorAll('input[name="is_pusat"]');
+            const idPusatField = document.getElementById('idPusatField');
+
+            function toggleIdPusatField() {
+                const isPusat0 = document.getElementById('is_pusat0');
+                if (isPusat0 && isPusat0.checked) {
+                    idPusatField.style.display = 'block';
+                } else {
+                    idPusatField.style.display = 'none';
+                }
+            }
+
+            isPusatRadios.forEach(radio => {
+                radio.addEventListener('change', toggleIdPusatField);
+            });
+
             // Handle edit button click
             document.querySelectorAll('.btn-edit').forEach(button => {
                 button.addEventListener('click', function() {
@@ -326,6 +529,8 @@
                     const radius = this.getAttribute('data-radius');
                     const jam_masuk = this.getAttribute('data-jam_masuk');
                     const jam_pulang = this.getAttribute('data-jam_pulang');
+                    const is_pusat = this.getAttribute('data-is_pusat');
+                    const id_pusat = this.getAttribute('data-id_pusat');
 
                     // Fill form fields
                     document.getElementById('editId').value = id;
@@ -336,6 +541,21 @@
                     document.getElementById('editRadius').value = radius;
                     document.getElementById('jam_masuk').value = jam_masuk;
                     document.getElementById('jam_pulang').value = jam_pulang;
+
+                    // Set tipe lokasi
+                    if (is_pusat === '1') {
+                        document.getElementById('is_pusat1').checked = true;
+                    } else {
+                        document.getElementById('is_pusat0').checked = true;
+                    }
+
+                    // Set id_pusat jika ada
+                    if (id_pusat) {
+                        document.getElementById('id_pusat').value = id_pusat;
+                    }
+
+                    // Initialize toggle
+                    toggleIdPusatField();
 
                     // Show modal
                     const editModal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -362,9 +582,12 @@
                             email: formData.get('email'),
                             latitude: formData.get('latitude'),
                             longitude: formData.get('longitude'),
-                            radius: formData.get('radius'), // ✅ koma sudah benar di sini
+                            radius: formData.get('radius'),
                             jam_masuk: formData.get('jam_masuk'),
                             jam_pulang: formData.get('jam_pulang'),
+                            is_pusat: document.querySelector('input[name="is_pusat"]:checked')
+                                .value,
+                            id_pusat: document.getElementById('id_pusat').value || null
                         })
                     })
                     .then(response => {
@@ -382,6 +605,72 @@
                         alert('Gagal memperbarui data: ' + error.message);
                     });
             });
+
+            // Handle add cabang button click
+            document.querySelectorAll('.btn-add-cabang').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const nama = this.getAttribute('data-nama');
+
+                    // Set id_pusat
+                    document.getElementById('id_pusat_cabang').value = id;
+
+                    // Show modal
+                    const addCabangModal = new bootstrap.Modal(document.getElementById(
+                        'addCabangModal'));
+                    addCabangModal.show();
+                });
+            });
+
+            // Handle add cabang form submission
+            document.getElementById('addCabangForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+
+                fetch('/hubin/iduka/store-cabang', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            nama: formData.get('nama'),
+                            id_pusat: formData.get('id_pusat'),
+                            latitude: formData.get('latitude'),
+                            longitude: formData.get('longitude'),
+                            radius: formData.get('radius'),
+                            jam_masuk: formData.get('jam_masuk'),
+                            jam_pulang: formData.get('jam_pulang')
+                        })
+                    })
+                    .then(response => {
+                        console.log('Response status:', response.status);
+                        console.log('Response headers:', response.headers);
+
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                console.error('Error response:', err);
+                                throw new Error(err.message ||
+                                    'Terjadi kesalahan saat menambah cabang');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Success response:', data);
+                        const addCabangModal = bootstrap.Modal.getInstance(document.getElementById(
+                            'addCabangModal'));
+                        addCabangModal.hide();
+                        alert('Lokasi cabang berhasil ditambahkan!');
+                        setTimeout(() => window.location.reload(), 1000);
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        alert('Gagal menambah cabang: ' + error.message);
+                    });
+            });
         });
     </script>
-@endsection
+@endpush

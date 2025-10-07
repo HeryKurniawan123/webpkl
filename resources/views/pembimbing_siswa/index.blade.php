@@ -188,4 +188,20 @@
             {{ $pembimbings->links('pagination::bootstrap-5') }}
         </div>
     </div>
+
+
 @endsection
+ @push('scripts')
+        <script>
+            $(document).ready(function() {
+                $('.select2').each(function() {
+                    $(this).select2({
+                        dropdownParent: $(this).closest('.modal'),
+                        placeholder: "-- Pilih siswa --",
+                        allowClear: true,
+                        width: '100%'
+                    });
+                });
+            });
+        </script>
+    @endpush
