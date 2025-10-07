@@ -395,9 +395,6 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
 
     Route::get('/konfir/absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfir.absen.index');
-    // Route::get('/test-dinas', function () {
-    //     return 'Route test dinas works!';
-    // });
 
     Route::prefix('iduka')->name('iduka.')->group(function () {
         // tampil halaman konfirmasi

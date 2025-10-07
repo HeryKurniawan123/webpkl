@@ -9,6 +9,7 @@ use App\Models\DinasPending;
 use App\Models\IzinPending;
 use App\Models\Iduka;
 use App\Models\User;
+use App\Models\Guru;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -172,11 +173,17 @@ class AbsensiController extends Controller
             // Tentukan status berdasarkan waktu
             $status = $this->getStatusAbsensi($now, $lokasi->jam_masuk);
 
+            // PERBAIKAN: Ambil data guru yang menjadi pembimbing siswa
+            $guru = Guru::find($user->pembimbing_id);
+            if (!$guru) {
+                return redirect()->back()->with('error', 'Data pembimbing tidak ditemukan. Silakan hubungi administrator.');
+            }
+
             // Create pending absensi dengan SEMUA field yang diperlukan
             $pendingData = [
                 'user_id' => $user->id,
                 'iduka_id' => $user->idukaDiterima->id,
-                'pembimbing_id' => $user->pembimbing_id,
+                'pembimbing_id' => $guru->id, // PERBAIKAN: Gunakan ID guru dari tabel gurus
                 'lokasi_iduka_id' => $lokasi->id,
                 'tanggal' => $today->format('Y-m-d'),
                 'jenis' => 'masuk',
@@ -208,8 +215,8 @@ class AbsensiController extends Controller
 
             Log::info('Absensi masuk pending berhasil dibuat', [
                 'user_id' => $user->id,
-                'pembimbing_id' => $user->pembimbing_id,
-                'pembimbing_name' => $user->pembimbing->nama ?? 'N/A',
+                'pembimbing_id' => $guru->id,
+                'pembimbing_name' => $guru->nama ?? 'N/A',
                 'lokasi_id' => $lokasi->id,
                 'lokasi_nama' => $lokasi->nama,
                 'jam' => $now->format('Y-m-d H:i:s'),
@@ -309,7 +316,7 @@ class AbsensiController extends Controller
             } else {
                 // Untuk kasus normal, harus sudah absen masuk
                 if (!$absensiHariIni->jam_masuk) {
-                    return redirect()->back()->with('error', 'Anda belum melakukan absen masuk hari ini.');
+                    return redirect()->back()->with('error', 'Anda belum melakukan absensi masuk hari ini.');
                 }
             }
 
@@ -401,6 +408,12 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun. Silakan hubungi administrator.');
             }
 
+            // PERBAIKAN: Ambil data guru yang menjadi pembimbing siswa
+            $guru = Guru::find($user->pembimbing_id);
+            if (!$guru) {
+                return redirect()->back()->with('error', 'Data pembimbing tidak ditemukan. Silakan hubungi administrator.');
+            }
+
             $iduka = $user->idukaDiterima;
 
             // Check if already has attendance record today
@@ -434,10 +447,11 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('error', 'Anda memiliki absensi yang menunggu konfirmasi. Tidak bisa mengajukan izin.');
             }
 
-            // Save to pending table instead of main table
+            // PERBAIKAN: Tambahkan pembimbing_id ke data izin pending
             IzinPending::create([
                 'user_id' => $user->id,
                 'iduka_id' => $iduka->id,
+                'pembimbing_id' => $guru->id, // PERBAIKAN: Gunakan ID guru dari tabel gurus
                 'tanggal' => Carbon::today(),
                 'jenis_izin' => $request->jenis_izin,
                 'keterangan' => $request->keterangan,
@@ -466,6 +480,109 @@ class AbsensiController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengajukan izin: ' . $e->getMessage());
+        }
+    }
+
+    // Tambahkan method ini di AbsensiController
+    public function dinasLuar(Request $request)
+    {
+        Log::info('=== AJUKAN DINAS LUAR DIPANGGIL ===', [
+            'user_id' => Auth::id(),
+            'request_data' => $request->all()
+        ]);
+
+        $request->validate([
+            'jenis_dinas' => 'required|string|in:perusahaan,sekolah,instansi_pemerintah,lainnya',
+            'keterangan' => 'required|string|min:10|max:500',
+        ], [
+            'jenis_dinas.required' => 'Jenis dinas harus dipilih.',
+            'jenis_dinas.in' => 'Jenis dinas tidak valid.',
+            'keterangan.required' => 'Keterangan dinas harus diisi.',
+            'keterangan.min' => 'Keterangan dinas minimal 10 karakter.',
+            'keterangan.max' => 'Keterangan dinas maksimal 500 karakter.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $user = Auth::user();
+
+            if (!$user->idukaDiterima) {
+                return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun. Silakan hubungi administrator.');
+            }
+
+            // PERBAIKAN: Ambil data guru yang menjadi pembimbing siswa
+            $guru = Guru::find($user->pembimbing_id);
+            if (!$guru) {
+                return redirect()->back()->with('error', 'Data pembimbing tidak ditemukan. Silakan hubungi administrator.');
+            }
+
+            $iduka = $user->idukaDiterima;
+
+            // Check if already has attendance record today
+            $absensiHariIni = Absensi::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->first();
+
+            if ($absensiHariIni) {
+                if ($absensiHariIni->status === 'dinas') {
+                    return redirect()->back()->with('error', 'Anda sudah mengajukan dinas luar hari ini.');
+                } else {
+                    return redirect()->back()->with('error', 'Anda sudah memiliki record absensi hari ini. Tidak bisa mengajukan dinas luar.');
+                }
+            }
+
+            // Check if there's pending dinas
+            $dinasPendingHariIni = DinasPending::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->first();
+
+            if ($dinasPendingHariIni) {
+                return redirect()->back()->with('info', 'Anda sudah mengajukan dinas luar. Menunggu konfirmasi IDUKA.');
+            }
+
+            // Check if there's pending attendance
+            $absensiPendingHariIni = AbsensiPending::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->first();
+
+            if ($absensiPendingHariIni) {
+                return redirect()->back()->with('error', 'Anda memiliki absensi yang menunggu konfirmasi. Tidak bisa mengajukan dinas luar.');
+            }
+
+            // PERBAIKAN: Tambahkan pembimbing_id ke data dinas pending
+            DinasPending::create([
+                'user_id' => $user->id,
+                'iduka_id' => $iduka->id,
+                'pembimbing_id' => $guru->id, // PERBAIKAN: Gunakan ID guru dari tabel gurus
+                'tanggal' => Carbon::today(),
+                'jenis_dinas' => $request->jenis_dinas,
+                'keterangan' => $request->keterangan,
+                'status_konfirmasi' => 'pending'
+            ]);
+
+            DB::commit();
+
+            $jenisDinasText = [
+                'perusahaan' => 'Perusahaan',
+                'sekolah' => 'Sekolah',
+                'instansi_pemerintah' => 'Instansi Pemerintah',
+                'lainnya' => 'Lainnya'
+            ];
+
+            return redirect()->back()->with(
+                'success',
+                'Dinas luar berhasil diajukan untuk hari ini. Menunggu konfirmasi IDUKA. Jenis: ' . $jenisDinasText[$request->jenis_dinas] .
+                '. Alasan: ' . $request->keterangan
+            );
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('ERROR saat mengajukan dinas luar', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengajukan dinas luar: ' . $e->getMessage());
         }
     }
 
@@ -644,102 +761,6 @@ class AbsensiController extends Controller
                 'has_pending_pulang' => false,
                 'error' => 'Terjadi kesalahan sistem'
             ], 500);
-        }
-    }
-
-    // Tambahkan method ini di AbsensiController
-    public function dinasLuar(Request $request)
-    {
-        Log::info('=== AJUKAN DINAS LUAR DIPANGGIL ===', [
-            'user_id' => Auth::id(),
-            'request_data' => $request->all()
-        ]);
-
-        $request->validate([
-            'jenis_dinas' => 'required|string|in:perusahaan,sekolah,instansi_pemerintah,lainnya',
-            'keterangan' => 'required|string|min:10|max:500',
-        ], [
-            'jenis_dinas.required' => 'Jenis dinas harus dipilih.',
-            'jenis_dinas.in' => 'Jenis dinas tidak valid.',
-            'keterangan.required' => 'Keterangan dinas harus diisi.',
-            'keterangan.min' => 'Keterangan dinas minimal 10 karakter.',
-            'keterangan.max' => 'Keterangan dinas maksimal 500 karakter.',
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $user = Auth::user();
-
-            if (!$user->idukaDiterima) {
-                return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun. Silakan hubungi administrator.');
-            }
-
-            $iduka = $user->idukaDiterima;
-
-            // Check if already has attendance record today
-            $absensiHariIni = Absensi::where('user_id', $user->id)
-                ->whereDate('tanggal', Carbon::today())
-                ->first();
-
-            if ($absensiHariIni) {
-                if ($absensiHariIni->status === 'dinas') {
-                    return redirect()->back()->with('error', 'Anda sudah mengajukan dinas luar hari ini.');
-                } else {
-                    return redirect()->back()->with('error', 'Anda sudah memiliki record absensi hari ini. Tidak bisa mengajukan dinas luar.');
-                }
-            }
-
-            // Check if there's pending dinas
-            $dinasPendingHariIni = DinasPending::where('user_id', $user->id)
-                ->whereDate('tanggal', Carbon::today())
-                ->first();
-
-            if ($dinasPendingHariIni) {
-                return redirect()->back()->with('info', 'Anda sudah mengajukan dinas luar. Menunggu konfirmasi IDUKA.');
-            }
-
-            // Check if there's pending attendance
-            $absensiPendingHariIni = AbsensiPending::where('user_id', $user->id)
-                ->whereDate('tanggal', Carbon::today())
-                ->first();
-
-            if ($absensiPendingHariIni) {
-                return redirect()->back()->with('error', 'Anda memiliki absensi yang menunggu konfirmasi. Tidak bisa mengajukan dinas luar.');
-            }
-
-            // Save to pending table
-            DinasPending::create([
-                'user_id' => $user->id,
-                'iduka_id' => $iduka->id,
-                'tanggal' => Carbon::today(),
-                'jenis_dinas' => $request->jenis_dinas,
-                'keterangan' => $request->keterangan,
-                'status_konfirmasi' => 'pending'
-            ]);
-
-            DB::commit();
-
-            $jenisDinasText = [
-                'perusahaan' => 'Perusahaan',
-                'sekolah' => 'Sekolah',
-                'instansi_pemerintah' => 'Instansi Pemerintah',
-                'lainnya' => 'Lainnya'
-            ];
-
-            return redirect()->back()->with(
-                'success',
-                'Dinas luar berhasil diajukan untuk hari ini. Menunggu konfirmasi IDUKA. Jenis: ' . $jenisDinasText[$request->jenis_dinas] .
-                '. Alasan: ' . $request->keterangan
-            );
-
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('ERROR saat mengajukan dinas luar', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengajukan dinas luar: ' . $e->getMessage());
         }
     }
 

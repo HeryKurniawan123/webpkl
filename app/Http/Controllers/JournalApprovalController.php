@@ -61,7 +61,7 @@ class JournalApprovalController extends Controller
     }
 
     /**
-     * Tampilkan jurnal yang perlu disetujui (IDUKA atau Guru/Pembimbing)
+     * Tampilkan jurnal yang perlu disetujui (IDUKA atau Guru/Pembimbing/Kaprog)
      */
     public function index()
     {
@@ -95,12 +95,12 @@ class JournalApprovalController extends Controller
                 return view('iduka.konfir_jurnal.index', compact('jurnals'));
             }
 
-            if ($user->role === 'guru') {
+            if ($user->role === 'guru' || $user->role === 'kaprog') {
                 // Gunakan helper method untuk mencari/membuat data guru
                 $pembimbing = $this->findOrCreateGuru($user);
 
                 // Query menggunakan relasi langsung
-                // Hanya tampilkan jurnal yang belum disetujui oleh Pembimbing dan belum disetujui oleh IDUKA
+                // Hanya tampilkan jurnal yang belum disetujui oleh Pembimbing/Kaprog dan belum disetujui oleh IDUKA
                 $jurnals = Jurnal::with('user')
                     ->where('pembimbing_id', $pembimbing->id)
                     ->where('validasi_pembimbing', 'belum')
@@ -113,8 +113,11 @@ class JournalApprovalController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);
 
-                Log::info('Guru/Pembimbing journals count: ' . $jurnals->total());
-                return view('guru.konfir_jurnal.index', compact('jurnals'));
+                Log::info(($user->role === 'guru' ? 'Guru' : 'Kaprog') . ' journals count: ' . $jurnals->total());
+
+                // Tentukan view berdasarkan role
+                $viewName = $user->role === 'guru' ? 'guru.konfir_jurnal.index' : 'kaprog.konfir_jurnal.index';
+                return view($viewName, compact('jurnals'));
             }
 
             Log::warning('Unauthorized role: ' . $user->role);
@@ -149,7 +152,7 @@ class JournalApprovalController extends Controller
                 return view('iduka.konfir_jurnal.riwayat', compact('jurnals'));
             }
 
-            if ($user->role === 'guru') {
+            if ($user->role === 'guru' || $user->role === 'kaprog') {
                 // Gunakan helper method untuk mencari/membuat data guru
                 $pembimbing = $this->findOrCreateGuru($user);
 
@@ -163,7 +166,9 @@ class JournalApprovalController extends Controller
                     ->orderBy('updated_at', 'desc')
                     ->paginate(10);
 
-                return view('guru.konfir_jurnal.riwayat', compact('jurnals'));
+                // Tentukan view berdasarkan role
+                $viewName = $user->role === 'guru' ? 'guru.konfir_jurnal.riwayat' : 'kaprog.konfir_jurnal.riwayat';
+                return view($viewName, compact('jurnals'));
             }
 
             return redirect()->back()->with('error', 'Akses tidak diizinkan.');
@@ -197,11 +202,11 @@ class JournalApprovalController extends Controller
                 // PERUBAHAN: Status langsung menjadi 'approved' jika salah satu menyetujui
                 $journal->status = 'approved';
 
-            } elseif ($user->role === 'guru') {
+            } elseif ($user->role === 'guru' || $user->role === 'kaprog') {
                 $pembimbing = $this->findOrCreateGuru($user);
 
                 if ($journal->pembimbing_id !== $pembimbing->id) {
-                    Log::warning("Unauthorized approval attempt by Guru {$pembimbing->id} for journal {$id}");
+                    Log::warning("Unauthorized approval attempt by " . ($user->role === 'guru' ? 'Guru' : 'Kaprog') . " {$pembimbing->id} for journal {$id}");
                     return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui jurnal ini.');
                 }
 
@@ -257,11 +262,11 @@ class JournalApprovalController extends Controller
                     'rejected_at' => now()
                 ]);
 
-            } elseif ($user->role === 'guru') {
+            } elseif ($user->role === 'guru' || $user->role === 'kaprog') {
                 $pembimbing = $this->findOrCreateGuru($user);
 
                 if ($journal->pembimbing_id !== $pembimbing->id) {
-                    Log::warning("Unauthorized rejection attempt by Guru {$pembimbing->id} for journal {$id}");
+                    Log::warning("Unauthorized rejection attempt by " . ($user->role === 'guru' ? 'Guru' : 'Kaprog') . " {$pembimbing->id} for journal {$id}");
                     return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak jurnal ini.');
                 }
 
@@ -307,11 +312,11 @@ class JournalApprovalController extends Controller
                         'message' => 'Anda tidak memiliki akses untuk melihat jurnal ini'
                     ], 403);
                 }
-            } elseif ($user->role === 'guru') {
+            } elseif ($user->role === 'guru' || $user->role === 'kaprog') {
                 $pembimbing = $this->findOrCreateGuru($user);
 
                 if (!$pembimbing || $journal->pembimbing_id !== $pembimbing->id) {
-                    Log::warning('Unauthorized Guru access attempt for journal ' . $id);
+                    Log::warning('Unauthorized ' . ($user->role === 'guru' ? 'Guru' : 'Kaprog') . ' access attempt for journal ' . $id);
                     return response()->json([
                         'success' => false,
                         'message' => 'Anda tidak memiliki akses untuk melihat jurnal ini'
@@ -328,7 +333,13 @@ class JournalApprovalController extends Controller
             Log::info('Rendering detail view for journal ' . $id);
 
             // Tentukan view berdasarkan role
-            $viewName = $user->role === 'guru' ? 'guru.konfir_jurnal.detail_jurnal' : 'iduka.konfir_jurnal.detail_jurnal';
+            if ($user->role === 'guru') {
+                $viewName = 'guru.konfir_jurnal.detail_jurnal';
+            } elseif ($user->role === 'kaprog') {
+                $viewName = 'kaprog.konfir_jurnal.detail_jurnal';
+            } else {
+                $viewName = 'iduka.konfir_jurnal.detail_jurnal';
+            }
 
             // Pastikan view ada
             if (!view()->exists($viewName)) {

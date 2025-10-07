@@ -41,7 +41,31 @@
                             <i class="bi bi-file-text me-1"></i> Uraian Kegiatan
                         </h6>
                         <div class="bg-light p-3 rounded">
-                            <p class="mb-0">{{ $journal->uraian }}</p>
+                            <p class="mb-0">{!! nl2br(e($journal->uraian)) !!}</p>
+                        </div>
+                    </div>
+
+                    <!-- Tambahan field baru -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <h6 class="text-muted mb-1">
+                                <i class="bi bi-lightbulb me-1"></i> Termasuk Pengetahuan Baru
+                            </h6>
+                            @if($journal->is_pengetahuan_baru)
+                                <span class="badge bg-success">Ya</span>
+                            @else
+                                <span class="badge bg-secondary">Tidak</span>
+                            @endif
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-muted mb-1">
+                                <i class="bi bi-book me-1"></i> Kegiatan dalam Mapel Sekolah
+                            </h6>
+                            @if($journal->is_dalam_mapel)
+                                <span class="badge bg-success">Ya</span>
+                            @else
+                                <span class="badge bg-secondary">Tidak</span>
+                            @endif
                         </div>
                     </div>
 
@@ -64,42 +88,91 @@
             <div class="card mb-3 border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="text-muted mb-3">
-                        <i class="bi bi-shield-check me-1"></i> Status Validasi
+                        <i class="bi bi-shield-check me-1"></i> Status Jurnal
+                    </h6>
+
+                    <div class="text-center mb-3">
+                        @if($journal->status == 'rejected')
+                            <span class="badge bg-danger fs-6 p-2">❌ Ditolak</span>
+                            @if($journal->rejected_reason)
+                                <div class="mt-2 small text-danger text-start">
+                                    <i class="bi bi-info-circle"></i> Alasan: {{ $journal->rejected_reason }}
+                                </div>
+                            @endif
+                        @elseif($journal->status == 'approved')
+                            <!-- Tampilan baru seperti pada gambar -->
+                            <button class="btn btn-success" disabled>
+                                <i class="bi bi-check-circle-fill me-2"></i> DISETUJUI
+                            </button>
+                            <div class="mt-2 small text-success">
+                                <i class="bi bi-check-circle"></i> Disetujui oleh:
+                                @if($journal->approved_pembimbing_at)
+                                    Pembimbing
+                                @elseif($journal->approved_iduka_at)
+                                    IDUKA
+                                @else
+                                    Pembimbing
+                                @endif
+                            </div>
+                        @else
+                            <span class="badge bg-warning fs-6 p-2">⏳ Menunggu Persetujuan</span>
+                        @endif
+                    </div>
+
+                    <h6 class="text-muted mb-3 mt-4">
+                        <i class="bi bi-people me-1"></i> Detail Validasi
                     </h6>
 
                     <div class="d-grid gap-2">
-                        @if($journal->validasi_pembimbing === 'sudah')
-                            <div class="alert alert-success d-flex align-items-center mb-0">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <span>Disetujui Pembimbing</span>
-                            </div>
-                        @elseif($journal->validasi_pembimbing === 'ditolak')
-                            <div class="alert alert-danger d-flex align-items-center mb-0">
-                                <i class="bi bi-x-circle-fill me-2"></i>
-                                <span>Ditolak Pembimbing</span>
-                            </div>
+                        @if($journal->status == 'approved')
+                            <!-- Jika sudah disetujui, tampilkan hanya yang sudah menyetujui -->
+                            @if($journal->validasi_pembimbing === 'sudah')
+                                <div class="alert alert-success d-flex align-items-center mb-0">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <span>Disetujui Pembimbing</span>
+                                </div>
+                            @endif
+                            @if($journal->validasi_iduka === 'sudah')
+                                <div class="alert alert-success d-flex align-items-center mb-0">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <span>Disetujui IDUKA</span>
+                                </div>
+                            @endif
                         @else
-                            <div class="alert alert-warning d-flex align-items-center mb-0">
-                                <i class="bi bi-clock-fill me-2"></i>
-                                <span>Menunggu Pembimbing</span>
-                            </div>
-                        @endif
+                            <!-- Jika belum disetujui, tampilkan status masing-masing -->
+                            @if($journal->validasi_pembimbing === 'sudah')
+                                <div class="alert alert-success d-flex align-items-center mb-0">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <span>Disetujui Pembimbing</span>
+                                </div>
+                            @elseif($journal->validasi_pembimbing === 'ditolak')
+                                <div class="alert alert-danger d-flex align-items-center mb-0">
+                                    <i class="bi bi-x-circle-fill me-2"></i>
+                                    <span>Ditolak Pembimbing</span>
+                                </div>
+                            @else
+                                <div class="alert alert-warning d-flex align-items-center mb-0">
+                                    <i class="bi bi-clock-fill me-2"></i>
+                                    <span>Menunggu Pembimbing</span>
+                                </div>
+                            @endif
 
-                        @if($journal->validasi_iduka === 'sudah')
-                            <div class="alert alert-success d-flex align-items-center mb-0">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <span>Disetujui IDUKA</span>
-                            </div>
-                        @elseif($journal->validasi_iduka === 'ditolak')
-                            <div class="alert alert-danger d-flex align-items-center mb-0">
-                                <i class="bi bi-x-circle-fill me-2"></i>
-                                <span>Ditolak IDUKA</span>
-                            </div>
-                        @else
-                            <div class="alert alert-warning d-flex align-items-center mb-0">
-                                <i class="bi bi-clock-fill me-2"></i>
-                                <span>Menunggu IDUKA</span>
-                            </div>
+                            @if($journal->validasi_iduka === 'sudah')
+                                <div class="alert alert-success d-flex align-items-center mb-0">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    <span>Disetujui IDUKA</span>
+                                </div>
+                            @elseif($journal->validasi_iduka === 'ditolak')
+                                <div class="alert alert-danger d-flex align-items-center mb-0">
+                                    <i class="bi bi-x-circle-fill me-2"></i>
+                                    <span>Ditolak IDUKA</span>
+                                </div>
+                            @else
+                                <div class="alert alert-warning d-flex align-items-center mb-0">
+                                    <i class="bi bi-clock-fill me-2"></i>
+                                    <span>Menunggu IDUKA</span>
+                                </div>
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -114,7 +187,8 @@
                     </h6>
                     <div class="text-center">
                         <img src="{{ asset('storage/' . $journal->foto) }}" alt="Dokumentasi kegiatan"
-                             class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                             class="img-fluid rounded shadow-sm" style="max-height: 200px; cursor: pointer;"
+                             onclick="showImageModal('{{ asset('storage/' . $journal->foto) }}')">
                     </div>
                 </div>
             </div>
@@ -145,3 +219,26 @@
         </div>
     </div>
 </div>
+
+<!-- Modal untuk menampilkan gambar besar -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dokumentasi Kegiatan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Dokumentasi Kegiatan" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showImageModal(src) {
+    document.getElementById('modalImage').src = src;
+    var modal = new bootstrap.Modal(document.getElementById('imageModal'));
+    modal.show();
+}
+</script>

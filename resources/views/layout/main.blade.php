@@ -313,6 +313,13 @@
                                 <div data-i18n="Basic">Review Surat Balasan</div>
                             </a>
                         </li>
+
+                        <li class="menu-item {{ Request::routeIs('persuratan.suratBalasan') ? 'active' : '' }}">
+                            <a href="{{ route('persuratan.suratBalasan') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">surat pengantar pkl </div>
+                            </a>
+                        </li>
                     @endif
                     @if (in_array(auth()->user()->role, ['iduka']))
                         <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
@@ -655,7 +662,7 @@
 
 
 
-      
+
         <script>
             if ("serviceWorker" in navigator) {
                 window.addEventListener("load", () => {

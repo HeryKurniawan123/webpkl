@@ -79,7 +79,7 @@ class Iduka extends Model
     // Relasi ke siswa yang diterima di IDUKA ini
     public function siswa()
     {
-        return $this->hasMany(User::class, 'iduka_diterima_id', 'id')
+        return $this->hasMany(User::class, 'iduka_id', 'id')
             ->where('role', 'siswa');
     }
 
