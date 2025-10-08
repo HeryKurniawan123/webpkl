@@ -76,7 +76,6 @@ class Iduka extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    // Relasi ke siswa yang diterima di IDUKA ini
     public function siswa()
     {
         return $this->hasMany(User::class, 'iduka_id', 'id')
@@ -147,4 +146,7 @@ class Iduka extends Model
     {
         return $this->hasMany(LokasiIduka::class, 'iduka_id', 'id');
     }
+
+
+
 }

@@ -15,6 +15,7 @@ use App\Http\Controllers\PembimbingDataController;
 use App\Http\Controllers\PendampingController;
 use App\Http\Controllers\PengajuanIzinSiswaController;
 use App\Http\Controllers\ProgresSiswaController;
+use App\Http\Controllers\SuratPengantarPklController;
 use App\Http\Controllers\UsersController;
 use App\Models\Cp;
 use App\Models\Guru;
@@ -319,6 +320,12 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::post('/update-status-surat', [App\Http\Controllers\PersuratanController::class, 'updateStatusSurat'])->name('persuratan.updateStatusSurat');
 
     Route::post('/surat-balasan/download-massal', [PersuratanController::class, 'massDownload'])->name('persuratan.suratBalasan.massDownload');
+
+    //surat pengantar
+    Route::get('/surat-pengantar', [SuratPengantarPklController::class, 'index'])->name('surat-pengantar.index');
+
+    Route::get('/surat-pengantar/cetak/{id}', [SuratPengantarPklController::class, 'cetak'])->name('surat-pengantar.cetak');
+    Route::get('/surat-pengantar/cetak-semua', [SuratPengantarPklController::class, 'cetakSemua'])->name('surat-pengantar.cetak-semua');
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {

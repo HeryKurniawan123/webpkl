@@ -314,8 +314,8 @@
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('persuratan.suratBalasan') ? 'active' : '' }}">
-                            <a href="{{ route('persuratan.suratBalasan') }}" class="menu-link">
+                        <li class="menu-item {{ Request::routeIs('surat-pengantar.index') ? 'active' : '' }}">
+                            <a href="{{ route('surat-pengantar.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">surat pengantar pkl </div>
                             </a>
