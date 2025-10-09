@@ -29,14 +29,14 @@
 
         .logo-cell {
             display: table-cell;
-            width: 145px;
+            width: 80px;
             /* Diperbesar lagi */
             vertical-align: middle;
             padding-right: 12px;
         }
 
         .logo {
-            width: 145px !important;
+            width: 80px !important;
             /* Diperbesar dengan !important */
             height: auto !important;
             max-width: none !important;
@@ -198,7 +198,7 @@
 
             @if ($logoBase64)
                 <img src="data:image/png;base64,{{ $logoBase64 }}" alt="Logo Jawa Barat"
-                    style="width: 140px; height: auto;">
+                    style="width: 80px; height: auto;">
             @else
                 <p style="color:red;">Logo tidak ditemukan di server</p>
             @endif

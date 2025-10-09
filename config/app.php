@@ -162,6 +162,8 @@ return [
          */
         Ladumor\LaravelPwa\PWAServiceProvider::class,
 
+
+
         /*
          * Application Service Providers...
          */

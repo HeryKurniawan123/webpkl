@@ -274,6 +274,7 @@
                                 </div>
                             </div>
 
+                            <!-- Tab Dinas Luar Perlu Konfirmasi -->
                             <div class="tab-pane fade" id="v-pills-dinas-pending" role="tabpanel"
                                 aria-labelledby="v-pills-dinas-pending-tab">
                                 <div class="card">
@@ -330,29 +331,16 @@
                                                             </td>
                                                             <td>
                                                                 <div class="btn-group" role="group">
-                                                                    <form method="POST"
-                                                                        action="{{ route('iduka.konfirmasi-dinas', ['id' => $dinas->id]) }}"
-                                                                        style="display: inline;">
-                                                                        @csrf
-                                                                        <input type="hidden" name="status"
-                                                                            value="disetujui">
-                                                                        <button type="submit"
-                                                                            class="btn btn-sm btn-success"
-                                                                            title="Setujui">
-                                                                            <i class="bi bi-check-lg"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                    <form method="POST"
-                                                                        action="{{ route('iduka.konfirmasi-dinas', ['id' => $dinas->id]) }}"
-                                                                        style="display: inline; margin-left: 5px;">
-                                                                        @csrf
-                                                                        <input type="hidden" name="status"
-                                                                            value="ditolak">
-                                                                        <button type="submit"
-                                                                            class="btn btn-sm btn-danger" title="Tolak">
-                                                                            <i class="bi bi-x-lg"></i>
-                                                                        </button>
-                                                                    </form>
+                                                                    <button type="button" class="btn btn-sm btn-success"
+                                                                        onclick="konfirmasiDinas({{ $dinas->id }}, 'disetujui')"
+                                                                        title="Setujui">
+                                                                        <i class="bi bi-check-lg"></i>
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                                        onclick="konfirmasiDinas({{ $dinas->id }}, 'ditolak')"
+                                                                        title="Tolak">
+                                                                        <i class="bi bi-x-lg"></i>
+                                                                    </button>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -369,7 +357,6 @@
                                 </div>
                             </div>
 
-                            <!-- Tab Perlu Konfirmasi -->
                             <div class="tab-pane fade" id="v-pills-perlu-konfirmasi" role="tabpanel"
                                 aria-labelledby="v-pills-perlu-konfirmasi-tab">
                                 <div class="card">
@@ -387,9 +374,9 @@
                                                         <th>Alasan</th>
                                                         <th>File</th>
                                                         <th>Status</th>
+                                                        <th>Aksi</th>
                                                     </tr>
                                                 </thead>
-                                                <!-- Di dalam tbody untuk izin pending -->
                                                 <tbody>
                                                     @forelse($izinPending as $izin)
                                                         <tr data-izin-id="{{ $izin->id }}">
@@ -440,16 +427,14 @@
                                                             </td>
                                                             <td>
                                                                 <div class="btn-group" role="group">
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-success btn-konfirmasi-izin"
-                                                                        data-izin-id="{{ $izin->id }}"
-                                                                        data-status="disetujui" title="Setujui">
+                                                                    <button type="button" class="btn btn-sm btn-success"
+                                                                        onclick="konfirmasiIzin({{ $izin->id }}, 'disetujui')"
+                                                                        title="Setujui">
                                                                         <i class="bi bi-check-lg"></i>
                                                                     </button>
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-danger btn-konfirmasi-izin"
-                                                                        data-izin-id="{{ $izin->id }}"
-                                                                        data-status="ditolak" title="Tolak">
+                                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                                        onclick="konfirmasiIzin({{ $izin->id }}, 'ditolak')"
+                                                                        title="Tolak">
                                                                         <i class="bi bi-x-lg"></i>
                                                                     </button>
                                                                     <a href="{{ route('iduka.detail-izin', $izin->id) }}"
@@ -673,7 +658,6 @@
                                                         <div class="form-text">Default: 15:00</div>
                                                     </div>
 
-
                                                     <button type="submit" class="btn btn-outline-primary">Simpan</button>
                                                 </form>
                                             </div>
@@ -682,7 +666,6 @@
                                 </div>
                             </div>
                             {{-- end --}}
-
                         </div>
                     </div>
                 </div>
@@ -708,7 +691,448 @@
         </div>
     </div>
 
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toast-title">Notifikasi</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                Pesan notifikasi
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Fungsi untuk konfirmasi absensi individual
+        function konfirmasiAbsensi(pendingId, status) {
+            if (status === 'ditolak') {
+                konfirmasiTolakAbsensi(pendingId);
+                return;
+            }
+
+            if (!confirm(`Apakah Anda yakin ingin menyetujui absensi ini?`)) {
+                return;
+            }
+
+            // Show loading
+            const row = document.getElementById(`row-pending-${pendingId}`);
+            if (row) {
+                row.style.opacity = '0.5';
+            }
+
+            fetch(`{{ route('iduka.konfirmasi-absen.proses', ['id' => ':id']) }}`.replace(':id', pendingId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: status
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showToast('Berhasil!', data.message, 'success');
+
+                        // Redirect ke tab hari ini setelah sukses
+                        setTimeout(() => {
+                            // Dapatkan URL tanpa hash
+                            const currentUrl = window.location.href.split('#')[0];
+                            window.location.href = currentUrl + '#v-pills-hari-ini';
+                        }, 1500);
+                    } else {
+                        showToast('Gagal!', data.message || 'Terjadi kesalahan', 'danger');
+                        if (row) row.style.opacity = '1';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
+                    if (row) row.style.opacity = '1';
+                });
+        }
+
+        // Fungsi untuk konfirmasi izin
+        function konfirmasiIzin(izinId, status) {
+            if (!izinId) {
+                showToast('Error!', 'ID izin tidak ditemukan', 'danger');
+                return;
+            }
+
+            const actionText = status === 'disetujui' ? 'menyetujui' : 'menolak';
+
+            if (!confirm(`Apakah Anda yakin ingin ${actionText} izin ini?`)) {
+                return;
+            }
+
+            let catatan = null;
+            if (status === 'ditolak') {
+                catatan = prompt('Masukkan alasan penolakan:');
+                if (catatan === null) return;
+                if (catatan.trim() === '') {
+                    showToast('Peringatan', 'Alasan penolakan harus diisi!', 'warning');
+                    return;
+                }
+            }
+
+            // Show loading
+            const row = document.querySelector(`tr[data-izin-id="${izinId}"]`);
+            if (row) {
+                row.style.opacity = '0.5';
+                const buttons = row.querySelectorAll('button');
+                buttons.forEach(btn => btn.disabled = true);
+            }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (!csrfToken) {
+                showToast('Error!', 'CSRF token tidak ditemukan. Silakan refresh halaman.', 'danger');
+                if (row) {
+                    row.style.opacity = '1';
+                    const buttons = row.querySelectorAll('button');
+                    buttons.forEach(btn => btn.disabled = false);
+                }
+                return;
+            }
+
+            const url = `{{ route('iduka.konfirmasi-izin', ['id' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', izinId);
+
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        status: status,
+                        catatan: catatan
+                    })
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return Promise.reject('Redirecting');
+                    }
+
+                    return response.json().then(data => {
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Terjadi kesalahan');
+                        }
+                        return data;
+                    });
+                })
+                .then(data => {
+                    showToast('Berhasil!', data.message, 'success');
+
+                    // Redirect ke tab hari ini setelah sukses
+                    setTimeout(() => {
+                        // Dapatkan URL tanpa hash
+                        const currentUrl = window.location.href.split('#')[0];
+                        window.location.href = currentUrl + '#v-pills-hari-ini';
+                    }, 1500);
+                })
+                .catch(error => {
+                    if (error === 'Redirecting') return;
+
+                    console.error('Error:', error);
+                    showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
+
+                    if (row) {
+                        row.style.opacity = '1';
+                        const buttons = row.querySelectorAll('button');
+                        buttons.forEach(btn => btn.disabled = false);
+                    }
+                });
+        }
+
+        // Fungsi untuk konfirmasi dinas
+        function konfirmasiDinas(dinasId, status) {
+            if (!dinasId) {
+                showToast('Error!', 'ID dinas tidak ditemukan', 'danger');
+                return;
+            }
+
+            const actionText = status === 'disetujui' ? 'menyetujui' : 'menolak';
+
+            if (!confirm(`Apakah Anda yakin ingin ${actionText} dinas luar ini?`)) {
+                return;
+            }
+
+            let catatan = null;
+            if (status === 'ditolak') {
+                catatan = prompt('Masukkan alasan penolakan:');
+                if (catatan === null) return;
+                if (catatan.trim() === '') {
+                    showToast('Peringatan', 'Alasan penolakan harus diisi!', 'warning');
+                    return;
+                }
+            }
+
+            // Show loading
+            const row = document.querySelector(`tr[data-dinas-id="${dinasId}"]`);
+            if (row) {
+                row.style.opacity = '0.5';
+                const buttons = row.querySelectorAll('button');
+                buttons.forEach(btn => btn.disabled = true);
+            }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+            if (!csrfToken) {
+                showToast('Error!', 'CSRF token tidak ditemukan. Silakan refresh halaman.', 'danger');
+                if (row) {
+                    row.style.opacity = '1';
+                    const buttons = row.querySelectorAll('button');
+                    buttons.forEach(btn => btn.disabled = false);
+                }
+                return;
+            }
+
+            const url = `{{ route('iduka.konfirmasi-dinas', ['id' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', dinasId);
+
+            fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        status: status,
+                        catatan: catatan
+                    })
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                        return Promise.reject('Redirecting');
+                    }
+
+                    return response.json().then(data => {
+                        if (!response.ok) {
+                            throw new Error(data.message || 'Terjadi kesalahan');
+                        }
+                        return data;
+                    });
+                })
+                .then(data => {
+                    showToast('Berhasil!', data.message, 'success');
+
+                    // Redirect ke tab hari ini setelah sukses
+                    setTimeout(() => {
+                        // Dapatkan URL tanpa hash
+                        const currentUrl = window.location.href.split('#')[0];
+                        window.location.href = currentUrl + '#v-pills-hari-ini';
+                    }, 1500);
+                })
+                .catch(error => {
+                    if (error === 'Redirecting') return;
+
+                    console.error('Error:', error);
+                    showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
+
+                    if (row) {
+                        row.style.opacity = '1';
+                        const buttons = row.querySelectorAll('button');
+                        buttons.forEach(btn => btn.disabled = false);
+                    }
+                });
+        }
+
+        // Form konfirmasi banyak absensi
+        document.getElementById('formKonfirmasiBanyak')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const checkedBoxes = document.querySelectorAll('.absen-check:checked');
+            if (checkedBoxes.length === 0) {
+                showToast('Peringatan', 'Silakan pilih minimal satu absensi untuk dikonfirmasi', 'warning');
+                return false;
+            }
+
+            const formData = new FormData();
+            const status = document.querySelector('button[type="submit"][clicked]')?.value ||
+                           document.querySelector('button[type="submit"]').value;
+
+            formData.append('status', status);
+
+            checkedBoxes.forEach(checkbox => {
+                formData.append('absen_ids[]', checkbox.value);
+            });
+
+            if (!confirm(`Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} ${checkedBoxes.length} absensi yang dipilih?`)) {
+                return false;
+            }
+
+            const submitButtons = this.querySelectorAll('button[type="submit"]');
+            submitButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+            });
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.message || `HTTP error! status: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showToast('Berhasil!', data.message, 'success');
+
+                    // Redirect ke tab hari ini setelah sukses
+                    setTimeout(() => {
+                        // Dapatkan URL tanpa hash
+                        const currentUrl = window.location.href.split('#')[0];
+                        window.location.href = currentUrl + '#v-pills-hari-ini';
+                    }, 1500);
+                } else {
+                    showToast('Gagal!', data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Error!', 'Terjadi kesalahan: ' + error.message, 'danger');
+            })
+            .finally(() => {
+                submitButtons.forEach(btn => {
+                    btn.disabled = false;
+                    if (btn.name === 'status' && btn.value === 'disetujui') {
+                        btn.innerHTML = '<i class="bi bi-check-lg"></i> Setujui yang Dipilih';
+                    } else if (btn.name === 'status' && btn.value === 'ditolak') {
+                        btn.innerHTML = '<i class="bi bi-x-lg"></i> Tolak yang Dipilih';
+                    }
+                });
+            });
+        });
+
+        // Event listener untuk tombol submit
+        document.querySelectorAll('#formKonfirmasiBanyak button[type="submit"]').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('#formKonfirmasiBanyak button[type="submit"]').forEach(btn => {
+                    btn.removeAttribute('clicked');
+                });
+                this.setAttribute('clicked', 'true');
+            });
+        });
+
+        // Fungsi untuk menolak absensi
+        function konfirmasiTolakAbsensi(pendingId) {
+            const catatan = prompt('Masukkan alasan penolakan:');
+            if (catatan === null) return;
+            if (catatan.trim() === '') {
+                showToast('Peringatan', 'Alasan penolakan harus diisi!', 'warning');
+                return;
+            }
+
+            const row = document.getElementById(`row-pending-${pendingId}`);
+            if (row) row.style.opacity = '0.5';
+
+            fetch(`{{ route('iduka.tolak-absen', ['id' => ':id']) }}`.replace(':id', pendingId), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        catatan: catatan
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Berhasil!', data.message, 'success');
+
+                        // Redirect ke tab hari ini setelah sukses
+                        setTimeout(() => {
+                            // Dapatkan URL tanpa hash
+                            const currentUrl = window.location.href.split('#')[0];
+                            window.location.href = currentUrl + '#v-pills-hari-ini';
+                        }, 1500);
+                    } else {
+                        showToast('Gagal!', data.message, 'danger');
+                        if (row) row.style.opacity = '1';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error!', 'Terjadi kesalahan koneksi: ' + error.message, 'danger');
+                    if (row) row.style.opacity = '1';
+                });
+        }
+
+        // Fungsi untuk menampilkan notifikasi toast
+        function showToast(title, message, type = 'success') {
+            const toastEl = document.getElementById('liveToast');
+            const toastTitle = document.getElementById('toast-title');
+            const toastMessage = document.getElementById('toast-message');
+
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            // Hapus session setelah menampilkan notifikasi
+            fetch("{{ route('clear.session') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            });
+        }
+
+        // Update badge counter
+        function updatePendingCounter() {
+            const badge = document.getElementById('badge-absen-pending');
+            if (badge) {
+                const currentCount = parseInt(badge.textContent) || 0;
+                const newCount = Math.max(0, currentCount - 1);
+                badge.textContent = newCount;
+
+                if (newCount === 0) {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // Update badge counter untuk izin pending
+        function updateIzinPendingCounter() {
+            const badge = document.getElementById('badge-pending');
+            if (badge) {
+                const currentCount = parseInt(badge.textContent) || 0;
+                const newCount = Math.max(0, currentCount - 1);
+                badge.textContent = newCount;
+
+                if (newCount === 0) {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // Inisialisasi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             // Fungsi untuk toggle semua checkbox
             function toggleAll(source) {
@@ -776,646 +1200,50 @@
                 }
             }
 
-            // Validasi form sebelum submit
-            document.getElementById('formKonfirmasiBanyak')?.addEventListener('submit', function(e) {
-                e.preventDefault();
+            // Fungsi untuk mengaktifkan tab berdasarkan hash
+            function activateTabFromHash() {
+                const hash = window.location.hash;
+                if (hash) {
+                    const tabElement = document.querySelector(`[data-bs-target="${hash}"]`);
+                    const tabPane = document.querySelector(hash);
 
-                const checkedBoxes = document.querySelectorAll('.absen-check:checked');
-                if (checkedBoxes.length === 0) {
-                    showAlert('warning', 'Silakan pilih minimal satu absensi untuk dikonfirmasi');
-                    return false;
-                }
-
-                const formData = new FormData(this);
-                const status = formData.get('status');
-
-                if (!confirm(
-                        `Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} ${checkedBoxes.length} absensi yang dipilih?`
-                    )) {
-                    return false;
-                }
-
-                // Tampilkan loading
-                const submitButtons = this.querySelectorAll('button[type="submit"]');
-                submitButtons.forEach(btn => {
-                    btn.disabled = true;
-                    btn.innerHTML =
-                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
-                });
-
-                fetch(this.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        }
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            showAlert('success', data.message);
-
-                            // Hapus baris yang berhasil diproses
-                            checkedBoxes.forEach(checkbox => {
-                                const row = checkbox.closest('tr');
-                                if (row) {
-                                    row.remove();
-                                }
-                            });
-
-                            // Update badge counter
-                            updatePendingCounter();
-
-                            // Periksa apakah masih ada data
-                            const tbody = document.getElementById('tbody-absensi-pending');
-                            const remainingRows = tbody.querySelectorAll('tr:not(#no-data-pending)');
-                            if (remainingRows.length === 0) {
-                                tbody.innerHTML = `
-                        <tr id="no-data-pending">
-                            <td colspan="7" class="text-center text-muted">
-                                Tidak ada absensi yang perlu dikonfirmasi
-                            </td>
-                        </tr>
-                    `;
-                            }
-
-                            // Reset form
-                            this.reset();
-                            updateCheckAllState();
-                        } else {
-                            showAlert('error', data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showAlert('error', 'Terjadi kesalahan koneksi: ' + error.message);
-                    })
-                    .finally(() => {
-                        // Kembalikan tombol ke keadaan semula
-                        submitButtons.forEach(btn => {
-                            btn.disabled = false;
-                            if (btn.name === 'status' && btn.value === 'disetujui') {
-                                btn.innerHTML =
-                                    '<i class="bi bi-check-lg"></i> Setujui yang Dipilih';
-                            } else if (btn.name === 'status' && btn.value === 'ditolak') {
-                                btn.innerHTML = '<i class="bi bi-x-lg"></i> Tolak yang Dipilih';
-                            }
+                    if (tabElement && tabPane) {
+                        // Nonaktifkan semua tab
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                            link.classList.remove('active');
                         });
-                    });
-            });
+                        document.querySelectorAll('.tab-pane').forEach(pane => {
+                            pane.classList.remove('show', 'active');
+                        });
 
-            // Event delegation untuk tombol konfirmasi izin
-            document.addEventListener('click', function(e) {
-                // Cek apakah yang diklik adalah tombol konfirmasi izin
-                if (e.target.closest('.btn-konfirmasi-izin')) {
-                    e.preventDefault();
-                    const button = e.target.closest('.btn-konfirmasi-izin');
-                    const izinId = button.getAttribute('data-izin-id');
-                    const status = button.getAttribute('data-status');
-
-                    konfirmasiIzin(izinId, status);
+                        // Aktifkan tab yang sesuai dengan hash
+                        tabElement.classList.add('active');
+                        tabPane.classList.add('show', 'active');
+                    }
                 }
-            });
+            }
+
+            // Panggil fungsi saat halaman dimuat
+            activateTabFromHash();
+
+            // Tambahkan event listener untuk perubahan hash
+            window.addEventListener('hashchange', activateTabFromHash);
+
+            // Tampilkan notifikasi jika ada
+            const successMessage = "{{ session('success') }}";
+            const errorMessage = "{{ session('error') }}";
+
+            if (successMessage) {
+                showToast('Berhasil!', successMessage, 'success');
+            }
+
+            if (errorMessage) {
+                showToast('Error!', errorMessage, 'danger');
+            }
 
             // Inisialisasi state awal
             updateCheckAllState();
         });
-
-
-
-
-        // Fungsi untuk konfirmasi individual
-        function konfirmasiAbsensi(pendingId, status) {
-            if (status === 'ditolak') {
-                konfirmasiTolakAbsensi(pendingId);
-                return;
-            }
-
-            if (!confirm(`Apakah Anda yakin ingin menyetujui absensi ini?`)) {
-                return;
-            }
-
-            // Show loading
-            const row = document.getElementById(`row-pending-${pendingId}`);
-            if (row) {
-                row.style.opacity = '0.5';
-            }
-
-            // Gunakan route yang benar
-            fetch(`{{ route('iduka.konfirmasi-absen.proses', ['id' => ':id']) }}`.replace(':id', pendingId), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        status: status
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response:', data);
-
-                    if (data.success) {
-                        // Show success message
-                        showAlert('success', data.message);
-
-                        // Remove row from pending table
-                        if (row) {
-                            row.remove();
-                        }
-
-                        // Update badge counter
-                        updatePendingCounter();
-
-                        // Check if no more pending data
-                        const tbody = document.getElementById('tbody-absensi-pending');
-                        const remainingRows = tbody.querySelectorAll('tr:not(#no-data-pending)');
-                        if (remainingRows.length === 0) {
-                            tbody.innerHTML = `
-                    <tr id="no-data-pending">
-                        <td colspan="7" class="text-center text-muted">
-                            Tidak ada absensi yang perlu dikonfirmasi
-                        </td>
-                    </tr>
-                `;
-                        }
-                    } else {
-                        showAlert('error', data.message || 'Terjadi kesalahan');
-                        // Restore row
-                        if (row) {
-                            row.style.opacity = '1';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('error', 'Terjadi kesalahan koneksi: ' + error.message);
-                    // Restore row
-                    if (row) {
-                        row.style.opacity = '1';
-                    }
-                });
-        }
-
-        function konfirmasiDinas(dinasId, status) {
-            console.log('konfirmasiDinas called:', dinasId, status);
-
-            if (!dinasId) {
-                console.error('dinasId is undefined');
-                alert('ID dinas tidak ditemukan');
-                return;
-            }
-
-            const actionText = status === 'disetujui' ? 'menyetujui' : 'menolak';
-
-            if (!confirm(`Apakah Anda yakin ingin ${actionText} dinas luar ini?`)) {
-                return;
-            }
-
-            let catatan = null;
-            if (status === 'ditolak') {
-                catatan = prompt('Masukkan alasan penolakan:');
-                if (catatan === null) return;
-                if (catatan.trim() === '') {
-                    alert('Alasan penolakan harus diisi!');
-                    return;
-                }
-            }
-
-            // Show loading
-            const row = document.querySelector(`tr[data-dinas-id="${dinasId}"]`);
-            if (row) {
-                row.style.opacity = '0.5';
-                const buttons = row.querySelectorAll('button');
-                buttons.forEach(btn => btn.disabled = true);
-            }
-
-            // Ambil CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-            if (!csrfToken) {
-                console.error('CSRF token not found');
-                alert('CSRF token tidak ditemukan. Silakan refresh halaman.');
-                if (row) {
-                    row.style.opacity = '1';
-                    const buttons = row.querySelectorAll('button');
-                    buttons.forEach(btn => btn.disabled = false);
-                }
-                return;
-            }
-
-            // Coba beberapa URL yang mungkin
-            const possibleUrls = [
-                `{{ route('iduka.konfirmasi-dinas', ['id' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', dinasId),
-                `/konfirmasi-dinas/${dinasId}`,
-                `/iduka/konfirmasi-dinas/${dinasId}`
-            ];
-
-            console.log('Mencoba URL:', possibleUrls);
-
-            // Coba setiap URL
-            tryFetchUrl(possibleUrls[0], dinasId, status, catatan, row)
-                .catch(() => tryFetchUrl(possibleUrls[1], dinasId, status, catatan, row))
-                .catch(() => tryFetchUrl(possibleUrls[2], dinasId, status, catatan, row))
-                .catch(error => {
-                    console.error('Semua URL gagal:', error);
-                    alert('Tidak dapat terhubung ke server. Silakan coba lagi.');
-                    if (row) {
-                        row.style.opacity = '1';
-                        const buttons = row.querySelectorAll('button');
-                        buttons.forEach(btn => btn.disabled = false);
-                    }
-                });
-        }
-
-        function tryFetchUrl(url, dinasId, status, catatan, row) {
-            console.log('Mencoba URL:', url);
-
-            return fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        status: status,
-                        catatan: catatan
-                    })
-                })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    console.log('Response headers:', response.headers);
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-
-                    if (data.success) {
-                        alert(data.message);
-                        if (row) row.remove();
-                        updateDinasPendingCounter();
-
-                        const tbody = document.querySelector('#v-pills-dinas-pending tbody');
-                        if (tbody) {
-                            const remainingRows = tbody.querySelectorAll('tr');
-                            if (remainingRows.length === 0) {
-                                tbody.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">
-                                Tidak ada dinas luar yang perlu dikonfirmasi
-                            </td>
-                        </tr>
-                    `;
-                            }
-                        }
-                    } else {
-                        alert(data.message || 'Terjadi kesalahan');
-                        if (row) {
-                            row.style.opacity = '1';
-                            const buttons = row.querySelectorAll('button');
-                            buttons.forEach(btn => btn.disabled = false);
-                        }
-                    }
-                });
-        }
-
-        // Update badge counter untuk dinas pending
-        function updateDinasPendingCounter() {
-            const badge = document.getElementById('badge-dinas-pending');
-            if (badge) {
-                const currentCount = parseInt(badge.textContent) || 0;
-                const newCount = Math.max(0, currentCount - 1);
-                badge.textContent = newCount;
-
-                if (newCount === 0) {
-                    badge.style.display = 'none';
-                }
-            }
-        }
-
-        // Event delegation untuk tombol konfirmasi dinas
-        document.addEventListener('DOMContentLoaded', function() {
-            // Event listener untuk tombol konfirmasi dinas
-            document.addEventListener('click', function(e) {
-                // Cek apakah yang diklik adalah tombol konfirmasi dinas
-                if (e.target.closest('.btn-konfirmasi-dinas')) {
-                    e.preventDefault();
-                    const button = e.target.closest('.btn-konfirmasi-dinas');
-                    const dinasId = button.getAttribute('data-dinas-id');
-                    const status = button.getAttribute('data-status');
-
-                    konfirmasiDinas(dinasId, status);
-                }
-            });
-        });
-
-        // Fungsi untuk menolak absensi
-        function konfirmasiTolakAbsensi(pendingId) {
-            const alasan = prompt('Masukkan alasan penolakan absensi:');
-
-            if (alasan === null) {
-                return; // User membatalkan
-            }
-
-            if (alasan.trim() === '') {
-                alert('Alasan penolakan harus diisi!');
-                return;
-            }
-
-            if (!confirm(`Apakah Anda yakin ingin menolak absensi ini?\nAlasan: ${alasan}`)) {
-                return;
-            }
-
-            // Show loading
-            const row = document.getElementById(`row-pending-${pendingId}`);
-            if (row) {
-                row.style.opacity = '0.5';
-            }
-
-            // Gunakan route tolak-absen yang benar
-            fetch(`{{ route('iduka.tolak-absen', ['id' => ':id']) }}`.replace(':id', pendingId), {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        catatan: alasan
-                    })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response:', data);
-
-                    if (data.success) {
-                        // Show success message
-                        showAlert('success', data.message);
-
-                        // Remove row from pending table
-                        if (row) {
-                            row.remove();
-                        }
-
-                        // Update badge counter
-                        updatePendingCounter();
-
-                        // Check if no more pending data
-                        const tbody = document.getElementById('tbody-absensi-pending');
-                        const remainingRows = tbody.querySelectorAll('tr:not(#no-data-pending)');
-                        if (remainingRows.length === 0) {
-                            tbody.innerHTML = `
-                    <tr id="no-data-pending">
-                        <td colspan="7" class="text-center text-muted">
-                            Tidak ada absensi yang perlu dikonfirmasi
-                        </td>
-                    </tr>
-                `;
-                        }
-                    } else {
-                        showAlert('error', data.message || 'Terjadi kesalahan');
-                        // Restore row
-                        if (row) {
-                            row.style.opacity = '1';
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('error', 'Terjadi kesalahan koneksi: ' + error.message);
-                    // Restore row
-                    if (row) {
-                        row.style.opacity = '1';
-                    }
-                });
-        }
-
-        // Fungsi untuk konfirmasi izin oleh IDUKA atau Guru
-        function konfirmasiIzin(izinId, status) {
-            console.log('konfirmasiIzin called:', izinId, status); // Debug
-
-            if (!izinId) {
-                console.error('izinId is undefined'); // Debug
-                alert('ID izin tidak ditemukan');
-                return;
-            }
-
-            const actionText = status === 'disetujui' ? 'menyetujui' : 'menolak';
-
-            if (!confirm(`Apakah Anda yakin ingin ${actionText} izin ini?`)) {
-                return;
-            }
-
-            let catatan = null;
-            if (status === 'ditolak') {
-                catatan = prompt('Masukkan alasan penolakan:');
-                if (catatan === null) return; // User membatalkan
-                if (catatan.trim() === '') {
-                    alert('Alasan penolakan harus diisi!');
-                    return;
-                }
-            }
-
-            // Show loading
-            const row = document.querySelector(`tr[data-izin-id="${izinId}"]`);
-            if (row) {
-                row.style.opacity = '0.5';
-
-                // Disable all buttons in the row
-                const buttons = row.querySelectorAll('button');
-                buttons.forEach(btn => {
-                    btn.disabled = true;
-                });
-            }
-
-            // Ambil CSRF token
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-            if (!csrfToken) {
-                console.error('CSRF token not found'); // Debug
-                alert('CSRF token tidak ditemukan. Silakan refresh halaman.');
-                if (row) {
-                    row.style.opacity = '1';
-                    const buttons = row.querySelectorAll('button');
-                    buttons.forEach(btn => {
-                        btn.disabled = false;
-                    });
-                }
-                return;
-            }
-
-            // Buat URL dengan route yang benar
-            const url = `{{ route('iduka.konfirmasi-izin', ['id' => 'PLACEHOLDER']) }}`.replace('PLACEHOLDER', izinId);
-            console.log('Fetch URL:', url); // Debug
-
-            fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        status: status,
-                        catatan: catatan
-                    })
-                })
-                .then(response => {
-                    console.log('Fetch response status:', response.status); // Debug
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data); // Debug
-
-                    if (data.success) {
-                        // Tampilkan pesan sukses
-                        alert(data.message);
-
-                        // Hapus baris dari tabel
-                        if (row) {
-                            row.remove();
-                        }
-
-                        // Update badge counter
-                        updateIzinPendingCounter();
-
-                        // Periksa apakah masih ada data
-                        const tbody = document.querySelector('#v-pills-perlu-konfirmasi tbody');
-                        if (tbody) {
-                            const remainingRows = tbody.querySelectorAll('tr');
-                            if (remainingRows.length === 0) {
-                                tbody.innerHTML = `
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">
-                                    Tidak ada izin yang perlu dikonfirmasi
-                                </td>
-                            </tr>
-                        `;
-                            }
-                        }
-                    } else {
-                        // Tampilkan pesan error
-                        alert(data.message || 'Terjadi kesalahan');
-
-                        // Kembalikan state row
-                        if (row) {
-                            row.style.opacity = '1';
-                            const buttons = row.querySelectorAll('button');
-                            buttons.forEach(btn => {
-                                btn.disabled = false;
-                            });
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error); // Debug
-                    alert('Terjadi kesalahan koneksi: ' + error.message);
-
-                    // Kembalikan state row
-                    if (row) {
-                        row.style.opacity = '1';
-                        const buttons = row.querySelectorAll('button');
-                        buttons.forEach(btn => {
-                            btn.disabled = false;
-                        });
-                    }
-                });
-        }
-
-        // Update badge counter untuk izin pending
-        function updateIzinPendingCounter() {
-            const badge = document.getElementById('badge-pending');
-            if (badge) {
-                const currentCount = parseInt(badge.textContent) || 0;
-                const newCount = Math.max(0, currentCount - 1);
-                badge.textContent = newCount;
-
-                if (newCount === 0) {
-                    badge.style.display = 'none';
-                }
-            }
-        }
-
-        // Update badge counter
-        function updatePendingCounter() {
-            const badge = document.getElementById('badge-absen-pending');
-            if (badge) {
-                const currentCount = parseInt(badge.textContent) || 0;
-                const newCount = Math.max(0, currentCount - 1);
-                badge.textContent = newCount;
-
-                if (newCount === 0) {
-                    badge.style.display = 'none';
-                }
-            }
-        }
-
-        // Fungsi untuk menampilkan alert
-        function showAlert(type, message) {
-            // Hapus alert sebelumnya
-            const existingAlerts = document.querySelectorAll('.alert');
-            existingAlerts.forEach(alert => {
-                if (alert.classList.contains('alert-success') ||
-                    alert.classList.contains('alert-danger') ||
-                    alert.classList.contains('alert-warning')) {
-                    alert.remove();
-                }
-            });
-
-            // Buat alert baru
-            const alertClass = type === 'success' ? 'alert-success' :
-                type === 'error' ? 'alert-danger' : 'alert-warning';
-            const iconClass = type === 'success' ? 'bi-check-circle' :
-                type === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle';
-
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert ${alertClass} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-    <i class="${iconClass} me-2"></i>
-    <strong>${type === 'success' ? 'Berhasil!' : type === 'error' ? 'Error!' : 'Peringatan!'}</strong> ${message}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-`;
-
-            // Sisipkan di bagian atas container
-            const container = document.querySelector('.container-xxl');
-            if (container) {
-                container.insertBefore(alertDiv, container.firstChild);
-            }
-
-            // Auto hide setelah 3 detik
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 3000);
-        }
     </script>
 
     <style>

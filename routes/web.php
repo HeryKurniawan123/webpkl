@@ -400,15 +400,14 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
 
 Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
-
     Route::get('/konfir/absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfir.absen.index');
 
     Route::prefix('iduka')->name('iduka.')->group(function () {
-        // tampil halaman konfirmasi
+        // Tampil halaman konfirmasi
         Route::get('/konfirmasi-absen', [KonfirAbsenSiswaController::class, 'index'])
             ->name('konfirmasi-absen');
 
-        // proses individual konfirmasi
+        // Proses individual konfirmasi
         Route::post('/konfirmasi-absen/{id}', [KonfirAbsenSiswaController::class, 'konfirmasiAbsensi'])
             ->name('konfirmasi-absen.proses');
 
@@ -438,15 +437,23 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
         Route::post('/tolak-absen/{id}', [KonfirAbsenSiswaController::class, 'tolakAbsensi'])
             ->name('tolak-absen');
 
-        //filter riwayat absen
+        // Filter riwayat absen
         Route::get('/riwayat-absensi', [KonfirAbsenSiswaController::class, 'filterRiwayat'])
             ->name('filter-riwayat');
 
+        // Route untuk konfirmasi dinas
         Route::post('/konfirmasi-dinas/{id}', [KonfirAbsenSiswaController::class, 'konfirmasiDinas'])
             ->name('konfirmasi-dinas');
+
+        // Route untuk koordinat
+        Route::post('/tambah-kordinat', [KonfirAbsenSiswaController::class, 'kordinat'])
+            ->name('tambah.kordinat');
     });
 
-    Route::post('/iduka/tambah-kordinat', [KonfirAbsenSiswaController::class, 'kordinat'])->name('iduka.tambah.kordinat');
+    Route::post('/clear-session', function () {
+        session()->forget(['success', 'error']);
+        return response()->json(['success' => true]);
+    })->name('clear.session');
 
 
     Route::get('/pembimbing/dashboard', [PembimbingDataController::class, 'index'])
@@ -457,17 +464,7 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
     Route::post('/approval/{id}/approve', [JournalApprovalController::class, 'approve'])->name('approval.approve');
     Route::post('/approval/{id}/reject', [JournalApprovalController::class, 'reject'])->name('approval.reject');
     Route::get('/approval/{id}/detail', [JournalApprovalController::class, 'showDetail'])->name('approval.detail');
-
-    // Di routes/web.php
-    Route::get('/debug-absensi-pending', function () {
-        $pendings = \App\Models\AbsensiPending::with(['user', 'iduka', 'pembimbing'])->get();
-
-        return response()->json([
-            'absensi_pending' => $pendings->toArray()
-        ]);
-    });
 });
-
 
 Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
 

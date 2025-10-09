@@ -27,10 +27,18 @@ class KonfirAbsenSiswaController extends Controller
         try {
             $user = Auth::user();
 
-            // Perbaikan: Tambahkan 'kaprog' dalam daftar role yang diizinkan
             if (!in_array($user->role, ['iduka', 'guru', 'kaprog'])) {
                 return redirect()->back()->with('error', 'Akses tidak diizinkan');
             }
+
+            // Log untuk debugging
+            Log::info('User mengakses halaman konfirmasi absen', [
+                'user_id' => $user->id,
+                'user_role' => $user->role,
+                'iduka_id' => $user->iduka_id ?? null,
+                'session_success' => session('success'),
+                'session_error' => session('error')
+            ]);
 
             // === Untuk IDUKA ===
             if ($user->role === 'iduka') {
@@ -85,19 +93,21 @@ class KonfirAbsenSiswaController extends Controller
                     ->whereDate('tanggal', Carbon::today())
                     ->get();
 
-                // PERBAIKAN: Ambil absensi pending yang pembimbing_id-nya sama dengan ID guru di tabel gurus
-                $absensiPending = AbsensiPending::with(['user', 'iduka', 'pembimbing'])
-                    ->where('pembimbing_id', $guru->id)
+                // PERBAIKAN: Ambil absensi pending yang user_id-nya ada di siswaIds
+                $absensiPending = AbsensiPending::with(['user', 'iduka'])
+                    ->whereIn('user_id', $siswaIds)
                     ->where('status_konfirmasi', 'pending')
                     ->latest()
                     ->get();
 
+                // PERBAIKAN: Ambil izin pending yang user_id-nya ada di siswaIds
                 $izinPending = IzinPending::with(['user', 'iduka'])
                     ->whereIn('user_id', $siswaIds)
                     ->where('status_konfirmasi', 'pending')
                     ->latest()
                     ->get();
 
+                // PERBAIKAN: Ambil dinas pending yang user_id-nya ada di siswaIds
                 $dinasPending = DinasPending::with(['user', 'iduka'])
                     ->whereIn('user_id', $siswaIds)
                     ->where('status_konfirmasi', 'pending')
@@ -112,7 +122,7 @@ class KonfirAbsenSiswaController extends Controller
                 // guru bisa lihat semua iduka
                 $iduka = null;
             }
-            // === Untuk Kepala Program (Kaprog) - PERBAIKAN TOTAL ===
+            // === Untuk Kepala Program (Kaprog) ===
             elseif ($user->role === 'kaprog') {
                 // Cari data guru untuk kaprog ini
                 $guru = Guru::where('user_id', $user->id)->first();
@@ -188,8 +198,8 @@ class KonfirAbsenSiswaController extends Controller
                         ->whereDate('tanggal', Carbon::today())
                         ->get();
 
-                    $absensiPending = AbsensiPending::with(['user', 'iduka', 'pembimbing'])
-                        ->where('pembimbing_id', $guru->id)
+                    $absensiPending = AbsensiPending::with(['user', 'iduka'])
+                        ->whereIn('user_id', $siswaIds)
                         ->where('status_konfirmasi', 'pending')
                         ->latest()
                         ->get();
@@ -238,9 +248,6 @@ class KonfirAbsenSiswaController extends Controller
         }
     }
 
-    /**
-     * Konfirmasi dinas luar - FIXED VERSION
-     */
     public function konfirmasiDinas(Request $request, $id)
     {
         DB::beginTransaction();
@@ -265,7 +272,7 @@ class KonfirAbsenSiswaController extends Controller
                 ], 422);
             }
 
-            $dinasPending = DinasPending::find($id);
+            $dinasPending = DinasPending::with('user')->find($id);
 
             if (!$dinasPending) {
                 Log::error('Dinas pending tidak ditemukan', ['id' => $id]);
@@ -299,11 +306,12 @@ class KonfirAbsenSiswaController extends Controller
                     ], 404);
                 }
 
-                // PERBAIKAN: Validasi apakah guru ini adalah pembimbing dari siswa yang mengajukan dinas
-                if ($dinasPending->pembimbing_id != $guru->id) {
+                // Cek langsung pembimbing_id di tabel users
+                if (!$dinasPending->user || $dinasPending->user->pembimbing_id != $guru->id) {
                     Log::warning('Guru bukan pembimbing siswa ini', [
                         'guru_id' => $guru->id,
-                        'pembimbing_id_pending' => $dinasPending->pembimbing_id
+                        'siswa_id' => $dinasPending->user_id,
+                        'siswa_pembimbing_id' => $dinasPending->user ? $dinasPending->user->pembimbing_id : 'null'
                     ]);
                     return response()->json([
                         'success' => false,
@@ -311,7 +319,6 @@ class KonfirAbsenSiswaController extends Controller
                     ], 403);
                 }
             } elseif ($user->role === 'kaprog') {
-                // PERBAIKAN: Kaprog hanya bisa mengkonfirmasi dinas untuk siswa yang dibimbingnya
                 $guru = Guru::where('user_id', $user->id)->first();
                 if (!$guru) {
                     Log::error('Data guru untuk kaprog tidak ditemukan', ['user_id' => $user->id]);
@@ -321,11 +328,12 @@ class KonfirAbsenSiswaController extends Controller
                     ], 404);
                 }
 
-                // Validasi apakah kaprog adalah pembimbing dari siswa yang mengajukan dinas
-                if ($dinasPending->pembimbing_id != $guru->id) {
+                // Cek langsung pembimbing_id di tabel users
+                if (!$dinasPending->user || $dinasPending->user->pembimbing_id != $guru->id) {
                     Log::warning('Kaprog bukan pembimbing siswa ini', [
-                        'kaprog_id' => $guru->id,
-                        'pembimbing_id_pending' => $dinasPending->pembimbing_id
+                        'guru_id' => $guru->id,
+                        'siswa_id' => $dinasPending->user_id,
+                        'siswa_pembimbing_id' => $dinasPending->user ? $dinasPending->user->pembimbing_id : 'null'
                     ]);
                     return response()->json([
                         'success' => false,
@@ -363,7 +371,7 @@ class KonfirAbsenSiswaController extends Controller
                 if ($absensiExist) {
                     // Update absensi yang sudah ada
                     $absensiExist->update([
-                        'status' => 'hadir', // Status tetap hadir
+                        'status' => 'hadir',
                         'jenis_dinas' => $dinasPending->jenis_dinas,
                         'keterangan_dinas' => $dinasPending->keterangan,
                         'status_dinas' => 'disetujui'
@@ -375,11 +383,10 @@ class KonfirAbsenSiswaController extends Controller
                         'user_id' => $dinasPending->user_id,
                         'iduka_id' => $dinasPending->iduka_id,
                         'tanggal' => $dinasPending->tanggal,
-                        'status' => 'hadir', // Status tetap hadir
+                        'status' => 'hadir',
                         'jenis_dinas' => $dinasPending->jenis_dinas,
                         'keterangan_dinas' => $dinasPending->keterangan,
                         'status_dinas' => 'disetujui',
-                        // Field absensi kosong karena siswa harus absensi manual
                         'jam_masuk' => null,
                         'jam_pulang' => null,
                         'latitude_masuk' => null,
@@ -397,9 +404,18 @@ class KonfirAbsenSiswaController extends Controller
 
             DB::commit();
 
+            // Set session flash data
+            session()->flash('success', 'Dinas luar berhasil ' . ($request->status === 'disetujui' ? 'disetujui' : 'ditolak'));
+
+            Log::info('Redirect URL yang akan dikirim', [
+                'redirect_url' => route('iduka.konfirmasi-absen')
+            ]);
+
+            // Return JSON response untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Dinas luar berhasil ' . ($request->status === 'disetujui' ? 'disetujui' : 'ditolak')
+                'message' => 'Dinas luar berhasil ' . ($request->status === 'disetujui' ? 'disetujui' : 'ditolak'),
+                'redirect_url' => route('iduka.konfirmasi-absen')
             ]);
 
         } catch (\Exception $e) {
@@ -409,9 +425,10 @@ class KonfirAbsenSiswaController extends Controller
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -443,7 +460,7 @@ class KonfirAbsenSiswaController extends Controller
                 ], 422);
             }
 
-            $izinPending = IzinPending::find($id);
+            $izinPending = IzinPending::with('user')->find($id);
 
             if (!$izinPending) {
                 Log::error('Izin pending tidak ditemukan', ['id' => $id]);
@@ -457,7 +474,6 @@ class KonfirAbsenSiswaController extends Controller
 
             // Validasi authorization berdasarkan role
             if ($user->role === 'iduka') {
-                // Untuk IDUKA - pastikan izin ini milik IDUKA yang sedang login
                 if (!$izinPending->iduka_id || $izinPending->iduka_id != $user->iduka_id) {
                     Log::warning('IDUKA tidak berwenang mengkonfirmasi izin ini', [
                         'izin_iduka_id' => $izinPending->iduka_id,
@@ -469,7 +485,6 @@ class KonfirAbsenSiswaController extends Controller
                     ], 403);
                 }
             } elseif ($user->role === 'guru') {
-                // Untuk Guru - ambil data guru dan validasi pembimbing
                 $guru = Guru::where('user_id', $user->id)->first();
                 if (!$guru) {
                     Log::error('Data guru tidak ditemukan', ['user_id' => $user->id]);
@@ -479,11 +494,12 @@ class KonfirAbsenSiswaController extends Controller
                     ], 404);
                 }
 
-                // PERBAIKAN: Validasi apakah guru ini adalah pembimbing dari siswa yang mengajukan izin
-                if ($izinPending->pembimbing_id != $guru->id) {
+                // Cek langsung pembimbing_id di tabel users
+                if (!$izinPending->user || $izinPending->user->pembimbing_id != $guru->id) {
                     Log::warning('Guru bukan pembimbing siswa ini', [
                         'guru_id' => $guru->id,
-                        'pembimbing_id_pending' => $izinPending->pembimbing_id
+                        'siswa_id' => $izinPending->user_id,
+                        'siswa_pembimbing_id' => $izinPending->user ? $izinPending->user->pembimbing_id : 'null'
                     ]);
                     return response()->json([
                         'success' => false,
@@ -491,7 +507,6 @@ class KonfirAbsenSiswaController extends Controller
                     ], 403);
                 }
             } elseif ($user->role === 'kaprog') {
-                // PERBAIKAN: Kaprog hanya bisa mengkonfirmasi izin untuk siswa yang dibimbingnya
                 $guru = Guru::where('user_id', $user->id)->first();
                 if (!$guru) {
                     Log::error('Data guru untuk kaprog tidak ditemukan', ['user_id' => $user->id]);
@@ -501,11 +516,12 @@ class KonfirAbsenSiswaController extends Controller
                     ], 404);
                 }
 
-                // Validasi apakah kaprog adalah pembimbing dari siswa yang mengajukan izin
-                if ($izinPending->pembimbing_id != $guru->id) {
+                // Cek langsung pembimbing_id di tabel users
+                if (!$izinPending->user || $izinPending->user->pembimbing_id != $guru->id) {
                     Log::warning('Kaprog bukan pembimbing siswa ini', [
-                        'kaprog_id' => $guru->id,
-                        'pembimbing_id_pending' => $izinPending->pembimbing_id
+                        'guru_id' => $guru->id,
+                        'siswa_id' => $izinPending->user_id,
+                        'siswa_pembimbing_id' => $izinPending->user ? $izinPending->user->pembimbing_id : 'null'
                     ]);
                     return response()->json([
                         'success' => false,
@@ -578,12 +594,20 @@ class KonfirAbsenSiswaController extends Controller
                 $izinPending->delete();
                 Log::info('Izin pending dihapus setelah disetujui', ['izin_id' => $id]);
             }
-
             DB::commit();
 
+            // Set session flash data
+            session()->flash('success', 'Izin berhasil ' . ($request->status === 'disetujui' ? 'disetujui' : 'ditolak'));
+
+            Log::info('Redirect URL yang akan dikirim', [
+                'redirect_url' => route('iduka.konfirmasi-absen')
+            ]);
+
+            // Return JSON response untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Izin berhasil ' . ($request->status === 'disetujui' ? 'disetujui' : 'ditolak')
+                'message' => 'Izin berhasil ' . ($request->status === 'disetujui' ? 'disetujui' : 'ditolak'),
+                'redirect_url' => route('iduka.konfirmasi-absen')
             ]);
 
         } catch (\Exception $e) {
@@ -593,9 +617,10 @@ class KonfirAbsenSiswaController extends Controller
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -719,24 +744,28 @@ class KonfirAbsenSiswaController extends Controller
 
             DB::commit();
 
-            Log::info('Absensi berhasil dikonfirmasi dan dipindahkan', [
-                'pending_id' => $id,
-                'absensi_id' => $absensi->id,
-                'dikonfirmasi_oleh' => $konfirmator
+            // Set session flash data
+            session()->flash('success', 'Absensi berhasil dikonfirmasi');
+
+            Log::info('Redirect URL yang akan dikirim', [
+                'redirect_url' => route('iduka.konfirmasi-absen')
             ]);
 
+            // Return JSON response untuk AJAX
             return response()->json([
                 'success' => true,
-                'message' => 'Absensi berhasil dikonfirmasi'
+                'message' => 'Absensi berhasil dikonfirmasi',
+                'redirect_url' => route('iduka.konfirmasi-absen')
             ]);
 
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('Error konfirmasi absensi', [
-                'id' => $id,
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+            Log::error('Error in konfirmasiAbsensi: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
@@ -763,41 +792,60 @@ class KonfirAbsenSiswaController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()->with('error', 'Validasi gagal: ' . implode(', ', $validator->errors()->all()));
+                Log::error('Validasi gagal', ['errors' => $validator->errors()->toArray()]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal: ' . implode(', ', $validator->errors()->all())
+                ], 422);
             }
 
             $user = Auth::user();
+            $absenIds = $request->absen_ids; // Sudah array dari validasi
 
             // Ambil data absensi pending berdasarkan role
             if ($user->role === 'iduka') {
-                $absensiPendings = AbsensiPending::whereIn('id', $request->absen_ids)
+                $absensiPendings = AbsensiPending::whereIn('id', $absenIds)
                     ->where('iduka_id', $user->iduka_id)
                     ->where('status_konfirmasi', 'pending')
                     ->get();
             } elseif ($user->role === 'guru') {
                 $guru = Guru::where('user_id', $user->id)->first();
-                // PERBAIKAN: Ambil data berdasarkan pembimbing_id di tabel gurus
-                $absensiPendings = AbsensiPending::whereIn('id', $request->absen_ids)
+                if (!$guru) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data guru tidak ditemukan'
+                    ], 404);
+                }
+
+                $absensiPendings = AbsensiPending::whereIn('id', $absenIds)
                     ->where('pembimbing_id', $guru->id)
                     ->where('status_konfirmasi', 'pending')
                     ->get();
             } elseif ($user->role === 'kaprog') {
-                // PERBAIKAN: Kaprog hanya bisa mengkonfirmasi absensi pending untuk siswa yang dibimbingnya
                 $guru = Guru::where('user_id', $user->id)->first();
                 if (!$guru) {
-                    return redirect()->back()->with('error', 'Data pembimbing untuk kaprog tidak ditemukan.');
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Data pembimbing untuk kaprog tidak ditemukan'
+                    ], 404);
                 }
 
-                $absensiPendings = AbsensiPending::whereIn('id', $request->absen_ids)
+                $absensiPendings = AbsensiPending::whereIn('id', $absenIds)
                     ->where('pembimbing_id', $guru->id)
                     ->where('status_konfirmasi', 'pending')
                     ->get();
             } else {
-                return redirect()->back()->with('error', 'Role tidak diizinkan');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Role tidak diizinkan'
+                ], 403);
             }
 
             if ($absensiPendings->isEmpty()) {
-                return redirect()->back()->with('error', 'Tidak ada data absensi pending yang valid untuk dikonfirmasi');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada data absensi pending yang valid untuk dikonfirmasi'
+                ], 404);
             }
 
             DB::beginTransaction();
@@ -805,54 +853,64 @@ class KonfirAbsenSiswaController extends Controller
             $berhasil = 0;
             $gagal = 0;
 
-            foreach ($absensiPendings as $absensiPending) {
+            // Kelompokkan absensi pending berdasarkan user_id dan tanggal
+            $groupedPendings = $absensiPendings->groupBy(function ($item) {
+                return $item->user_id . '_' . $item->tanggal;
+            });
+
+            foreach ($groupedPendings as $groupKey => $pendings) {
                 try {
-                    if ($request->status === 'disetujui') {
-                        // Cek apakah absensi sudah ada untuk tanggal tersebut
-                        $absensi = Absensi::where('user_id', $absensiPending->user_id)
-                            ->where('iduka_id', $absensiPending->iduka_id)
-                            ->whereDate('tanggal', $absensiPending->tanggal)
-                            ->first();
+                    // Ambil user_id dan tanggal dari group key
+                    list($userId, $tanggal) = explode('_', $groupKey);
+                    $tanggal = Carbon::parse($tanggal)->toDateString();
 
-                        if (!$absensi) {
-                            // Buat record absensi baru
-                            $absensi = new Absensi();
-                            $absensi->user_id = $absensiPending->user_id;
-                            $absensi->iduka_id = $absensiPending->iduka_id;
-                            $absensi->tanggal = $absensiPending->tanggal;
-                            $absensi->status = $absensiPending->status;
-                        }
+                    // Cek apakah sudah ada absensi untuk user dan tanggal tersebut
+                    $absensi = Absensi::where('user_id', $userId)
+                        ->where('iduka_id', $pendings->first()->iduka_id)
+                        ->whereDate('tanggal', $tanggal)
+                        ->first();
 
-                        // Update data sesuai jenis absensi
-                        if ($absensiPending->jenis === 'masuk') {
-                            $absensi->jam_masuk = $absensiPending->jam;
-                            $absensi->latitude_masuk = $absensiPending->latitude;
-                            $absensi->longitude_masuk = $absensiPending->longitude;
-                            if (!$absensi->exists) {
-                                $absensi->status = $absensiPending->status;
-                            }
-                        } elseif ($absensiPending->jenis === 'pulang') {
-                            $absensi->jam_pulang = $absensiPending->jam;
-                            $absensi->latitude_pulang = $absensiPending->latitude;
-                            $absensi->longitude_pulang = $absensiPending->longitude;
-                        }
-
-                        $absensi->save();
+                    if (!$absensi) {
+                        // Buat record absensi baru
+                        $absensi = new Absensi();
+                        $absensi->user_id = $userId;
+                        $absensi->iduka_id = $pendings->first()->iduka_id;
+                        $absensi->tanggal = $tanggal;
+                        $absensi->status = $pendings->first()->status ?? 'hadir';
                     }
 
-                    // Update status dan hapus
-                    $absensiPending->status_konfirmasi = $request->status;
-                    $absensiPending->save();
-                    $absensiPending->delete();
+                    // Proses setiap pending dalam grup
+                    foreach ($pendings as $pending) {
+                        if ($request->status === 'disetujui') {
+                            // Update data sesuai jenis absensi
+                            if ($pending->jenis === 'masuk') {
+                                $absensi->jam_masuk = $pending->jam;
+                                $absensi->latitude_masuk = $pending->latitude;
+                                $absensi->longitude_masuk = $pending->longitude;
+                            } elseif ($pending->jenis === 'pulang') {
+                                $absensi->jam_pulang = $pending->jam;
+                                $absensi->latitude_pulang = $pending->latitude;
+                                $absensi->longitude_pulang = $pending->longitude;
+                            }
+                        }
 
-                    $berhasil++;
+                        // Update status dan hapus pending
+                        $pending->status_konfirmasi = $request->status;
+                        $pending->save();
+                        $pending->delete();
+                    }
+
+                    // Simpan absensi
+                    $absensi->save();
+
+                    $berhasil += count($pendings);
 
                 } catch (\Exception $e) {
-                    Log::error('Error processing individual absensi', [
-                        'pending_id' => $absensiPending->id,
+                    Log::error('Error processing group of absensi', [
+                        'group_key' => $groupKey,
                         'error' => $e->getMessage()
                     ]);
-                    $gagal++;
+                    $gagal += count($pendings);
                 }
             }
 
@@ -863,15 +921,29 @@ class KonfirAbsenSiswaController extends Controller
                 $message .= ", gagal {$gagal} absensi";
             }
 
-            return redirect()->back()->with('success', $message);
+            // Set session flash data
+            session()->flash('success', $message);
+
+            Log::info('Redirect URL yang akan dikirim', [
+                'redirect_url' => route('iduka.konfirmasi-absen')
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'redirect_url' => route('iduka.konfirmasi-absen')
+            ]);
 
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Error in konfirmasiBanyakAbsen: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
+            ], 500);
         }
     }
-
     /**
      * Menolak absensi pending
      */
@@ -969,9 +1041,17 @@ class KonfirAbsenSiswaController extends Controller
                 'absensi_id' => $absensi->id
             ]);
 
+            // Set session flash data
+            session()->flash('success', 'Absensi berhasil ditolak' . ($request->catatan ? ' dengan alasan: ' . $request->catatan : ''));
+
+            Log::info('Redirect URL yang akan dikirim', [
+                'redirect_url' => route('iduka.konfirmasi-absen')
+            ]);
+
             return response()->json([
                 'success' => true,
-                'message' => 'Absensi berhasil ditolak' . ($request->catatan ? ' dengan alasan: ' . $request->catatan : '')
+                'message' => 'Absensi berhasil ditolak' . ($request->catatan ? ' dengan alasan: ' . $request->catatan : ''),
+                'redirect_url' => route('iduka.konfirmasi-absen')
             ]);
 
         } catch (\Exception $e) {
@@ -1099,12 +1179,6 @@ class KonfirAbsenSiswaController extends Controller
         ]);
     }
 
-
-
-    /**
-     * Menolak absensi pending
-     */
-
     /**
      * Method untuk cek dan debug absensi pending
      */
@@ -1139,7 +1213,10 @@ class KonfirAbsenSiswaController extends Controller
 
             // Validasi ownership
             if ($absensiPending->iduka_id !== $user->iduka_id) {
-                return redirect()->back()->with('error', 'Unauthorized access');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access'
+                ], 403);
             }
 
             DB::beginTransaction();
@@ -1177,16 +1254,28 @@ class KonfirAbsenSiswaController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Absensi berhasil dikonfirmasi');
+            // Set session flash data
+            session()->flash('success', 'Absensi berhasil dikonfirmasi');
+
+            Log::info('Redirect URL yang akan dikirim', [
+                'redirect_url' => route('iduka.konfirmasi-absen')
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Absensi berhasil dikonfirmasi',
+                'redirect_url' => route('iduka.konfirmasi-absen')
+            ]);
 
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Error in prosesKonfirmasiAbsen: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
-
-
 
     public function kordinat(Request $request)
     {
@@ -1211,5 +1300,237 @@ class KonfirAbsenSiswaController extends Controller
         return redirect()->back()->with('success', 'Koordinat berhasil diperbarui!');
     }
 
+    /**
+     * Detail absen
+     */
+    public function detailAbsen($id)
+    {
+        try {
+            $absensi = Absensi::with(['user', 'iduka'])->findOrFail($id);
 
+            // Cek otorisasi
+            $user = Auth::user();
+            if ($user->role === 'iduka' && $absensi->iduka_id != $user->iduka_id) {
+                return redirect()->back()->with('error', 'Unauthorized access');
+            } elseif (in_array($user->role, ['guru', 'kaprog'])) {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if (!$guru || $absensi->user->pembimbing_id != $guru->id) {
+                    return redirect()->back()->with('error', 'Anda bukan pembimbing siswa ini');
+                }
+            }
+
+            return view('iduka.konfir_absen_siswa.detail_absen', compact('absensi'));
+        } catch (\Exception $e) {
+            Log::error('Error in detailAbsen: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
     }
+
+    /**
+     * Detail izin
+     */
+    public function detailIzin($id)
+    {
+        try {
+            $izin = IzinPending::with(['user', 'iduka'])->findOrFail($id);
+
+            // Cek otorisasi
+            $user = Auth::user();
+            if ($user->role === 'iduka' && $izin->iduka_id != $user->iduka_id) {
+                return redirect()->back()->with('error', 'Unauthorized access');
+            } elseif (in_array($user->role, ['guru', 'kaprog'])) {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if (!$guru || $izin->user->pembimbing_id != $guru->id) {
+                    return redirect()->back()->with('error', 'Anda bukan pembimbing siswa ini');
+                }
+            }
+
+            return view('iduka.konfir_absen_siswa.detail_izin', compact('izin'));
+        } catch (\Exception $e) {
+            Log::error('Error in detailIzin: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Data tidak ditemukan');
+        }
+    }
+
+    /**
+     * Get absensi hari ini untuk API
+     */
+    public function getAbsensiHariIni(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $today = Carbon::today();
+
+            $query = Absensi::with(['user', 'iduka'])
+                ->whereDate('tanggal', $today);
+
+            if ($user->role === 'iduka') {
+                $query->where('iduka_id', $user->iduka_id);
+            } elseif ($user->role === 'guru') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            } elseif ($user->role === 'kaprog') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            }
+
+            $absensi = $query->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $absensi
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getAbsensiHariIni: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get absensi pending untuk API
+     */
+    public function getAbsensiPending(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $query = AbsensiPending::with(['user', 'iduka'])
+                ->where('status_konfirmasi', 'pending');
+
+            if ($user->role === 'iduka') {
+                $query->where('iduka_id', $user->iduka_id);
+            } elseif ($user->role === 'guru') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->where('pembimbing_id', $guru->id);
+                }
+            } elseif ($user->role === 'kaprog') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->where('pembimbing_id', $guru->id);
+                }
+            }
+
+            $absensiPending = $query->latest()->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $absensiPending
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getAbsensiPending: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get izin pending untuk API
+     */
+    public function getIzinPending(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            $query = IzinPending::with(['user', 'iduka'])
+                ->where('status_konfirmasi', 'pending');
+
+            if ($user->role === 'iduka') {
+                $query->where('iduka_id', $user->iduka_id);
+            } elseif ($user->role === 'guru') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            } elseif ($user->role === 'kaprog') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            }
+
+            $izinPending = $query->latest()->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $izinPending
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getIzinPending: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Filter riwayat absensi
+     */
+    public function filterRiwayat(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $tanggalDari = $request->tanggal_dari;
+            $tanggalSampai = $request->tanggal_sampai;
+            $filterSiswa = $request->filter_siswa_riwayat;
+
+            $query = Absensi::with(['user', 'iduka']);
+
+            if ($user->role === 'iduka') {
+                $query->where('iduka_id', $user->iduka_id);
+            } elseif ($user->role === 'guru') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            } elseif ($user->role === 'kaprog') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            }
+
+            if ($tanggalDari) {
+                $query->whereDate('tanggal', '>=', $tanggalDari);
+            }
+            if ($tanggalSampai) {
+                $query->whereDate('tanggal', '<=', $tanggalSampai);
+            }
+            if ($filterSiswa) {
+                $query->where('user_id', $filterSiswa);
+            }
+
+            $riwayat = $query->latest()->get();
+
+            return view('iduka.konfir_absen_siswa.riwayat_table', compact('riwayat'));
+        } catch (\Exception $e) {
+            Log::error('Error in filterRiwayat: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+}
