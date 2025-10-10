@@ -58,32 +58,76 @@ class MonitoringController extends Controller
             'iduka_id' => 'required|exists:idukas,id',
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
-            'foto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tgl' => 'required|date',
+            'foto.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // maksimal 2MB per foto
         ]);
 
-        $data = $request->only(['iduka_id', 'saran', 'perikiraan_siswa_diterima', 'tgl']);
-
-        $guru = \App\Models\Guru::where('user_id', auth()->id())->first();
-        if ($guru) {
-            $data['guru_id'] = $guru->id;
-        }
-
-        $fotoPaths = [];
+        $fotos = [];
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $file) {
-                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/monitoring'), $filename);
-                $fotoPaths[] = 'uploads/monitoring/' . $filename;
+                if ($file->isValid()) {
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $path = 'uploads/monitoring/' . $filename;
+                    $file->move(public_path('uploads/monitoring'), $filename);
+                    $fotos[] = $path;
+                }
             }
         }
 
-        // Simpan sebagai JSON
-        $data['foto'] = json_encode($fotoPaths);
-
-        Monitoring::create($data);
+        Monitoring::create([
+            'iduka_id' => $request->iduka_id,
+            'saran' => $request->saran,
+            'perikiraan_siswa_diterima' => $request->perikiraan_siswa_diterima,
+            'foto' => $fotos ? json_encode($fotos) : null,
+        ]);
 
         return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil ditambahkan.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $monitoring = Monitoring::findOrFail($id);
+
+        $request->validate([
+            'iduka_id' => 'required|exists:idukas,id',
+            'saran' => 'nullable|string',
+            'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
+            'foto.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // maksimal 2MB per foto
+        ]);
+
+        // hapus foto lama jika ada file baru
+        if ($request->hasFile('foto')) {
+            if ($monitoring->foto) {
+                $oldFotos = json_decode($monitoring->foto, true);
+                foreach ($oldFotos as $oldFoto) {
+                    $oldPath = public_path($oldFoto);
+                    if (file_exists($oldPath)) {
+                        @unlink($oldPath);
+                    }
+                }
+            }
+
+            $fotos = [];
+            foreach ($request->file('foto') as $file) {
+                if ($file->isValid()) {
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $path = 'uploads/monitoring/' . $filename;
+                    $file->move(public_path('uploads/monitoring'), $filename);
+                    $fotos[] = $path;
+                }
+            }
+
+            $monitoring->foto = json_encode($fotos);
+        }
+
+        $monitoring->update([
+            'iduka_id' => $request->iduka_id,
+            'saran' => $request->saran,
+            'perikiraan_siswa_diterima' => $request->perikiraan_siswa_diterima,
+        ]);
+
+        $monitoring->save();
+
+        return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil diperbarui.');
     }
 
 
@@ -99,48 +143,7 @@ class MonitoringController extends Controller
         return view('monitoring.edit', compact('monitoring', 'idukas'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $monitoring = Monitoring::findOrFail($id);
 
-        $request->validate([
-            'iduka_id' => 'required|exists:idukas,id',
-            'saran' => 'nullable|string',
-            'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
-            'foto.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
-        ]);
-
-        // === HAPUS FOTO LAMA JIKA ADA ===
-        if ($monitoring->foto) {
-            $fotoLama = json_decode($monitoring->foto, true);
-            foreach ($fotoLama as $fotoPath) {
-                $fullPath = public_path($fotoPath);
-                if (file_exists($fullPath)) {
-                    @unlink($fullPath);
-                }
-            }
-        }
-
-        $fotoBaru = [];
-        // === SIMPAN FOTO BARU ===
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
-                $namaFile = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/monitoring'), $namaFile);
-                $fotoBaru[] = 'uploads/monitoring/' . $namaFile;
-            }
-        }
-
-        // Simpan data baru ke database
-        $monitoring->update([
-            'iduka_id' => $request->iduka_id,
-            'saran' => $request->saran,
-            'perikiraan_siswa_diterima' => $request->perikiraan_siswa_diterima,
-            'foto' => json_encode($fotoBaru),
-        ]);
-
-        return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil diperbarui.');
-    }
 
 
 

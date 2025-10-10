@@ -24,6 +24,7 @@
                         <form action="{{ route('monitoring.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
+                            {{-- IDUKA --}}
                             <div class="mb-3">
                                 <label for="iduka_id" class="form-label fw-semibold">
                                     <i class="bx bx-building me-1"></i> IDUKA <span class="text-danger">*</span>
@@ -43,6 +44,7 @@
                                 @enderror
                             </div>
 
+                            {{-- Saran / Catatan --}}
                             <div class="mb-3">
                                 <label for="saran" class="form-label fw-semibold">
                                     <i class="bx bx-comment-detail me-1"></i> Saran / Catatan
@@ -55,6 +57,7 @@
                                 <div class="form-text">Catatan hasil kunjungan atau monitoring ke IDUKA</div>
                             </div>
 
+                            {{-- Perkiraan Siswa Diterima --}}
                             <div class="mb-3">
                                 <label for="perikiraan_siswa_diterima" class="form-label fw-semibold">
                                     <i class="bx bx-user-check me-1"></i> Perkiraan Siswa Diterima
@@ -69,6 +72,7 @@
                                 <div class="form-text">Perkiraan jumlah siswa yang akan diterima di IDUKA ini</div>
                             </div>
 
+                            {{-- Upload Foto Monitoring --}}
                             <div class="mb-4">
                                 <label for="foto" class="form-label fw-semibold">
                                     <i class="bx bx-camera me-1"></i> Foto Monitoring
@@ -78,18 +82,24 @@
                                 @error('foto.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">Upload hingga 3 foto dokumentasi monitoring (JPG, PNG, GIF, max 2MB
-                                    per foto)</div>
+                                <div class="form-text">
+                                    Upload hingga 3 foto dokumentasi monitoring (JPG, PNG, GIF, max 2MB per foto)
+                                </div>
 
                                 {{-- Preview gambar --}}
                                 <div id="imagePreview" class="mt-3 d-flex flex-wrap gap-2"></div>
                             </div>
 
+                            {{-- Tanggal --}}
                             <div class="mb-4">
-                                <label for="tgl">Tanggal Pembuatan</label>
-                                <input type="date" name="tgl" id="" class="form-control">
+                                <label for="tgl" class="form-label fw-semibold">
+                                    <i class="bx bx-calendar me-1"></i> Tanggal Pembuatan
+                                </label>
+                                <input type="date" name="tgl" id="tgl" class="form-control"
+                                    value="{{ old('tgl') }}">
                             </div>
 
+                            {{-- Tombol --}}
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a href="{{ route('monitoring.index') }}" class="btn btn-secondary me-md-2">
                                     <i class="fas fa-times me-2"></i> Batal
@@ -108,27 +118,48 @@
 
 @push('scripts')
     <script>
-        document.getElementById('foto').addEventListener('change', function(event) {
-            const previewContainer = document.getElementById('imagePreview');
-            previewContainer.innerHTML = ''; // kosongkan preview lama
+        const input = document.getElementById('foto');
+        const preview = document.getElementById('imagePreview');
+        let files = [];
 
-            const files = event.target.files;
-            if (files.length > 0) {
-                previewContainer.style.display = 'flex';
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.classList.add('img-thumbnail');
-                        img.style.maxWidth = '150px';
-                        img.style.maxHeight = '150px';
-                        previewContainer.appendChild(img);
-                    }
-                    reader.readAsDataURL(file);
-                });
-            } else {
-                previewContainer.style.display = 'none';
+        input.addEventListener('change', (e) => {
+            const newFiles = Array.from(e.target.files);
+
+            // gabungkan file lama dan baru, maksimal 3
+            files = [...files, ...newFiles].slice(0, 3);
+
+            // gunakan DataTransfer supaya semua file tetap tersimpan
+            const dataTransfer = new DataTransfer();
+            files.forEach(file => dataTransfer.items.add(file));
+            input.files = dataTransfer.files;
+
+            // tampilkan preview
+            preview.innerHTML = '';
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.classList.add('img-thumbnail');
+                    img.style.maxWidth = '120px';
+                    img.style.maxHeight = '120px';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const files = document.querySelector('#foto').files;
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            for (let file of files) {
+                if (file.size > maxSize) {
+                    e.preventDefault();
+                    alert(`File "${file.name}" terlalu besar! Maksimal 2MB per foto.`);
+                    return;
+                }
             }
         });
     </script>

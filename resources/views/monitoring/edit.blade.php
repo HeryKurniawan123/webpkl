@@ -26,6 +26,7 @@
                             @csrf
                             @method('PUT')
 
+                            {{-- IDUKA --}}
                             <div class="mb-3">
                                 <label for="iduka_id" class="form-label fw-semibold">
                                     <i class="bx bx-building me-1"></i> IDUKA <span class="text-danger">*</span>
@@ -45,6 +46,7 @@
                                 @enderror
                             </div>
 
+                            {{-- Saran --}}
                             <div class="mb-3">
                                 <label for="saran" class="form-label fw-semibold">
                                     <i class="bx bx-comment-detail me-1"></i> Saran / Catatan
@@ -57,6 +59,7 @@
                                 <div class="form-text">Catatan hasil kunjungan atau monitoring ke IDUKA</div>
                             </div>
 
+                            {{-- Perkiraan siswa --}}
                             <div class="mb-3">
                                 <label for="perikiraan_siswa_diterima" class="form-label fw-semibold">
                                     <i class="bx bx-user-check me-1"></i> Perkiraan Siswa Diterima
@@ -69,9 +72,9 @@
                                 @error('perikiraan_siswa_diterima')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">Perkiraan jumlah siswa yang akan diterima di IDUKA ini</div>
                             </div>
 
+                            {{-- Foto Monitoring --}}
                             <div class="mb-4">
                                 <label for="foto" class="form-label fw-semibold">
                                     <i class="bx bx-camera me-1"></i> Foto Monitoring (maks 3 foto)
@@ -79,26 +82,34 @@
 
                                 <input type="file" class="form-control @error('foto.*') is-invalid @enderror"
                                     id="foto" name="foto[]" accept="image/*" multiple>
-
                                 @error('foto.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">Upload sampai 3 foto (JPG, PNG, GIF, max 2MB per foto)</div>
 
-                                {{-- Tampilkan foto lama --}}
+                                <div class="form-text">
+                                    Upload hingga 3 foto (JPG, PNG, max 2MB per foto)
+                                </div>
+
+                                {{-- Foto Lama --}}
                                 @php
                                     $fotos = $monitoring->foto ? json_decode($monitoring->foto, true) : [];
                                 @endphp
                                 @if ($fotos)
                                     <div class="mt-3 d-flex flex-wrap gap-2">
                                         @foreach ($fotos as $foto)
-                                           <img src="{{ asset($foto) }}" class="img-thumbnail" style="max-width: 180px;">
+                                            <div class="position-relative">
+                                                <img src="{{ asset($foto) }}" class="img-thumbnail"
+                                                    style="max-width: 140px;">
+                                            </div>
                                         @endforeach
                                     </div>
                                 @endif
+
+                                {{-- Preview Baru --}}
+                                <div id="imagePreview" class="mt-3 d-flex flex-wrap gap-2"></div>
                             </div>
 
-
+                            {{-- Tombol --}}
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a href="{{ route('monitoring.index') }}" class="btn btn-secondary me-md-2">
                                     <i class="fas fa-times me-2"></i> Batal
@@ -115,28 +126,47 @@
     </div>
 @endsection
 
-<script>
-    function previewImage(inputId, previewId) {
-        const input = document.getElementById(inputId);
-        const previewContainer = document.getElementById(previewId);
-        const img = previewContainer.querySelector('img');
+@push('scripts')
+    <script>
+        const input = document.getElementById('foto');
+        const preview = document.getElementById('imagePreview');
+        let files = [];
 
-        input.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
+        input.addEventListener('change', (e) => {
+            const newFiles = Array.from(e.target.files);
+            files = [...files, ...newFiles].slice(0, 3);
+
+            const dataTransfer = new DataTransfer();
+            files.forEach(file => dataTransfer.items.add(file));
+            input.files = dataTransfer.files;
+
+            preview.innerHTML = '';
+            files.forEach(file => {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    img.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                }
+                reader.onload = (event) => {
+                    const img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.classList.add('img-thumbnail');
+                    img.style.maxWidth = '120px';
+                    img.style.maxHeight = '120px';
+                    preview.appendChild(img);
+                };
                 reader.readAsDataURL(file);
-            } else {
-                previewContainer.style.display = 'none';
+            });
+        });
+    </script>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const files = document.querySelector('#foto').files;
+            const maxSize = 2 * 1024 * 1024; // 2MB
+            for (let file of files) {
+                if (file.size > maxSize) {
+                    e.preventDefault();
+                    alert(`File "${file.name}" terlalu besar! Maksimal 2MB per foto.`);
+                    return;
+                }
             }
         });
-    }
-
-    previewImage('foto1', 'preview-foto1');
-    previewImage('foto2', 'preview-foto2');
-    previewImage('foto3', 'preview-foto3');
-</script>
+    </script>
+@endpush
