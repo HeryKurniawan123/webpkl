@@ -24,14 +24,17 @@
                             <h6 class="text-muted mb-1">
                                 <i class="bi bi-calendar3 me-1"></i> Tanggal Kegiatan
                             </h6>
-                            <p class="mb-0">{{ \Carbon\Carbon::parse($journal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+                            <p class="mb-0">
+                                {{ \Carbon\Carbon::parse($journal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}
+                            </p>
                         </div>
                         <div class="col-6">
                             <h6 class="text-muted mb-1">
                                 <i class="bi bi-clock me-1"></i> Waktu Kegiatan
                             </h6>
                             <p class="mb-0">
-                                <span class="badge bg-primary">{{ $journal->jam_mulai }} - {{ $journal->jam_selesai }}</span>
+                                <span class="badge bg-primary">{{ $journal->jam_mulai }} -
+                                    {{ $journal->jam_selesai }}</span>
                             </p>
                         </div>
                     </div>
@@ -51,7 +54,7 @@
                             <h6 class="text-muted mb-1">
                                 <i class="bi bi-lightbulb me-1"></i> Termasuk Pengetahuan Baru
                             </h6>
-                            @if($journal->is_pengetahuan_baru)
+                            @if ($journal->is_pengetahuan_baru)
                                 <span class="badge bg-success">Ya</span>
                             @else
                                 <span class="badge bg-secondary">Tidak</span>
@@ -61,7 +64,7 @@
                             <h6 class="text-muted mb-1">
                                 <i class="bi bi-book me-1"></i> Kegiatan dalam Mapel Sekolah
                             </h6>
-                            @if($journal->is_dalam_mapel)
+                            @if ($journal->is_dalam_mapel)
                                 <span class="badge bg-success">Ya</span>
                             @else
                                 <span class="badge bg-secondary">Tidak</span>
@@ -69,15 +72,15 @@
                         </div>
                     </div>
 
-                    @if($journal->rejected_reason)
-                    <div>
-                        <h6 class="text-muted mb-1">
-                            <i class="bi bi-exclamation-triangle me-1"></i> Alasan Ditolak
-                        </h6>
-                        <div class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-25">
-                            <p class="mb-0 text-danger">{{ $journal->rejected_reason }}</p>
+                    @if ($journal->rejected_reason)
+                        <div>
+                            <h6 class="text-muted mb-1">
+                                <i class="bi bi-exclamation-triangle me-1"></i> Alasan Ditolak
+                            </h6>
+                            <div class="bg-danger bg-opacity-10 p-3 rounded border border-danger border-opacity-25">
+                                <p class="mb-0 text-danger">{{ $journal->rejected_reason }}</p>
+                            </div>
                         </div>
-                    </div>
                     @endif
                 </div>
             </div>
@@ -92,9 +95,9 @@
                     </h6>
 
                     <div class="text-center mb-3">
-                        @if($journal->status == 'rejected')
+                        @if ($journal->status == 'rejected')
                             <span class="badge bg-danger fs-6 p-2">❌ Ditolak</span>
-                            @if($journal->rejected_reason)
+                            @if ($journal->rejected_reason)
                                 <div class="mt-2 small text-danger text-start">
                                     <i class="bi bi-info-circle"></i> Alasan: {{ $journal->rejected_reason }}
                                 </div>
@@ -106,7 +109,7 @@
                             </button>
                             <div class="mt-2 small text-success">
                                 <i class="bi bi-check-circle"></i> Disetujui oleh:
-                                @if($journal->approved_pembimbing_at)
+                                @if ($journal->approved_pembimbing_at)
                                     Pembimbing
                                 @elseif($journal->approved_iduka_at)
                                     IDUKA
@@ -124,15 +127,15 @@
                     </h6>
 
                     <div class="d-grid gap-2">
-                        @if($journal->status == 'approved')
+                        @if ($journal->status == 'approved')
                             <!-- Jika sudah disetujui, tampilkan hanya yang sudah menyetujui -->
-                            @if($journal->validasi_pembimbing === 'sudah')
+                            @if ($journal->validasi_pembimbing === 'sudah')
                                 <div class="alert alert-success d-flex align-items-center mb-0">
                                     <i class="bi bi-check-circle-fill me-2"></i>
                                     <span>Disetujui Pembimbing</span>
                                 </div>
                             @endif
-                            @if($journal->validasi_iduka === 'sudah')
+                            @if ($journal->validasi_iduka === 'sudah')
                                 <div class="alert alert-success d-flex align-items-center mb-0">
                                     <i class="bi bi-check-circle-fill me-2"></i>
                                     <span>Disetujui IDUKA</span>
@@ -140,7 +143,7 @@
                             @endif
                         @else
                             <!-- Jika belum disetujui, tampilkan status masing-masing -->
-                            @if($journal->validasi_pembimbing === 'sudah')
+                            @if ($journal->validasi_pembimbing === 'sudah')
                                 <div class="alert alert-success d-flex align-items-center mb-0">
                                     <i class="bi bi-check-circle-fill me-2"></i>
                                     <span>Disetujui Pembimbing</span>
@@ -157,7 +160,7 @@
                                 </div>
                             @endif
 
-                            @if($journal->validasi_iduka === 'sudah')
+                            @if ($journal->validasi_iduka === 'sudah')
                                 <div class="alert alert-success d-flex align-items-center mb-0">
                                     <i class="bi bi-check-circle-fill me-2"></i>
                                     <span>Disetujui IDUKA</span>
@@ -179,20 +182,21 @@
             </div>
 
             <!-- Documentation -->
-            @if($journal->foto)
-            <div class="card mb-3 border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-muted mb-3">
-                        <i class="bi bi-camera me-1"></i> Dokumentasi Kegiatan
-                    </h6>
-                    <div class="text-center">
-                        <img src="{{ asset('storage/' . $journal->foto) }}" alt="Dokumentasi kegiatan"
-                             class="img-fluid rounded shadow-sm" style="max-height: 200px; cursor: pointer;"
-                             onclick="showImageModal('{{ asset('storage/' . $journal->foto) }}')">
+            @if ($journal->foto)
+                <div class="card mb-3 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted mb-3">
+                            <i class="bi bi-camera me-1"></i> Dokumentasi Kegiatan
+                        </h6>
+                        <div class="text-center">
+                            <img src="{{ asset($journal->foto) }}" alt="Dokumentasi kegiatan"
+                                class="img-fluid rounded shadow-sm" style="max-height: 200px; cursor: pointer;"
+                                onclick="showImageModal('{{ asset($journal->foto) }}')">
+                        </div>
                     </div>
                 </div>
-            </div>
             @endif
+
 
             <!-- Additional Info -->
             <div class="card border-0 shadow-sm">
@@ -205,14 +209,18 @@
                         <i class="bi bi-calendar-plus text-muted me-2"></i>
                         <small class="text-muted">Ditambahkan:</small>
                     </div>
-                    <p class="ms-4 mb-3">{{ \Carbon\Carbon::parse($journal->created_at)->locale('id')->isoFormat('D MMMM YYYY HH:mm') }}</p>
+                    <p class="ms-4 mb-3">
+                        {{ \Carbon\Carbon::parse($journal->created_at)->locale('id')->isoFormat('D MMMM YYYY HH:mm') }}
+                    </p>
 
-                    @if($journal->updated_at != $journal->created_at)
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-arrow-clockwise text-muted me-2"></i>
-                        <small class="text-muted">Diperbarui:</small>
-                    </div>
-                    <p class="ms-4 mb-0">{{ \Carbon\Carbon::parse($journal->updated_at)->locale('id')->isoFormat('D MMMM YYYY HH:mm') }}</p>
+                    @if ($journal->updated_at != $journal->created_at)
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-arrow-clockwise text-muted me-2"></i>
+                            <small class="text-muted">Diperbarui:</small>
+                        </div>
+                        <p class="ms-4 mb-0">
+                            {{ \Carbon\Carbon::parse($journal->updated_at)->locale('id')->isoFormat('D MMMM YYYY HH:mm') }}
+                        </p>
                     @endif
                 </div>
             </div>
@@ -236,9 +244,9 @@
 </div>
 
 <script>
-function showImageModal(src) {
-    document.getElementById('modalImage').src = src;
-    var modal = new bootstrap.Modal(document.getElementById('imageModal'));
-    modal.show();
-}
+    function showImageModal(src) {
+        document.getElementById('modalImage').src = src;
+        var modal = new bootstrap.Modal(document.getElementById('imageModal'));
+        modal.show();
+    }
 </script>

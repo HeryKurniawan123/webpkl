@@ -282,8 +282,9 @@
 
         <p class="body-text">
             Untuk melaksanakan Praktik Kerja Lapangan dalam rangka Pendidikan Sistem Ganda (PSG) pada Institusi/
-            Perusahaan saudara selama 5 (lima) bulan, dengan waktu pelaksanaan dari tanggal 13 September 2025 s.d 14
+            Perusahaan saudara selama waktu Pelaksanaan dari tanggal 13 Oktober 2025 s.d 14
             Februari 2026. Pada akhir kegiatan Praktik Kerja Lapangan, siswa diwajibkan menyerahkan Jurnal Kegiatan PKL
+            baik yang cetak maupun Online
             yang telah diketahui dan disetujui oleh pihak institusi/ perusahaan, sebagai salah satu acuan dalam menilai
             kegiatan PKL siswa.
         </p>
@@ -296,13 +297,7 @@
         <p class="body-text">
             Atas perhatian, bantuan dan kerjasama Saudara, kami ucapkan terima kasih.
         </p>
-        <div class="signature-section">
-            <p>Kepala Sekolah</p>
-            <div class="signature-space"></div>
-            <p class="signature-name">CEPY WAHYUDIN, A.Md., S.Kom., M.Kom.</p>
-            <p>Penata Tk. I</p>
-            <p>NIP. 19840825 201001 1 01</p>
-        </div>
+
     </div>
 </body>
 

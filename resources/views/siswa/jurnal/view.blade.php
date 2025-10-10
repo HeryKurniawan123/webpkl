@@ -2,7 +2,8 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <h6 class="text-muted">Tanggal</h6>
-            <p class="fw-semibold">{{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
+            <p class="fw-semibold">
+                {{ \Carbon\Carbon::parse($jurnal->tgl)->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</p>
         </div>
         <div class="col-md-6">
             <h6 class="text-muted">Waktu Kegiatan</h6>
@@ -21,7 +22,7 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <h6 class="text-muted">Termasuk Pengetahuan Baru</h6>
-            @if($jurnal->is_pengetahuan_baru)
+            @if ($jurnal->is_pengetahuan_baru)
                 <span class="badge bg-success">Ya</span>
             @else
                 <span class="badge bg-secondary">Tidak</span>
@@ -29,7 +30,7 @@
         </div>
         <div class="col-md-6">
             <h6 class="text-muted">Kegiatan dalam Mapel Sekolah</h6>
-            @if($jurnal->is_dalam_mapel)
+            @if ($jurnal->is_dalam_mapel)
                 <span class="badge bg-success">Ya</span>
             @else
                 <span class="badge bg-secondary">Tidak</span>
@@ -37,15 +38,17 @@
         </div>
     </div>
 
-    @if($jurnal->foto)
-        <div class="mb-4">
-            <h6 class="text-muted">Foto Kegiatan</h6>
-            <div class="text-center">
-                <img src="{{ $jurnal->foto }}"
-                     alt="Foto Kegiatan"
-                     class="img-fluid rounded shadow-sm"
-                     style="max-height: 300px; object-fit: cover;"
-                     onclick="showImageModal(this.src)">
+    @if ($jurnal->foto)
+        <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body">
+                <h6 class="text-muted mb-3">
+                    <i class="bi bi-camera me-1"></i> Dokumentasi Kegiatan
+                </h6>
+                <div class="text-center">
+                    <img src="{{ asset($jurnal->foto) }}" alt="Dokumentasi kegiatan"
+                        class="img-fluid rounded shadow-sm" style="max-height: 200px; cursor: pointer;"
+                        onclick="showImageModal('{{ asset($jurnal->foto) }}')">
+                </div>
             </div>
         </div>
     @endif
@@ -54,16 +57,16 @@
     <div class="row mt-3">
         <div class="col-12">
             <h6 class="text-muted">Status Jurnal</h6>
-            @if($jurnal->status == 'rejected')
+            @if ($jurnal->status == 'rejected')
                 <span class="badge bg-danger">❌ Ditolak</span>
-                @if($jurnal->rejected_reason)
+                @if ($jurnal->rejected_reason)
                     <div class="mt-2 small text-danger">
                         <i class="bi bi-info-circle"></i> Alasan: {{ $jurnal->rejected_reason }}
                     </div>
                 @endif
             @elseif($jurnal->status == 'approved')
                 <span class="badge bg-success">✅ Disetujui</span>
-                @if($jurnal->approved_by)
+                @if ($jurnal->approved_by)
                     <div class="mt-2 small text-success">
                         <i class="bi bi-check-circle"></i> Disetujui oleh: {{ $jurnal->approved_by }}
                     </div>
