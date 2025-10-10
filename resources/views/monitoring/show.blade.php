@@ -24,7 +24,7 @@
                                     <i class="fas fa-edit me-1"></i> Edit
                                 </a>
                                 <button class="btn btn-danger btn-sm"
-                                        onclick="confirmDelete({{ $monitoring->id }}, '{{ $monitoring->iduka->nama }}')">
+                                    onclick="confirmDelete({{ $monitoring->id }}, '{{ $monitoring->iduka->nama }}')">
                                     <i class="fas fa-trash me-1"></i> Hapus
                                 </button>
                             </div>
@@ -70,7 +70,7 @@
                                             <td>: {{ $monitoring->created_at->format('d F Y, H:i') }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted">Terakhir     </td>
+                                            <td class="text-muted">Terakhir Diperbarui</td>
                                             <td>: {{ $monitoring->updated_at->format('d F Y, H:i') }}</td>
                                         </tr>
                                         <tr>
@@ -85,36 +85,36 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                {{-- Foto Monitoring --}}
-                                @if($monitoring->foto)
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold text-info mb-3">
-                                            <i class="bx bx-camera me-2"></i>Foto Monitoring
-                                        </h6>
-                                        <div class="text-center">
-                                            <img src="{{ Storage::url('monitoring/' . $monitoring->foto) }}"
-                                                 alt="Foto Monitoring"
-                                                 class="img-fluid rounded shadow-sm"
-                                                 style="max-height: 300px; cursor: pointer;"
-                                                 onclick="showImageModal('{{ Storage::url('monitoring/' . $monitoring->foto) }}', '{{ $monitoring->iduka->nama }}')">
-                                            <p class="text-muted mt-2 mb-0">
-                                                <small>Klik gambar untuk memperbesar</small>
-                                            </p>
-                                        </div>
+                            {{-- Foto Monitoring (bisa banyak) --}}
+                            <div class="mb-4">
+                                <h6 class="fw-bold text-info mb-3">
+                                    <i class="bx bx-camera me-2"></i>Foto Monitoring
+                                </h6>
+
+                                @php
+                                    $fotos = json_decode($monitoring->foto, true);
+                                @endphp
+
+                                @if ($fotos && count($fotos) > 0)
+                                    <div class="d-flex flex-wrap gap-2 justify-content-start">
+                                        @foreach ($fotos as $foto)
+                                            <div class="position-relative">
+                                                <img src="{{ asset($foto) }}" alt="Foto Monitoring"
+                                                    class="img-thumbnail shadow-sm"
+                                                    style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;"
+                                                    onclick="showImageModal('{{ asset($foto) }}', '{{ $monitoring->iduka->nama ?? '-' }}')">
+                                            </div>
+                                        @endforeach
                                     </div>
+                                    <p class="text-muted mt-2 mb-0"><small>Klik gambar untuk memperbesar</small></p>
                                 @else
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold text-info mb-3">
-                                            <i class="bx bx-camera me-2"></i>Foto Monitoring
-                                        </h6>
-                                        <div class="text-center p-4 bg-light rounded">
-                                            <i class="bx bx-image-alt fs-1 text-muted"></i>
-                                            <p class="text-muted mt-2 mb-0">Tidak ada foto</p>
-                                        </div>
+                                    <div class="text-center p-4 bg-light rounded">
+                                        <i class="bx bx-image-alt fs-1 text-muted"></i>
+                                        <p class="text-muted mt-2 mb-0">Tidak ada foto</p>
                                     </div>
                                 @endif
                             </div>
+
                         </div>
 
                         {{-- Saran/Catatan --}}
@@ -123,7 +123,7 @@
                                 <i class="bx bx-comment-detail me-2"></i>Saran / Catatan Monitoring
                             </h6>
                             <div class="bg-light p-3 rounded">
-                                @if($monitoring->saran)
+                                @if ($monitoring->saran)
                                     <p class="mb-0">{{ $monitoring->saran }}</p>
                                 @else
                                     <p class="text-muted mb-0 fst-italic">Tidak ada catatan</p>
@@ -157,7 +157,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <img id="modalImage" src="" alt="" class="img-fluid">
+                    <img id="modalImage" src="" alt="" class="img-fluid rounded shadow">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>

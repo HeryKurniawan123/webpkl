@@ -28,11 +28,12 @@
                                 <label for="iduka_id" class="form-label fw-semibold">
                                     <i class="bx bx-building me-1"></i> IDUKA <span class="text-danger">*</span>
                                 </label>
-                                <select class="form-select @error('iduka_id') is-invalid @enderror"
-                                        id="iduka_id" name="iduka_id" required>
+                                <select class="form-select @error('iduka_id') is-invalid @enderror" id="iduka_id"
+                                    name="iduka_id" required>
                                     <option value="">Pilih IDUKA...</option>
                                     @foreach ($idukas as $iduka)
-                                        <option value="{{ $iduka->id }}" {{ old('iduka_id') == $iduka->id ? 'selected' : '' }}>
+                                        <option value="{{ $iduka->id }}"
+                                            {{ old('iduka_id') == $iduka->id ? 'selected' : '' }}>
                                             {{ $iduka->nama }} - {{ $iduka->alamat }}
                                         </option>
                                     @endforeach
@@ -46,9 +47,8 @@
                                 <label for="saran" class="form-label fw-semibold">
                                     <i class="bx bx-comment-detail me-1"></i> Saran / Catatan
                                 </label>
-                                <textarea class="form-control @error('saran') is-invalid @enderror"
-                                          id="saran" name="saran" rows="4"
-                                          placeholder="Masukkan saran atau catatan monitoring...">{{ old('saran') }}</textarea>
+                                <textarea class="form-control @error('saran') is-invalid @enderror" id="saran" name="saran" rows="4"
+                                    placeholder="Masukkan saran atau catatan monitoring...">{{ old('saran') }}</textarea>
                                 @error('saran')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -60,12 +60,9 @@
                                     <i class="bx bx-user-check me-1"></i> Perkiraan Siswa Diterima
                                 </label>
                                 <input type="number"
-                                       class="form-control @error('perikiraan_siswa_diterima') is-invalid @enderror"
-                                       id="perikiraan_siswa_diterima"
-                                       name="perikiraan_siswa_diterima"
-                                       min="0"
-                                       value="{{ old('perikiraan_siswa_diterima') }}"
-                                       placeholder="Contoh: 10">
+                                    class="form-control @error('perikiraan_siswa_diterima') is-invalid @enderror"
+                                    id="perikiraan_siswa_diterima" name="perikiraan_siswa_diterima" min="0"
+                                    value="{{ old('perikiraan_siswa_diterima') }}" placeholder="Contoh: 10">
                                 @error('perikiraan_siswa_diterima')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -76,20 +73,16 @@
                                 <label for="foto" class="form-label fw-semibold">
                                     <i class="bx bx-camera me-1"></i> Foto Monitoring
                                 </label>
-                                <input type="file"
-                                       class="form-control @error('foto') is-invalid @enderror"
-                                       id="foto"
-                                       name="foto"
-                                       accept="image/*">
-                                @error('foto')
+                                <input type="file" class="form-control @error('foto.*') is-invalid @enderror"
+                                    id="foto" name="foto[]" accept="image/*" multiple>
+                                @error('foto.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">Upload foto dokumentasi monitoring (JPG, PNG, GIF, max 2MB)</div>
+                                <div class="form-text">Upload hingga 3 foto dokumentasi monitoring (JPG, PNG, GIF, max 2MB
+                                    per foto)</div>
 
                                 {{-- Preview gambar --}}
-                                <div id="imagePreview" class="mt-3" style="display: none;">
-                                    <img id="preview" src="#" alt="Preview" class="img-thumbnail" style="max-width: 200px;">
-                                </div>
+                                <div id="imagePreview" class="mt-3 d-flex flex-wrap gap-2"></div>
                             </div>
 
                             <div class="mb-4">
@@ -115,31 +108,27 @@
 
 @push('scripts')
     <script>
-        // Preview gambar sebelum upload
         document.getElementById('foto').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('preview');
             const previewContainer = document.getElementById('imagePreview');
+            previewContainer.innerHTML = ''; // kosongkan preview lama
 
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+            const files = event.target.files;
+            if (files.length > 0) {
+                previewContainer.style.display = 'flex';
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('img-thumbnail');
+                        img.style.maxWidth = '150px';
+                        img.style.maxHeight = '150px';
+                        previewContainer.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
             } else {
                 previewContainer.style.display = 'none';
-            }
-        });
-
-        // Select2 untuk dropdown IDUKA (jika tersedia)
-        $(document).ready(function() {
-            if (typeof $.fn.select2 !== 'undefined') {
-                $('#iduka_id').select2({
-                    placeholder: 'Pilih IDUKA...',
-                    allowClear: true
-                });
             }
         });
     </script>

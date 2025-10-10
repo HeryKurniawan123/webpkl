@@ -74,30 +74,31 @@
 
                             <div class="mb-4">
                                 <label for="foto" class="form-label fw-semibold">
-                                    <i class="bx bx-camera me-1"></i> Foto Monitoring
+                                    <i class="bx bx-camera me-1"></i> Foto Monitoring (maks 3 foto)
                                 </label>
-                                <input type="file" class="form-control @error('foto') is-invalid @enderror"
-                                    id="foto" name="foto" accept="image/*">
-                                @error('foto')
+
+                                <input type="file" class="form-control @error('foto.*') is-invalid @enderror"
+                                    id="foto" name="foto[]" accept="image/*" multiple>
+
+                                @error('foto.*')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">Upload foto dokumentasi monitoring (JPG, PNG, GIF, max 2MB)</div>
+                                <div class="form-text">Upload sampai 3 foto (JPG, PNG, GIF, max 2MB per foto)</div>
 
-                                {{-- Tampilkan foto lama jika ada --}}
-                                @if ($monitoring->foto)
-                                    <div class="mt-3">
-                                        <p class="fw-semibold mb-1">Foto Lama:</p>
-                                        <img src="{{ asset('storage/' . $monitoring->foto) }}" alt="Foto Monitoring"
-                                            class="img-thumbnail" style="max-width: 200px;">
+                                {{-- Tampilkan foto lama --}}
+                                @php
+                                    $fotos = $monitoring->foto ? json_decode($monitoring->foto, true) : [];
+                                @endphp
+                                @if ($fotos)
+                                    <div class="mt-3 d-flex flex-wrap gap-2">
+                                        @foreach ($fotos as $foto)
+                                           <img src="{{ asset($foto) }}" class="img-thumbnail" style="max-width: 180px;">
+                                        @endforeach
                                     </div>
                                 @endif
-
-                                {{-- Preview gambar baru --}}
-                                <div id="imagePreview" class="mt-3" style="display: none;">
-                                    <img id="preview" src="#" alt="Preview" class="img-thumbnail"
-                                        style="max-width: 200px;">
-                                </div>
                             </div>
+
+
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                 <a href="{{ route('monitoring.index') }}" class="btn btn-secondary me-md-2">
                                     <i class="fas fa-times me-2"></i> Batal
@@ -114,34 +115,28 @@
     </div>
 @endsection
 
-@push('scripts')
-    <script>
-        // Preview gambar sebelum upload
-        document.getElementById('foto').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('preview');
-            const previewContainer = document.getElementById('imagePreview');
+<script>
+    function previewImage(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const previewContainer = document.getElementById(previewId);
+        const img = previewContainer.querySelector('img');
 
+        input.addEventListener('change', function() {
+            const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    preview.src = e.target.result;
+                    img.src = e.target.result;
                     previewContainer.style.display = 'block';
-                };
+                }
                 reader.readAsDataURL(file);
             } else {
                 previewContainer.style.display = 'none';
             }
         });
+    }
 
-        // Select2 untuk dropdown IDUKA (jika tersedia)
-        $(document).ready(function() {
-            if (typeof $.fn.select2 !== 'undefined') {
-                $('#iduka_id').select2({
-                    placeholder: 'Pilih IDUKA...',
-                    allowClear: true
-                });
-            }
-        });
-    </script>
-@endpush
+    previewImage('foto1', 'preview-foto1');
+    previewImage('foto2', 'preview-foto2');
+    previewImage('foto3', 'preview-foto3');
+</script>

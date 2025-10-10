@@ -188,14 +188,17 @@
                                     {{-- Foto --}}
                                     <td class="text-center align-middle">
                                         @if ($item->foto)
-                                            <button class="btn btn-outline-primary btn-sm"
-                                                onclick="showImage('{{ Storage::url('monitoring/' . $item->foto) }}', '{{ $item->iduka->nama }}')">
-                                                <i class="fas fa-image"></i> Lihat
-                                            </button>
+                                            @foreach (json_decode($item->foto, true) as $foto)
+                                                <button class="btn btn-outline-primary btn-sm mb-1"
+                                                    onclick="showImage('{{ asset($foto) }}', '{{ $item->iduka->nama }}')">
+                                                    <i class="fas fa-image"></i> Lihat
+                                                </button>
+                                            @endforeach
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
                                     </td>
+
 
                                     {{-- Tanggal --}}
                                     <td class="text-center align-middle">
