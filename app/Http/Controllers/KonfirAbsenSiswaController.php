@@ -1300,6 +1300,18 @@ class KonfirAbsenSiswaController extends Controller
         return redirect()->back()->with('success', 'Koordinat berhasil diperbarui!');
     }
 
+    public function getData($id)
+    {
+        $iduka = Iduka::find($id);
+
+        if (!$iduka) {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        }
+
+        return response()->json($iduka);
+    }
+
+
     /**
      * Detail absen
      */

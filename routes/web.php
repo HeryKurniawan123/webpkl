@@ -401,6 +401,9 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
 Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
     Route::get('/konfir/absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfir.absen.index');
+    Route::get('/iduka/get-data/{id}', [KonfirAbsenSiswaController::class, 'getData'])
+        ->name('iduka.getData');
+
 
     Route::prefix('iduka')->name('iduka.')->group(function () {
         // Tampil halaman konfirmasi

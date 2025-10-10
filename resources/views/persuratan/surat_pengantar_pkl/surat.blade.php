@@ -30,18 +30,15 @@
         .logo-cell {
             display: table-cell;
             width: 80px;
-            /* Diperbesar lagi */
             vertical-align: middle;
             padding-right: 12px;
         }
 
         .logo {
             width: 80px !important;
-            /* Diperbesar dengan !important */
             height: auto !important;
             max-width: none !important;
         }
-
 
         .header-text {
             display: table-cell;
@@ -158,9 +155,11 @@
             text-align: center;
         }
 
+        /* --- Bagian tanda tangan diubah di sini --- */
         .signature-section {
-            margin-top: 20px;
-            text-align: center;
+            margin-top: 70px; /* jarak lebih jauh dari teks */
+            text-align: right; /* rata kanan */
+            padding-right: 80px; /* mendekati ujung kanan */
         }
 
         .signature-section p {
@@ -169,13 +168,11 @@
             font-size: 11pt;
         }
 
-        .signature-space {
-            height: 50px;
-        }
-
-        .signature-name {
-            font-weight: bold;
-            text-decoration: underline;
+        .signature-section img {
+            width: 350px; /* diperbesar sedikit */
+            height: auto;
+            display: inline-block;
+            margin-top: 10px;
         }
 
         .page-break {
@@ -186,7 +183,6 @@
 
 <body>
     <div class="header">
-
         <div class="logo-cell">
             @php
                 $path = public_path('images/jawabarat.png');
@@ -202,10 +198,7 @@
             @else
                 <p style="color:red;">Logo tidak ditemukan di server</p>
             @endif
-
         </div>
-
-
 
         <div class="header-text">
             <h1>PEMERINTAH DAERAH PROVINSI JAWA BARAT</h1>
@@ -240,18 +233,13 @@
             </div>
         </div>
 
-        <p style="text-align: justify; text-indent: 0; margin-bottom: 0;">
+        <p style="text-align: justify; margin-bottom: 0;">
             Menindaklanjuti surat balasan perihal penerimaan siswa–siswi kami untuk melaksanakan
             Praktik Kerja Lapangan (PKL) di Institusi/ Perusahaan Saudara,
         </p>
-        <p style="text-align: justify; text-indent: 0; margin-top: 0;">
+        <p style="text-align: justify; margin-top: 0;">
             kami tugaskan siswa sebagai berikut :
         </p>
-
-
-
-
-
 
         <table border="1" cellspacing="0" cellpadding="5" width="100%">
             <thead>
@@ -298,6 +286,21 @@
             Atas perhatian, bantuan dan kerjasama Saudara, kami ucapkan terima kasih.
         </p>
 
+        <div class="signature-section">
+            @php
+                $ttdPath = public_path('images/ttd_kepsek.png');
+                $ttdBase64 = '';
+                if (file_exists($ttdPath)) {
+                    $ttdBase64 = base64_encode(file_get_contents($ttdPath));
+                }
+            @endphp
+
+            @if ($ttdBase64)
+                <img src="data:image/png;base64,{{ $ttdBase64 }}" alt="TTD Kepala Sekolah">
+            @else
+                <p style="color:red; text-align:right;">TTD Kepala Sekolah tidak ditemukan</p>
+            @endif
+        </div>
     </div>
 </body>
 

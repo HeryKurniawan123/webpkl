@@ -960,7 +960,7 @@
 
             const formData = new FormData();
             const status = document.querySelector('button[type="submit"][clicked]')?.value ||
-                           document.querySelector('button[type="submit"]').value;
+                document.querySelector('button[type="submit"]').value;
 
             formData.append('status', status);
 
@@ -968,61 +968,64 @@
                 formData.append('absen_ids[]', checkbox.value);
             });
 
-            if (!confirm(`Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} ${checkedBoxes.length} absensi yang dipilih?`)) {
+            if (!confirm(
+                    `Apakah Anda yakin ingin ${status === 'disetujui' ? 'menyetujui' : 'menolak'} ${checkedBoxes.length} absensi yang dipilih?`
+                )) {
                 return false;
             }
 
             const submitButtons = this.querySelectorAll('button[type="submit"]');
             submitButtons.forEach(btn => {
                 btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
+                btn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
             });
 
             fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.message || `HTTP error! status: ${response.status}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    showToast('Berhasil!', data.message, 'success');
-
-                    // Redirect ke tab hari ini setelah sukses
-                    setTimeout(() => {
-                        // Dapatkan URL tanpa hash
-                        const currentUrl = window.location.href.split('#')[0];
-                        window.location.href = currentUrl + '#v-pills-hari-ini';
-                    }, 1500);
-                } else {
-                    showToast('Gagal!', data.message, 'danger');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Error!', 'Terjadi kesalahan: ' + error.message, 'danger');
-            })
-            .finally(() => {
-                submitButtons.forEach(btn => {
-                    btn.disabled = false;
-                    if (btn.name === 'status' && btn.value === 'disetujui') {
-                        btn.innerHTML = '<i class="bi bi-check-lg"></i> Setujui yang Dipilih';
-                    } else if (btn.name === 'status' && btn.value === 'ditolak') {
-                        btn.innerHTML = '<i class="bi bi-x-lg"></i> Tolak yang Dipilih';
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || `HTTP error! status: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        showToast('Berhasil!', data.message, 'success');
+
+                        // Redirect ke tab hari ini setelah sukses
+                        setTimeout(() => {
+                            // Dapatkan URL tanpa hash
+                            const currentUrl = window.location.href.split('#')[0];
+                            window.location.href = currentUrl + '#v-pills-hari-ini';
+                        }, 1500);
+                    } else {
+                        showToast('Gagal!', data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('Error!', 'Terjadi kesalahan: ' + error.message, 'danger');
+                })
+                .finally(() => {
+                    submitButtons.forEach(btn => {
+                        btn.disabled = false;
+                        if (btn.name === 'status' && btn.value === 'disetujui') {
+                            btn.innerHTML = '<i class="bi bi-check-lg"></i> Setujui yang Dipilih';
+                        } else if (btn.name === 'status' && btn.value === 'ditolak') {
+                            btn.innerHTML = '<i class="bi bi-x-lg"></i> Tolak yang Dipilih';
+                        }
+                    });
                 });
-            });
         });
 
         // Event listener untuk tombol submit
@@ -1090,7 +1093,8 @@
             toastTitle.textContent = title;
             toastMessage.textContent = message;
 
-            toastEl.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toastEl.className =
+                `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
 
             const toast = new bootstrap.Toast(toastEl);
             toast.show();
@@ -1288,6 +1292,7 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            // 🔹 Inisialisasi Select2
             $('.select2').each(function() {
                 $(this).select2({
                     dropdownParent: $(this).closest('.modal').length ? $(this).closest('.modal') :
@@ -1297,6 +1302,40 @@
                     width: '100%',
                     dropdownPosition: 'below'
                 });
+            });
+
+            // 🔹 Event saat memilih IDUKA
+            $('#iduka_id').on('change', function() {
+                const idukaId = $(this).val();
+
+                if (idukaId) {
+                    // Ambil data IDUKA lewat AJAX (fetch API versi jQuery)
+                    $.ajax({
+                        url: `/iduka/get-data/${idukaId}`,
+                        method: 'GET',
+                        success: function(data) {
+                            if (data.error) {
+                                alert(data.error);
+                            } else {
+                                $('input[name="latitude"]').val(data.latitude || '');
+                                $('input[name="longitude"]').val(data.longitude || '');
+                                $('input[name="radius"]').val(data.radius || '');
+                                $('input[name="jam_masuk"]').val(data.jam_masuk || '08:00');
+                                $('input[name="jam_pulang"]').val(data.jam_pulang || '15:00');
+                            }
+                        },
+                        error: function() {
+                            console.error('Gagal mengambil data IDUKA.');
+                        }
+                    });
+                } else {
+                    // Kosongkan input jika pilihan direset
+                    $('input[name="latitude"]').val('');
+                    $('input[name="longitude"]').val('');
+                    $('input[name="radius"]').val('');
+                    $('input[name="jam_masuk"]').val('08:00');
+                    $('input[name="jam_pulang"]').val('15:00');
+                }
             });
         });
     </script>
