@@ -8,14 +8,34 @@ use Illuminate\Http\Request;
 
 class PercetakanAtpController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $iduka = Iduka::orderBy('rekomendasi', 'desc')  // Urutkan berdasarkan rekomendasi (1 di atas)
-        ->orderBy('created_at', 'desc') // Jika ada yang sama, urutkan berdasarkan tanggal dibuat
-        ->paginate(10);
+        $query = Iduka::orderBy('rekomendasi', 'desc')
+                      ->orderBy('created_at', 'desc');
+
+        // Filter berdasarkan pencarian
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'LIKE', '%' . $search . '%')
+                  ->orWhere('alamat', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        // Filter berdasarkan rekomendasi/ajuan
+        if ($request->has('filter') && $request->filter != 'all') {
+            if ($request->filter == 'rekomendasi') {
+                $query->where('rekomendasi', 1);
+            } elseif ($request->filter == 'ajuan') {
+                $query->where('rekomendasi', 0);
+            }
+        }
+
+        $iduka = $query->paginate(10)->withQueryString();
 
         return view('iduka.dataiduka.cetakatp', compact('iduka'));
     }
+
     public function show($id)
     {
         $iduka = Iduka::where('id', $id)->first();
