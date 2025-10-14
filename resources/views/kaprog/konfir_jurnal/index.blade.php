@@ -129,9 +129,16 @@
                     @endforeach
                 </div>
 
-                <div class="mt-4">
-                    {{ $jurnals->links() }}
+                 <div class="card-footer bg-transparent border-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        Menampilkan {{ $jurnals->firstItem() }} - {{ $jurnals->lastItem() }} dari {{ $jurnals->total() }} data
+                    </small>
+                    <nav>
+                        {{ $jurnals->links('pagination::bootstrap-5') }}
+                    </nav>
                 </div>
+            </div>
             @else
                 <div class="text-center py-5">
                     <div style="font-size: 50px;">✅</div>

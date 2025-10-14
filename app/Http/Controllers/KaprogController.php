@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -573,6 +574,7 @@ class KaprogController extends Controller
     {
         $kaprog = auth()->user();
         $konkeId = $kaprog->konke_id;
+        $today = Carbon::today();
 
         // Total siswa PKL per jurusan kaprog
         $totalSiswaPKL = User::whereHas('kelas', function ($q) use ($konkeId) {
@@ -581,25 +583,36 @@ class KaprogController extends Controller
             ->where('role', 'siswa')
             ->count();
 
+        // Ambil semua ID siswa di jurusan kaprog
+        $siswaIds = User::whereHas('kelas', function ($q) use ($konkeId) {
+            $q->where('konke_id', $konkeId);
+        })
+            ->where('role', 'siswa')
+            ->pluck('id')
+            ->toArray();
+
         // Hadir hari ini
-        $hadirHariIni = Absensi::whereDate('tanggal', now())
-            ->whereHas('user.kelas', function ($q) use ($konkeId) {
-                $q->where('konke_id', $konkeId);
+        $hadirHariIni = Absensi::whereDate('tanggal', $today)
+            ->whereIn('user_id', $siswaIds)
+            ->where(function ($q) {
+                $q->where('status', 'hadir')
+                    ->orWhere('status', 'tepat_waktu')
+                    ->orWhere('status', 'terlambat')
+                    ->orWhereNotNull('jam_masuk');
             })
-            ->where('status', 'hadir')
-            ->count();
+            ->distinct('user_id')
+            ->count('user_id');
 
         // Tidak hadir (izin/sakit/alfa)
-        $tidakHadir = Absensi::whereDate('tanggal', now())
-            ->whereHas('user.kelas', function ($q) use ($konkeId) {
-                $q->where('konke_id', $konkeId);
-            })
+        $tidakHadir = Absensi::whereDate('tanggal', $today)
+            ->whereIn('user_id', $siswaIds)
             ->whereIn('status', ['izin', 'sakit', 'alfa'])
-            ->count();
+            ->distinct('user_id')
+            ->count('user_id');
 
         // Tingkat kehadiran (%)
         $totalAbsenHariIni = max($totalSiswaPKL, 1);
-        $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100);
+        $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100, 2);
 
         // Ambil semua kelas dari jurusan kaprog
         $kelasList = Kelas::with(['siswa' => function ($q) {
@@ -609,26 +622,39 @@ class KaprogController extends Controller
                 $q->where('role', 'siswa');
             }])
             ->where('konke_id', $konkeId)
-            ->orderBy('kelas', 'asc') // urutkan X, XI, XII
-            ->orderBy('name_kelas', 'asc') // urutkan 1, 2, 3
+            ->orderBy('kelas', 'asc')
+            ->orderBy('name_kelas', 'asc')
             ->get();
 
-        $absensiHariIni = Absensi::whereDate('tanggal', today())->get();
+        // Ambil absensi hari ini untuk jurusan kaprog saja
+        $absensiHariIni = Absensi::with('user')
+            ->whereDate('tanggal', $today)
+            ->whereIn('user_id', $siswaIds)
+            ->get();
 
         // Analisis per kelas
         $kelasAnalisis = $kelasList->map(function ($kelas) use ($absensiHariIni) {
             $totalSiswa = $kelas->siswa_count;
 
+            // Ambil semua ID siswa di kelas ini
+            $siswaIdsInKelas = $kelas->siswa->pluck('id')->toArray();
+
+            // Hitung jumlah siswa yang hadir di kelas ini
             $hadirCount = $absensiHariIni
-                ->whereIn('user_id', $kelas->siswa->pluck('id'))
-                ->where('status', 'hadir')
+                ->whereIn('user_id', $siswaIdsInKelas)
+                ->filter(function ($absensi) {
+                    return $absensi->jam_masuk ||
+                        in_array($absensi->status, ['hadir', 'tepat_waktu', 'terlambat']);
+                })
                 ->count();
 
+            // Hitung persentase
             $persentase = $totalSiswa > 0 ? round(($hadirCount / $totalSiswa) * 100, 2) : 0;
 
             return [
-                'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas, // contoh: XII RPL 1
+                'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas,
                 'total_siswa' => $totalSiswa,
+                'hadir_count' => $hadirCount,
                 'persentase' => $persentase,
             ];
         });
@@ -637,6 +663,56 @@ class KaprogController extends Controller
         $kelasLabels = $kelasAnalisis->pluck('kelas');
         $kelasValues = $kelasAnalisis->pluck('total_siswa');
 
+        // Data detail absensi per kelas
+        $detailAbsensiPerKelas = $kelasList->map(function ($kelas) use ($absensiHariIni) {
+            $siswaList = $kelas->siswa;
+
+            $detailSiswa = $siswaList->map(function ($siswa) use ($absensiHariIni) {
+                $absensi = $absensiHariIni->firstWhere('user_id', $siswa->id);
+
+                // Tentukan status dengan benar
+                $status = 'belum_absen';
+                $keterangan = '-';
+
+                if ($absensi) {
+                    // Cek status izin/sakit/alfa terlebih dahulu
+                    if (in_array($absensi->status, ['izin', 'sakit', 'alfa'])) {
+                        $status = $absensi->status;
+                        $keterangan = $absensi->keterangan_izin ?? $absensi->keterangan ?? '-';
+                    }
+                    // Cek jika ada jam masuk
+                    elseif ($absensi->jam_masuk) {
+                        if ($absensi->status == 'terlambat') {
+                            $status = 'terlambat';
+                        } else {
+                            $status = 'hadir';
+                        }
+                        $keterangan = $absensi->keterangan ?? '-';
+                    }
+                    // Cek jika status dinas disetujui
+                    elseif ($absensi->status_dinas === 'disetujui') {
+                        $status = 'dinas';
+                        $keterangan = $absensi->keterangan_dinas ?? '-';
+                    }
+                }
+
+                return [
+                    'id' => $siswa->id,
+                    'nama' => $siswa->name,
+                    'nis' => $siswa->nis,
+                    'status' => $status,
+                    'jam_masuk' => $absensi ? $absensi->jam_masuk : null,
+                    'jam_pulang' => $absensi ? $absensi->jam_pulang : null,
+                    'keterangan' => $keterangan,
+                ];
+            });
+
+            return [
+                'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas,
+                'siswa' => $detailSiswa,
+            ];
+        });
+
         return view('kaprog.absensi.index', compact(
             'totalSiswaPKL',
             'hadirHariIni',
@@ -644,10 +720,10 @@ class KaprogController extends Controller
             'tingkatKehadiran',
             'kelasLabels',
             'kelasValues',
-            'kelasAnalisis'
+            'kelasAnalisis',
+            'detailAbsensiPerKelas'
         ));
     }
-
     public function export(Request $request)
     {
         $tanggal = $request->input('tanggal', now()->toDateString());

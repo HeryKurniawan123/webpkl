@@ -141,33 +141,136 @@
                 </div>
 
                 <!-- Analisis Kehadiran per Kelas -->
-                <div class="row mt-4">
+                <div class="row mt-4" id="analisisKehadiranContainer">
                     <div class="col-12">
                         <div class="card border-0 shadow-sm">
                             <div class="card-header bg-white border-0 py-4">
-                                <h5 class="mb-0 fw-semibold text-dark">Analisis Kehadiran per Kelas</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="mb-0 fw-semibold text-dark">Analisis Kehadiran per Kelas</h5>
+                                        <p class="text-secondary mb-0 small">Tingkat kehadiran siswa per kelas hari ini</p>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary" id="refreshAnalisis">
+                                            <i class="bx bx-refresh"></i> Refresh
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="card-body p-4">
-                                <div class="row g-4">
-                                    @foreach ($kelasAnalisis as $kelas)
-                                        <div class="col-lg-2 col-md-4 col-6">
-                                            <div class="text-center p-3 bg-light rounded-4">
-                                                <h6 class="mb-0 fw-semibold text-dark">{{ $kelas['kelas'] }}</h6>
-                                                <div class="h4 mb-1 fw-bold"
-                                                    style="color: {{ $kelas['persentase'] >= 90 ? '#27ae60' : ($kelas['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }};">
-                                                    {{ $kelas['persentase'] }}%
+                                @if(count($kelasAnalisis) > 0)
+                                    <div class="row g-4">
+                                        @foreach ($kelasAnalisis as $kelas)
+                                            <div class="col-lg-2 col-md-4 col-6">
+                                                <div class="text-center p-3 bg-light rounded-4 h-100 d-flex flex-column">
+                                                    <h6 class="mb-0 fw-semibold text-dark">{{ $kelas['kelas'] }}</h6>
+                                                    <div class="h4 mb-1 fw-bold mt-auto"
+                                                         style="color: {{ $kelas['persentase'] >= 90 ? '#27ae60' : ($kelas['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }};">
+                                                        {{ $kelas['persentase'] }}%
+                                                    </div>
+                                                    <small class="text-secondary">
+                                                        {{ $kelas['hadir_count'] ?? 0 }}/{{ $kelas['total_siswa'] }} siswa
+                                                    </small>
                                                 </div>
-                                                <small class="text-secondary">{{ $kelas['total_siswa'] }} siswa</small>
                                             </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="alert alert-warning">
+                                        Tidak ada data kelas untuk ditampilkan.
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Detail Absensi per Kelas -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-white border-0 py-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="mb-0 fw-semibold text-dark">Detail Absensi per Kelas</h5>
+                                        <p class="text-secondary mb-0 small">Data kehadiran siswa per kelas hari ini</p>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-primary" id="refreshBtn">
+                                            <i class="bx bx-refresh"></i> Refresh Data
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <!-- Tab untuk setiap kelas -->
+                                <ul class="nav nav-tabs mb-4" id="kelasTabs" role="tablist">
+                                    @foreach($detailAbsensiPerKelas as $index => $kelas)
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link {{ $index == 0 ? 'active' : '' }}" id="kelas-{{ $index }}-tab" data-bs-toggle="tab" data-bs-target="#kelas-{{ $index }}" type="button" role="tab">
+                                                {{ $kelas['kelas'] }}
+                                            </button>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                
+                                <!-- Tab content -->
+                                <div class="tab-content" id="kelasTabsContent">
+                                    @foreach($detailAbsensiPerKelas as $index => $kelas)
+                                        <div class="tab-pane fade {{ $index == 0 ? 'show active' : '' }}" id="kelas-{{ $index }}" role="tabpanel">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>No</th>
+                                                            <th>NIS</th>
+                                                            <th>Nama Siswa</th>
+                                                            <th>Status</th>
+                                                            <th>Jam Masuk</th>
+                                                            <th>Jam Pulang</th>
+                                                            <th>Keterangan</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($kelas['siswa'] as $key => $siswa)
+                                                            <tr>
+                                                                <td>{{ $key + 1 }}</td>
+                                                                <td>{{ $siswa['nis'] }}</td>
+                                                                <td>{{ $siswa['nama'] }}</td>
+                                                                <td>
+                                                                    @if($siswa['status'] == 'hadir')
+                                                                        <span class="badge bg-success">Hadir</span>
+                                                                    @elseif($siswa['status'] == 'tepat_waktu')
+                                                                        <span class="badge bg-success">Tepat Waktu</span>
+                                                                    @elseif($siswa['status'] == 'terlambat')
+                                                                        <span class="badge bg-warning">Terlambat</span>
+                                                                    @elseif($siswa['status'] == 'izin')
+                                                                        <span class="badge bg-info">Izin</span>
+                                                                    @elseif($siswa['status'] == 'sakit')
+                                                                        <span class="badge bg-warning">Sakit</span>
+                                                                    @elseif($siswa['status'] == 'alfa')
+                                                                        <span class="badge bg-danger">Alfa</span>
+                                                                    @elseif($siswa['status'] == 'dinas')
+                                                                        <span class="badge bg-primary">Dinas</span>
+                                                                    @else
+                                                                        <span class="badge bg-secondary">Belum Absen</span>
+                                                                    @endif
+                                                                </td>
+                                                                <td>{{ $siswa['jam_masuk'] ? $siswa['jam_masuk']->format('H:i') : '-' }}</td>
+                                                                <td>{{ $siswa['jam_pulang'] ? $siswa['jam_pulang']->format('H:i') : '-' }}</td>
+                                                                <td>{{ $siswa['keterangan'] }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </div>
@@ -261,6 +364,41 @@
 
             .fw-semibold {
                 font-weight: 600 !important;
+            }
+
+            /* Tambahan CSS untuk tab dan tabel */
+            .nav-tabs .nav-link {
+                color: #6c757d;
+                font-weight: 500;
+                border: none;
+                border-bottom: 2px solid transparent;
+                border-radius: 0;
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-tabs .nav-link:hover {
+                border-color: transparent;
+                color: #212529;
+            }
+
+            .nav-tabs .nav-link.active {
+                color: #212529;
+                background-color: transparent;
+                border-bottom: 2px solid #212529;
+            }
+
+            .table thead th {
+                border-bottom: 2px solid #dee2e6;
+                font-weight: 600;
+                color: #495057;
+            }
+
+            .table-hover tbody tr:hover {
+                background-color: rgba(0, 0, 0, 0.03);
+            }
+
+            .badge {
+                font-size: 0.75em;
             }
         </style>
 
@@ -416,6 +554,35 @@
                         card.style.opacity = '1';
                         card.style.transform = 'translateY(0)';
                     }, index * 100);
+                });
+
+                // ====== Refresh Data ======
+                document.getElementById('refreshBtn').addEventListener('click', function() {
+                    location.reload();
+                });
+
+                // Refresh data analisis
+                document.getElementById('refreshAnalisis')?.addEventListener('click', function() {
+                    fetch(window.location.href)
+                        .then(response => response.text())
+                        .then(html => {
+                            // Buat DOM parser
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            
+                            // Ambil elemen analisis kehadiran dari response
+                            const newAnalisis = doc.querySelector('#analisisKehadiranContainer');
+                            
+                            // Ganti elemen saat ini dengan yang baru
+                            if (newAnalisis) {
+                                document.getElementById('analisisKehadiranContainer').innerHTML = newAnalisis.innerHTML;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error refreshing data:', error);
+                            // Alternatif: reload halaman
+                            window.location.reload();
+                        });
                 });
             });
         </script>

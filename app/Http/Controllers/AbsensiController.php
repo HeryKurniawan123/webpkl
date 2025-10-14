@@ -224,7 +224,6 @@ class AbsensiController extends Controller
             ]);
 
             return redirect()->back()->with('success', 'Absen masuk berhasil, menunggu konfirmasi IDUKA dan Pembimbing.');
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Error in absen masuk: ' . $e->getMessage(), [
@@ -370,7 +369,6 @@ class AbsensiController extends Controller
             DB::commit();
 
             return redirect()->back()->with('success', 'Absensi pulang berhasil disimpan.');
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('ERROR saat menyimpan absensi pulang', [
@@ -470,9 +468,8 @@ class AbsensiController extends Controller
             return redirect()->back()->with(
                 'success',
                 'Izin berhasil diajukan untuk hari ini. Menunggu konfirmasi IDUKA. Jenis: ' . $jenisIzinText[$request->jenis_izin] .
-                '. Alasan: ' . $request->keterangan
+                    '. Alasan: ' . $request->keterangan
             );
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('ERROR saat mengajukan izin', [
@@ -573,9 +570,8 @@ class AbsensiController extends Controller
             return redirect()->back()->with(
                 'success',
                 'Dinas luar berhasil diajukan untuk hari ini. Menunggu konfirmasi IDUKA. Jenis: ' . $jenisDinasText[$request->jenis_dinas] .
-                '. Alasan: ' . $request->keterangan
+                    '. Alasan: ' . $request->keterangan
             );
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('ERROR saat mengajukan dinas luar', [
@@ -697,7 +693,6 @@ class AbsensiController extends Controller
                     'pending_izin' => $izinPending ? true : false,
                 ]
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -750,7 +745,6 @@ class AbsensiController extends Controller
                 'has_pending_masuk' => $hasPendingMasuk,
                 'has_pending_pulang' => $hasPendingPulang
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error in cekStatusIzin: ' . $e->getMessage());
             return response()->json([
@@ -808,7 +802,6 @@ class AbsensiController extends Controller
                 'has_pending_masuk' => $hasPendingMasuk,
                 'has_pending_pulang' => $hasPendingPulang
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error in cekStatusDinas: ' . $e->getMessage());
             return response()->json([
@@ -840,24 +833,26 @@ class AbsensiController extends Controller
             return $lokasi;
         }
 
-        // Jika lokasi_id adalah ID cabang, cari lokasi cabang
-        $lokasi = Iduka::find($lokasiId);
+        // Jika lokasi_id adalah ID cabang, ekstrak ID numerik
+        if (strpos($lokasiId, 'cabang_') === 0) {
+            $cabangId = substr($lokasiId, 7); // Menghapus 'cabang_' prefix
 
-        if (!$lokasi) {
-            throw new \Exception("Lokasi dengan ID {$lokasiId} tidak ditemukan.");
+            $lokasi = Iduka::find($cabangId);
+
+            if (!$lokasi) {
+                throw new \Exception("Lokasi cabang dengan ID {$cabangId} tidak ditemukan.");
+            }
+
+            // Pastikan cabang ini terkait dengan IDUKA user
+            if ($lokasi->id_pusat && $lokasi->id_pusat != $user->idukaDiterima->id) {
+                throw new \Exception('Lokasi cabang ini tidak terkait dengan IDUKA Anda.');
+            }
+
+            return $lokasi;
         }
 
-        // Pastikan cabang ini terkait dengan IDUKA user
-        if ($lokasi->id_pusat && $lokasi->id_pusat != $user->idukaDiterima->id) {
-            throw new \Exception('Lokasi cabang ini tidak terkait dengan IDUKA Anda.');
-        }
-
-        // Jika lokasi adalah pusat, pastikan itu adalah pusat dari IDUKA user
-        if ($lokasi->is_pusat && $lokasi->id != $user->idukaDiterima->id) {
-            throw new \Exception('Lokasi pusat ini bukan merupakan IDUKA Anda.');
-        }
-
-        return $lokasi;
+        // Jika format tidak dikenali
+        throw new \Exception("Format lokasi tidak valid: {$lokasiId}");
     }
 
     /**
