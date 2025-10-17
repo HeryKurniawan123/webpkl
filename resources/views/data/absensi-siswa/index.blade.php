@@ -10,7 +10,7 @@
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h4 class="mb-1 text-dark fw-bold">Dashboard PKL & Absensi</h4>
+                                    <h4 cla   ss="mb-1 text-dark fw-bold">Dashboard PKL & Absensi</h4>
                                     <p class="text-secondary mb-0">Monitoring kehadiran dan data siswa PKL</p>
                                 </div>
                                 <div class="d-flex gap-2">
@@ -18,6 +18,10 @@
                                         <a href="{{ route('export.jurusan') }}">
                                             <i class="fas fa-file-excel"></i> Export Excel
                                         </a>
+                                    </button>
+                                    <!-- TOMBOL BARU UNTUK SISWA BELUM ABSEN -->
+                                    <button class="btn btn-danger border" data-bs-toggle="modal" data-bs-target="#modalBelumAbsen">
+                                        <i class="fas fa-user-slash"></i> Siswa Belum Absen
                                     </button>
                                 </div>
                             </div>
@@ -134,9 +138,6 @@
                 </div>
             </div>
 
-
-
-
             <!-- Analisis Kehadiran per Jurusan -->
             <div class="row">
                 <div class="col-12">
@@ -165,6 +166,58 @@
 
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BARU UNTUK SISWA BELUM ABSEN -->
+    <div class="modal fade" id="modalBelumAbsen" tabindex="-1" aria-labelledby="modalBelumAbsenLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="modalBelumAbsenLabel">
+                        Daftar Siswa Belum Absen Hari Ini
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <span class="badge bg-danger fs-5" id="countBelumAbsen">0 SISWA</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>NAMA</th>
+                                    <th>EMAIL</th>
+                                    <th>NIP</th>
+                                    <th>IDUKA</th>
+                                    <th>PEMBIMBING ID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyBelumAbsen">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <div class="spinner-border text-danger" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2">Memuat data...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="errorMessage" class="text-center py-4 d-none">
+                        <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                        <p class="mb-0">Gagal memuat data. Silakan coba lagi.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -260,12 +313,77 @@
         .fw-semibold {
             font-weight: 600 !important;
         }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            border-bottom: none;
+            padding: 1rem;
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 1rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-color: #f8f9fa;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.8em;
+            font-size: 0.75rem;
+        }
+
+        .btn-close:focus {
+            box-shadow: none;
+        }
+
+        /* Animasi untuk modal */
+        .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out;
+            transform: translate(0, -50px);
+        }
+
+        .modal.show .modal-dialog {
+            transform: translate(0, 0);
+        }
+
+        /* Spinner styling */
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
     </style>
 
     <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -338,6 +456,9 @@
                                 }
                             }
                         });
+                    })
+                    .catch(error => {
+                        console.error('Error loading attendance chart:', error);
                     });
             }
 
@@ -400,6 +521,84 @@
                     card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
+
+            // Event saat modal dibuka
+            document.getElementById('modalBelumAbsen').addEventListener('show.bs.modal', function (event) {
+                loadSiswaBelumAbsen();
+            });
+
+            // Fungsi untuk memuat data siswa belum absen
+            function loadSiswaBelumAbsen() {
+                // Tampilkan loading
+                document.getElementById('tbodyBelumAbsen').innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="spinner-border text-danger" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Memuat data...</p>
+                        </td>
+                    </tr>
+                `;
+
+                // Sembunyikan pesan error
+                document.getElementById('errorMessage').classList.add('d-none');
+
+                fetch('/data-absensi/siswa-belum-absen')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        let tbody = document.getElementById('tbodyBelumAbsen');
+                        let countElement = document.getElementById('countBelumAbsen');
+
+                        // Update count
+                        countElement.textContent = `${data.length} SISWA`;
+
+                        // Kosongkan tbody
+                        tbody.innerHTML = '';
+
+                        if (data.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <i class="fas fa-check-circle text-success fa-3x mb-3 d-block"></i>
+                                        <p class="mb-0">Semua siswa sudah melakukan absensi hari ini</p>
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
+
+                        // Tambahkan data ke tabel
+                        data.forEach(siswa => {
+                            let row = `
+                                <tr>
+                                    <td>${siswa.no}</td>
+                                    <td>${siswa.name}</td>
+                                    <td>${siswa.email}</td>
+                                    <td>${siswa.nip}</td>
+                                    <td>${siswa.iduka_id}</td>
+                                    <td>${siswa.pembimbing_id}</td>
+                                </tr>
+                            `;
+                            tbody.innerHTML += row;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+
+                        // Tampilkan pesan error
+                        document.getElementById('tbodyBelumAbsen').innerHTML = '';
+                        document.getElementById('errorMessage').classList.remove('d-none');
+
+                        // Update count
+                        document.getElementById('countBelumAbsen').textContent = '0 SISWA';
+                    });
+            }
         });
 
         // Grafik Distribusi Jurusan (ambil dari backend)
@@ -440,6 +639,9 @@
                             }
                         }
                     });
+                })
+                .catch(error => {
+                    console.error('Error loading jurusan chart:', error);
                 });
         }
 

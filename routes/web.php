@@ -641,6 +641,7 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
 
     Route::get('/absensi/chart-data', [DataAbsensiController::class, 'getAttendanceChart']);
     Route::get('/absensi/jurusan-data', [DataAbsensiController::class, 'getJurusanChart']);
+    Route::get('/data-absensi/siswa-belum-absen', [DataAbsensiController::class, 'getSiswaBelumAbsen'])->name('data-absensi.siswa-belum-absen');
 
     //export
     Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])

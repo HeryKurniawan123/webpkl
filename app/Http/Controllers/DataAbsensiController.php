@@ -14,8 +14,8 @@ class DataAbsensiController extends Controller
 {
     public function index()
     {
-        $totalSiswaPKL = DB::table('pengajuan_pkl')
-            ->where('status', 'diterima')
+        // Hitung total siswa PKL (siswa dengan role siswa dan memiliki iduka_id)
+        $totalSiswaPKL = User::where('role', 'siswa')
             ->count();
 
         // Kehadiran hari ini
@@ -57,7 +57,6 @@ class DataAbsensiController extends Controller
             'jurusanData'
         ));
     }
-
 
     public function chartData(Request $request)
     {
@@ -144,48 +143,86 @@ class DataAbsensiController extends Controller
         ]);
     }
 
-  public function getKehadiranJurusan()
-{
-    // Hitung jumlah siswa per jurusan dan kehadiran hari ini per jurusan
-    $jurusanData = DB::table('konkes')
-        ->leftJoin('users', 'users.konke_id', '=', 'konkes.id')
-        // join absensi hanya yang tanggal = hari ini (ubah sesuai kebutuhan)
-        ->leftJoin('absensi', function ($join) {
-            $join->on('absensi.user_id', '=', 'users.id')
-                 ->whereDate('absensi.tanggal', Carbon::today());
-        })
-        ->select(
-            'konkes.id',
-            'konkes.name_konke as jurusan',
-            DB::raw('COUNT(DISTINCT users.id) as total_siswa'),
-            DB::raw('COUNT(absensi.id) as total_hadir_today')
-        )
-        ->where('users.role', 'siswa')
-        ->groupBy('konkes.id', 'konkes.name_konke')
-        ->get();
+    public function getKehadiranJurusan()
+    {
+        // Hitung jumlah siswa per jurusan dan kehadiran hari ini per jurusan
+        $jurusanData = DB::table('konkes')
+            ->leftJoin('users', 'users.konke_id', '=', 'konkes.id')
+            // join absensi hanya yang tanggal = hari ini (ubah sesuai kebutuhan)
+            ->leftJoin('absensi', function ($join) {
+                $join->on('absensi.user_id', '=', 'users.id')
+                    ->whereDate('absensi.tanggal', Carbon::today());
+            })
+            ->select(
+                'konkes.id',
+                'konkes.name_konke as jurusan',
+                DB::raw('COUNT(DISTINCT users.id) as total_siswa'),
+                DB::raw('COUNT(absensi.id) as total_hadir_today')
+            )
+            ->where('users.role', 'siswa')
+            ->groupBy('konkes.id', 'konkes.name_konke')
+            ->get();
 
-    // map jadi array rapi
-    $hasil = $jurusanData->map(function ($item) {
-        $total_siswa = (int) $item->total_siswa;
-        $total_hadir = (int) $item->total_hadir_today;
-        $persentase = $total_siswa > 0 ? round(($total_hadir / $total_siswa) * 100) : 0;
+        // map jadi array rapi
+        $hasil = $jurusanData->map(function ($item) {
+            $total_siswa = (int) $item->total_siswa;
+            $total_hadir = (int) $item->total_hadir_today;
+            $persentase = $total_siswa > 0 ? round(($total_hadir / $total_siswa) * 100) : 0;
 
-        return [
-            'jurusan'     => $item->jurusan,
-            'total_siswa' => $total_siswa,
-            'persentase'  => $persentase,
-        ];
-    });
+            return [
+                'jurusan' => $item->jurusan,
+                'total_siswa' => $total_siswa,
+                'persentase' => $persentase,
+            ];
+        });
 
-    return $hasil; // Collection of arrays
+        return $hasil; // Collection of arrays
+    }
+
+    public function exportJurusan()
+    {
+        return Excel::download(new JurusanKehadiranExport(), 'kehadiran_jurusan.xlsx');
+    }
+
+    // METHOD BARU UNTUK MENDAPATKAN SISWA BELUM ABSEN
+// METHOD BARU UNTUK MENDAPATKAN SISWA BELUM ABSEN
+    public function getSiswaBelumAbsen()
+    {
+        try {
+            // Log untuk debugging
+            \Log::info('Memulai getSiswaBelumAbsen');
+
+            // Ambil semua user dengan role siswa yang memiliki iduka_id (sudah diterima PKL) dan belum absen hari ini
+            $siswaBelumAbsen = User::where('role', 'siswa')
+                ->whereNotNull('iduka_id') // Menandakan siswa sudah diterima PKL
+                ->whereDoesntHave('absensi', function ($query) {
+                    $query->whereDate('tanggal', Carbon::today());
+                })
+                ->with(['konke', 'idukaDiterima']) // Load relasi yang diperlukan
+                ->get();
+
+            \Log::info('Jumlah siswa belum absen: ' . $siswaBelumAbsen->count());
+
+            // Format data untuk response
+            $data = $siswaBelumAbsen->map(function ($siswa, $index) {
+                return [
+                    'no' => $index + 1,
+                    'name' => $siswa->name ?? '-',
+                    'email' => $siswa->email ?? '-',
+                    'nip' => $siswa->nip ?? '-',
+                    'iduka_id' => $siswa->iduka_id ?? '-',
+                    'pembimbing_id' => $siswa->pembimbing_id ?? '-',
+                ];
+            });
+
+            \Log::info('Data siswa belum absen: ' . json_encode($data));
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            \Log::error('Error di getSiswaBelumAbsen: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
-
-public function exportJurusan()
-{
-    return Excel::download(new JurusanKehadiranExport(), 'kehadiran_jurusan.xlsx');
-}
-
-
-}
-
-

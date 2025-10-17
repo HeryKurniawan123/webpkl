@@ -157,9 +157,12 @@
 
         /* --- Bagian tanda tangan diubah di sini --- */
         .signature-section {
-            margin-top: 70px; /* jarak lebih jauh dari teks */
-            text-align: right; /* rata kanan */
-            padding-right: 80px; /* mendekati ujung kanan */
+            margin-top: 70px;
+            text-align: right;
+            position: relative;
+            right: 0;
+            width: calc(50% - 150px);
+            margin-left: auto;
         }
 
         .signature-section p {
@@ -169,7 +172,7 @@
         }
 
         .signature-section img {
-            width: 350px; /* diperbesar sedikit */
+            width: 350px;
             height: auto;
             display: inline-block;
             margin-top: 10px;
