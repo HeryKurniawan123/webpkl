@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>PKL SMKN 1 Kawali</title>
+    <title>TATA RIKSA K-ONE</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
 
@@ -243,7 +243,7 @@
         <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
             <a href="index.html" class="logo d-flex align-items-center">
-                <h1 class="sitename">PKL SMKN 1 Kawali</h1>
+                <h1 class="sitename">TATA RIKSA K-ONE</h1>
             </a>
 
             <nav id="navmenu" class="navmenu">
@@ -295,7 +295,7 @@
                 <div class="carousel-item active">
                     <div class="carousel-container">
                         <h2 class="animate__animated animate__fadeInDown">Selamat Datang di <span
-                                class="highlighted-text">PKL SMKN 1 Kawali</span></h2>
+                                class="highlighted-text">TATA RIKSA K-ONE</span></h2>
                         <p class="animate__animated animate__fadeInUp">Platform pendaftaran PKL untuk siswa SMK, lebih
                             mudah, cepat, dan praktis!</p>
                         <div class="button-group">
@@ -422,11 +422,11 @@
                             src="{{ asset('images/bljrr.png')}}"></div>
 
                     <div class="col-lg-7" data-aos="fade-up" data-aos-delay="100">
-                        <h2 class="inner-title">Tentang PKL SMKN 1 Kawali</h2>
+                        <h2 class="inner-title">Tentang TATA RIKSA K-ONE</h2>
                         <div class="our-story rounded-container">
                             <h4>Sejak 2025</h4>
                             <h3>Cerita Kita</h3>
-                            <p><b>PKL SMKN 1 Kawali</b> hadir untuk membantu siswa memulai perjalanan PKL mereka dengan
+                            <p><b>TATA RIKSA K-ONE</b> hadir untuk membantu siswa memulai perjalanan PKL mereka dengan
                                 mudah dan lancar.Kami memahami pentingnya pengalaman PKL yang tepat untuk membangun
                                 keterampilan dan pengetahuan di dunia profesional. Kami bekerja sama dengan berbagai
                                 perusahaan terkemuka untuk memberikan kesempatan terbaik bagi setiap siswa.</p>
@@ -438,7 +438,7 @@
                                 <li><i class="bi bi-check-circle"></i> <span>Platform yang mudah digunakan untuk semua
                                         siswa</span></li>
                             </ul>
-                            <p>Dengan <b>PKL SMKN 1 Kawali</b>, kamu dapat memilih dan mendaftar ke program PKL yang
+                            <p>Dengan <b>TATA RIKSA K-ONE</b>, kamu dapat memilih dan mendaftar ke program PKL yang
                                 sesuai dengan minat dan kebutuhanmu. Kami selalu berusaha memberikan pengalaman terbaik
                                 bagi setiap peserta.</p>
 
@@ -461,7 +461,7 @@
 
             <!-- Section Title -->
             <div class="container section-title" data-aos="fade-up">
-                <h2>Keunggulan PKL SMKN 1 Kawali</h2>
+                <h2>Keunggulan TATA RIKSA K-ONE</h2>
                 <p>Platform PKL yang dirancang untuk mempermudah siswa SMK dalam menemukan kesempatan PKL di berbagai
                     perusahaan terkemuka.</p>
             </div><!-- End Section Title -->
@@ -1035,7 +1035,7 @@
 
     <footer id="footer" class="footer light-background">
         <div class="container">
-            <h3 class="sitename">PKL SMKN 1 Kawali</h3>
+            <h3 class="sitename">TATA RIKSA K-ONE</h3>
             <p>Platform untuk memudahkan siswa SMK dalam mencari, mendaftar, dan menjalani Praktik Kerja Lapangan (PKL)
                 di dunia industri.</p>
 
@@ -1050,7 +1050,7 @@
 
             <div class="container mt-4">
                 <div class="copyright text-center">
-                    &copy; <strong class="sitename">PKL SMKN 1 Kawali</strong> | All Rights Reserved
+                    &copy; <strong class="sitename">TATA RIKSA K-ONE</strong> | All Rights Reserved
                 </div>
                 <div class="credits text-center">
                     Designed with ?? for K-One students.

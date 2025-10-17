@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
-    data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -65,6 +65,12 @@
         .navbar {
             background-color: #ffffff !important;
         }
+
+        .app-brand-text.demo {
+            font-size: 18px !important;
+            text-transform: uppercase !important;
+            font-variant: normal !important;
+        }
     </style>
 </head>
 
@@ -78,9 +84,10 @@
                 <div class="app-brand demo">
                     <a href="#" class="app-brand-link">
                         <span class="app-brand-logo demo">
-                            <img src="{{ asset('images/logo.png') }}" width="40px" height="40px" alt="">
+                            <img src="{{ asset('images/logoo.png') }}" width="40px" height="40px" alt="">
                         </span>
-                        <span class="app-brand-text demo fw-bolder ms-2">SMKN 1 KAWALI</span>
+                        <span class="app-brand-text demo fw-bolder ms-2" style="font-size: 18px;">TATA RIKSA
+                            K-ONE</span>
                     </a>
 
                     <a href="javascript:void(0);"
@@ -104,7 +111,7 @@
                         @elseif(auth()->user()->role == 'iduka') /dashboard/iduka
                         @elseif(auth()->user()->role == 'orangtua') /dashboard/orangtua
                         @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan
-                                @elseif(auth()->user()->role == 'kepsek') /dashboard/kepsek
+                        @elseif(auth()->user()->role == 'kepsek') /dashboard/kepsek
                                 @elseif(auth()->user()->role == 'pendamping') /dashboard/pendamping @endif"
                             class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
@@ -182,11 +189,11 @@
 
 
                         <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                                                        <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
-                                                            <i class="menu-icon tf-icons bx bx-collection"></i>
-                                                            <div data-i18n="Basic">Pembimbing</div>
-                                                        </a>
-                                                    </li> -->
+                                                            <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
+                                                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                                                <div data-i18n="Basic">Pembimbing</div>
+                                                            </a>
+                                                        </li> -->
                     @endif
 
 
@@ -286,8 +293,7 @@
                         </li>
                     @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li
-                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -599,7 +605,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function(event) {
+                button.addEventListener('click', function (event) {
                     event.preventDefault();
 
                     Swal.fire({
