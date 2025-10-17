@@ -95,7 +95,7 @@
 
     <div id="loader-overlay">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
-        <p class="mt-3 fw-semibold text-primary">Memproses login...</p>
+        <p class="mt-3 fw-semibold text-primary">Antosan Kedap...</p>
     </div>
 
     <!----------------------- Main Container -------------------------->
