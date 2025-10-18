@@ -14,11 +14,6 @@
                                     <p class="text-secondary mb-0">Monitoring kehadiran dan data siswa PKL</p>
                                 </div>
                                 <div class="d-flex gap-2">
-                                    <button class="btn btn-light border">
-                                        <a href="{{ route('export.jurusan') }}">
-                                            <i class="fas fa-file-excel"></i> Export Excel
-                                        </a>
-                                    </button>
                                     <!-- TOMBOL UNTUK SISWA BELUM DIKONFIRMASI -->
                                     <button class="btn btn-warning border" data-bs-toggle="modal"
                                         data-bs-target="#modalBelumDikonfirmasi">
@@ -27,7 +22,7 @@
                                     <!-- TOMBOL UNTUK SISWA BELUM ABSEN -->
                                     <button class="btn btn-danger border" data-bs-toggle="modal"
                                         data-bs-target="#modalBelumAbsen">
-                                        <i class="fas fa-user-slash"></i> Tidak Hadir
+                                        <i class="fas fa-user-slash"></i> Belum Absen
                                     </button>
                                 </div>
                             </div>
@@ -95,7 +90,7 @@
                                 </div>
                                 <div>
                                     <h3 class="mb-1 fw-bold text-dark">{{ $tidakHadir }}</h3>
-                                    <p class="text-secondary mb-0 small">Tidak Hadir</p>
+                                    <p class="text-secondary mb-0 small">Belum Absen</p>
                                 </div>
                             </div>
                         </div>
@@ -237,7 +232,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title" id="modalBelumAbsenLabel">
-                        Daftar Siswa Tidak Hadir Hari Ini
+                        Daftar siswa yang belum absen hari ini
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>

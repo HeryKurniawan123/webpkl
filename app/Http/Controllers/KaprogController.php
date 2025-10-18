@@ -584,7 +584,7 @@ class KaprogController extends Controller
             ->count();
 
         // Ambil semua ID siswa di jurusan kaprog
-        $siswaIds = User::whereHas('kelas', function ($q) use ($konkeId) {
+        $allSiswaIds = User::whereHas('kelas', function ($q) use ($konkeId) {
             $q->where('konke_id', $konkeId);
         })
             ->where('role', 'siswa')
@@ -593,7 +593,7 @@ class KaprogController extends Controller
 
         // Hadir hari ini
         $hadirHariIni = Absensi::whereDate('tanggal', $today)
-            ->whereIn('user_id', $siswaIds)
+            ->whereIn('user_id', $allSiswaIds)
             ->where(function ($q) {
                 $q->where('status', 'hadir')
                     ->orWhere('status', 'tepat_waktu')
@@ -603,24 +603,88 @@ class KaprogController extends Controller
             ->distinct('user_id')
             ->count('user_id');
 
-        // Tidak hadir (izin/sakit/alfa)
-        $tidakHadir = Absensi::whereDate('tanggal', $today)
-            ->whereIn('user_id', $siswaIds)
-            ->whereIn('status', ['izin', 'sakit', 'alfa'])
-            ->distinct('user_id')
-            ->count('user_id');
+        // PERBAIKAN: Hitung siswa yang tidak hadir menggunakan pendekatan yang sama seperti getSiswaBelumAbsen
+        // Ambil semua user_id yang sudah melakukan aktivitas hari ini dari semua tabel
+        $activeUserIds = DB::table('absensi')
+            ->whereDate('tanggal', $today)
+            ->whereIn('user_id', $allSiswaIds)
+            ->select('user_id')
+            ->union(
+                DB::table('absensi_pending')
+                    ->whereDate('tanggal', $today)
+                    ->whereIn('user_id', $allSiswaIds)
+                    ->select('user_id')
+            )
+            ->union(
+                DB::table('izin_pending')
+                    ->whereDate('tanggal', $today)
+                    ->whereIn('user_id', $allSiswaIds)
+                    ->select('user_id')
+            )
+            ->union(
+                DB::table('dinas_pending')
+                    ->whereDate('tanggal', $today)
+                    ->whereIn('user_id', $allSiswaIds)
+                    ->select('user_id')
+            )
+            ->pluck('user_id')
+            ->toArray();
+
+        \Log::info('Total ID siswa yang sudah aktivitas: ' . count($activeUserIds));
+
+        // Hitung siswa yang tidak hadir = total siswa - siswa yang sudah aktivitas
+        $tidakHadir = $totalSiswaPKL - count($activeUserIds);
+
+        // PERBAIKAN: Hitung siswa yang benar-benar tidak absen sama sekali
+        $tidakAbsenSamaSekali = $tidakHadir;
+
+        // Hitung siswa yang belum dikonfirmasi (absensi, izin, atau dinas pending)
+        $idsSiswaPending = DB::table('absensi_pending as ap')
+            ->join('users as u', 'ap.user_id', '=', 'u.id')
+            ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+            ->whereDate('ap.tanggal', $today)
+            ->where('ap.status_konfirmasi', 'pending')
+            ->where('k.konke_id', $konkeId)
+            ->pluck('u.id')
+            ->toArray();
+
+        $idsSiswaIzin = DB::table('izin_pending as ip')
+            ->join('users as u', 'ip.user_id', '=', 'u.id')
+            ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+            ->whereDate('ip.tanggal', $today)
+            ->where('ip.status_konfirmasi', 'pending')
+            ->where('k.konke_id', $konkeId)
+            ->pluck('u.id')
+            ->toArray();
+
+        $idsSiswaDinas = DB::table('dinas_pending as dp')
+            ->join('users as u', 'dp.user_id', '=', 'u.id')
+            ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+            ->whereDate('dp.tanggal', $today)
+            ->where('dp.status_konfirmasi', 'pending')
+            ->where('k.konke_id', $konkeId)
+            ->pluck('u.id')
+            ->toArray();
+
+        // Gabungkan semua ID siswa yang pending dan hapus duplikat
+        $allPendingIds = array_unique(array_merge($idsSiswaPending, $idsSiswaIzin, $idsSiswaDinas));
+        $belumDikonfirmasi = count($allPendingIds);
 
         // Tingkat kehadiran (%)
         $totalAbsenHariIni = max($totalSiswaPKL, 1);
         $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100, 2);
 
         // Ambil semua kelas dari jurusan kaprog
-        $kelasList = Kelas::with(['siswa' => function ($q) {
-            $q->where('role', 'siswa');
-        }])
-            ->withCount(['siswa' => function ($q) {
+        $kelasList = Kelas::with([
+            'siswa' => function ($q) {
                 $q->where('role', 'siswa');
-            }])
+            }
+        ])
+            ->withCount([
+                'siswa' => function ($q) {
+                    $q->where('role', 'siswa');
+                }
+            ])
             ->where('konke_id', $konkeId)
             ->orderBy('kelas', 'asc')
             ->orderBy('name_kelas', 'asc')
@@ -629,7 +693,7 @@ class KaprogController extends Controller
         // Ambil absensi hari ini untuk jurusan kaprog saja
         $absensiHariIni = Absensi::with('user')
             ->whereDate('tanggal', $today)
-            ->whereIn('user_id', $siswaIds)
+            ->whereIn('user_id', $allSiswaIds)
             ->get();
 
         // Analisis per kelas
@@ -713,17 +777,71 @@ class KaprogController extends Controller
             ];
         });
 
+        // PERBAIKAN: Ambil data jurusan untuk analisis kehadiran per jurusan
+        $jurusanData = $this->getKehadiranJurusan($konkeId);
+
+        // Debugging - tambahkan ini untuk melihat nilai
+        \Log::info('Debug Data Absensi:', [
+            'totalSiswaPKL' => $totalSiswaPKL,
+            'hadirHariIni' => $hadirHariIni,
+            'tidakHadir' => $tidakHadir,
+            'tidakAbsenSamaSekali' => $tidakAbsenSamaSekali,
+            'belumDikonfirmasi' => $belumDikonfirmasi,
+            'allSiswaIds' => $allSiswaIds,
+            'activeUserIds' => $activeUserIds,
+            'countActiveUserIds' => count($activeUserIds),
+        ]);
+
         return view('kaprog.absensi.index', compact(
             'totalSiswaPKL',
             'hadirHariIni',
             'tidakHadir',
+            'tidakAbsenSamaSekali',
+            'belumDikonfirmasi',
             'tingkatKehadiran',
             'kelasLabels',
             'kelasValues',
             'kelasAnalisis',
-            'detailAbsensiPerKelas'
+            'detailAbsensiPerKelas',
+            'jurusanData'
         ));
     }
+
+    // PERBAIKAN: Tambahkan method untuk mendapatkan data kehadiran per jurusan
+    private function getKehadiranJurusan($konkeId)
+    {
+        $jurusanData = DB::table('konkes')
+            ->leftJoin('users', 'users.konke_id', '=', 'konkes.id')
+            ->leftJoin('absensi', function ($join) {
+                $join->on('absensi.user_id', '=', 'users.id')
+                    ->whereDate('absensi.tanggal', Carbon::today());
+            })
+            ->select(
+                'konkes.id',
+                'konkes.name_konke as jurusan',
+                DB::raw('COUNT(DISTINCT users.id) as total_siswa'),
+                DB::raw('COUNT(absensi.id) as total_hadir_today')
+            )
+            ->where('users.role', 'siswa')
+            ->where('konkes.id', $konkeId)
+            ->groupBy('konkes.id', 'konkes.name_konke')
+            ->get();
+
+        $hasil = $jurusanData->map(function ($item) {
+            $total_siswa = (int) $item->total_siswa;
+            $total_hadir = (int) $item->total_hadir_today;
+            $persentase = $total_siswa > 0 ? round(($total_hadir / $total_siswa) * 100) : 0;
+
+            return [
+                'jurusan' => $item->jurusan,
+                'total_siswa' => $total_siswa,
+                'persentase' => $persentase,
+            ];
+        });
+
+        return $hasil;
+    }
+
     public function export(Request $request)
     {
         $tanggal = $request->input('tanggal', now()->toDateString());
@@ -749,4 +867,190 @@ class KaprogController extends Controller
 
         return $map[$jurusan] ?? $jurusan;
     }
+
+    // Tambahkan method ini di KaprogController.php
+
+    public function getSiswaBelumDikonfirmasi()
+    {
+        try {
+            $kaprog = auth()->user();
+            $konkeId = $kaprog->konke_id;
+
+            \Log::info('Memulai getSiswaBelumDikonfirmasi untuk konke_id: ' . $konkeId);
+
+            // Ambil data dari absensi_pending
+            $absensiPending = DB::table('absensi_pending as ap')
+                ->join('users as u', 'ap.user_id', '=', 'u.id')
+                ->leftJoin('idukas as i', 'u.iduka_id', '=', 'i.id')
+                ->leftJoin('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+                ->whereDate('ap.tanggal', Carbon::today())
+                ->where('ap.status_konfirmasi', 'pending')
+                ->where('k.konke_id', $konkeId)
+                ->select(
+                    'u.id',
+                    'u.name',
+                    'u.email',
+                    'u.iduka_id',
+                    'u.pembimbing_id',
+                    'ap.jam',
+                    DB::raw('COALESCE(i.nama, "-") as iduka_nama'),
+                    DB::raw('COALESCE(g.nama, "-") as pembimbing_nama'),
+                    DB::raw('"Absensi" as jenis'),
+                    DB::raw('"" as keterangan')
+                )
+                ->get();
+
+            // Ambil data dari izin_pending
+            $izinPending = DB::table('izin_pending as ip')
+                ->join('users as u', 'ip.user_id', '=', 'u.id')
+                ->leftJoin('idukas as i', 'u.iduka_id', '=', 'i.id')
+                ->leftJoin('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+                ->whereDate('ip.tanggal', Carbon::today())
+                ->where('ip.status_konfirmasi', 'pending')
+                ->where('k.konke_id', $konkeId)
+                ->select(
+                    'u.id',
+                    'u.name',
+                    'u.email',
+                    'u.iduka_id',
+                    'u.pembimbing_id',
+                    DB::raw('"" as jam'),
+                    DB::raw('COALESCE(i.nama, "-") as iduka_nama'),
+                    DB::raw('COALESCE(g.nama, "-") as pembimbing_nama'),
+                    DB::raw('"Izin" as jenis'),
+                    'ip.keterangan'
+                )
+                ->get();
+
+            // Ambil data dari dinas_pending
+            $dinasPending = DB::table('dinas_pending as dp')
+                ->join('users as u', 'dp.user_id', '=', 'u.id')
+                ->leftJoin('idukas as i', 'u.iduka_id', '=', 'i.id')
+                ->leftJoin('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+                ->whereDate('dp.tanggal', Carbon::today())
+                ->where('dp.status_konfirmasi', 'pending')
+                ->where('k.konke_id', $konkeId)
+                ->select(
+                    'u.id',
+                    'u.name',
+                    'u.email',
+                    'u.iduka_id',
+                    'u.pembimbing_id',
+                    DB::raw('"" as jam'),
+                    DB::raw('COALESCE(i.nama, "-") as iduka_nama'),
+                    DB::raw('COALESCE(g.nama, "-") as pembimbing_nama'),
+                    DB::raw('"Dinas" as jenis'),
+                    'dp.keterangan'
+                )
+                ->get();
+
+            // Gabungkan semua data
+            $allPending = $absensiPending->concat($izinPending)->concat($dinasPending);
+
+            $data = [];
+            foreach ($allPending as $index => $siswa) {
+                $data[] = [
+                    'no' => $index + 1,
+                    'name' => $siswa->name ?? '-',
+                    'email' => $siswa->email ?? '-',
+                    'iduka' => $siswa->iduka_nama ?? '-',
+                    'pembimbing' => $siswa->pembimbing_nama ?? '-',
+                    'jenis' => $siswa->jenis ?? '-',
+                    'keterangan' => $siswa->keterangan ?? '-',
+                    'waktu_absen' => $siswa->jam ? substr($siswa->jam, 0, 5) : '-',
+                ];
+            }
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            \Log::error('Error di getSiswaBelumDikonfirmasi: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getSiswaBelumAbsen()
+{
+    try {
+        \Log::info('Memulai getSiswaBelumAbsen');
+
+        $kaprog = auth()->user();
+        $konkeId = $kaprog->konke_id;
+        $today = Carbon::today();
+
+        // Ambil semua ID siswa di jurusan kaprog
+        $allSiswaIds = User::whereHas('kelas', function ($q) use ($konkeId) {
+            $q->where('konke_id', $konkeId);
+        })
+            ->where('role', 'siswa')
+            ->pluck('id')
+            ->toArray();
+
+        \Log::info('Total siswa PKL: ' . count($allSiswaIds));
+
+        // Ambil semua user_id yang sudah melakukan aktivitas hari ini dari semua tabel
+        $activeUserIds = DB::table('absensi')
+            ->whereDate('tanggal', $today)
+            ->whereIn('user_id', $allSiswaIds)
+            ->select('user_id')
+            ->union(
+                DB::table('absensi_pending')
+                    ->whereDate('tanggal', $today)
+                    ->whereIn('user_id', $allSiswaIds)
+                    ->select('user_id')
+            )
+            ->union(
+                DB::table('izin_pending')
+                    ->whereDate('tanggal', $today)
+                    ->whereIn('user_id', $allSiswaIds)
+                    ->select('user_id')
+            )
+            ->union(
+                DB::table('dinas_pending')
+                    ->whereDate('tanggal', $today)
+                    ->whereIn('user_id', $allSiswaIds)
+                    ->select('user_id')
+            )
+            ->pluck('user_id')
+            ->toArray();
+
+        \Log::info('Total ID siswa yang sudah aktivitas: ' . count($activeUserIds));
+
+        // Query utama: ambil siswa yang tidak ada di daftar user_id yang sudah aktivitas
+        $siswaBelumAbsen = User::where('role', 'siswa')
+            ->whereIn('users.id', $allSiswaIds) // PERBAIKAN: Tambahkan prefix tabel
+            ->whereNotIn('users.id', $activeUserIds) // PERBAIKAN: Tambahkan prefix tabel
+            ->leftJoin('idukas', 'users.iduka_id', '=', 'idukas.id')
+            ->leftJoin('gurus', 'users.pembimbing_id', '=', 'gurus.id')
+            ->select(
+                'users.id',
+                'users.name',
+                'users.email',
+                DB::raw('COALESCE(idukas.nama, "-") as iduka_nama'),
+                DB::raw('COALESCE(gurus.nama, gurus.nama, "-") as pembimbing_nama')
+            )
+            ->get();
+
+        \Log::info('Jumlah siswa belum absen: ' . $siswaBelumAbsen->count());
+
+        // Format data
+        $data = $siswaBelumAbsen->map(function ($siswa, $index) {
+            return [
+                'no' => $index + 1,
+                'name' => $siswa->name ?? '-',
+                'email' => $siswa->email ?? '-',
+                'iduka' => $siswa->iduka_nama ?? '-',
+                'pembimbing' => $siswa->pembimbing_nama ?? '-',
+            ];
+        });
+
+        return response()->json($data);
+    } catch (\Exception $e) {
+        \Log::error('Error di getSiswaBelumAbsen: ' . $e->getMessage());
+        \Log::error('Trace: ' . $e->getTraceAsString());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
 }
