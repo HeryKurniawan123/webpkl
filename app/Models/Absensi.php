@@ -17,7 +17,7 @@ class Absensi extends Model
         'tanggal',
         'jam_masuk',
         'jam_pulang',
-        'status', // tetap 'hadir' untuk dinas luar
+        'status',
         'keterangan',
         'latitude',
         'longitude',
@@ -33,7 +33,7 @@ class Absensi extends Model
         'keterangan_izin',
         'jenis_dinas',
         'keterangan_dinas',
-        'status_dinas' // 'disetujui', 'pending', 'ditolak'
+        'status_dinas'
     ];
 
     protected $dates = ['tanggal'];

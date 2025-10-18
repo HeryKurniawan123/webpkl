@@ -40,7 +40,7 @@ class AbsensiController extends Controller
                 ->limit(10)
                 ->get();
 
-            // Determine if student can check out
+        // Determine if student can check out
             if ($absensiHariIni) {
                 if ($absensiHariIni->status_dinas === 'disetujui') {
                     // Jika sedang dinas luar, bisa pulang langsung tanpa harus masuk

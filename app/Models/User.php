@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,23 +11,28 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
-        'nip',
-        'kelas_id',
-        'konke_id',
         'email',
         'password',
-        'tahun_ajaran',
         'role',
         'iduka_id',
+        'pembimbing_id',
+        'kelas_id',
+        'konke_id',
+        'tahun_ajaran',
         'lokasi_pkl_id',
         'profile_photo'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
     // Relasi ke tabel gurus (One to One)
@@ -36,7 +40,6 @@ class User extends Authenticatable
     {
         return $this->hasOne(Guru::class, 'user_id');
     }
-
 
     // Relasi ke tabel konkes (Many to One)
     public function konke()
@@ -50,10 +53,10 @@ class User extends Authenticatable
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
-    // Relasi ke Iduka (One to One)
+    // Relasi ke Iduka (Many to One) - PERBAIKAN
     public function iduka()
     {
-        return $this->hasOne(Iduka::class, 'user_id');
+        return $this->belongsTo(Iduka::class, 'iduka_id', 'id');
     }
 
     // Relasi ke Kependik (One to One, by email)
@@ -68,13 +71,10 @@ class User extends Authenticatable
         return $this->hasOne(DataPribadi::class, 'user_id');
     }
 
-
     public function dataPersuratan()
     {
         return $this->hasOne(DataPribadiPersuratan::class, 'user_id', 'id');
-
     }
-
 
     public function siswa()
     {
@@ -86,9 +86,16 @@ class User extends Authenticatable
         return $this->hasOne(Pembimbing::class, 'user_id', 'id');
     }
 
+    // Relasi ke Absensi (One to Many)
     public function absensi()
     {
-        return $this->hasMany(Absensi::class, 'nis', 'nip');
+        return $this->hasMany(Absensi::class, 'user_id', 'id');
+    }
+
+    // Relasi ke AbsensiPending (One to Many)
+    public function absensiPending()
+    {
+        return $this->hasMany(AbsensiPending::class, 'user_id', 'id');
     }
 
     public function lokasiPkl()
@@ -101,32 +108,14 @@ class User extends Authenticatable
         return $this->belongsTo(Iduka::class, 'iduka_id', 'id');
     }
 
+    // Relasi ke Guru sebagai pembimbing (Many to One) - PERBAIKAN
     public function pembimbing()
     {
-        return $this->belongsTo(Guru::class, 'pembimbing_id');
+        return $this->belongsTo(Guru::class, 'pembimbing_id', 'id');
     }
 
-     public function monitoring()
+    public function monitoring()
     {
         return $this->hasMany(Monitoring::class, 'guru_id');
     }
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
 }

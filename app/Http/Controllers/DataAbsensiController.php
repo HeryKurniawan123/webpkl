@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exports\JurusanKehadiranExport;
 use App\Models\Absensi;
+use App\Models\AbsensiPending;
+use App\Models\DinasPending;
+use App\Models\IzinPending;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -16,15 +19,30 @@ class DataAbsensiController extends Controller
     {
         // Hitung total siswa PKL (siswa dengan role siswa dan memiliki iduka_id)
         $totalSiswaPKL = User::where('role', 'siswa')
+            ->whereNotNull('iduka_id')
             ->count();
 
-        // Kehadiran hari ini
-        $hadirHariIni = DB::table('absensi')
-            ->whereDate('tanggal', Carbon::today())
+        // Kehadiran hari ini (sudah dikonfirmasi)
+        $hadirHariIni = Absensi::whereDate('tanggal', Carbon::today())
             ->distinct('user_id')
             ->count('user_id');
 
-        $tidakHadir = $totalSiswaPKL - $hadirHariIni;
+        // Siswa yang sudah absensi tapi masih pending (belum dikonfirmasi)
+        // Termasuk absensi biasa, izin, dan dinas yang masih pending
+        $belumDikonfirmasi = AbsensiPending::whereDate('tanggal', Carbon::today())
+            ->distinct('user_id')
+            ->count('user_id') +
+            IzinPending::whereDate('tanggal', Carbon::today())
+            ->where('status_konfirmasi', 'pending')
+            ->distinct('user_id')
+            ->count('user_id') +
+            DinasPending::whereDate('tanggal', Carbon::today())
+            ->where('status_konfirmasi', 'pending')
+            ->distinct('user_id')
+            ->count('user_id');
+
+        // Siswa yang benar-benar tidak absen (tidak hadir)
+        $tidakHadir = $totalSiswaPKL - $hadirHariIni - $belumDikonfirmasi;
 
         $tingkatKehadiran = $totalSiswaPKL > 0
             ? round(($hadirHariIni / $totalSiswaPKL) * 100, 2)
@@ -35,13 +53,12 @@ class DataAbsensiController extends Controller
         for ($i = 6; $i >= 0; $i--) {
             $tanggal = Carbon::today()->subDays($i)->toDateString();
 
-            $hadir = DB::table('absensi')
-                ->whereDate('tanggal', $tanggal)
+            $hadir = Absensi::whereDate('tanggal', $tanggal)
                 ->distinct('user_id')
                 ->count('user_id');
 
             $mingguan[] = [
-                'tanggal' => Carbon::parse($tanggal)->translatedFormat('l'), // Senin, Selasa...
+                'tanggal' => Carbon::parse($tanggal)->translatedFormat('l'),
                 'hadir' => $hadir,
             ];
         }
@@ -51,6 +68,7 @@ class DataAbsensiController extends Controller
         return view('data.absensi-siswa.index', compact(
             'totalSiswaPKL',
             'hadirHariIni',
+            'belumDikonfirmasi',
             'tidakHadir',
             'tingkatKehadiran',
             'mingguan',
@@ -60,14 +78,13 @@ class DataAbsensiController extends Controller
 
     public function chartData(Request $request)
     {
-        $filter = $request->get('filter', '7'); // default 7 hari
+        $filter = $request->get('filter', '7');
         $labels = [];
         $values = [];
 
         if ($filter === 'today') {
             $tanggal = Carbon::today()->toDateString();
-            $hadir = DB::table('absensi')
-                ->whereDate('tanggal', $tanggal)
+            $hadir = Absensi::whereDate('tanggal', $tanggal)
                 ->distinct('user_id')
                 ->count('user_id');
 
@@ -78,8 +95,7 @@ class DataAbsensiController extends Controller
             for ($i = $days - 1; $i >= 0; $i--) {
                 $tanggal = Carbon::today()->subDays($i)->toDateString();
 
-                $hadir = DB::table('absensi')
-                    ->whereDate('tanggal', $tanggal)
+                $hadir = Absensi::whereDate('tanggal', $tanggal)
                     ->distinct('user_id')
                     ->count('user_id');
 
@@ -94,44 +110,14 @@ class DataAbsensiController extends Controller
         ]);
     }
 
-    public function getAttendanceChart(Request $request)
-    {
-        $filter = $request->get('filter', '7'); // default 7 hari
-        $labels = [];
-        $values = [];
-
-        if ($filter === 'today') {
-            $labels = [Carbon::today()->format('d M Y')];
-            $values = [Absensi::whereDate('tanggal', Carbon::today())->count()];
-        } else {
-            $days = $filter === '30' ? 30 : ($filter === '90' ? 90 : 7);
-
-            $data = Absensi::select(
-                DB::raw('DATE(tanggal) as tgl'),
-                DB::raw('COUNT(*) as total')
-            )
-                ->whereDate('tanggal', '>=', Carbon::today()->subDays($days))
-                ->groupBy('tgl')
-                ->orderBy('tgl', 'asc')
-                ->get();
-
-            $labels = $data->pluck('tgl')->map(fn($d) => Carbon::parse($d)->translatedFormat('d M'))->toArray();
-            $values = $data->pluck('total')->toArray();
-        }
-
-        return response()->json([
-            'labels' => $labels,
-            'values' => $values
-        ]);
-    }
-
+    // PERBAIKAN: Menggunakan kolom yang benar
     public function getJurusanChart()
     {
         $data = DB::table('users')
             ->join('konkes', 'users.konke_id', '=', 'konkes.id')
-            ->select('konkes.nama as jurusan', DB::raw('COUNT(users.id) as total'))
+            ->select('konkes.name_konke as jurusan', DB::raw('COUNT(users.id) as total'))
             ->where('users.role', 'siswa')
-            ->groupBy('konkes.nama')
+            ->groupBy('konkes.name_konke')
             ->get();
 
         $labels = $data->pluck('jurusan');
@@ -145,10 +131,8 @@ class DataAbsensiController extends Controller
 
     public function getKehadiranJurusan()
     {
-        // Hitung jumlah siswa per jurusan dan kehadiran hari ini per jurusan
         $jurusanData = DB::table('konkes')
             ->leftJoin('users', 'users.konke_id', '=', 'konkes.id')
-            // join absensi hanya yang tanggal = hari ini (ubah sesuai kebutuhan)
             ->leftJoin('absensi', function ($join) {
                 $join->on('absensi.user_id', '=', 'users.id')
                     ->whereDate('absensi.tanggal', Carbon::today());
@@ -163,7 +147,6 @@ class DataAbsensiController extends Controller
             ->groupBy('konkes.id', 'konkes.name_konke')
             ->get();
 
-        // map jadi array rapi
         $hasil = $jurusanData->map(function ($item) {
             $total_siswa = (int) $item->total_siswa;
             $total_hadir = (int) $item->total_hadir_today;
@@ -176,7 +159,7 @@ class DataAbsensiController extends Controller
             ];
         });
 
-        return $hasil; // Collection of arrays
+        return $hasil;
     }
 
     public function exportJurusan()
@@ -184,45 +167,163 @@ class DataAbsensiController extends Controller
         return Excel::download(new JurusanKehadiranExport(), 'kehadiran_jurusan.xlsx');
     }
 
-    // METHOD BARU UNTUK MENDAPATKAN SISWA BELUM ABSEN
-// METHOD BARU UNTUK MENDAPATKAN SISWA BELUM ABSEN
-    public function getSiswaBelumAbsen()
+    public function getSiswaBelumDikonfirmasi()
     {
         try {
-            // Log untuk debugging
-            \Log::info('Memulai getSiswaBelumAbsen');
-
-            // Ambil semua user dengan role siswa yang memiliki iduka_id (sudah diterima PKL) dan belum absen hari ini
-            $siswaBelumAbsen = User::where('role', 'siswa')
-                ->whereNotNull('iduka_id') // Menandakan siswa sudah diterima PKL
-                ->whereDoesntHave('absensi', function ($query) {
-                    $query->whereDate('tanggal', Carbon::today());
-                })
-                ->with(['konke', 'idukaDiterima']) // Load relasi yang diperlukan
+            // Ambil data dari absensi_pending
+            $absensiPending = DB::table('absensi_pending as ap')
+                ->join('users as u', 'ap.user_id', '=', 'u.id')
+                ->leftJoin('idukas as i', 'u.iduka_id', '=', 'i.id')
+                ->leftJoin('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->whereDate('ap.tanggal', Carbon::today())
+                ->where('ap.status_konfirmasi', 'pending')
+                ->select(
+                    'u.id',
+                    'u.name',
+                    'u.email',
+                    'u.iduka_id',
+                    'u.pembimbing_id',
+                    'ap.jam',
+                    DB::raw('COALESCE(i.nama, "-") as iduka_nama'),
+                    DB::raw('COALESCE(g.nama, "-") as pembimbing_nama'),
+                    DB::raw('"Absensi" as jenis'),
+                    DB::raw('"" as keterangan')
+                )
                 ->get();
 
-            \Log::info('Jumlah siswa belum absen: ' . $siswaBelumAbsen->count());
+            // Ambil data dari izin_pending
+            $izinPending = DB::table('izin_pending as ip')
+                ->join('users as u', 'ip.user_id', '=', 'u.id')
+                ->leftJoin('idukas as i', 'u.iduka_id', '=', 'i.id')
+                ->leftJoin('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->whereDate('ip.tanggal', Carbon::today())
+                ->where('ip.status_konfirmasi', 'pending')
+                ->select(
+                    'u.id',
+                    'u.name',
+                    'u.email',
+                    'u.iduka_id',
+                    'u.pembimbing_id',
+                    DB::raw('"" as jam'),
+                    DB::raw('COALESCE(i.nama, "-") as iduka_nama'),
+                    DB::raw('COALESCE(g.nama, "-") as pembimbing_nama'),
+                    DB::raw('"Izin" as jenis'),
+                    'ip.keterangan'
+                )
+                ->get();
 
-            // Format data untuk response
-            $data = $siswaBelumAbsen->map(function ($siswa, $index) {
-                return [
+            // Ambil data dari dinas_pending
+            $dinasPending = DB::table('dinas_pending as dp')
+                ->join('users as u', 'dp.user_id', '=', 'u.id')
+                ->leftJoin('idukas as i', 'u.iduka_id', '=', 'i.id')
+                ->leftJoin('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->whereDate('dp.tanggal', Carbon::today())
+                ->where('dp.status_konfirmasi', 'pending')
+                ->select(
+                    'u.id',
+                    'u.name',
+                    'u.email',
+                    'u.iduka_id',
+                    'u.pembimbing_id',
+                    DB::raw('"" as jam'),
+                    DB::raw('COALESCE(i.nama, "-") as iduka_nama'),
+                    DB::raw('COALESCE(g.nama, "-") as pembimbing_nama'),
+                    DB::raw('"Dinas" as jenis'),
+                    'dp.keterangan'
+                )
+                ->get();
+
+            // Gabungkan semua data
+            $allPending = $absensiPending->concat($izinPending)->concat($dinasPending);
+
+            $data = [];
+            foreach ($allPending as $index => $siswa) {
+                $data[] = [
                     'no' => $index + 1,
                     'name' => $siswa->name ?? '-',
                     'email' => $siswa->email ?? '-',
-                    'nip' => $siswa->nip ?? '-',
-                    'iduka_id' => $siswa->iduka_id ?? '-',
-                    'pembimbing_id' => $siswa->pembimbing_id ?? '-',
+                    'iduka' => $siswa->iduka_nama ?? '-',
+                    'pembimbing' => $siswa->pembimbing_nama ?? '-',
+                    'jenis' => $siswa->jenis ?? '-',
+                    'keterangan' => $siswa->keterangan ?? '-',
+                    'waktu_absen' => $siswa->jam ? substr($siswa->jam, 0, 5) : '-',
                 ];
-            });
-
-            \Log::info('Data siswa belum absen: ' . json_encode($data));
+            }
 
             return response()->json($data);
         } catch (\Exception $e) {
-            \Log::error('Error di getSiswaBelumAbsen: ' . $e->getMessage());
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
+            \Log::error('Error di getSiswaBelumDikonfirmasi: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    // Method untuk mendapatkan siswa yang benar-benar tidak absen
+public function getSiswaBelumAbsen()
+{
+    try {
+        \Log::info('Memulai getSiswaBelumAbsen');
+
+        // Ambil semua siswa PKL
+        $allSiswa = User::where('role', 'siswa')
+            ->whereNotNull('iduka_id')
+            ->get();
+
+        \Log::info('Total siswa PKL: ' . $allSiswa->count());
+
+        // Ambil ID siswa yang sudah ada di absensi (sudah konfirmasi)
+        $idsSiswaHadir = Absensi::whereDate('tanggal', Carbon::today())
+            ->pluck('user_id')
+            ->toArray();
+
+        // Ambil ID siswa yang ada di absensi_pending (belum konfirmasi)
+        $idsSiswaPending = AbsensiPending::whereDate('tanggal', Carbon::today())
+            ->pluck('user_id')
+            ->toArray();
+
+        // Ambil ID siswa yang ada di izin_pending
+        $idsSiswaIzin = IzinPending::whereDate('tanggal', Carbon::today())
+            ->pluck('user_id')
+            ->toArray();
+
+        // Ambil ID siswa yang ada di dinas_pending
+        $idsSiswaDinas = DinasPending::whereDate('tanggal', Carbon::today())
+            ->pluck('user_id')
+            ->toArray();
+
+        // Gabungkan semua ID siswa yang sudah melakukan aktivitas
+        $allIds = array_merge($idsSiswaHadir, $idsSiswaPending, $idsSiswaIzin, $idsSiswaDinas);
+        \Log::info('Total ID siswa yang sudah aktivitas: ' . count($allIds));
+
+        // Filter siswa yang belum melakukan aktivitas sama sekali
+        $siswaBelumAbsen = $allSiswa->filter(function ($siswa) use ($allIds) {
+            return !in_array($siswa->id, $allIds);
+        });
+
+        \Log::info('Jumlah siswa belum absen: ' . $siswaBelumAbsen->count());
+
+        // Format data dengan query langsung untuk menghindari error relasi
+        $data = [];
+        $index = 1;
+
+        foreach ($siswaBelumAbsen as $siswa) {
+            // Ambil data iduka dan pembimbing secara manual
+            $iduka = DB::table('idukas')->where('id', $siswa->iduka_id)->first();
+            $pembimbing = DB::table('gurus')->where('id', $siswa->pembimbing_id)->first();
+
+            $data[] = [
+                'no' => $index++,
+                'name' => $siswa->name ?? '-',
+                'email' => $siswa->email ?? '-',
+                'iduka' => $iduka->nama ?? '-', // Menggunakan kolom 'nama' bukan 'nama_perusahaan'
+                'pembimbing' => $pembimbing->nama ?? $pembimbing->name ?? '-',
+            ];
+        }
+
+        return response()->json($data);
+    } catch (\Exception $e) {
+        \Log::error('Error di getSiswaBelumAbsen: ' . $e->getMessage());
+        \Log::error('Trace: ' . $e->getTraceAsString());
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
 }

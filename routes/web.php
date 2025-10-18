@@ -19,6 +19,7 @@ use App\Http\Controllers\SuratPengantarPklController;
 use App\Http\Controllers\UsersController;
 use App\Models\Cp;
 use App\Models\Guru;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\DataController;
@@ -633,20 +634,18 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
     Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
 });
 
-//data absensi siswa
 Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
     Route::get('/data-absensi', [DataAbsensiController::class, 'index'])->name('data-absen.index');
-
     Route::get('/absensi/chart-data', [DataAbsensiController::class, 'chartData']);
-
-    Route::get('/absensi/chart-data', [DataAbsensiController::class, 'getAttendanceChart']);
     Route::get('/absensi/jurusan-data', [DataAbsensiController::class, 'getJurusanChart']);
+    Route::get('/data-absensi/siswa-belum-dikonfirmasi', [DataAbsensiController::class, 'getSiswaBelumDikonfirmasi'])->name('data-absensi.siswa-belum-dikonfirmasi');
     Route::get('/data-absensi/siswa-belum-absen', [DataAbsensiController::class, 'getSiswaBelumAbsen'])->name('data-absensi.siswa-belum-absen');
 
     //export
     Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])
         ->name('export.jurusan');
 });
+
 
 Route::get('/logout', [HakAksesController::class, 'logout'])->name('logout');
 

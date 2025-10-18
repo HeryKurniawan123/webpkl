@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Guru extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'nama',
         'nik',
@@ -22,54 +23,38 @@ class Guru extends Model
         'konke_id',
         'user_id',
     ];
+
     protected $hidden = [
         'password',
     ];
-    // Relasi ke Proker (Many to One)
-    public function proker()
-    {
-        return $this->belongsTo(Proker::class, 'konke_id', 'id');
-    }
 
-    // Relasi ke Guru (One to Many)
-    public function gurus()
-    {
-        return $this->hasMany(Guru::class, 'konke_id');
-    }
-
-    // Relasi ke CP (One to Many)
-    public function cp()
-    {
-        return $this->hasMany(Cp::class, 'konke_id');
-    }
-
-    // Relasi ke Data Pribadi (One to Many)
-    public function dataPribadis()
-    {
-        return $this->hasMany(DataPribadi::class, 'konke_id');
-    }
+    // Relasi ke User
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    // Relasi ke Konke
     public function konke()
     {
         return $this->belongsTo(Konke::class, 'konke_id', 'id');
     }
 
+    // Relasi ke Siswa (sebagai pembimbing)
     public function siswas()
     {
         return $this->hasMany(User::class, 'pembimbing_id');
     }
 
+    // Relasi ke AbsensiPending
     public function absensiPending()
     {
         return $this->hasMany(AbsensiPending::class, 'pembimbing_id');
     }
 
+    // Relasi ke Monitoring
     public function monitoring()
     {
         return $this->hasMany(Monitoring::class, 'guru_id');
     }
-
 }
