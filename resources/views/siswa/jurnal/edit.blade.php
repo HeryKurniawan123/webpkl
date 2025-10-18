@@ -1,66 +1,145 @@
-<div class="row">
+{{-- File: resources/views/siswa/jurnal/partials/edit.blade.php --}}
+
+<div class="row g-3">
     <div class="col-md-6">
-        <div class="form-group">
-            <label class="form-label">Tanggal</label>
-            <input type="date" class="form-control" name="tgl" value="{{ $jurnal->tgl }}" required>
-        </div>
+        <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
+            <i class="bi bi-calendar3 me-1"></i>Tanggal
+        </label>
+        <input type="date" class="form-control form-control-lg" name="tgl" value="{{ old('tgl', $jurnal->tgl) }}" required>
     </div>
     <div class="col-md-6">
-        <div class="form-group">
-            <label class="form-label">Foto Kegiatan</label>
-            <input type="file" class="form-control" name="foto" accept="image/*">
-            @if ($jurnal->foto)
-                <small class="text-muted">Foto saat ini:
-                    <a href="{{ $jurnal->foto }}" target="_blank">Lihat foto</a>
+        <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
+            <i class="bi bi-image me-1"></i>Foto Kegiatan
+        </label>
+        <input type="file" class="form-control form-control-lg" name="foto" accept="image/*" id="editFotoInput">
+        @if($jurnal->foto)
+            <div class="mt-2 p-2 bg-light rounded">
+                <small class="text-muted d-flex align-items-center">
+                    <i class="bi bi-image-fill text-primary me-2"></i>
+                    <span>Foto saat ini: </span>
+                    <a href="{{ asset($jurnal->foto) }}" target="_blank" class="text-primary ms-1 text-decoration-none fw-semibold">
+                        <i class="bi bi-eye me-1"></i>Lihat foto
+                    </a>
                 </small>
-            @endif
-        </div>
+            </div>
+        @else
+            <small class="text-muted d-block mt-1">
+                <i class="bi bi-info-circle me-1"></i>Belum ada foto. Upload foto baru jika diperlukan.
+            </small>
+        @endif
+        <small class="text-muted d-block mt-1">Format: JPG, PNG, GIF (Max: 2MB)</small>
     </div>
 </div>
 
-<div class="row">
+<div class="row g-3 mt-1">
     <div class="col-md-6">
-        <div class="form-group">
-            <label class="form-label">Jam Mulai</label>
-            <input type="time" class="form-control" name="jam_mulai" value="{{ $jurnal->jam_mulai }}" required>
-        </div>
+        <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
+            <i class="bi bi-clock me-1"></i>Jam Mulai
+        </label>
+        <input type="time" class="form-control form-control-lg" name="jam_mulai" value="{{ old('jam_mulai', $jurnal->jam_mulai) }}" required>
     </div>
     <div class="col-md-6">
-        <div class="form-group">
-            <label class="form-label">Jam Selesai</label>
-            <input type="time" class="form-control" name="jam_selesai" value="{{ $jurnal->jam_selesai }}" required>
-        </div>
+        <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
+            <i class="bi bi-clock-history me-1"></i>Jam Selesai
+        </label>
+        <input type="time" class="form-control form-control-lg" name="jam_selesai" value="{{ old('jam_selesai', $jurnal->jam_selesai) }}" required>
     </div>
 </div>
 
-<div class="form-group">
-    <label class="form-label">Uraian Kegiatan</label>
-    <textarea class="form-control" name="uraian" rows="5" required>{{ $jurnal->uraian }}</textarea>
-</div>
-
-<div class="form-check mt-2">
-    <input type="checkbox" class="form-check-input" name="is_pengetahuan_baru" id="is_pengetahuan_baru" value="1"
-        {{ old('is_pengetahuan_baru', $jurnal->is_pengetahuan_baru ?? 0) ? 'checked' : '' }}>
-    <label class="form-check-label" for="is_pengetahuan_baru">
-        Termasuk pengetahuan baru
+<div class="mt-3">
+    <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
+        <i class="bi bi-file-text me-1"></i>Uraian Kegiatan
     </label>
+    <textarea class="form-control form-control-lg" name="uraian" rows="5" 
+        placeholder="Tuliskan uraian kegiatan yang dilakukan..." required>{{ old('uraian', $jurnal->uraian) }}</textarea>
+    <small class="text-muted">
+        <i class="bi bi-info-circle me-1"></i>Maksimal 1000 karakter
+    </small>
 </div>
 
-<div class="form-check mt-2">
-    <input type="checkbox" class="form-check-input" name="is_dalam_mapel" id="is_dalam_mapel" value="1"
-        {{ old('is_dalam_mapel', $jurnal->is_dalam_mapel ?? 0) ? 'checked' : '' }}>
-    <label class="form-check-label" for="is_dalam_mapel">
-        Kegiatan ada dalam mapel sekolah
-    </label>
+<div class="mt-4 p-3 bg-light rounded">
+    <div class="form-check mb-3">
+        <input type="checkbox" class="form-check-input" name="is_pengetahuan_baru" 
+            id="edit_is_pengetahuan_baru" value="1" 
+            {{ old('is_pengetahuan_baru', $jurnal->is_pengetahuan_baru) ? 'checked' : '' }}>
+        <label class="form-check-label fw-semibold" for="edit_is_pengetahuan_baru">
+            <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+            Termasuk pengetahuan baru
+        </label>
+    </div>
+
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input" name="is_dalam_mapel" 
+            id="edit_is_dalam_mapel" value="1" 
+            {{ old('is_dalam_mapel', $jurnal->is_dalam_mapel) ? 'checked' : '' }}>
+        <label class="form-check-label fw-semibold" for="edit_is_dalam_mapel">
+            <i class="bi bi-book-fill text-primary me-1"></i>
+            Kegiatan ada dalam mapel sekolah
+        </label>
+    </div>
 </div>
 
-@if ($jurnal->foto)
-    <div class="form-group mt-3">
-        <label class="form-label">Foto Saat Ini</label>
-        <div class="text-center">
-            <img src="{{ $jurnal->foto }}" alt="Foto Kegiatan" class="img-fluid rounded shadow-sm"
-                style="max-height: 200px; object-fit: cover;">
+@if($jurnal->status === 'rejected')
+    <div class="alert alert-danger mt-4 border-0 shadow-sm">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+            <div>
+                <strong class="d-block mb-1">Jurnal Ditolak</strong>
+                <small>Silakan perbaiki jurnal Anda dan kirim ulang untuk validasi.</small>
+            </div>
         </div>
-        <small class="text-muted">Upload foto baru jika ingin mengganti foto yang ada</small>
     </div>
 @endif
+
+<style>
+    .form-control-lg {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+    }
+    
+    .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    }
+    
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+    
+    .form-check-input:checked {
+        background-color: #6366f1;
+        border-color: #6366f1;
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+        user-select: none;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .alert-danger {
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
