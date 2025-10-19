@@ -233,27 +233,81 @@ class AbsensiController extends Controller
         }
     }
 
-    public function pulang(Request $request)
-    {
-        Log::info('=== ABSEN PULANG DIPANGGIL ===', [
-            'user_id' => Auth::id(),
-            'request_data' => $request->all()
-        ]);
+  public function pulang(Request $request)
+{
+    Log::info('=== ABSEN PULANG DIPANGGIL ===', [
+        'user_id' => Auth::id(),
+        'request_data' => $request->all()
+    ]);
 
+    // Cari record absensi hari ini terlebih dahulu untuk menentukan validasi
+    $absensiHariIni = Absensi::where('user_id', Auth::id())
+        ->whereDate('tanggal', Carbon::today())
+        ->first();
+
+    // Jika sedang dinas luar, validasi berbeda
+    if ($absensiHariIni && $absensiHariIni->status_dinas === 'disetujui') {
+        $request->validate([
+            'lokasi_id' => 'required|string',
+        ]);
+    } else {
         $request->validate([
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'lokasi_id' => 'required|string',
             'accuracy' => 'required|numeric|min:0'
         ]);
+    }
 
-        try {
-            DB::beginTransaction();
+    try {
+        DB::beginTransaction();
 
-            $user = Auth::user();
+        $user = Auth::user();
 
-            if (!$user->idukaDiterima) {
-                return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun.');
+        if (!$user->idukaDiterima) {
+            return redirect()->back()->with('error', 'Anda tidak terdaftar di IDUKA manapun.');
+        }
+
+        // Jika tidak ada absensi hari ini, cari lagi
+        if (!$absensiHariIni) {
+            $absensiHariIni = Absensi::where('user_id', $user->id)
+                ->whereDate('tanggal', Carbon::today())
+                ->first();
+
+            if (!$absensiHariIni) {
+                return redirect()->back()->with('error', 'Anda belum memiliki record absensi hari ini.');
+            }
+        }
+
+        // Jika sedang izin, tidak bisa absen pulang
+        if ($absensiHariIni->status === 'izin') {
+            return redirect()->back()->with('error', 'Anda sedang izin hari ini. Tidak bisa melakukan absensi pulang.');
+        }
+
+        // Jika sudah absen pulang
+        if ($absensiHariIni->jam_pulang) {
+            return redirect()->back()->with('error', 'Anda sudah melakukan absen pulang hari ini pada ' . $absensiHariIni->jam_pulang->format('H:i'));
+        }
+
+        // Logika utama untuk dinas luar
+        if ($absensiHariIni->status_dinas === 'disetujui') {
+            // Untuk dinas luar, validasi jam 12.00
+            $jamPulangMinimalDinas = Carbon::today()->setHour(12)->setMinute(0);
+            if (Carbon::now()->lt($jamPulangMinimalDinas)) {
+                return redirect()->back()->with(
+                    'error',
+                    'Absen pulang untuk dinas luar hanya dapat dilakukan setelah jam 12.00 siang.'
+                );
+            }
+            Log::info('Siswa sedang dinas luar, diizinkan absen pulang langsung');
+            
+            // Untuk dinas luar, kita tidak perlu validasi lokasi
+            // Gunakan lokasi pusat sebagai default
+            $lokasi = $user->idukaDiterima;
+        } else {
+            // Untuk kasus normal, harus sudah absen masuk
+            if (!$absensiHariIni->jam_masuk) {
+                return redirect()->back()->with('error', 'Anda belum melakukan absen masuk hari ini.');
             }
 
             // Tentukan lokasi yang digunakan (pusat atau cabang)
@@ -271,7 +325,22 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('error', $e->getMessage());
             }
 
-            // Validasi lokasi user
+            // Validasi jam pulang minimal jam pulang yang ditetapkan IDUKA
+            $jamPulangMinimal = Carbon::today()->setHour(15); // default jam 15:00
+
+            // Gunakan jam pulang dari lokasi yang dipilih
+            if ($lokasi->jam_pulang) {
+                $jamPulangMinimal = Carbon::createFromTimeString($lokasi->jam_pulang);
+            }
+
+            if (Carbon::now()->lt($jamPulangMinimal)) {
+                return redirect()->back()->with(
+                    'error',
+                    'Absen pulang hanya dapat dilakukan setelah jam ' . $jamPulangMinimal->format('H:i') . '.'
+                );
+            }
+
+            // Validasi lokasi user (hanya untuk non-dinas)
             $validation = $this->validateLocation(
                 $request->latitude,
                 $request->longitude,
@@ -288,96 +357,57 @@ class AbsensiController extends Controller
                     "Anda berada di luar radius yang diizinkan untuk absensi di {$lokasiName}. Jarak Anda: " . round($validation['distance']) . " meter, Radius maksimal: " . $lokasi->radius . " meter, Akurasi GPS: ±" . round($request->accuracy) . "m"
                 );
             }
-
-            // Cari record absensi hari ini
-            $absensiHariIni = Absensi::where('user_id', $user->id)
-                ->whereDate('tanggal', Carbon::today())
-                ->first();
-
-            if (!$absensiHariIni) {
-                return redirect()->back()->with('error', 'Anda belum memiliki record absensi hari ini.');
-            }
-
-            // Jika sedang izin, tidak bisa absen pulang
-            if ($absensiHariIni->status === 'izin') {
-                return redirect()->back()->with('error', 'Anda sedang izin hari ini. Tidak bisa melakukan absensi pulang.');
-            }
-
-            // Jika sudah absen pulang
-            if ($absensiHariIni->jam_pulang) {
-                return redirect()->back()->with('error', 'Anda sudah melakukan absensi pulang hari ini pada ' . $absensiHariIni->jam_pulang->format('H:i'));
-            }
-
-            // Logika utama untuk dinas luar
-            if ($absensiHariIni->status_dinas === 'disetujui') {
-                // Untuk dinas luar, langsung izinkan absen pulang
-                Log::info('Siswa sedang dinas luar, diizinkan absen pulang langsung');
-            } else {
-                // Untuk kasus normal, harus sudah absen masuk
-                if (!$absensiHariIni->jam_masuk) {
-                    return redirect()->back()->with('error', 'Anda belum melakukan absensi masuk hari ini.');
-                }
-            }
-
-            // Validasi jam pulang minimal jam pulang yang ditetapkan IDUKA
-            if ($absensiHariIni->status_dinas !== 'disetujui') {
-                $jamPulangMinimal = Carbon::today()->setHour(15); // default jam 15:00
-
-                // Gunakan jam pulang dari lokasi yang dipilih
-                if ($lokasi->jam_pulang) {
-                    $jamPulangMinimal = Carbon::createFromTimeString($lokasi->jam_pulang);
-                }
-
-                if (Carbon::now()->lt($jamPulangMinimal)) {
-                    return redirect()->back()->with(
-                        'error',
-                        'Absen pulang hanya dapat dilakukan setelah jam ' . $jamPulangMinimal->format('H:i') . '.'
-                    );
-                }
-            }
-
-            // Simpan absensi pulang
-            try {
-                $absensiHariIni->update([
-                    'jam_pulang' => Carbon::now(),
-                    'latitude_pulang' => $request->latitude,
-                    'longitude_pulang' => $request->longitude,
-                    'lokasi_iduka_id' => $lokasi->id,
-                ]);
-
-                Log::info('Absensi pulang berhasil disimpan', [
-                    'user_id' => $user->id,
-                    'lokasi_id' => $lokasi->id,
-                    'lokasi_nama' => $lokasi->nama,
-                    'jam_pulang' => Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Error saat menyimpan absensi pulang', [
-                    'error' => $e->getMessage(),
-                    'lokasi_id' => $lokasi->id,
-                    'absensi_id' => $absensiHariIni->id
-                ]);
-
-                // Cek apakah error karena foreign key
-                if (strpos($e->getMessage(), 'foreign key constraint') !== false) {
-                    return redirect()->back()->with('error', 'Lokasi absensi tidak valid. Silakan pilih lokasi yang tersedia.');
-                }
-
-                throw $e; // Re-throw exception untuk ditangkap di outer catch
-            }
-
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Absensi pulang berhasil disimpan.');
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('ERROR saat menyimpan absensi pulang', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan absensi: ' . $e->getMessage());
         }
+
+        // Simpan absensi pulang
+        try {
+            $updateData = [
+                'jam_pulang' => Carbon::now(),
+                'lokasi_iduka_id' => $lokasi->id,
+            ];
+
+            // Hanya tambahkan koordinat jika bukan dinas luar
+            if ($absensiHariIni->status_dinas !== 'disetujui') {
+                $updateData['latitude_pulang'] = $request->latitude;
+                $updateData['longitude_pulang'] = $request->longitude;
+            }
+
+            $absensiHariIni->update($updateData);
+
+            Log::info('Absensi pulang berhasil disimpan', [
+                'user_id' => $user->id,
+                'lokasi_id' => $lokasi->id,
+                'lokasi_nama' => $lokasi->nama,
+                'jam_pulang' => Carbon::now()->format('Y-m-d H:i:s'),
+                'is_dinas' => $absensiHariIni->status_dinas === 'disetujui'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error saat menyimpan absensi pulang', [
+                'error' => $e->getMessage(),
+                'lokasi_id' => $lokasi->id,
+                'absensi_id' => $absensiHariIni->id
+            ]);
+
+            // Cek apakah error karena foreign key
+            if (strpos($e->getMessage(), 'foreign key constraint') !== false) {
+                return redirect()->back()->with('error', 'Lokasi absensi tidak valid. Silakan pilih lokasi yang tersedia.');
+            }
+
+            throw $e; // Re-throw exception untuk ditangkap di outer catch
+        }
+
+        DB::commit();
+
+        return redirect()->back()->with('success', 'Absensi pulang berhasil disimpan.');
+    } catch (\Exception $e) {
+        DB::rollback();
+        Log::error('ERROR saat menyimpan absensi pulang', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan absensi: ' . $e->getMessage());
     }
+}
 
     public function izin(Request $request)
     {
