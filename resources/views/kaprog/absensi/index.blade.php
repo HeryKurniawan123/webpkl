@@ -8,22 +8,20 @@
                 <div class="col-12">
                     <div class="card border-0 bg-white shadow-sm">
                         <div class="card-body p-4">
-                            <div
-                                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                                 <div>
-                                    <h4 class="mb-1 text-dark fw-bold">Dashboard PKL & Absensi</h4>
-                                    <p class="text-secondary mb-0">Monitoring kehadiran dan data siswa PKL Per Jurusan</p>
+                                    <h4 class="mb-1 text-dark fw-bold">TATA RIKSA K-ONE</h4>
+                                    <p class="text-secondary mb-0">Absensi - data siswa PKL Per Jurusan</p>
                                 </div>
 
                                 <div class="d-flex gap-2 ms-auto">
-                                    <button class="btn btn-warning border d-flex align-items-center gap-1"
+                                    <button id="btnBelumDikonfirmasi" class="btn btn-warning border d-flex align-items-center gap-1"
                                         data-bs-toggle="modal" data-bs-target="#modalBelumDikonfirmasi">
                                         <i class="fas fa-user-clock"></i> Belum Dikonfirmasi
                                     </button>
 
-                                    <button class="btn btn-danger border d-flex align-items-center gap-1"
-                                        data-bs-toggle="modal" data-bs-target="#modalBelumAbsen">
-                                        <i class="fas fa-user-slash"></i> Belum Absen
+                                    <button id="btnBelumAbsen" class="btn btn-danger border d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalBelumAbsen"> 
+                                        <i class="fas fa-user-slash"></i> Belum Absen 
                                     </button>
                                 </div>
                             </div>
@@ -34,23 +32,7 @@
 
             <!-- Stats Overview Cards -->
             <div class="row g-4 mb-5">
-                <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-light rounded-4 p-3 me-3">
-                                    <i class="fas fa-users fa-2x text-dark"></i>
-                                </div>
-                                <div>
-                                    <h3 class="mb-1 fw-bold text-dark">{{ $totalSiswaPKL }}</h3>
-                                    <p class="text-secondary mb-0 small">Total Siswa</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
@@ -66,7 +48,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
@@ -82,7 +64,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
@@ -157,20 +139,69 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body p-4">
+                        <div class="card-body p-4" id="analisisKehadiranContainer">
                             @if (count($kelasAnalisis) > 0)
                                 <div class="row g-4">
-                                    @foreach ($kelasAnalisis as $kelas)
+                                    @foreach ($kelasAnalisis as $index => $kelas)
                                         <div class="col-lg-2 col-md-4 col-6">
-                                            <div class="text-center p-3 bg-light rounded-4 h-100 d-flex flex-column">
-                                                <h6 class="mb-0 fw-semibold text-dark">{{ $kelas['kelas'] }}</h6>
-                                                <div class="h4 mb-1 fw-bold mt-auto"
-                                                    style="color: {{ $kelas['persentase'] >= 90 ? '#27ae60' : ($kelas['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }};">
-                                                    {{ $kelas['persentase'] }}%
+                                            <div class="kelas-card h-100 p-3 bg-light rounded-4 shadow-sm transition-all cursor-pointer"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalDetailKelas"
+                                                data-kelas="{{ $kelas['kelas'] }}"
+                                                data-total="{{ $kelas['total_siswa'] }}"
+                                                data-sudah-absen="{{ $kelas['sudah_absen'] }}"
+                                                data-belum-absen="{{ $kelas['belum_absen'] }}"
+                                                data-belum-divalidasi="{{ $kelas['belum_divalidasi'] }}"
+                                                data-hadir="{{ $kelas['hadir_count'] }}"
+                                                data-ijin="{{ $kelas['ijin_count'] }}"
+                                                data-sakit="{{ $kelas['sakit_count'] }}"
+                                                data-dinas="{{ $kelas['dinas_count'] }}"
+                                                data-persentase="{{ $kelas['persentase'] }}">
+                                                <div class="text-center">
+                                                    <h6 class="mb-2 fw-semibold text-dark">{{ $kelas['kelas'] }}</h6>
+                                                    
+                                                    <!-- Progress Circle -->
+                                                    <div class="position-relative d-inline-block mb-2">
+                                                        <svg class="progress-circle" width="80" height="80">
+                                                            <circle class="progress-circle-bg" cx="40" cy="40" r="35" fill="none" stroke="#e9ecef" stroke-width="8"></circle>
+                                                            <circle class="progress-circle-fill" cx="40" cy="40" r="35" fill="none" 
+                                                                stroke="{{ $kelas['persentase'] >= 90 ? '#27ae60' : ($kelas['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }}" 
+                                                                stroke-width="8"
+                                                                stroke-dasharray="{{ 2 * 3.14159 * 35 }}"
+                                                                stroke-dashoffset="{{ 2 * 3.14159 * 35 * (1 - $kelas['persentase'] / 100) }}"
+                                                                stroke-linecap="round"
+                                                                transform="rotate(-90 40 40)"></circle>
+                                                        </svg>
+                                                        <div class="position-absolute top-50 start-50 translate-middle">
+                                                            <span class="fw-bold" style="font-size: 0.9rem;">{{ $kelas['persentase'] }}%</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Stats Summary -->
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <div class="text-start">
+                                                            <div class="small text-muted">Total</div>
+                                                            <div class="fw-bold">{{ $kelas['total_siswa'] }}</div>
+                                                        </div>
+                                                        <div class="text-center">
+                                                            <div class="small text-muted">Hadir</div>
+                                                            <div class="fw-bold text-success">{{ $kelas['hadir_count'] }}</div>
+                                                        </div>
+                                                        <div class="text-end">
+                                                            <div class="small text-muted">Pending</div>
+                                                            <div class="fw-bold text-warning">{{ $kelas['belum_divalidasi'] }}</div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="progress mt-2" style="height: 4px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" 
+                                                            style="width: {{ ($kelas['hadir_count'] / max($kelas['total_siswa'], 1)) * 100 }}%;" 
+                                                            aria-valuenow="{{ $kelas['hadir_count'] }}" 
+                                                            aria-valuemin="0" 
+                                                            aria-valuemax="{{ $kelas['total_siswa'] }}">
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <small class="text-secondary">
-                                                    {{ $kelas['hadir_count'] ?? 0 }}/{{ $kelas['total_siswa'] }} siswa
-                                                </small>
                                             </div>
                                         </div>
                                     @endforeach
@@ -274,6 +305,142 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL KELAS -->
+    <div class="modal fade" id="modalDetailKelas" tabindex="-1" aria-labelledby="modalDetailKelasLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalDetailKelasLabel">
+                        Detail Kehadiran Kelas: <span id="modalKelasNama"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Ringkasan Statistik -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-primary mb-2">
+                                        <i class="fas fa-users fa-2x"></i>
+                                    </div>
+                                    <h5 class="mb-0 fw-bold" id="modalTotalSiswa">0</h5>
+                                    <p class="text-muted mb-0 small">Total Siswa</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-success mb-2">
+                                        <i class="fas fa-user-check fa-2x"></i>
+                                    </div>
+                                    <h5 class="mb-0 fw-bold" id="modalSudahAbsen">0</h5>
+                                    <p class="text-muted mb-0 small">Sudah Absen</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-danger mb-2">
+                                        <i class="fas fa-user-times fa-2x"></i>
+                                    </div>
+                                    <h5 class="mb-0 fw-bold" id="modalBelumAbsenCount">0</h5>
+                                    <p class="text-muted mb-0 small">Belum Absen</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-warning mb-2">
+                                        <i class="fas fa-user-clock fa-2x"></i>
+                                    </div>
+                                    <h5 class="mb-0 fw-bold" id="modalBelumDivalidasi">0</h5>
+                                    <p class="text-muted mb-0 small">Belum Divalidasi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Kategori -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h6 class="fw-semibold mb-3">Detail Kategori Kehadiran</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-check text-success"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Hadir</div>
+                                            <div class="text-muted small" id="modalHadirCount">0 siswa</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-info bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-file-alt text-info"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Izin</div>
+                                            <div class="text-muted small" id="modalIjinCount">0 siswa</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-warning bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-thermometer-half text-warning"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Sakit</div>
+                                            <div class="text-muted small" id="modalSakitCount">0 siswa</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="fas fa-briefcase text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">Dinas Luar</div>
+                                            <div class="text-muted small" id="modalDinasCount">0 siswa</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="fw-semibold mb-3">Tingkat Kehadiran</h6>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span id="modalPersentaseLabel">0%</span>
+                                <span class="text-muted">Target: 90%</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                <div class="progress-bar" id="modalPersentaseBar" role="progressbar" 
+                                    style="width: 0%;" 
+                                    aria-valuenow="0" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -569,6 +736,41 @@
             width: 3rem;
             height: 3rem;
         }
+        
+        /* Kelas Card Styles */
+        .kelas-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .kelas-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .progress-circle {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-circle-bg {
+            fill: none;
+            stroke-width: 8;
+        }
+        
+        .progress-circle-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        .cursor-pointer {
+            cursor: pointer;
+        }
     </style>
 
     <!-- Chart.js -->
@@ -746,6 +948,9 @@
                         if (newAnalisis) {
                             document.getElementById('analisisKehadiranContainer').innerHTML =
                                 newAnalisis.innerHTML;
+                            
+                            // Reinitialize event listeners for kelas cards
+                            initializeKelasCards();
                         }
                     })
                     .catch(error => {
@@ -754,6 +959,66 @@
                         window.location.reload();
                     });
             });
+
+            // ====== Modal Detail Kelas ======
+            const modalDetailKelas = document.getElementById('modalDetailKelas');
+            
+            // Event saat modal ditampilkan
+            modalDetailKelas.addEventListener('show.bs.modal', function(event) {
+                // Button that triggered the modal
+                const button = event.relatedTarget;
+                
+                // Extract info from data-bs-* attributes
+                const kelas = button.getAttribute('data-kelas');
+                const total = button.getAttribute('data-total');
+                const sudahAbsen = button.getAttribute('data-sudah-absen');
+                const belumAbsen = button.getAttribute('data-belum-absen');
+                const belumDivalidasi = button.getAttribute('data-belum-divalidasi');
+                const hadir = button.getAttribute('data-hadir');
+                const ijin = button.getAttribute('data-ijin');
+                const sakit = button.getAttribute('data-sakit');
+                const dinas = button.getAttribute('data-dinas');
+                const persentase = button.getAttribute('data-persentase');
+                
+                // Update the modal's content
+                document.getElementById('modalKelasNama').textContent = kelas;
+                document.getElementById('modalTotalSiswa').textContent = total;
+                document.getElementById('modalSudahAbsen').textContent = sudahAbsen;
+                document.getElementById('modalBelumAbsenCount').textContent = belumAbsen;
+                document.getElementById('modalBelumDivalidasi').textContent = belumDivalidasi;
+                document.getElementById('modalHadirCount').textContent = hadir + ' siswa';
+                document.getElementById('modalIjinCount').textContent = ijin + ' siswa';
+                document.getElementById('modalSakitCount').textContent = sakit + ' siswa';
+                document.getElementById('modalDinasCount').textContent = dinas + ' siswa';
+                document.getElementById('modalPersentaseLabel').textContent = persentase + '%';
+                
+                // Update progress bar
+                const progressBar = document.getElementById('modalPersentaseBar');
+                progressBar.style.width = persentase + '%';
+                progressBar.setAttribute('aria-valuenow', persentase);
+                
+                // Set progress bar color based on percentage
+                if (persentase >= 90) {
+                    progressBar.classList.remove('bg-warning', 'bg-danger');
+                    progressBar.classList.add('bg-success');
+                } else if (persentase >= 85) {
+                    progressBar.classList.remove('bg-success', 'bg-danger');
+                    progressBar.classList.add('bg-warning');
+                } else {
+                    progressBar.classList.remove('bg-success', 'bg-warning');
+                    progressBar.classList.add('bg-danger');
+                }
+            });
+
+            // Initialize kelas cards event listeners
+            function initializeKelasCards() {
+                // This function will be called after refresh to reinitialize event listeners
+                // The event listeners are already set up with data-bs-toggle and data-bs-target attributes
+                console.log('Kelas cards initialized');
+            }
+            
+            // Initialize on page load
+            initializeKelasCards();
 
             // Fungsi untuk memuat data siswa belum dikonfirmasi
             function loadSiswaBelumDikonfirmasi() {
@@ -850,6 +1115,7 @@
                 // Sembunyikan pesan error
                 document.getElementById('errorMessage').classList.add('d-none');
 
+                // Menggunakan URL yang benar untuk route
                 fetch("{{ route('kaprog.siswa-belum-absen') }}")
                     .then(response => {
                         console.log('Response status:', response.status);
@@ -888,8 +1154,8 @@
                             <tr>
                                 <td>${siswa.no}</td>
                                 <td>${siswa.name}</td>
-                                <td>${siswa.iduka}</td>
-                                <td>${siswa.pembimbing}</td>
+                                <td>${siswa.iduka || '-'}</td>
+                                <td>${siswa.pembimbing || '-'}</td>
                             </tr>
                         `;
                             tbody.innerHTML += row;
@@ -907,18 +1173,20 @@
                     });
             }
 
-            // Event saat modal dibuka - Siswa Belum Dikonfirmasi
-            const modalBelumDikonfirmasi = document.getElementById('modalBelumDikonfirmasi');
-            if (modalBelumDikonfirmasi) {
-                modalBelumDikonfirmasi.addEventListener('show.bs.modal', function(event) {
+            // Event listener untuk tombol Belum Dikonfirmasi
+            const btnBelumDikonfirmasi = document.getElementById('btnBelumDikonfirmasi');
+            if (btnBelumDikonfirmasi) {
+                btnBelumDikonfirmasi.addEventListener('click', function() {
+                    console.log('Tombol Belum Dikonfirmasi diklik');
                     loadSiswaBelumDikonfirmasi();
                 });
             }
 
-            // Event saat modal dibuka - Siswa Belum Absen
-            const modalBelumAbsen = document.getElementById('modalBelumAbsen');
-            if (modalBelumAbsen) {
-                modalBelumAbsen.addEventListener('show.bs.modal', function(event) {
+            // Event listener untuk tombol Belum Absen
+            const btnBelumAbsen = document.getElementById('btnBelumAbsen');
+            if (btnBelumAbsen) {
+                btnBelumAbsen.addEventListener('click', function() {
+                    console.log('Tombol Belum Absen diklik');
                     loadSiswaBelumAbsen();
                 });
             }

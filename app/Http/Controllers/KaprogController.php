@@ -571,241 +571,284 @@ class KaprogController extends Controller
     }
 
     public function dataAbsen()
-    {
-        $kaprog = auth()->user();
-        $konkeId = $kaprog->konke_id;
-        $today = Carbon::today();
+{
+    $kaprog = auth()->user();
+    $konkeId = $kaprog->konke_id;
+    $today = Carbon::today();
 
-        // Total siswa PKL per jurusan kaprog
-        $totalSiswaPKL = User::whereHas('kelas', function ($q) use ($konkeId) {
-            $q->where('konke_id', $konkeId);
+    // Total siswa PKL per jurusan kaprog
+    $totalSiswaPKL = User::whereHas('kelas', function ($q) use ($konkeId) {
+        $q->where('konke_id', $konkeId);
+    })
+        ->where('role', 'siswa')
+        ->count();
+
+    // Ambil semua ID siswa di jurusan kaprog
+    $allSiswaIds = User::whereHas('kelas', function ($q) use ($konkeId) {
+        $q->where('konke_id', $konkeId);
+    })
+        ->where('role', 'siswa')
+        ->pluck('id')
+        ->toArray();
+
+    // Hadir hari ini
+    $hadirHariIni = Absensi::whereDate('tanggal', $today)
+        ->whereIn('user_id', $allSiswaIds)
+        ->where(function ($q) {
+            $q->where('status', 'hadir')
+                ->orWhere('status', 'tepat_waktu')
+                ->orWhere('status', 'terlambat')
+                ->orWhereNotNull('jam_masuk');
         })
-            ->where('role', 'siswa')
-            ->count();
+        ->distinct('user_id')
+        ->count('user_id');
 
-        // Ambil semua ID siswa di jurusan kaprog
-        $allSiswaIds = User::whereHas('kelas', function ($q) use ($konkeId) {
-            $q->where('konke_id', $konkeId);
-        })
-            ->where('role', 'siswa')
-            ->pluck('id')
-            ->toArray();
+    // Ambil semua user_id yang sudah melakukan aktivitas hari ini dari semua tabel
+    $activeUserIds = DB::table('absensi')
+        ->whereDate('tanggal', $today)
+        ->whereIn('user_id', $allSiswaIds)
+        ->select('user_id')
+        ->union(
+            DB::table('absensi_pending')
+                ->whereDate('tanggal', $today)
+                ->whereIn('user_id', $allSiswaIds)
+                ->select('user_id')
+        )
+        ->union(
+            DB::table('izin_pending')
+                ->whereDate('tanggal', $today)
+                ->whereIn('user_id', $allSiswaIds)
+                ->select('user_id')
+        )
+        ->union(
+            DB::table('dinas_pending')
+                ->whereDate('tanggal', $today)
+                ->whereIn('user_id', $allSiswaIds)
+                ->select('user_id')
+        )
+        ->pluck('user_id')
+        ->toArray();
 
-        // Hadir hari ini
-        $hadirHariIni = Absensi::whereDate('tanggal', $today)
-            ->whereIn('user_id', $allSiswaIds)
-            ->where(function ($q) {
-                $q->where('status', 'hadir')
-                    ->orWhere('status', 'tepat_waktu')
-                    ->orWhere('status', 'terlambat')
-                    ->orWhereNotNull('jam_masuk');
-            })
-            ->distinct('user_id')
-            ->count('user_id');
+    // Hitung siswa yang tidak hadir = total siswa - siswa yang sudah aktivitas
+    $tidakHadir = $totalSiswaPKL - count($activeUserIds);
 
-        // PERBAIKAN: Hitung siswa yang tidak hadir menggunakan pendekatan yang sama seperti getSiswaBelumAbsen
-        // Ambil semua user_id yang sudah melakukan aktivitas hari ini dari semua tabel
-        $activeUserIds = DB::table('absensi')
-            ->whereDate('tanggal', $today)
-            ->whereIn('user_id', $allSiswaIds)
-            ->select('user_id')
-            ->union(
-                DB::table('absensi_pending')
-                    ->whereDate('tanggal', $today)
-                    ->whereIn('user_id', $allSiswaIds)
-                    ->select('user_id')
-            )
-            ->union(
-                DB::table('izin_pending')
-                    ->whereDate('tanggal', $today)
-                    ->whereIn('user_id', $allSiswaIds)
-                    ->select('user_id')
-            )
-            ->union(
-                DB::table('dinas_pending')
-                    ->whereDate('tanggal', $today)
-                    ->whereIn('user_id', $allSiswaIds)
-                    ->select('user_id')
-            )
-            ->pluck('user_id')
-            ->toArray();
+    // Hitung siswa yang belum dikonfirmasi (absensi, izin, atau dinas pending)
+    $idsSiswaPending = DB::table('absensi_pending as ap')
+        ->join('users as u', 'ap.user_id', '=', 'u.id')
+        ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+        ->whereDate('ap.tanggal', $today)
+        ->where('ap.status_konfirmasi', 'pending')
+        ->where('k.konke_id', $konkeId)
+        ->pluck('u.id')
+        ->toArray();
 
-        \Log::info('Total ID siswa yang sudah aktivitas: ' . count($activeUserIds));
+    $idsSiswaIzin = DB::table('izin_pending as ip')
+        ->join('users as u', 'ip.user_id', '=', 'u.id')
+        ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+        ->whereDate('ip.tanggal', $today)
+        ->where('ip.status_konfirmasi', 'pending')
+        ->where('k.konke_id', $konkeId)
+        ->pluck('u.id')
+        ->toArray();
 
-        // Hitung siswa yang tidak hadir = total siswa - siswa yang sudah aktivitas
-        $tidakHadir = $totalSiswaPKL - count($activeUserIds);
+    $idsSiswaDinas = DB::table('dinas_pending as dp')
+        ->join('users as u', 'dp.user_id', '=', 'u.id')
+        ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
+        ->whereDate('dp.tanggal', $today)
+        ->where('dp.status_konfirmasi', 'pending')
+        ->where('k.konke_id', $konkeId)
+        ->pluck('u.id')
+        ->toArray();
 
-        // PERBAIKAN: Hitung siswa yang benar-benar tidak absen sama sekali
-        $tidakAbsenSamaSekali = $tidakHadir;
+    // Gabungkan semua ID siswa yang pending dan hapus duplikat
+    $allPendingIds = array_unique(array_merge($idsSiswaPending, $idsSiswaIzin, $idsSiswaDinas));
+    $belumDikonfirmasi = count($allPendingIds);
 
-        // Hitung siswa yang belum dikonfirmasi (absensi, izin, atau dinas pending)
-        $idsSiswaPending = DB::table('absensi_pending as ap')
-            ->join('users as u', 'ap.user_id', '=', 'u.id')
-            ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
-            ->whereDate('ap.tanggal', $today)
-            ->where('ap.status_konfirmasi', 'pending')
-            ->where('k.konke_id', $konkeId)
-            ->pluck('u.id')
-            ->toArray();
+    // Tingkat kehadiran (%)
+    $totalAbsenHariIni = max($totalSiswaPKL, 1);
+    $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100, 2);
 
-        $idsSiswaIzin = DB::table('izin_pending as ip')
-            ->join('users as u', 'ip.user_id', '=', 'u.id')
-            ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
-            ->whereDate('ip.tanggal', $today)
-            ->where('ip.status_konfirmasi', 'pending')
-            ->where('k.konke_id', $konkeId)
-            ->pluck('u.id')
-            ->toArray();
-
-        $idsSiswaDinas = DB::table('dinas_pending as dp')
-            ->join('users as u', 'dp.user_id', '=', 'u.id')
-            ->join('kelas as k', 'u.kelas_id', '=', 'k.id')
-            ->whereDate('dp.tanggal', $today)
-            ->where('dp.status_konfirmasi', 'pending')
-            ->where('k.konke_id', $konkeId)
-            ->pluck('u.id')
-            ->toArray();
-
-        // Gabungkan semua ID siswa yang pending dan hapus duplikat
-        $allPendingIds = array_unique(array_merge($idsSiswaPending, $idsSiswaIzin, $idsSiswaDinas));
-        $belumDikonfirmasi = count($allPendingIds);
-
-        // Tingkat kehadiran (%)
-        $totalAbsenHariIni = max($totalSiswaPKL, 1);
-        $tingkatKehadiran = round(($hadirHariIni / $totalAbsenHariIni) * 100, 2);
-
-        // Ambil semua kelas dari jurusan kaprog
-        $kelasList = Kelas::with([
+    // Ambil semua kelas dari jurusan kaprog
+    $kelasList = Kelas::with([
+        'siswa' => function ($q) {
+            $q->where('role', 'siswa');
+        }
+    ])
+        ->withCount([
             'siswa' => function ($q) {
                 $q->where('role', 'siswa');
             }
         ])
-            ->withCount([
-                'siswa' => function ($q) {
-                    $q->where('role', 'siswa');
+        ->where('konke_id', $konkeId)
+        ->orderBy('kelas', 'asc')
+        ->orderBy('name_kelas', 'asc')
+        ->get();
+
+    // Ambil absensi hari ini untuk jurusan kaprog saja
+    $absensiHariIni = Absensi::with('user')
+        ->whereDate('tanggal', $today)
+        ->whereIn('user_id', $allSiswaIds)
+        ->get();
+
+    // Ambil data pending untuk analisis per kelas
+    $absensiPendingData = DB::table('absensi_pending')
+        ->whereDate('tanggal', $today)
+        ->whereIn('user_id', $allSiswaIds)
+        ->get();
+    
+    $izinPendingData = DB::table('izin_pending')
+        ->whereDate('tanggal', $today)
+        ->whereIn('user_id', $allSiswaIds)
+        ->get();
+    
+    $dinasPendingData = DB::table('dinas_pending')
+        ->whereDate('tanggal', $today)
+        ->whereIn('user_id', $allSiswaIds)
+        ->get();
+
+    // Analisis per kelas
+    $kelasAnalisis = $kelasList->map(function ($kelas) use ($absensiHariIni, $absensiPendingData, $izinPendingData, $dinasPendingData) {
+        $totalSiswa = $kelas->siswa_count;
+        $siswaIdsInKelas = $kelas->siswa->pluck('id')->toArray();
+        
+        // Hitung jumlah siswa yang sudah aktivitas (baik sudah absen maupun pending)
+        $activeUserIdsInKelas = $absensiHariIni
+            ->whereIn('user_id', $siswaIdsInKelas)
+            ->pluck('user_id')
+            ->merge($absensiPendingData->whereIn('user_id', $siswaIdsInKelas)->pluck('user_id'))
+            ->merge($izinPendingData->whereIn('user_id', $siswaIdsInKelas)->pluck('user_id'))
+            ->merge($dinasPendingData->whereIn('user_id', $siswaIdsInKelas)->pluck('user_id'))
+            ->unique()
+            ->toArray();
+        
+        $sudahAbsen = count($activeUserIdsInKelas);
+        $belumAbsen = $totalSiswa - $sudahAbsen;
+        
+        // Hitung yang belum divalidasi (pending)
+        $belumDivalidasi = $absensiPendingData->whereIn('user_id', $siswaIdsInKelas)->count() +
+                          $izinPendingData->whereIn('user_id', $siswaIdsInKelas)->count() +
+                          $dinasPendingData->whereIn('user_id', $siswaIdsInKelas)->count();
+        
+        // Hitung masing-masing kategori
+        $hadirCount = 0;
+        $ijinCount = 0;
+        $sakitCount = 0;
+        $dinasCount = 0;
+        
+        // Proses absensi yang sudah dikonfirmasi
+        foreach ($absensiHariIni->whereIn('user_id', $siswaIdsInKelas) as $absensi) {
+            if (in_array($absensi->status, ['hadir', 'tepat_waktu', 'terlambat'])) {
+                $hadirCount++;
+            } elseif ($absensi->status == 'izin') {
+                $ijinCount++;
+            } elseif ($absensi->status == 'sakit') {
+                $sakitCount++;
+            } elseif ($absensi->status_dinas == 'disetujui') {
+                $dinasCount++;
+            }
+        }
+        
+        // Hitung persentase kehadiran
+        $persentase = $totalSiswa > 0 ? round(($hadirCount / $totalSiswa) * 100, 2) : 0;
+
+        return [
+            'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas,
+            'total_siswa' => $totalSiswa,
+            'sudah_absen' => $sudahAbsen,
+            'belum_absen' => $belumAbsen,
+            'belum_divalidasi' => $belumDivalidasi,
+            'hadir_count' => $hadirCount,
+            'ijin_count' => $ijinCount,
+            'sakit_count' => $sakitCount,
+            'dinas_count' => $dinasCount,
+            'persentase' => $persentase,
+        ];
+    });
+
+    // Data chart distribusi
+    $kelasLabels = $kelasAnalisis->pluck('kelas');
+    $kelasValues = $kelasAnalisis->pluck('total_siswa');
+
+    // Data detail absensi per kelas
+    $detailAbsensiPerKelas = $kelasList->map(function ($kelas) use ($absensiHariIni, $absensiPendingData, $izinPendingData, $dinasPendingData) {
+        $siswaList = $kelas->siswa;
+
+        $detailSiswa = $siswaList->map(function ($siswa) use ($absensiHariIni, $absensiPendingData, $izinPendingData, $dinasPendingData) {
+            $absensi = $absensiHariIni->firstWhere('user_id', $siswa->id);
+            
+            // Cek di tabel pending
+            $absensiPending = $absensiPendingData->firstWhere('user_id', $siswa->id);
+            $izinPending = $izinPendingData->firstWhere('user_id', $siswa->id);
+            $dinasPending = $dinasPendingData->firstWhere('user_id', $siswa->id);
+            
+            // Tentukan status dengan benar
+            $status = 'belum_absen';
+            $keterangan = '-';
+            
+            if ($absensi) {
+                // Cek status izin/sakit/alfa terlebih dahulu
+                if (in_array($absensi->status, ['izin', 'sakit', 'alfa'])) {
+                    $status = $absensi->status;
+                    $keterangan = $absensi->keterangan_izin ?? $absensi->keterangan ?? '-';
                 }
-            ])
-            ->where('konke_id', $konkeId)
-            ->orderBy('kelas', 'asc')
-            ->orderBy('name_kelas', 'asc')
-            ->get();
-
-        // Ambil absensi hari ini untuk jurusan kaprog saja
-        $absensiHariIni = Absensi::with('user')
-            ->whereDate('tanggal', $today)
-            ->whereIn('user_id', $allSiswaIds)
-            ->get();
-
-        // Analisis per kelas
-        $kelasAnalisis = $kelasList->map(function ($kelas) use ($absensiHariIni) {
-            $totalSiswa = $kelas->siswa_count;
-
-            // Ambil semua ID siswa di kelas ini
-            $siswaIdsInKelas = $kelas->siswa->pluck('id')->toArray();
-
-            // Hitung jumlah siswa yang hadir di kelas ini
-            $hadirCount = $absensiHariIni
-                ->whereIn('user_id', $siswaIdsInKelas)
-                ->filter(function ($absensi) {
-                    return $absensi->jam_masuk ||
-                        in_array($absensi->status, ['hadir', 'tepat_waktu', 'terlambat']);
-                })
-                ->count();
-
-            // Hitung persentase
-            $persentase = $totalSiswa > 0 ? round(($hadirCount / $totalSiswa) * 100, 2) : 0;
+                // Cek jika ada jam masuk
+                elseif ($absensi->jam_masuk) {
+                    if ($absensi->status == 'terlambat') {
+                        $status = 'terlambat';
+                    } else {
+                        $status = 'hadir';
+                    }
+                    $keterangan = $absensi->keterangan ?? '-';
+                }
+                // Cek jika status dinas disetujui
+                elseif ($absensi->status_dinas === 'disetujui') {
+                    $status = 'dinas';
+                    $keterangan = $absensi->keterangan_dinas ?? '-';
+                }
+            } elseif ($absensiPending) {
+                $status = 'pending';
+                $keterangan = 'Absensi pending konfirmasi';
+            } elseif ($izinPending) {
+                $status = 'pending';
+                $keterangan = 'Izin pending konfirmasi: ' . ($izinPending->keterangan ?? '');
+            } elseif ($dinasPending) {
+                $status = 'pending';
+                $keterangan = 'Dinas pending konfirmasi: ' . ($dinasPending->keterangan ?? '');
+            }
 
             return [
-                'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas,
-                'total_siswa' => $totalSiswa,
-                'hadir_count' => $hadirCount,
-                'persentase' => $persentase,
+                'id' => $siswa->id,
+                'nama' => $siswa->name,
+                'nis' => $siswa->nis,
+                'status' => $status,
+                'jam_masuk' => $absensi ? $absensi->jam_masuk : null,
+                'jam_pulang' => $absensi ? $absensi->jam_pulang : null,
+                'keterangan' => $keterangan,
             ];
         });
 
-        // Data chart distribusi
-        $kelasLabels = $kelasAnalisis->pluck('kelas');
-        $kelasValues = $kelasAnalisis->pluck('total_siswa');
+        return [
+            'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas,
+            'siswa' => $detailSiswa,
+        ];
+    });
 
-        // Data detail absensi per kelas
-        $detailAbsensiPerKelas = $kelasList->map(function ($kelas) use ($absensiHariIni) {
-            $siswaList = $kelas->siswa;
+    // Ambil data jurusan untuk analisis kehadiran per jurusan
+    $jurusanData = $this->getKehadiranJurusan($konkeId);
 
-            $detailSiswa = $siswaList->map(function ($siswa) use ($absensiHariIni) {
-                $absensi = $absensiHariIni->firstWhere('user_id', $siswa->id);
-
-                // Tentukan status dengan benar
-                $status = 'belum_absen';
-                $keterangan = '-';
-
-                if ($absensi) {
-                    // Cek status izin/sakit/alfa terlebih dahulu
-                    if (in_array($absensi->status, ['izin', 'sakit', 'alfa'])) {
-                        $status = $absensi->status;
-                        $keterangan = $absensi->keterangan_izin ?? $absensi->keterangan ?? '-';
-                    }
-                    // Cek jika ada jam masuk
-                    elseif ($absensi->jam_masuk) {
-                        if ($absensi->status == 'terlambat') {
-                            $status = 'terlambat';
-                        } else {
-                            $status = 'hadir';
-                        }
-                        $keterangan = $absensi->keterangan ?? '-';
-                    }
-                    // Cek jika status dinas disetujui
-                    elseif ($absensi->status_dinas === 'disetujui') {
-                        $status = 'dinas';
-                        $keterangan = $absensi->keterangan_dinas ?? '-';
-                    }
-                }
-
-                return [
-                    'id' => $siswa->id,
-                    'nama' => $siswa->name,
-                    'nis' => $siswa->nis,
-                    'status' => $status,
-                    'jam_masuk' => $absensi ? $absensi->jam_masuk : null,
-                    'jam_pulang' => $absensi ? $absensi->jam_pulang : null,
-                    'keterangan' => $keterangan,
-                ];
-            });
-
-            return [
-                'kelas' => $kelas->kelas . ' ' . $kelas->name_kelas,
-                'siswa' => $detailSiswa,
-            ];
-        });
-
-        // PERBAIKAN: Ambil data jurusan untuk analisis kehadiran per jurusan
-        $jurusanData = $this->getKehadiranJurusan($konkeId);
-
-        // Debugging - tambahkan ini untuk melihat nilai
-        \Log::info('Debug Data Absensi:', [
-            'totalSiswaPKL' => $totalSiswaPKL,
-            'hadirHariIni' => $hadirHariIni,
-            'tidakHadir' => $tidakHadir,
-            'tidakAbsenSamaSekali' => $tidakAbsenSamaSekali,
-            'belumDikonfirmasi' => $belumDikonfirmasi,
-            'allSiswaIds' => $allSiswaIds,
-            'activeUserIds' => $activeUserIds,
-            'countActiveUserIds' => count($activeUserIds),
-        ]);
-
-        return view('kaprog.absensi.index', compact(
-            'totalSiswaPKL',
-            'hadirHariIni',
-            'tidakHadir',
-            'tidakAbsenSamaSekali',
-            'belumDikonfirmasi',
-            'tingkatKehadiran',
-            'kelasLabels',
-            'kelasValues',
-            'kelasAnalisis',
-            'detailAbsensiPerKelas',
-            'jurusanData'
-        ));
-    }
+    return view('kaprog.absensi.index', compact(
+        'totalSiswaPKL',
+        'hadirHariIni',
+        'tidakHadir',
+        'belumDikonfirmasi',
+        'tingkatKehadiran',
+        'kelasLabels',
+        'kelasValues',
+        'kelasAnalisis',
+        'detailAbsensiPerKelas',
+        'jurusanData'
+    ));
+}
 
     // PERBAIKAN: Tambahkan method untuk mendapatkan data kehadiran per jurusan
     private function getKehadiranJurusan($konkeId)

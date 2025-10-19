@@ -545,10 +545,12 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/absen-kaprog', [KaprogController::class, 'dataAbsen'])->name('absen.siswa.kaprog');
     Route::get('/kaprog/absensi/export', [KaprogController::class, 'export'])
         ->name('kaprog.absensi.export');
-    // Tambahkan route ini di web.php
-    Route::get('/kaprog/siswa-belum-dikonfirmasi', [KaprogController::class, 'getSiswaBelumDikonfirmasi'])->name('kaprog.siswa-belum-dikonfirmasi');
-    Route::get('/kaprog/siswa-belum-absen', [KaprogController::class, 'getSiswaBelumAbsen'])->name('kaprog.siswa-belum-absen'); 
-});
+        // Pastikan route ini ada dan konsisten
+Route::get('/kaprog/siswa-belum-absen', [KaprogController::class, 'getSiswaBelumAbsen'])
+    ->name('kaprog.siswa-belum-absen');
+Route::get('/kaprog/siswa-belum-dikonfirmasi', [KaprogController::class, 'getSiswaBelumDikonfirmasi'])
+    ->name('kaprog.siswa-belum-dikonfirmasi');
+   });
 
 
 Route::middleware(['auth'])->group(function () {
