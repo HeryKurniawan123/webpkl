@@ -1,5 +1,6 @@
+
 <?php
-//anjay
+
 namespace App\Http\Controllers;
 
 use App\Exports\DataAbsenKaprog;
@@ -695,12 +696,12 @@ class KaprogController extends Controller
         ->whereDate('tanggal', $today)
         ->whereIn('user_id', $allSiswaIds)
         ->get();
-    
+
     $izinPendingData = DB::table('izin_pending')
         ->whereDate('tanggal', $today)
         ->whereIn('user_id', $allSiswaIds)
         ->get();
-    
+
     $dinasPendingData = DB::table('dinas_pending')
         ->whereDate('tanggal', $today)
         ->whereIn('user_id', $allSiswaIds)
@@ -710,7 +711,7 @@ class KaprogController extends Controller
     $kelasAnalisis = $kelasList->map(function ($kelas) use ($absensiHariIni, $absensiPendingData, $izinPendingData, $dinasPendingData) {
         $totalSiswa = $kelas->siswa_count;
         $siswaIdsInKelas = $kelas->siswa->pluck('id')->toArray();
-        
+
         // Hitung jumlah siswa yang sudah aktivitas (baik sudah absen maupun pending)
         $activeUserIdsInKelas = $absensiHariIni
             ->whereIn('user_id', $siswaIdsInKelas)
@@ -720,21 +721,21 @@ class KaprogController extends Controller
             ->merge($dinasPendingData->whereIn('user_id', $siswaIdsInKelas)->pluck('user_id'))
             ->unique()
             ->toArray();
-        
+
         $sudahAbsen = count($activeUserIdsInKelas);
         $belumAbsen = $totalSiswa - $sudahAbsen;
-        
+
         // Hitung yang belum divalidasi (pending)
         $belumDivalidasi = $absensiPendingData->whereIn('user_id', $siswaIdsInKelas)->count() +
                           $izinPendingData->whereIn('user_id', $siswaIdsInKelas)->count() +
                           $dinasPendingData->whereIn('user_id', $siswaIdsInKelas)->count();
-        
+
         // Hitung masing-masing kategori
         $hadirCount = 0;
         $ijinCount = 0;
         $sakitCount = 0;
         $dinasCount = 0;
-        
+
         // Proses absensi yang sudah dikonfirmasi
         foreach ($absensiHariIni->whereIn('user_id', $siswaIdsInKelas) as $absensi) {
             if (in_array($absensi->status, ['hadir', 'tepat_waktu', 'terlambat'])) {
@@ -747,7 +748,7 @@ class KaprogController extends Controller
                 $dinasCount++;
             }
         }
-        
+
         // Hitung persentase kehadiran
         $persentase = $totalSiswa > 0 ? round(($hadirCount / $totalSiswa) * 100, 2) : 0;
 
@@ -775,16 +776,16 @@ class KaprogController extends Controller
 
         $detailSiswa = $siswaList->map(function ($siswa) use ($absensiHariIni, $absensiPendingData, $izinPendingData, $dinasPendingData) {
             $absensi = $absensiHariIni->firstWhere('user_id', $siswa->id);
-            
+
             // Cek di tabel pending
             $absensiPending = $absensiPendingData->firstWhere('user_id', $siswa->id);
             $izinPending = $izinPendingData->firstWhere('user_id', $siswa->id);
             $dinasPending = $dinasPendingData->firstWhere('user_id', $siswa->id);
-            
+
             // Tentukan status dengan benar
             $status = 'belum_absen';
             $keterangan = '-';
-            
+
             if ($absensi) {
                 // Cek status izin/sakit/alfa terlebih dahulu
                 if (in_array($absensi->status, ['izin', 'sakit', 'alfa'])) {

@@ -175,15 +175,7 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/user-guru', [UsersController::class, 'guruIndex'])->name('user.guru');
     Route::post('/siswa', [UsersController::class, 'guruStore'])->name('user.guru.store');
 
-    //pembimbing siswa
-    Route::get('/pembimbing-siswa', [PembimbingSiswaController::class, 'index'])->name('pembimbing.siswa.index');
 
-
-    Route::prefix('pembimbing-siswa')->name('pembimbing.')->group(function () {
-        Route::get('/{id}', [PembimbingSiswaController::class, 'show'])->name('show');
-        Route::post('/{id}/tambah-siswa', [PembimbingSiswaController::class, 'store'])->name('store');
-        Route::delete('/{id}/hapus-siswa/{siswa_id}', [PembimbingSiswaController::class, 'destroy'])->name('destroy');
-    });
 });
 
 // Route monitoring hanya untuk login dan role kaprog, hubin, pembimbing
@@ -545,12 +537,12 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/absen-kaprog', [KaprogController::class, 'dataAbsen'])->name('absen.siswa.kaprog');
     Route::get('/kaprog/absensi/export', [KaprogController::class, 'export'])
         ->name('kaprog.absensi.export');
-        // Pastikan route ini ada dan konsisten
-Route::get('/kaprog/siswa-belum-absen', [KaprogController::class, 'getSiswaBelumAbsen'])
-    ->name('kaprog.siswa-belum-absen');
-Route::get('/kaprog/siswa-belum-dikonfirmasi', [KaprogController::class, 'getSiswaBelumDikonfirmasi'])
-    ->name('kaprog.siswa-belum-dikonfirmasi');
-   });
+    // Tambahkan route ini di web.php
+    Route::get('/kaprog/siswa-belum-dikonfirmasi', [KaprogController::class, 'getSiswaBelumDikonfirmasi'])->name('kaprog.siswa-belum-dikonfirmasi');
+    Route::get('/kaprog/siswa-belum-absen', [KaprogController::class, 'getSiswaBelumAbsen'])->name('kaprog.siswa-belum-absen');
+    Route::get('/kaprog/pembimbing-belum-konfirmasi', [KaprogController::class, 'getPembimbingBelumKonfirmasi'])->name('kaprog.pembimbing-belum-konfirmasi');
+
+});
 
 
 Route::middleware(['auth'])->group(function () {
@@ -639,12 +631,23 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
     Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
 });
 
-Route::middleware(['auth', 'hakakses:hubin,kaprog'])->group(function () {
+Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
     Route::get('/data-absensi', [DataAbsensiController::class, 'index'])->name('data-absen.index');
     Route::get('/absensi/chart-data', [DataAbsensiController::class, 'chartData']);
     Route::get('/absensi/jurusan-data', [DataAbsensiController::class, 'getJurusanChart']);
     Route::get('/data-absensi/siswa-belum-dikonfirmasi', [DataAbsensiController::class, 'getSiswaBelumDikonfirmasi'])->name('data-absensi.siswa-belum-dikonfirmasi');
     Route::get('/data-absensi/siswa-belum-absen', [DataAbsensiController::class, 'getSiswaBelumAbsen'])->name('data-absensi.siswa-belum-absen');
+    Route::get('/data-absensi/pembimbing-belum-konfirmasi', [DataAbsensiController::class, 'getPembimbingBelumKonfirmasi'])->name('data-absensi.pembimbing-belum-konfirmasi');
+
+    //pembimbing siswa
+    Route::get('/pembimbing-siswa', [PembimbingSiswaController::class, 'index'])->name('pembimbing.siswa.index');
+
+
+    Route::prefix('pembimbing-siswa')->name('pembimbing.')->group(function () {
+        Route::get('/{id}', [PembimbingSiswaController::class, 'show'])->name('show');
+        Route::post('/{id}/tambah-siswa', [PembimbingSiswaController::class, 'store'])->name('store');
+        Route::delete('/{id}/hapus-siswa/{siswa_id}', [PembimbingSiswaController::class, 'destroy'])->name('destroy');
+    });
 
     //export
     Route::get('/export/jurusan', [DataAbsensiController::class, 'exportJurusan'])

@@ -14,6 +14,11 @@
                                     <p class="text-secondary mb-0">Monitoring kehadiran dan data siswa PKL</p>
                                 </div>
                                 <div class="d-flex gap-2">
+                                    <!-- TOMBOL UNTUK PEMBIMBING BELUM DIKONFIRMASI -->
+                                    <button class="btn btn-info border" data-bs-toggle="modal"
+                                        data-bs-target="#modalPembimbingBelumKonfirmasi">
+                                        <i class="fas fa-chalkboard-teacher"></i> Pembimbing Belum Konfirmasi
+                                    </button>
                                     <!-- TOMBOL UNTUK SISWA BELUM DIKONFIRMASI -->
                                     <button class="btn btn-warning border" data-bs-toggle="modal"
                                         data-bs-target="#modalBelumDikonfirmasi">
@@ -165,6 +170,59 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL UNTUK PEMBIMBING BELUM DIKONFIRMASI -->
+    <div class="modal fade" id="modalPembimbingBelumKonfirmasi" tabindex="-1" aria-labelledby="modalPembimbingBelumKonfirmasiLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="modalPembimbingBelumKonfirmasiLabel">
+                        Daftar Pembimbing yang Belum Konfirmasi Hari Ini
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <span class="badge bg-info fs-5" id="countPembimbingBelumKonfirmasi">0 GURU</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>NAMA GURU</th>
+                                    <th>EMAIL</th>
+                                    <th>JUMLAH PENDING</th>
+                                    <th>DETAIL</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyPembimbingBelumKonfirmasi">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <div class="spinner-border text-info" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-2">Memuat data...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="errorMessagePembimbingBelumKonfirmasi" class="text-center py-4 d-none">
+                        <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                        <p class="mb-0">Gagal memuat data. Silakan coba lagi.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -588,6 +646,78 @@
                 }, index * 100);
             });
 
+            // Fungsi untuk memuat data pembimbing belum konfirmasi
+            function loadPembimbingBelumKonfirmasi() {
+                // Tampilkan loading
+                document.getElementById('tbodyPembimbingBelumKonfirmasi').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-4">
+                            <div class="spinner-border text-info" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Memuat data...</p>
+                        </td>
+                    </tr>
+                `;
+
+                // Sembunyikan pesan error
+                document.getElementById('errorMessagePembimbingBelumKonfirmasi').classList.add('d-none');
+
+                fetch("{{ route('data-absensi.pembimbing-belum-konfirmasi') }}")
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        let tbody = document.getElementById('tbodyPembimbingBelumKonfirmasi');
+                        let countElement = document.getElementById('countPembimbingBelumKonfirmasi');
+
+                        // Update count
+                        countElement.textContent = `${data.length} GURU`;
+
+                        // Kosongkan tbody
+                        tbody.innerHTML = '';
+
+                        if (data.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">
+                                        <i class="fas fa-check-circle text-success fa-3x mb-3 d-block"></i>
+                                        <p class="mb-0">Semua pembimbing sudah melakukan konfirmasi hari ini</p>
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
+
+                        // Tambahkan data ke tabel
+                        data.forEach(guru => {
+                            let row = `
+                                <tr>
+                                    <td>${guru.no}</td>
+                                    <td>${guru.guru_name}</td>
+                                    <td>${guru.guru_email}</td>
+                                    <td><span class="badge bg-warning">${guru.total_pending}</span></td>
+                                    <td>${guru.detail}</td>
+                                </tr>
+                            `;
+                            tbody.innerHTML += row;
+                        });
+
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Tampilkan pesan error
+                        document.getElementById('tbodyPembimbingBelumKonfirmasi').innerHTML = '';
+                        document.getElementById('errorMessagePembimbingBelumKonfirmasi').classList.remove('d-none');
+
+                        // Update count
+                        document.getElementById('countPembimbingBelumKonfirmasi').textContent = '0 GURU';
+                    });
+            }
+
             // Fungsi untuk memuat data siswa belum dikonfirmasi
             function loadSiswaBelumDikonfirmasi() {
                 // Tampilkan loading
@@ -738,6 +868,14 @@
                         // Update count
                         document.getElementById('countBelumAbsen').textContent = '0 SISWA';
                     });
+            }
+
+            // Event saat modal dibuka - Pembimbing Belum Konfirmasi
+            const modalPembimbingBelumKonfirmasi = document.getElementById('modalPembimbingBelumKonfirmasi');
+            if (modalPembimbingBelumKonfirmasi) {
+                modalPembimbingBelumKonfirmasi.addEventListener('show.bs.modal', function(event) {
+                    loadPembimbingBelumKonfirmasi();
+                });
             }
 
             // Event saat modal dibuka - Siswa Belum Dikonfirmasi

@@ -1,3 +1,4 @@
+
 @extends('layout.main')
 
 @section('content')
@@ -20,8 +21,8 @@
                                         <i class="fas fa-user-clock"></i> Belum Dikonfirmasi
                                     </button>
 
-                                    <button id="btnBelumAbsen" class="btn btn-danger border d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalBelumAbsen"> 
-                                        <i class="fas fa-user-slash"></i> Belum Absen 
+                                    <button id="btnBelumAbsen" class="btn btn-danger border d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalBelumAbsen">
+                                        <i class="fas fa-user-slash"></i> Belum Absen
                                     </button>
                                 </div>
                             </div>
@@ -145,7 +146,7 @@
                                     @foreach ($kelasAnalisis as $index => $kelas)
                                         <div class="col-lg-2 col-md-4 col-6">
                                             <div class="kelas-card h-100 p-3 bg-light rounded-4 shadow-sm transition-all cursor-pointer"
-                                                data-bs-toggle="modal" 
+                                                data-bs-toggle="modal"
                                                 data-bs-target="#modalDetailKelas"
                                                 data-kelas="{{ $kelas['kelas'] }}"
                                                 data-total="{{ $kelas['total_siswa'] }}"
@@ -159,13 +160,13 @@
                                                 data-persentase="{{ $kelas['persentase'] }}">
                                                 <div class="text-center">
                                                     <h6 class="mb-2 fw-semibold text-dark">{{ $kelas['kelas'] }}</h6>
-                                                    
+
                                                     <!-- Progress Circle -->
                                                     <div class="position-relative d-inline-block mb-2">
                                                         <svg class="progress-circle" width="80" height="80">
                                                             <circle class="progress-circle-bg" cx="40" cy="40" r="35" fill="none" stroke="#e9ecef" stroke-width="8"></circle>
-                                                            <circle class="progress-circle-fill" cx="40" cy="40" r="35" fill="none" 
-                                                                stroke="{{ $kelas['persentase'] >= 90 ? '#27ae60' : ($kelas['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }}" 
+                                                            <circle class="progress-circle-fill" cx="40" cy="40" r="35" fill="none"
+                                                                stroke="{{ $kelas['persentase'] >= 90 ? '#27ae60' : ($kelas['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }}"
                                                                 stroke-width="8"
                                                                 stroke-dasharray="{{ 2 * 3.14159 * 35 }}"
                                                                 stroke-dashoffset="{{ 2 * 3.14159 * 35 * (1 - $kelas['persentase'] / 100) }}"
@@ -176,7 +177,7 @@
                                                             <span class="fw-bold" style="font-size: 0.9rem;">{{ $kelas['persentase'] }}%</span>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <!-- Stats Summary -->
                                                     <div class="d-flex justify-content-between mb-2">
                                                         <div class="text-start">
@@ -192,12 +193,12 @@
                                                             <div class="fw-bold text-warning">{{ $kelas['belum_divalidasi'] }}</div>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="progress mt-2" style="height: 4px;">
-                                                        <div class="progress-bar bg-success" role="progressbar" 
-                                                            style="width: {{ ($kelas['hadir_count'] / max($kelas['total_siswa'], 1)) * 100 }}%;" 
-                                                            aria-valuenow="{{ $kelas['hadir_count'] }}" 
-                                                            aria-valuemin="0" 
+                                                        <div class="progress-bar bg-success" role="progressbar"
+                                                            style="width: {{ ($kelas['hadir_count'] / max($kelas['total_siswa'], 1)) * 100 }}%;"
+                                                            aria-valuenow="{{ $kelas['hadir_count'] }}"
+                                                            aria-valuemin="0"
                                                             aria-valuemax="{{ $kelas['total_siswa'] }}">
                                                         </div>
                                                     </div>
@@ -429,10 +430,10 @@
                                 <span class="text-muted">Target: 90%</span>
                             </div>
                             <div class="progress" style="height: 10px;">
-                                <div class="progress-bar" id="modalPersentaseBar" role="progressbar" 
-                                    style="width: 0%;" 
-                                    aria-valuenow="0" 
-                                    aria-valuemin="0" 
+                                <div class="progress-bar" id="modalPersentaseBar" role="progressbar"
+                                    style="width: 0%;"
+                                    aria-valuenow="0"
+                                    aria-valuemin="0"
                                     aria-valuemax="100">
                                 </div>
                             </div>
@@ -736,38 +737,38 @@
             width: 3rem;
             height: 3rem;
         }
-        
+
         /* Kelas Card Styles */
         .kelas-card {
             transition: all 0.3s ease;
             cursor: pointer;
         }
-        
+
         .kelas-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
         }
-        
+
         .progress-circle {
             transform: rotate(-90deg);
         }
-        
+
         .progress-circle-bg {
             fill: none;
             stroke-width: 8;
         }
-        
+
         .progress-circle-fill {
             fill: none;
             stroke-width: 8;
             stroke-linecap: round;
             transition: stroke-dashoffset 1s ease-in-out;
         }
-        
+
         .transition-all {
             transition: all 0.3s ease;
         }
-        
+
         .cursor-pointer {
             cursor: pointer;
         }
@@ -948,7 +949,7 @@
                         if (newAnalisis) {
                             document.getElementById('analisisKehadiranContainer').innerHTML =
                                 newAnalisis.innerHTML;
-                            
+
                             // Reinitialize event listeners for kelas cards
                             initializeKelasCards();
                         }
@@ -962,12 +963,12 @@
 
             // ====== Modal Detail Kelas ======
             const modalDetailKelas = document.getElementById('modalDetailKelas');
-            
+
             // Event saat modal ditampilkan
             modalDetailKelas.addEventListener('show.bs.modal', function(event) {
                 // Button that triggered the modal
                 const button = event.relatedTarget;
-                
+
                 // Extract info from data-bs-* attributes
                 const kelas = button.getAttribute('data-kelas');
                 const total = button.getAttribute('data-total');
@@ -979,7 +980,7 @@
                 const sakit = button.getAttribute('data-sakit');
                 const dinas = button.getAttribute('data-dinas');
                 const persentase = button.getAttribute('data-persentase');
-                
+
                 // Update the modal's content
                 document.getElementById('modalKelasNama').textContent = kelas;
                 document.getElementById('modalTotalSiswa').textContent = total;
@@ -991,12 +992,12 @@
                 document.getElementById('modalSakitCount').textContent = sakit + ' siswa';
                 document.getElementById('modalDinasCount').textContent = dinas + ' siswa';
                 document.getElementById('modalPersentaseLabel').textContent = persentase + '%';
-                
+
                 // Update progress bar
                 const progressBar = document.getElementById('modalPersentaseBar');
                 progressBar.style.width = persentase + '%';
                 progressBar.setAttribute('aria-valuenow', persentase);
-                
+
                 // Set progress bar color based on percentage
                 if (persentase >= 90) {
                     progressBar.classList.remove('bg-warning', 'bg-danger');
@@ -1016,7 +1017,7 @@
                 // The event listeners are already set up with data-bs-toggle and data-bs-target attributes
                 console.log('Kelas cards initialized');
             }
-            
+
             // Initialize on page load
             initializeKelasCards();
 
@@ -1190,6 +1191,6 @@
                     loadSiswaBelumAbsen();
                 });
             }
-        });
+        });j
     </script>
 @endsection

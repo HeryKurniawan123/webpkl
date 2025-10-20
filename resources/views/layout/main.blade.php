@@ -278,7 +278,7 @@
                             </a>
                         </li>
                     @endif
-                    @if (in_array(auth()->user()->role, ['hubin']))
+                    @if (in_array(auth()->user()->role, ['hubin' , 'kepsek']))
                         <li class="menu-item {{ Request::routeIs('data-absen.index') ? 'active' : '' }}">
                             <a href="{{ route('data-absen.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
