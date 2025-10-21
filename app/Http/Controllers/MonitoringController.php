@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Monitoring;
 use App\Models\Iduka;
 use App\Models\User;
+use App\Models\Guru;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Intervention\Image\Facades\Image;
 
 class MonitoringController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Monitoring::with('iduka');
+        $query = Monitoring::with(['iduka', 'guru']);
 
         if ($request->filled('nama_iduka')) {
             $search = $request->nama_iduka;
@@ -58,9 +58,18 @@ class MonitoringController extends Controller
             'iduka_id' => 'required|exists:idukas,id',
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
-            'foto.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // maksimal 2MB per foto
+            'foto.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        // cari guru yang sedang login (berdasarkan user_id)
+        $guru = Guru::where('user_id', Auth::id())->first();
+
+        // validasi jika bukan guru
+        if (!$guru && Auth::user()->role === 'guru') {
+            return redirect()->back()->with('error', 'Akun ini belum terdaftar sebagai guru.');
+        }
+
+        // upload foto
         $fotos = [];
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $file) {
@@ -78,6 +87,7 @@ class MonitoringController extends Controller
             'saran' => $request->saran,
             'perikiraan_siswa_diterima' => $request->perikiraan_siswa_diterima,
             'foto' => $fotos ? json_encode($fotos) : null,
+            'guru_id' => $guru ? $guru->id : null, // kalau bukan guru, biarkan NULL
         ]);
 
         return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil ditambahkan.');
@@ -91,10 +101,10 @@ class MonitoringController extends Controller
             'iduka_id' => 'required|exists:idukas,id',
             'saran' => 'nullable|string',
             'perikiraan_siswa_diterima' => 'nullable|integer|min:0',
-            'foto.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // maksimal 2MB per foto
+            'foto.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // hapus foto lama jika ada file baru
+        // upload foto baru jika ada
         if ($request->hasFile('foto')) {
             if ($monitoring->foto) {
                 $oldFotos = json_decode($monitoring->foto, true);
@@ -130,10 +140,9 @@ class MonitoringController extends Controller
         return redirect()->route('monitoring.index')->with('success', 'Data monitoring berhasil diperbarui.');
     }
 
-
     public function show(Monitoring $monitoring)
     {
-        $monitoring->load(['iduka', 'user']);
+        $monitoring->load(['iduka', 'guru']);
         return view('monitoring.show', compact('monitoring'));
     }
 
@@ -142,10 +151,6 @@ class MonitoringController extends Controller
         $idukas = Iduka::orderBy('nama')->get();
         return view('monitoring.edit', compact('monitoring', 'idukas'));
     }
-
-
-
-
 
     public function destroy(Monitoring $monitoring)
     {
