@@ -88,7 +88,7 @@
                                         <h5 class="card-title mb-0">Absensi Hari Ini</h5>
                                         <div>
                                             <span class="badge bg-primary"
-                                                id="tanggal-hari-ini">{{ date('d F Y') }}</span>
+                                                id="tanggal-hari-ini">{{ date('d-m-Y') }}</span>
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -122,10 +122,10 @@
                                                             <td>
                                                                 @if ($absensi->jam_masuk)
                                                                     <span
-                                                                        class="badge bg-success">{{ $absensi->jam_masuk }}</span>
+                                                                        class="badge bg-success">{{ \Carbon\Carbon::parse($absensi->jam_masuk)->format('H:i') }} WIB</span>
                                                                 @elseif ($absensi->status_dinas === 'disetujui')
                                                                     <span class="badge bg-primary">
-                                                                        {{ \Carbon\Carbon::parse($absensi->created_at)->format('Y-m-d H:i:s') }}
+                                                                        {{ \Carbon\Carbon::parse($absensi->created_at)->format('d-m-Y H:i') }} WIB
                                                                     </span>
                                                                 @else
                                                                     <span class="badge bg-secondary">-</span>
@@ -134,7 +134,7 @@
                                                             <td>
                                                                 @if ($absensi->jam_pulang)
                                                                     <span
-                                                                        class="badge bg-info">{{ $absensi->jam_pulang }}</span>
+                                                                        class="badge bg-info">{{ \Carbon\Carbon::parse($absensi->jam_pulang)->format('H:i') }} WIB</span>
                                                                 @else
                                                                     <span class="badge bg-secondary">-</span>
                                                                 @endif
@@ -222,7 +222,7 @@
                                                                         data-id="{{ $absensi->id }}">
                                                                 </td>
                                                                 <td>{{ $absensi->user->name }}</td>
-                                                                <td>{{ \Carbon\Carbon::parse($absensi->tanggal)->format('d M Y') }}
+                                                                <td>{{ \Carbon\Carbon::parse($absensi->tanggal)->format('d-m-Y') }}
                                                                 </td>
                                                                 <td>
                                                                     <span
@@ -230,7 +230,7 @@
                                                                         {{ ucfirst($absensi->jenis) }}
                                                                     </span>
                                                                 </td>
-                                                                <td>{{ \Carbon\Carbon::parse($absensi->jam)->format('H:i') }}
+                                                                <td>{{ \Carbon\Carbon::parse($absensi->jam)->format('H:i') }} WIB
                                                                 </td>
                                                                 <td>
                                                                     @if ($absensi->dikonfirmasi_oleh)
@@ -306,12 +306,12 @@
                                                                         <div class="fw-semibold">{{ $dinas->user->name }}
                                                                         </div>
                                                                         <div class="text-muted small">
-                                                                            {{ $dinas->created_at->format('d M Y H:i') }}
+                                                                            {{ $dinas->created_at->format('d-m-Y H:i') }} WIB
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td>{{ $dinas->tanggal->format('d M Y') }}</td>
+                                                            <td>{{ $dinas->tanggal->format('d-m-Y') }}</td>
                                                             <td>
                                                                 <span class="badge bg-primary">
                                                                     {{ ucfirst(str_replace('_', ' ', $dinas->jenis_dinas)) }}
@@ -389,12 +389,12 @@
                                                                         <div class="fw-semibold">{{ $izin->user->name }}
                                                                         </div>
                                                                         <div class="text-muted small">
-                                                                            {{ $izin->created_at->format('d M Y H:i') }}
+                                                                            {{ $izin->created_at->format('d-m-Y H:i') }} WIB
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td>{{ $izin->tanggal_izin ? $izin->tanggal_izin->format('d M Y') : $izin->created_at->format('d M Y') }}
+                                                            <td>{{ $izin->tanggal_izin ? $izin->tanggal_izin->format('d-m-Y') : $izin->created_at->format('d-m-Y') }}
                                                             </td>
                                                             <td>
                                                                 <span
@@ -1247,7 +1247,139 @@
 
             // Inisialisasi state awal
             updateCheckAllState();
+
+            // Event listener untuk form filter riwayat
+            const filterRiwayatForm = document.getElementById('filterRiwayatForm');
+            if (filterRiwayatForm) {
+                filterRiwayatForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    loadRiwayatData();
+                });
+            }
         });
+
+        // Fungsi untuk memuat data riwayat
+        function loadRiwayatData() {
+            const tanggalDari = document.getElementById('tanggal_dari').value;
+            const tanggalSampai = document.getElementById('tanggal_sampai').value;
+            const filterSiswa = document.getElementById('filter_siswa_riwayat').value;
+
+            // Validasi minimal tanggal dari
+            if (!tanggalDari) {
+                showToast('Peringatan', 'Silakan pilih tanggal awal', 'warning');
+                return;
+            }
+
+            // Tampilkan loading
+            const riwayatBody = document.getElementById('riwayatBody');
+            riwayatBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            // Ambil data via AJAX
+            fetch(`{{ route('iduka.get-riwayat-absen') }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    tanggal_dari: tanggalDari,
+                    tanggal_sampai: tanggalSampai,
+                    siswa_id: filterSiswa
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderRiwayatTable(data.data);
+                } else {
+                    riwayatBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">${data.message || 'Tidak ada data'}</td>
+                        </tr>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                riwayatBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">Terjadi kesalahan: ${error.message}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Fungsi untuk merender tabel riwayat
+        function renderRiwayatTable(data) {
+            const riwayatBody = document.getElementById('riwayatBody');
+
+            if (!data || data.length === 0) {
+                riwayatBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Tidak ada data riwayat untuk periode yang dipilih</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            data.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.tanggal}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="{{ asset('snet/assets/img/avatars/1.png') }}" alt="Avatar" class="rounded-circle me-2" width="32" height="32">
+                                <div class="ms-2">
+                                    <div class="fw-semibold">${item.nama_siswa}</div>
+                                    <div class="text-muted small">${item.email}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            ${item.jam_masuk !== '-' ? `<span class="badge bg-success">${item.jam_masuk}</span>` : '<span class="badge bg-secondary">-</span>'}
+                        </td>
+                        <td>
+                            ${item.jam_pulang !== '-' ? `<span class="badge bg-info">${item.jam_pulang}</span>` : '<span class="badge bg-secondary">-</span>'}
+                        </td>
+                        <td>
+                            <span class="badge ${getStatusBadgeClass(item.status)}">
+                                ${ucfirst(item.status.replace('_', ' '))}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            riwayatBody.innerHTML = html;
+        }
+
+        // Fungsi helper untuk mendapatkan kelas badge status
+        function getStatusBadgeClass(status) {
+            switch(status) {
+                case 'tepat_waktu': return 'bg-success';
+                case 'terlambat': return 'bg-warning';
+                case 'izin': return 'bg-info';
+                case 'sakit': return 'bg-danger';
+                case 'alpha': return 'bg-danger';
+                case 'ditolak': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        // Fungsi helper untuk mengkapitalisasi kata
+        function ucfirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
     </script>
 
     <style>

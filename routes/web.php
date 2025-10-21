@@ -446,6 +446,9 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
             ->name('tambah.kordinat');
     });
 
+    Route::post('/get-riwayat-absen', [KonfirAbsenSiswaController::class, 'getRiwayatAbsen'])
+    ->name('iduka.get-riwayat-absen');
+
     Route::post('/clear-session', function () {
         session()->forget(['success', 'error']);
         return response()->json(['success' => true]);

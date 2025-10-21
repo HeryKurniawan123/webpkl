@@ -1113,13 +1113,13 @@ class KonfirAbsenSiswaController extends Controller
         }
 
         $absensiStats = $absensiQuery->selectRaw('
-            COUNT(*) as total_absensi,
-            SUM(CASE WHEN status = "tepat_waktu" THEN 1 ELSE 0 END) as tepat_waktu,
-            SUM(CASE WHEN status = "terlambat" THEN 1 ELSE 0 END) as terlambat,
-            SUM(CASE WHEN status = "izin" THEN 1 ELSE 0 END) as izin,
-            SUM(CASE WHEN status = "sakit" THEN 1 ELSE 0 END) as sakit,
-            SUM(CASE WHEN status = "alpha" THEN 1 ELSE 0 END) as alpha
-        ')->first();
+                COUNT(*) as total_absensi,
+                SUM(CASE WHEN status = "tepat_waktu" THEN 1 ELSE 0 END) as tepat_waktu,
+                SUM(CASE WHEN status = "terlambat" THEN 1 ELSE 0 END) as terlambat,
+                SUM(CASE WHEN status = "izin" THEN 1 ELSE 0 END) as izin,
+                SUM(CASE WHEN status = "sakit" THEN 1 ELSE 0 END) as sakit,
+                SUM(CASE WHEN status = "alpha" THEN 1 ELSE 0 END) as alpha
+            ')->first();
 
         // Hitung persentase kehadiran
         $totalAbsensi = $absensiStats->total_absensi ?? 0;
@@ -1539,6 +1539,73 @@ class KonfirAbsenSiswaController extends Controller
             return view('iduka.konfir_absen_siswa.riwayat_table', compact('riwayat'));
         } catch (\Exception $e) {
             Log::error('Error in filterRiwayat: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Get riwayat absensi untuk AJAX
+     */
+    public function getRiwayatAbsen(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $tanggalDari = $request->tanggal_dari;
+            $tanggalSampai = $request->tanggal_sampai;
+            $filterSiswa = $request->siswa_id;
+
+            $query = Absensi::with(['user', 'iduka']);
+
+            if ($user->role === 'iduka') {
+                $query->where('iduka_id', $user->iduka_id);
+            } elseif ($user->role === 'guru') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            } elseif ($user->role === 'kaprog') {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $query->whereHas('user', function ($q) use ($guru) {
+                        $q->where('pembimbing_id', $guru->id);
+                    });
+                }
+            }
+
+            if ($tanggalDari) {
+                $query->whereDate('tanggal', '>=', $tanggalDari);
+            }
+            if ($tanggalSampai) {
+                $query->whereDate('tanggal', '<=', $tanggalSampai);
+            }
+            if ($filterSiswa) {
+                $query->where('user_id', $filterSiswa);
+            }
+
+            $riwayat = $query->latest()->get();
+
+            // Format data untuk response
+            $data = $riwayat->map(function ($item) {
+                return [
+                    'tanggal' => Carbon::parse($item->tanggal)->format('d-m-Y'),
+                    'nama_siswa' => $item->user->name,
+                    'email' => $item->user->email,
+                    'jam_masuk' => $item->jam_masuk ? Carbon::parse($item->jam_masuk)->format('H:i') . ' WIB' : '-',
+                    'jam_pulang' => $item->jam_pulang ? Carbon::parse($item->jam_pulang)->format('H:i') . ' WIB' : '-',
+                    'status' => $item->status
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $data
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in getRiwayatAbsen: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
