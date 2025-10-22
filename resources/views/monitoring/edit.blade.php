@@ -31,7 +31,7 @@
                                 <label for="iduka_id" class="form-label fw-semibold">
                                     <i class="bx bx-building me-1"></i> IDUKA <span class="text-danger">*</span>
                                 </label>
-                                <select class="form-select @error('iduka_id') is-invalid @enderror" id="iduka_id"
+                                <select class="form-select select2 @error('iduka_id') is-invalid @enderror" id="iduka_id"
                                     name="iduka_id" required>
                                     <option value="">Pilih IDUKA...</option>
                                     @foreach ($idukas as $iduka)
@@ -45,6 +45,7 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             {{-- Saran --}}
                             <div class="mb-3">
@@ -169,4 +170,15 @@
             }
         });
     </script>
+
+    <script>
+    $(document).ready(function() {
+        $('#iduka_id').select2({
+            placeholder: "Pilih IDUKA...",
+            allowClear: true,
+            width: '100%' // biar pas dengan Bootstrap
+        });
+    });
+</script>
+
 @endpush
