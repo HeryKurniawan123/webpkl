@@ -190,7 +190,6 @@ class JournalController extends Controller
             return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil diperbarui.');
         } catch (\Exception $e) {
             Log::error('Error updating journal: ' . $e->getMessage());
-
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
@@ -394,45 +393,39 @@ class JournalController extends Controller
         }
     }
 
-    public function siswaBelumIsi()
-    {
-        $user = Auth::user();
+ public function siswaBelumIsi()
+{
+    $user = Auth::user();
 
-        // Hanya bisa diakses oleh hubin, kepsek, kaprog
-        if (!in_array($user->role, ['hubin', 'kepsek', 'kaprog'])) {
-            abort(403, 'Unauthorized access');
-        }
-
-        // Ambil tanggal hari ini
-        $today = Carbon::today()->format('Y-m-d');
-
-        // Ambil ID siswa yang sudah mengisi jurnal hari ini
-        $siswaSudahIsi = Jurnal::whereDate('tgl', $today)
-            ->pluck('user_id')
-            ->toArray();
-
-        // Ambil semua siswa dengan pagination
-        $siswaQuery = User::where('role', 'siswa')
-            ->whereNotIn('id', $siswaSudahIsi) // Filter langsung di query
-            ->with(['iduka', 'kelas']); // Eager loading kelas
-
-        // Filter berdasarkan role
-        if ($user->role === 'kaprog') {
-            // Asumsi ada relasi ke jurusan melalui kelas
-            $siswaQuery->whereHas('kelas', function ($query) use ($user) {
-                $query->where('jurusan_id', $user->jurusan_id);
-            });
-        }
-        // Hubin dan Kepsek bisa melihat semua siswa
-
-        // Gunakan pagination biasa untuk semua role
-        $siswaBelumIsi = $siswaQuery->paginate(10);
-
-        return view('jurnal.siswa-belumisi', [
-            'siswaBelumIsi' => $siswaBelumIsi,
-            'today' => $today
-        ]);
+    // Hanya bisa diakses oleh hubin, kepsek, kaprog
+    if (!in_array($user->role, ['hubin', 'kepsek', 'kaprog'])) {
+        abort(403, 'Unauthorized access');
     }
+
+    // Ambil tanggal hari ini
+    $today = Carbon::today()->format('Y-m-d');
+
+    // Ambil ID siswa yang sudah mengisi jurnal hari ini
+    $siswaSudahIsi = Jurnal::whereDate('tgl', $today)
+        ->pluck('user_id')
+        ->toArray();
+
+    // Ambil semua siswa dengan pagination
+    $siswaQuery = User::where('role', 'siswa')
+        ->whereNotIn('id', $siswaSudahIsi) // Filter langsung di query
+        ->with(['iduka', 'kelas']); // Eager loading kelas
+
+    // PERBAIKAN: Hapus filter jurusan untuk kaprog sementara
+    // Hubin, Kepsek, dan Kaprog bisa melihat semua siswa
+
+    // Gunakan pagination biasa untuk semua role
+    $siswaBelumIsi = $siswaQuery->paginate(10);
+
+    return view('jurnal.siswa-belumisi', [
+        'siswaBelumIsi' => $siswaBelumIsi,
+        'today' => $today
+    ]);
+}
 
     public function kirimPengingat(Request $request)
     {
