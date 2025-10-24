@@ -1,4 +1,3 @@
-
 @extends('layout.main')
 
 @section('content')
@@ -13,17 +12,6 @@
                                 <div>
                                     <h4 class="mb-1 text-dark fw-bold">TATA RIKSA K-ONE</h4>
                                     <p class="text-secondary mb-0">Absensi - data siswa PKL Per Jurusan</p>
-                                </div>
-
-                                <div class="d-flex gap-2 ms-auto">
-                                    <button id="btnBelumDikonfirmasi" class="btn btn-warning border d-flex align-items-center gap-1"
-                                        data-bs-toggle="modal" data-bs-target="#modalBelumDikonfirmasi">
-                                        <i class="fas fa-user-clock"></i> Belum Dikonfirmasi
-                                    </button>
-
-                                    <button id="btnBelumAbsen" class="btn btn-danger border d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#modalBelumAbsen">
-                                        <i class="fas fa-user-slash"></i> Belum Absen
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +38,9 @@
                 </div>
 
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalBelumDikonfirmasi">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -66,7 +56,9 @@
                 </div>
 
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalBelumAbsen">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -1174,23 +1166,21 @@
                     });
             }
 
-            // Event listener untuk tombol Belum Dikonfirmasi
-            const btnBelumDikonfirmasi = document.getElementById('btnBelumDikonfirmasi');
-            if (btnBelumDikonfirmasi) {
-                btnBelumDikonfirmasi.addEventListener('click', function() {
-                    console.log('Tombol Belum Dikonfirmasi diklik');
+            // Event saat modal dibuka - Siswa Belum Dikonfirmasi
+            const modalBelumDikonfirmasi = document.getElementById('modalBelumDikonfirmasi');
+            if (modalBelumDikonfirmasi) {
+                modalBelumDikonfirmasi.addEventListener('show.bs.modal', function(event) {
                     loadSiswaBelumDikonfirmasi();
                 });
             }
 
-            // Event listener untuk tombol Belum Absen
-            const btnBelumAbsen = document.getElementById('btnBelumAbsen');
-            if (btnBelumAbsen) {
-                btnBelumAbsen.addEventListener('click', function() {
-                    console.log('Tombol Belum Absen diklik');
+            // Event saat modal dibuka - Siswa Belum Absen
+            const modalBelumAbsen = document.getElementById('modalBelumAbsen');
+            if (modalBelumAbsen) {
+                modalBelumAbsen.addEventListener('show.bs.modal', function(event) {
                     loadSiswaBelumAbsen();
                 });
             }
-        });j
+        });
     </script>
 @endsection

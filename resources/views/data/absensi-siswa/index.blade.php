@@ -13,23 +13,6 @@
                                     <h4 class="mb-1 text-dark fw-bold">Dashboard PKL & Absensi</h4>
                                     <p class="text-secondary mb-0">Monitoring kehadiran dan data siswa PKL</p>
                                 </div>
-                                <div class="d-flex gap-2">
-                                    <!-- TOMBOL UNTUK PEMBIMBING BELUM DIKONFIRMASI -->
-                                    <button class="btn btn-info border" data-bs-toggle="modal"
-                                        data-bs-target="#modalPembimbingBelumKonfirmasi">
-                                        <i class="fas fa-chalkboard-teacher"></i> Pembimbing Belum Konfirmasi
-                                    </button>
-                                    <!-- TOMBOL UNTUK SISWA BELUM DIKONFIRMASI -->
-                                    <button class="btn btn-warning border" data-bs-toggle="modal"
-                                        data-bs-target="#modalBelumDikonfirmasi">
-                                        <i class="fas fa-user-clock"></i> Belum Dikonfirmasi
-                                    </button>
-                                    <!-- TOMBOL UNTUK SISWA BELUM ABSEN -->
-                                    <button class="btn btn-danger border" data-bs-toggle="modal"
-                                        data-bs-target="#modalBelumAbsen">
-                                        <i class="fas fa-user-slash"></i> Belum Absen
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -71,7 +54,9 @@
                 </div>
 
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalBelumDikonfirmasi">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -87,7 +72,9 @@
                 </div>
 
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
+                         data-bs-toggle="modal"
+                         data-bs-target="#modalBelumAbsen">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -488,6 +475,11 @@
         .spinner-border {
             width: 3rem;
             height: 3rem;
+        }
+
+        /* Tambahkan kursor pointer untuk kartu yang bisa diklik */
+        .cursor-pointer {
+            cursor: pointer;
         }
     </style>
 
