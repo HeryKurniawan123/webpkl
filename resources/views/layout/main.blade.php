@@ -501,6 +501,12 @@
                                 <div data-i18n="Basic">Progres Siswa</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('jurnal.siswa-belum-isi') ? 'active' : '' }}">
+                            <a href="{{ route('jurnal.siswa-belum-isi') }}" class="menu-link">
+                                <i class="menu-icon bx bx-line-chart"></i>
+                                <div data-i18n="Basic">Siswa Belum Isi Jurnal</div>
+                            </a>
+                        </li>
                     @endif
 
 

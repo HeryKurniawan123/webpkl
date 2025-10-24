@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jurnal;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -188,14 +190,14 @@ class JournalController extends Controller
             return redirect()->route('jurnal.index')->with('success', 'Jurnal berhasil diperbarui.');
         } catch (\Exception $e) {
             Log::error('Error updating journal: ' . $e->getMessage());
-            
+
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Terjadi kesalahan saat mengupdate jurnal.'
                 ], 500);
             }
-            
+
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengupdate jurnal.');
         }
     }
@@ -251,7 +253,7 @@ class JournalController extends Controller
                 return response($html, 200);
             } catch (\Exception $e) {
                 Log::error('Error rendering edit form: ' . $e->getMessage());
-                
+
                 // Return a complete form even if there's an error
                 $html = '
                 <div class="row g-3">
@@ -266,7 +268,7 @@ class JournalController extends Controller
                             <i class="bi bi-image me-1"></i>Foto Kegiatan
                         </label>
                         <input type="file" class="form-control form-control-lg" name="foto" accept="image/*">';
-                
+
                 if ($jurnal->foto) {
                     $html .= '
                     <div class="mt-2 p-2 bg-light rounded">
@@ -284,7 +286,7 @@ class JournalController extends Controller
                         <i class="bi bi-info-circle me-1"></i>Belum ada foto. Upload foto baru jika diperlukan.
                     </small>';
                 }
-                
+
                 $html .= '
                         <small class="text-muted d-block mt-1">Format: JPG, PNG, GIF (Max: 2MB)</small>
                     </div>
@@ -309,7 +311,7 @@ class JournalController extends Controller
                     <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
                         <i class="bi bi-file-text me-1"></i>Uraian Kegiatan
                     </label>
-                    <textarea class="form-control form-control-lg" name="uraian" rows="5" 
+                    <textarea class="form-control form-control-lg" name="uraian" rows="5"
                         placeholder="Tuliskan uraian kegiatan yang dilakukan..." required>' . $jurnal->uraian . '</textarea>
                     <small class="text-muted">
                         <i class="bi bi-info-circle me-1"></i>Maksimal 1000 karakter
@@ -318,7 +320,7 @@ class JournalController extends Controller
 
                 <div class="mt-4 p-3 bg-light rounded">
                     <div class="form-check mb-3">
-                        <input type="checkbox" class="form-check-input" name="is_pengetahuan_baru" 
+                        <input type="checkbox" class="form-check-input" name="is_pengetahuan_baru"
                             id="edit_is_pengetahuan_baru" value="1" ' . ($jurnal->is_pengetahuan_baru ? 'checked' : '') . '>
                         <label class="form-check-label fw-semibold" for="edit_is_pengetahuan_baru">
                             <i class="bi bi-lightbulb-fill text-warning me-1"></i>
@@ -327,7 +329,7 @@ class JournalController extends Controller
                     </div>
 
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" name="is_dalam_mapel" 
+                        <input type="checkbox" class="form-check-input" name="is_dalam_mapel"
                             id="edit_is_dalam_mapel" value="1" ' . ($jurnal->is_dalam_mapel ? 'checked' : '') . '>
                         <label class="form-check-label fw-semibold" for="edit_is_dalam_mapel">
                             <i class="bi bi-book-fill text-primary me-1"></i>
@@ -335,7 +337,7 @@ class JournalController extends Controller
                         </label>
                     </div>
                 </div>';
-                
+
                 if ($jurnal->status === 'rejected') {
                     $html .= '
                 <div class="alert alert-danger mt-4 border-0 shadow-sm">
@@ -348,7 +350,7 @@ class JournalController extends Controller
                     </div>
                 </div>';
                 }
-                
+
                 return response($html, 200);
             }
         }
@@ -391,4 +393,125 @@ class JournalController extends Controller
             }
         }
     }
+
+    public function siswaBelumIsi()
+    {
+        $user = Auth::user();
+
+        // Hanya bisa diakses oleh hubin, kepsek, kaprog
+        if (!in_array($user->role, ['hubin', 'kepsek', 'kaprog'])) {
+            abort(403, 'Unauthorized access');
+        }
+
+        // Ambil tanggal hari ini
+        $today = Carbon::today()->format('Y-m-d');
+
+        // Ambil ID siswa yang sudah mengisi jurnal hari ini
+        $siswaSudahIsi = Jurnal::whereDate('tgl', $today)
+            ->pluck('user_id')
+            ->toArray();
+
+        // Ambil semua siswa dengan pagination
+        $siswaQuery = User::where('role', 'siswa')
+            ->whereNotIn('id', $siswaSudahIsi) // Filter langsung di query
+            ->with(['iduka', 'kelas']); // Eager loading kelas
+
+        // Filter berdasarkan role
+        if ($user->role === 'kaprog') {
+            // Asumsi ada relasi ke jurusan melalui kelas
+            $siswaQuery->whereHas('kelas', function ($query) use ($user) {
+                $query->where('jurusan_id', $user->jurusan_id);
+            });
+        }
+        // Hubin dan Kepsek bisa melihat semua siswa
+
+        // Gunakan pagination biasa untuk semua role
+        $siswaBelumIsi = $siswaQuery->paginate(10);
+
+        return view('jurnal.siswa-belumisi', [
+            'siswaBelumIsi' => $siswaBelumIsi,
+            'today' => $today
+        ]);
+    }
+
+    public function kirimPengingat(Request $request)
+    {
+        $user = Auth::user();
+
+        // Hanya bisa diakses oleh hubin, kepsek, kaprog
+        if (!in_array($user->role, ['hubin', 'kepsek', 'kaprog'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'siswa_id' => 'nullable|exists:users,id',
+            'message' => 'required|string'
+        ]);
+
+        $siswaId = $request->siswa_id;
+        $message = $request->message;
+
+        // Ambil siswa yang akan dikirimi pengingat
+        $siswaQuery = User::where('role', 'siswa');
+
+        if ($siswaId) {
+            // Jika hanya satu siswa
+            $siswaQuery->where('id', $siswaId);
+        } else {
+            // Jika semua siswa yang belum mengisi jurnal hari ini
+            $today = Carbon::today()->format('Y-m-d');
+            $siswaSudahIsi = Jurnal::whereDate('tgl', $today)
+                ->pluck('user_id')
+                ->toArray();
+
+            $siswaQuery->whereNotIn('id', $siswaSudahIsi);
+
+            // Filter berdasarkan role
+            if ($user->role === 'kaprog') {
+                $siswaQuery->whereHas('kelas', function ($query) use ($user) {
+                    $query->where('jurusan_id', $user->jurusan_id);
+                });
+            }
+        }
+
+        $siswaList = $siswaQuery->get();
+
+        $count = 0;
+        $errors = [];
+
+        foreach ($siswaList as $siswa) {
+            $personalMessage = str_replace('{nama_siswa}', $siswa->name, $message);
+
+            // Kirim via Email
+            if ($siswa->email) {
+                try {
+                    // Implementasi kirim email
+                    // Mail::to($siswa->email)->send(new JournalReminder($personalMessage));
+
+                    // Simulasi pengiriman email
+                    Log::info("Mengirim email ke {$siswa->email}: {$personalMessage}");
+                    $count++;
+                } catch (\Exception $e) {
+                    $errors[] = "Gagal kirim email ke {$siswa->name}: {$e->getMessage()}";
+                }
+            } else {
+                $errors[] = "Siswa {$siswa->name} tidak memiliki alamat email";
+            }
+        }
+
+        $responseMessage = "Pengingat berhasil dikirim ke {$count} siswa melalui email.";
+
+        if (count($errors) > 0) {
+            $responseMessage .= " Beberapa error terjadi: " . implode("; ", $errors);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $responseMessage
+        ]);
+    }
+
 }

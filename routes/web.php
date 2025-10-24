@@ -4,6 +4,7 @@ use App\Exports\DataAbsenKaprog;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AbsensiGuruController;
 use App\Http\Controllers\DataAbsensiController;
+use App\Http\Controllers\Hubin\JurnalController;
 use App\Http\Controllers\JournalApprovalController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\JurnalSiswaController;
@@ -615,6 +616,8 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
     Route::get('/kepsek/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kepsek.siswa.detail');
 
     Route::get('/kepsek/siswa', [SiswaController::class, 'index'])->name('kepsek.siswa.index');
+
+
 });
 
 
@@ -632,6 +635,9 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
 
     Route::get('/progres/siswa', [ProgresSiswaController::class, 'index'])->name('progres.siswa.index');
     Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
+
+        Route::get('/pembimbing/jurnal/siswa-belum-isi', [JournalController::class, 'siswaBelumIsi'])->name('jurnal.siswa-belum-isi');
+    Route::post('/pembimbing/jurnal/kirim-pengingat', [JournalController::class, 'kirimPengingat'])->name('jurnal.kirim-pengingat');
 });
 
 Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
