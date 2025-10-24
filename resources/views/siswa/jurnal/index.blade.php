@@ -193,7 +193,11 @@
                                     <i class="bi bi-calendar3 me-1"></i>Tanggal
                                 </label>
                                 <input type="date" class="form-control form-control-lg" name="tgl"
-                                    value="{{ old('tgl', date('Y-m-d')) }}" required>
+                                    value="{{ old('tgl', date('Y-m-d')) }}"
+                                    min="{{ date('Y-m-d') }}"
+                                    max="{{ date('Y-m-d') }}"
+                                    required>
+                                <small class="text-muted">Hanya tanggal hari ini yang dapat dipilih</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
