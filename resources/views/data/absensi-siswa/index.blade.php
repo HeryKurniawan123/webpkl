@@ -54,9 +54,8 @@
                 </div>
 
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
-                         data-bs-toggle="modal"
-                         data-bs-target="#modalBelumDikonfirmasi">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer" data-bs-toggle="modal"
+                        data-bs-target="#modalBelumDikonfirmasi">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -72,9 +71,8 @@
                 </div>
 
                 <div class="col-lg-3 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
-                         data-bs-toggle="modal"
-                         data-bs-target="#modalBelumAbsen">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer" data-bs-toggle="modal"
+                        data-bs-target="#modalBelumAbsen">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -150,7 +148,8 @@
                                                 style="color: {{ $j['persentase'] >= 90 ? '#27ae60' : ($j['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }};">
                                                 {{ $j['persentase'] }}%
                                             </div>
-                                            <small class="text-secondary">{{ $j['total_siswa'] }} siswa</small>
+                                            <small class="text-secondary">{{ $j['jumlah_hadir'] }}/{{ $j['total_siswa'] }}
+                                                siswa</small>
                                         </div>
                                     </div>
                                 @endforeach
@@ -163,8 +162,8 @@
     </div>
 
     <!-- MODAL UNTUK PEMBIMBING BELUM DIKONFIRMASI -->
-    <div class="modal fade" id="modalPembimbingBelumKonfirmasi" tabindex="-1" aria-labelledby="modalPembimbingBelumKonfirmasiLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="modalPembimbingBelumKonfirmasi" tabindex="-1"
+        aria-labelledby="modalPembimbingBelumKonfirmasiLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
@@ -703,7 +702,8 @@
                         console.error('Error:', error);
                         // Tampilkan pesan error
                         document.getElementById('tbodyPembimbingBelumKonfirmasi').innerHTML = '';
-                        document.getElementById('errorMessagePembimbingBelumKonfirmasi').classList.remove('d-none');
+                        document.getElementById('errorMessagePembimbingBelumKonfirmasi').classList.remove(
+                            'd-none');
 
                         // Update count
                         document.getElementById('countPembimbingBelumKonfirmasi').textContent = '0 GURU';

@@ -33,13 +33,13 @@ class DataAbsensiController extends Controller
             ->distinct('user_id')
             ->count('user_id') +
             IzinPending::whereDate('tanggal', Carbon::today())
-            ->where('status_konfirmasi', 'pending')
-            ->distinct('user_id')
-            ->count('user_id') +
+                ->where('status_konfirmasi', 'pending')
+                ->distinct('user_id')
+                ->count('user_id') +
             DinasPending::whereDate('tanggal', Carbon::today())
-            ->where('status_konfirmasi', 'pending')
-            ->distinct('user_id')
-            ->count('user_id');
+                ->where('status_konfirmasi', 'pending')
+                ->distinct('user_id')
+                ->count('user_id');
 
         // Siswa yang benar-benar tidak absen (tidak hadir)
         $tidakHadir = $totalSiswaPKL - $hadirHariIni - $belumDikonfirmasi;
@@ -141,7 +141,7 @@ class DataAbsensiController extends Controller
                 'konkes.id',
                 'konkes.name_konke as jurusan',
                 DB::raw('COUNT(DISTINCT users.id) as total_siswa'),
-                DB::raw('COUNT(absensi.id) as total_hadir_today')
+                DB::raw('COUNT(DISTINCT absensi.user_id) as total_hadir_today') // Perbaikan di sini
             )
             ->where('users.role', 'siswa')
             ->groupBy('konkes.id', 'konkes.name_konke')
@@ -155,6 +155,7 @@ class DataAbsensiController extends Controller
             return [
                 'jurusan' => $item->jurusan,
                 'total_siswa' => $total_siswa,
+                'jumlah_hadir' => $total_hadir, // Tambahkan ini
                 'persentase' => $persentase,
             ];
         });
@@ -258,178 +259,178 @@ class DataAbsensiController extends Controller
     }
 
     // Method untuk mendapatkan siswa yang benar-benar tidak absen
-public function getSiswaBelumAbsen()
-{
-    try {
-        \Log::info('Memulai getSiswaBelumAbsen');
+    public function getSiswaBelumAbsen()
+    {
+        try {
+            \Log::info('Memulai getSiswaBelumAbsen');
 
-        // Ambil semua siswa PKL
-        $allSiswa = User::where('role', 'siswa')
-            ->whereNotNull('iduka_id')
-            ->get();
+            // Ambil semua siswa PKL
+            $allSiswa = User::where('role', 'siswa')
+                ->whereNotNull('iduka_id')
+                ->get();
 
-        \Log::info('Total siswa PKL: ' . $allSiswa->count());
+            \Log::info('Total siswa PKL: ' . $allSiswa->count());
 
-        // Ambil ID siswa yang sudah ada di absensi (sudah konfirmasi)
-        $idsSiswaHadir = Absensi::whereDate('tanggal', Carbon::today())
-            ->pluck('user_id')
-            ->toArray();
+            // Ambil ID siswa yang sudah ada di absensi (sudah konfirmasi)
+            $idsSiswaHadir = Absensi::whereDate('tanggal', Carbon::today())
+                ->pluck('user_id')
+                ->toArray();
 
-        // Ambil ID siswa yang ada di absensi_pending (belum konfirmasi)
-        $idsSiswaPending = AbsensiPending::whereDate('tanggal', Carbon::today())
-            ->pluck('user_id')
-            ->toArray();
+            // Ambil ID siswa yang ada di absensi_pending (belum konfirmasi)
+            $idsSiswaPending = AbsensiPending::whereDate('tanggal', Carbon::today())
+                ->pluck('user_id')
+                ->toArray();
 
-        // Ambil ID siswa yang ada di izin_pending
-        $idsSiswaIzin = IzinPending::whereDate('tanggal', Carbon::today())
-            ->pluck('user_id')
-            ->toArray();
+            // Ambil ID siswa yang ada di izin_pending
+            $idsSiswaIzin = IzinPending::whereDate('tanggal', Carbon::today())
+                ->pluck('user_id')
+                ->toArray();
 
-        // Ambil ID siswa yang ada di dinas_pending
-        $idsSiswaDinas = DinasPending::whereDate('tanggal', Carbon::today())
-            ->pluck('user_id')
-            ->toArray();
+            // Ambil ID siswa yang ada di dinas_pending
+            $idsSiswaDinas = DinasPending::whereDate('tanggal', Carbon::today())
+                ->pluck('user_id')
+                ->toArray();
 
-        // Gabungkan semua ID siswa yang sudah melakukan aktivitas
-        $allIds = array_merge($idsSiswaHadir, $idsSiswaPending, $idsSiswaIzin, $idsSiswaDinas);
-        \Log::info('Total ID siswa yang sudah aktivitas: ' . count($allIds));
+            // Gabungkan semua ID siswa yang sudah melakukan aktivitas
+            $allIds = array_merge($idsSiswaHadir, $idsSiswaPending, $idsSiswaIzin, $idsSiswaDinas);
+            \Log::info('Total ID siswa yang sudah aktivitas: ' . count($allIds));
 
-        // Filter siswa yang belum melakukan aktivitas sama sekali
-        $siswaBelumAbsen = $allSiswa->filter(function ($siswa) use ($allIds) {
-            return !in_array($siswa->id, $allIds);
-        });
+            // Filter siswa yang belum melakukan aktivitas sama sekali
+            $siswaBelumAbsen = $allSiswa->filter(function ($siswa) use ($allIds) {
+                return !in_array($siswa->id, $allIds);
+            });
 
-        \Log::info('Jumlah siswa belum absen: ' . $siswaBelumAbsen->count());
+            \Log::info('Jumlah siswa belum absen: ' . $siswaBelumAbsen->count());
 
-        // Format data dengan query langsung untuk menghindari error relasi
-        $data = [];
-        $index = 1;
+            // Format data dengan query langsung untuk menghindari error relasi
+            $data = [];
+            $index = 1;
 
-        foreach ($siswaBelumAbsen as $siswa) {
-            // Ambil data iduka dan pembimbing secara manual
-            $iduka = DB::table('idukas')->where('id', $siswa->iduka_id)->first();
-            $pembimbing = DB::table('gurus')->where('id', $siswa->pembimbing_id)->first();
+            foreach ($siswaBelumAbsen as $siswa) {
+                // Ambil data iduka dan pembimbing secara manual
+                $iduka = DB::table('idukas')->where('id', $siswa->iduka_id)->first();
+                $pembimbing = DB::table('gurus')->where('id', $siswa->pembimbing_id)->first();
 
-            $data[] = [
-                'no' => $index++,
-                'name' => $siswa->name ?? '-',
-                'email' => $siswa->email ?? '-',
-                'iduka' => $iduka->nama ?? '-', // Menggunakan kolom 'nama' bukan 'nama_perusahaan'
-                'pembimbing' => $pembimbing->nama ?? $pembimbing->name ?? '-',
-            ];
-        }
-
-        return response()->json($data);
-    } catch (\Exception $e) {
-        \Log::error('Error di getSiswaBelumAbsen: ' . $e->getMessage());
-        \Log::error('Trace: ' . $e->getTraceAsString());
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-}
-public function getPembimbingBelumKonfirmasi()
-{
-    try {
-        \Log::info('Memulai getPembimbingBelumKonfirmasi');
-
-        // Ambil semua data pending yang perlu dikonfirmasi oleh guru
-        $absensiPending = DB::table('absensi_pending as ap')
-            ->join('users as u', 'ap.user_id', '=', 'u.id')
-            ->join('gurus as g', 'u.pembimbing_id', '=', 'g.id')
-            ->leftJoin('users as guru_user', 'g.user_id', '=', 'guru_user.id')
-            ->whereDate('ap.tanggal', Carbon::today())
-            ->where('ap.status_konfirmasi', 'pending')
-            ->select(
-                'g.id as guru_id',
-                'guru_user.name as guru_name',
-                'guru_user.email as guru_email',
-                DB::raw('COUNT(ap.id) as jumlah_pending'),
-                DB::raw('"Absensi" as jenis')
-            )
-            ->groupBy('g.id', 'guru_user.name', 'guru_user.email')
-            ->get();
-
-        // Ambil data izin pending
-        $izinPending = DB::table('izin_pending as ip')
-            ->join('users as u', 'ip.user_id', '=', 'u.id')
-            ->join('gurus as g', 'u.pembimbing_id', '=', 'g.id')
-            ->leftJoin('users as guru_user', 'g.user_id', '=', 'guru_user.id')
-            ->whereDate('ip.tanggal', Carbon::today())
-            ->where('ip.status_konfirmasi', 'pending')
-            ->select(
-                'g.id as guru_id',
-                'guru_user.name as guru_name',
-                'guru_user.email as guru_email',
-                DB::raw('COUNT(ip.id) as jumlah_pending'),
-                DB::raw('"Izin" as jenis')
-            )
-            ->groupBy('g.id', 'guru_user.name', 'guru_user.email')
-            ->get();
-
-        // Ambil data dinas pending
-        $dinasPending = DB::table('dinas_pending as dp')
-            ->join('users as u', 'dp.user_id', '=', 'u.id')
-            ->join('gurus as g', 'u.pembimbing_id', '=', 'g.id')
-            ->leftJoin('users as guru_user', 'g.user_id', '=', 'guru_user.id')
-            ->whereDate('dp.tanggal', Carbon::today())
-            ->where('dp.status_konfirmasi', 'pending')
-            ->select(
-                'g.id as guru_id',
-                'guru_user.name as guru_name',
-                'guru_user.email as guru_email',
-                DB::raw('COUNT(dp.id) as jumlah_pending'),
-                DB::raw('"Dinas" as jenis')
-            )
-            ->groupBy('g.id', 'guru_user.name', 'guru_user.email')
-            ->get();
-
-        // Gabungkan semua data
-        $allPending = $absensiPending->concat($izinPending)->concat($dinasPending);
-
-        // Kelompokkan berdasarkan guru
-        $groupedData = [];
-        foreach ($allPending as $item) {
-            $guruId = $item->guru_id;
-            if (!isset($groupedData[$guruId])) {
-                $groupedData[$guruId] = [
-                    'guru_id' => $guruId,
-                    'guru_name' => $item->guru_name,
-                    'guru_email' => $item->guru_email,
-                    'total_pending' => 0,
-                    'detail' => []
+                $data[] = [
+                    'no' => $index++,
+                    'name' => $siswa->name ?? '-',
+                    'email' => $siswa->email ?? '-',
+                    'iduka' => $iduka->nama ?? '-', // Menggunakan kolom 'nama' bukan 'nama_perusahaan'
+                    'pembimbing' => $pembimbing->nama ?? $pembimbing->name ?? '-',
                 ];
             }
 
-            $groupedData[$guruId]['total_pending'] += $item->jumlah_pending;
-            $groupedData[$guruId]['detail'][] = [
-                'jenis' => $item->jenis,
-                'jumlah' => $item->jumlah_pending
-            ];
+            return response()->json($data);
+        } catch (\Exception $e) {
+            \Log::error('Error di getSiswaBelumAbsen: ' . $e->getMessage());
+            \Log::error('Trace: ' . $e->getTraceAsString());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+    public function getPembimbingBelumKonfirmasi()
+    {
+        try {
+            \Log::info('Memulai getPembimbingBelumKonfirmasi');
 
-        // Format data untuk response
-        $data = [];
-        $index = 1;
-        foreach ($groupedData as $guruId => $guruData) {
-            $detailText = [];
-            foreach ($guruData['detail'] as $detail) {
-                $detailText[] = "{$detail['jumlah']} {$detail['jenis']}";
+            // Ambil semua data pending yang perlu dikonfirmasi oleh guru
+            $absensiPending = DB::table('absensi_pending as ap')
+                ->join('users as u', 'ap.user_id', '=', 'u.id')
+                ->join('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->leftJoin('users as guru_user', 'g.user_id', '=', 'guru_user.id')
+                ->whereDate('ap.tanggal', Carbon::today())
+                ->where('ap.status_konfirmasi', 'pending')
+                ->select(
+                    'g.id as guru_id',
+                    'guru_user.name as guru_name',
+                    'guru_user.email as guru_email',
+                    DB::raw('COUNT(ap.id) as jumlah_pending'),
+                    DB::raw('"Absensi" as jenis')
+                )
+                ->groupBy('g.id', 'guru_user.name', 'guru_user.email')
+                ->get();
+
+            // Ambil data izin pending
+            $izinPending = DB::table('izin_pending as ip')
+                ->join('users as u', 'ip.user_id', '=', 'u.id')
+                ->join('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->leftJoin('users as guru_user', 'g.user_id', '=', 'guru_user.id')
+                ->whereDate('ip.tanggal', Carbon::today())
+                ->where('ip.status_konfirmasi', 'pending')
+                ->select(
+                    'g.id as guru_id',
+                    'guru_user.name as guru_name',
+                    'guru_user.email as guru_email',
+                    DB::raw('COUNT(ip.id) as jumlah_pending'),
+                    DB::raw('"Izin" as jenis')
+                )
+                ->groupBy('g.id', 'guru_user.name', 'guru_user.email')
+                ->get();
+
+            // Ambil data dinas pending
+            $dinasPending = DB::table('dinas_pending as dp')
+                ->join('users as u', 'dp.user_id', '=', 'u.id')
+                ->join('gurus as g', 'u.pembimbing_id', '=', 'g.id')
+                ->leftJoin('users as guru_user', 'g.user_id', '=', 'guru_user.id')
+                ->whereDate('dp.tanggal', Carbon::today())
+                ->where('dp.status_konfirmasi', 'pending')
+                ->select(
+                    'g.id as guru_id',
+                    'guru_user.name as guru_name',
+                    'guru_user.email as guru_email',
+                    DB::raw('COUNT(dp.id) as jumlah_pending'),
+                    DB::raw('"Dinas" as jenis')
+                )
+                ->groupBy('g.id', 'guru_user.name', 'guru_user.email')
+                ->get();
+
+            // Gabungkan semua data
+            $allPending = $absensiPending->concat($izinPending)->concat($dinasPending);
+
+            // Kelompokkan berdasarkan guru
+            $groupedData = [];
+            foreach ($allPending as $item) {
+                $guruId = $item->guru_id;
+                if (!isset($groupedData[$guruId])) {
+                    $groupedData[$guruId] = [
+                        'guru_id' => $guruId,
+                        'guru_name' => $item->guru_name,
+                        'guru_email' => $item->guru_email,
+                        'total_pending' => 0,
+                        'detail' => []
+                    ];
+                }
+
+                $groupedData[$guruId]['total_pending'] += $item->jumlah_pending;
+                $groupedData[$guruId]['detail'][] = [
+                    'jenis' => $item->jenis,
+                    'jumlah' => $item->jumlah_pending
+                ];
             }
 
-            $data[] = [
-                'no' => $index++,
-                'guru_id' => $guruData['guru_id'],
-                'guru_name' => $guruData['guru_name'],
-                'guru_email' => $guruData['guru_email'],
-                'total_pending' => $guruData['total_pending'],
-                'detail' => implode(', ', $detailText)
-            ];
-        }
+            // Format data untuk response
+            $data = [];
+            $index = 1;
+            foreach ($groupedData as $guruId => $guruData) {
+                $detailText = [];
+                foreach ($guruData['detail'] as $detail) {
+                    $detailText[] = "{$detail['jumlah']} {$detail['jenis']}";
+                }
 
-        return response()->json($data);
-    } catch (\Exception $e) {
-        \Log::error('Error di getPembimbingBelumKonfirmasi: ' . $e->getMessage());
-        \Log::error('Trace: ' . $e->getTraceAsString());
-        return response()->json(['error' => $e->getMessage()], 500);
+                $data[] = [
+                    'no' => $index++,
+                    'guru_id' => $guruData['guru_id'],
+                    'guru_name' => $guruData['guru_name'],
+                    'guru_email' => $guruData['guru_email'],
+                    'total_pending' => $guruData['total_pending'],
+                    'detail' => implode(', ', $detailText)
+                ];
+            }
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            \Log::error('Error di getPembimbingBelumKonfirmasi: ' . $e->getMessage());
+            \Log::error('Trace: ' . $e->getTraceAsString());
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
-}
 }
