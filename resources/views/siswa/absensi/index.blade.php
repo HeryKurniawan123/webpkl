@@ -786,6 +786,26 @@
             };
         }
 
+        // PERBAIKAN: Fungsi untuk validasi jam masuk
+        function validateJamMasuk() {
+            const now = new Date();
+            const [jam, menit] = jamMasukIduka.split(':');
+            const jamMasukDate = new Date();
+            jamMasukDate.setHours(parseInt(jam), parseInt(menit), 0, 0);
+
+            if (now < jamMasukDate) {
+                return {
+                    valid: false,
+                    message: `Absen masuk hanya dapat dilakukan mulai pukul ${jamMasukIduka}.`
+                };
+            }
+
+            return {
+                valid: true,
+                message: ''
+            };
+        }
+
         function getLocation() {
             // Jika sudah lengkap absensi atau sedang izin, jangan ambil lokasi
             if ((sudahAbsenMasuk && sudahAbsenPulang) || sedangIzin) {
@@ -919,9 +939,17 @@
                 distanceStatus.textContent = `✅ Anda berada dalam radius yang diizinkan (${lokasiName})`;
                 distanceStatus.className = "text-success";
 
+                // PERBAIKAN: Validasi jam masuk
+                const jamValidation = validateJamMasuk();
+
                 // Enable tombol sesuai kondisi
                 if (!sudahAbsenMasuk && !sedangIzin) {
-                    btnMasuk.disabled = false;
+                    btnMasuk.disabled = !jamValidation.valid;
+                    if (!jamValidation.valid) {
+                        btnMasuk.title = jamValidation.message;
+                    } else {
+                        btnMasuk.title = "";
+                    }
                 }
                 if (sudahAbsenMasuk && !sudahAbsenPulang && !sedangIzin) {
                     // Cek validasi jam pulang
@@ -1047,6 +1075,14 @@
             if (!currentPosition) {
                 e.preventDefault();
                 alert('Lokasi tidak terdeteksi. Silakan aktifkan akses lokasi.');
+                return false;
+            }
+
+            // PERBAIKAN: Validasi jam masuk
+            const jamValidation = validateJamMasuk();
+            if (!jamValidation.valid) {
+                e.preventDefault();
+                alert(jamValidation.message);
                 return false;
             }
 
@@ -1488,6 +1524,18 @@
 
             // Fungsi untuk update status tombol berdasarkan waktu
             function updateButtonStatusBasedOnTime() {
+                // Update status tombol masuk jika belum absen masuk
+                if (!sudahAbsenMasuk && !sedangIzin && !sedangDinas && !hasPendingIzin && !hasPendingDinas && !hasApprovedIzin && !hasApprovedDinas && !hasPendingMasuk) {
+                    const jamValidation = validateJamMasuk();
+                    if (locationSwitch.checked) {
+                        btnMasuk.disabled = !jamValidation.valid;
+                        btnMasuk.title = jamValidation.valid ? "" : jamValidation.message;
+                    } else {
+                        btnMasuk.disabled = true;
+                        btnMasuk.title = "Silakan aktifkan akses lokasi";
+                    }
+                }
+
                 // Update status tombol pulang jika sudah absen masuk
                 if (sudahAbsenMasuk && !sudahAbsenPulang && !sedangIzin && !sedangDinas) {
                     const jamValidation = validateJamPulang();
@@ -1551,8 +1599,16 @@
                 btnMasuk.classList.remove('btn-success');
                 btnMasuk.classList.add('btn-secondary');
             } else {
-                // Aktifkan jika semua kondisi terpenuhi
-                btnMasuk.disabled = false;
+                // PERBAIKAN: Validasi jam masuk
+                const jamValidation = validateJamMasuk();
+                if (!jamValidation.valid) {
+                    btnMasuk.disabled = true;
+                    btnMasuk.title = jamValidation.message;
+                } else {
+                    // Aktifkan jika semua kondisi terpenuhi
+                    btnMasuk.disabled = false;
+                    btnMasuk.title = "";
+                }
                 btnMasuk.classList.add('btn-success');
                 btnMasuk.classList.remove('btn-secondary');
             }
