@@ -102,6 +102,7 @@
                         </div>
                     </div>
                 </div>
+
                 {{-- Status Absensi Hari Ini --}}
                 @if ($absensiHariIni)
                     <div class="row mb-4">
@@ -409,7 +410,7 @@
                                     {{-- Tombol Izin --}}
                                     <div class="col-md-3 col-6">
                                         <button type="button" class="btn btn-info w-100 btn-absensi" id="btnIzin"
-                                            data-bs-toggle="modal" data-bs-target="#modalIzin" {{ $absensiHariIni ? 'disabled' : '' }} {{ $hasPendingIzin || $hasApprovedIzin ? 'disabled' : '' }}
+                                            {{ $absensiHariIni ? 'disabled' : '' }} {{ $hasPendingIzin || $hasApprovedIzin ? 'disabled' : '' }}
                                             {{ $hasPendingDinas || $hasApprovedDinas ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}>
                                             <div class="btn-content">
                                                 <i class="bi bi-file-earmark-text"></i>
@@ -438,7 +439,7 @@
                                     {{-- Tombol Dinas Luar --}}
                                     <div class="col-md-3 col-6">
                                         <button type="button" class="btn btn-primary w-100 btn-absensi" id="btnDinas"
-                                            data-bs-toggle="modal" data-bs-target="#modalDinas" {{ $absensiHariIni ? 'disabled' : '' }} {{ $hasPendingDinas || $hasApprovedDinas ? 'disabled' : '' }}
+                                            {{ $absensiHariIni ? 'disabled' : '' }} {{ $hasPendingDinas || $hasApprovedDinas ? 'disabled' : '' }}
                                             {{ $hasPendingIzin || $hasApprovedIzin ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}>
                                             <div class="btn-content">
                                                 <i class="bi bi-briefcase"></i>
@@ -482,90 +483,187 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    {{-- Modal Izin --}}
-    <div class="modal fade" id="modalIzin" tabindex="-1" aria-labelledby="modalIzinLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalIzinLabel">Ajukan Izin Tidak Masuk</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                {{-- Form Izin --}}
+                <div class="row mb-4" id="formIzinContainer" style="display: none;">
+                    <div class="col-lg-12">
+                        <div class="card border-info">
+                            <div class="card-header bg-light-info">
+                                <h5 class="card-title text-info mb-0">
+                                    <i class="bi bi-file-earmark-text me-2"></i>Ajukan Izin Tidak Masuk
+                                </h5>
+                                <button type="button" class="btn-close float-end" id="closeIzinForm"></button>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="{{ route('absensi.izin') }}" id="formIzin">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="jenisIzin" class="form-label">Jenis Izin</label>
+                                                <select class="form-select" id="jenisIzin" name="jenis_izin" required>
+                                                    <option value="">Pilih jenis izin</option>
+                                                    <option value="sakit">Sakit</option>
+                                                    <option value="keperluan_keluarga">Keperluan Keluarga</option>
+                                                    <option value="keperluan_sekolah">Keperluan Sekolah</option>
+                                                    <option value="lainnya">Lainnya</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="keteranganIzin" class="form-label">Keterangan/Alasan</label>
+                                                <textarea class="form-control" id="keteranganIzin" name="keterangan" rows="1"
+                                                    placeholder="Jelaskan alasan izin Anda..." required></textarea>
+                                                <div class="form-text">Minimal 10 karakter, maksimal 500 karakter</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <strong>Perhatian:</strong> Setelah mengajukan izin, Anda tidak bisa melakukan absensi
+                                        masuk/pulang hari ini.
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-secondary me-2" id="cancelIzin">Batal</button>
+                                        <button type="submit" class="btn btn-info">Ajukan Izin</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <form method="POST" action="{{ route('absensi.izin') }}" id="formIzin">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="jenisIzin" class="form-label">Jenis Izin</label>
-                            <select class="form-select" id="jenisIzin" name="jenis_izin" required>
-                                <option value="">Pilih jenis izin</option>
-                                <option value="sakit">Sakit</option>
-                                <option value="keperluan_keluarga">Keperluan Keluarga</option>
-                                <option value="keperluan_sekolah">Keperluan Sekolah</option>
-                                <option value="lainnya">Lainnya</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="keteranganIzin" class="form-label">Keterangan/Alasan</label>
-                            <textarea class="form-control" id="keteranganIzin" name="keterangan" rows="3"
-                                placeholder="Jelaskan alasan izin Anda..." required></textarea>
-                            <div class="form-text">Minimal 10 karakter, maksimal 500 karakter</div>
-                        </div>
-                        <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            <strong>Perhatian:</strong> Setelah mengajukan izin, Anda tidak bisa melakukan absensi
-                            masuk/pulang hari ini.
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-info">Ajukan Izin</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    {{-- Modal Dinas Luar --}}
-    <div class="modal fade" id="modalDinas" tabindex="-1" aria-labelledby="modalDinasLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalDinasLabel">Ajukan Dinas Luar</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                {{-- Form Dinas Luar --}}
+                <div class="row mb-4" id="formDinasContainer" style="display: none;">
+                    <div class="col-lg-12">
+                        <div class="card border-primary">
+                            <div class="card-header bg-light-primary">
+                                <h5 class="card-title text-primary mb-0">
+                                    <i class="bi bi-briefcase me-2"></i>Ajukan Dinas Luar
+                                </h5>
+                                <button type="button" class="btn-close float-end" id="closeDinasForm"></button>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="{{ route('absensi.dinas-luar') }}" id="formDinas">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="jenisDinas" class="form-label">Jenis Dinas</label>
+                                                <select class="form-select" id="jenisDinas" name="jenis_dinas" required>
+                                                    <option value="">Pilih jenis dinas</option>
+                                                    <option value="perusahaan">Perusahaan</option>
+                                                    <option value="sekolah">Sekolah</option>
+                                                    <option value="instansi_pemerintah">Instansi Pemerintah</option>
+                                                    <option value="lainnya">Lainnya</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="keteranganDinas" class="form-label">Keterangan/Alasan</label>
+                                                <textarea class="form-control" id="keteranganDinas" name="keterangan" rows="1"
+                                                    placeholder="Jelaskan alasan dinas luar Anda..." required></textarea>
+                                                <div class="form-text">Minimal 10 karakter, maksimal 500 karakter</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        <strong>Informasi:</strong> Setelah mengajukan dinas luar dan disetujui, Anda tetap wajib
+                                        melakukan absensi pulang seperti biasa.
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-secondary me-2" id="cancelDinas">Batal</button>
+                                        <button type="submit" class="btn btn-primary">Ajukan Dinas Luar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <form method="POST" action="{{ route('absensi.dinas-luar') }}" id="formDinas">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="jenisDinas" class="form-label">Jenis Dinas</label>
-                            <select class="form-select" id="jenisDinas" name="jenis_dinas" required>
-                                <option value="">Pilih jenis dinas</option>
-                                <option value="perusahaan">Perusahaan</option>
-                                <option value="sekolah">Sekolah</option>
-                                <option value="instansi_pemerintah">Instansi Pemerintah</option>
-                                <option value="lainnya">Lainnya</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="keteranganDinas" class="form-label">Keterangan/Alasan</label>
-                            <textarea class="form-control" id="keteranganDinas" name="keterangan" rows="3"
-                                placeholder="Jelaskan alasan dinas luar Anda..." required></textarea>
-                            <div class="form-text">Minimal 10 karakter, maksimal 500 karakter</div>
-                        </div>
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle me-2"></i>
-                            <strong>Informasi:</strong> Setelah mengajukan dinas luar dan disetujui, Anda tetap wajib
-                            melakukan absensi pulang seperti biasa.
+
+                {{-- Tombol untuk menampilkan riwayat --}}
+                <div class="row mb-4">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Riwayat Absensi</h5>
+                                <button type="button" class="btn btn-primary btn-sm" id="toggleRiwayat">
+                                    <i class="bi bi-calendar-history me-2"></i>Lihat Riwayat Absensi
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Ajukan Dinas Luar</button>
+                </div>
+
+                {{-- Riwayat Absensi (disembunyikan secara default) --}}
+                <div class="row mb-4" id="riwayatContainer" style="display: none;">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Daftar Riwayat Absensi</h5>
+                                <button type="button" class="btn btn-secondary btn-sm" id="hideRiwayat">
+                                    <i class="bi bi-eye-slash me-2"></i>Sembunyikan
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Tanggal</th>
+                                                <th>Jam Masuk</th>
+                                                <th>Jam Pulang</th>
+                                                <th>Status</th>
+                                                <th>Lokasi</th>
+                                                <th>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="riwayatAbsensiTable">
+                                            <tr>
+                                                <td colspan="6" class="text-center">
+                                                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    Memuat data riwayat absensi...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        Menampilkan <span id="showingCount">0</span> dari <span id="totalCount">0</span> data
+                                    </div>
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination pagination-sm mb-0" id="paginationRiwayat">
+                                            <!-- Pagination will be inserted here -->
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </form>
+                </div>
+
+                {{-- Detail Absensi (disembunyikan secara default) --}}
+                <div class="row mb-4" id="detailAbsensiContainer" style="display: none;">
+                    <div class="col-lg-12">
+                        <div class="card border-primary">
+                            <div class="card-header bg-light-primary">
+                                <h5 class="card-title text-primary mb-0">
+                                    <i class="bi bi-info-circle me-2"></i>Detail Absensi
+                                </h5>
+                                <button type="button" class="btn-close float-end" id="closeDetailAbsensi"></button>
+                            </div>
+                            <div class="card-body" id="detailAbsensiContent">
+                                <!-- Detail content will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -656,12 +754,34 @@
             opacity: 0.7;
             cursor: not-allowed;
         }
+
+        /* Style untuk tabel riwayat */
+        #riwayatAbsensiTable tr {
+            cursor: pointer;
+        }
+
+        #riwayatAbsensiTable tr:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+
+        /* Animasi untuk menampilkan/menyembunyikan riwayat */
+        #riwayatContainer {
+            transition: all 0.3s ease;
+        }
+
+        #detailAbsensiContainer {
+            transition: all 0.3s ease;
+        }
     </style>
 
     <script>
         // Variabel global untuk menyimpan posisi
         let currentPosition = null;
         let watchId = null;
+        let riwayatData = [];
+        let currentPage = 1;
+        let perPage = 10;
+        let riwayatVisible = false;
 
         // Status absensi hari ini dari server
         const absensiHariIni = @json($absensiHariIni);
@@ -700,6 +820,30 @@
         const lokasiIdMasuk = document.getElementById('lokasiIdMasuk');
         const lokasiIdPulang = document.getElementById('lokasiIdPulang');
 
+        // Elemen form Izin
+        const formIzinContainer = document.getElementById('formIzinContainer');
+        const closeIzinForm = document.getElementById('closeIzinForm');
+        const cancelIzin = document.getElementById('cancelIzin');
+
+        // Elemen form Dinas
+        const formDinasContainer = document.getElementById('formDinasContainer');
+        const closeDinasForm = document.getElementById('closeDinasForm');
+        const cancelDinas = document.getElementById('cancelDinas');
+
+        // Elemen riwayat absensi
+        const toggleRiwayat = document.getElementById('toggleRiwayat');
+        const hideRiwayat = document.getElementById('hideRiwayat');
+        const riwayatContainer = document.getElementById('riwayatContainer');
+        const riwayatAbsensiTable = document.getElementById('riwayatAbsensiTable');
+        const showingCount = document.getElementById('showingCount');
+        const totalCount = document.getElementById('totalCount');
+        const paginationRiwayat = document.getElementById('paginationRiwayat');
+
+        // Elemen detail absensi
+        const detailAbsensiContainer = document.getElementById('detailAbsensiContainer');
+        const closeDetailAbsensi = document.getElementById('closeDetailAbsensi');
+        const detailAbsensiContent = document.getElementById('detailAbsensiContent');
+
         // Koordinat IDUKA dari user yang login
         @auth
                 @if (Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->latitude && Auth::user()->idukaDiterima->longitude)
@@ -730,6 +874,16 @@
                                     // Data cabang
                                     const cabangs = @json(Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->is_pusat ? Auth::user()->idukaDiterima->cabangs : []);
 
+        // Event listener untuk tombol toggle riwayat
+        toggleRiwayat.addEventListener('click', function() {
+            showRiwayat();
+        });
+
+        // Event listener untuk tombol hide riwayat
+        hideRiwayat.addEventListener('click', function() {
+            hideRiwayatSection();
+        });
+
         // Event listener untuk perubahan lokasi
         lokasiSelect.addEventListener('change', function () {
             const selectedValue = this.value;
@@ -739,6 +893,295 @@
             // Update info lokasi yang ditampilkan
             updateLocationInfo(currentPosition);
         });
+
+        // Event listener untuk tombol Izin
+        btnIzin.addEventListener('click', function() {
+            if (this.disabled) return;
+
+            // Sembunyikan form dinas jika sedang terbuka
+            formDinasContainer.style.display = 'none';
+
+            // Toggle form izin
+            if (formIzinContainer.style.display === 'none' || formIzinContainer.style.display === '') {
+                formIzinContainer.style.display = 'block';
+
+                // Reset form
+                document.getElementById('formIzin').reset();
+
+                // Cek status izin
+                cekStatusIzin();
+            } else {
+                formIzinContainer.style.display = 'none';
+            }
+        });
+
+        // Event listener untuk tombol Dinas
+        btnDinas.addEventListener('click', function() {
+            if (this.disabled) return;
+
+            // Sembunyikan form izin jika sedang terbuka
+            formIzinContainer.style.display = 'none';
+
+            // Toggle form dinas
+            if (formDinasContainer.style.display === 'none' || formDinasContainer.style.display === '') {
+                formDinasContainer.style.display = 'block';
+
+                // Reset form
+                document.getElementById('formDinas').reset();
+
+                // Cek status dinas
+                cekStatusDinas();
+            } else {
+                formDinasContainer.style.display = 'none';
+            }
+        });
+
+        // Event listener untuk menutup form izin
+        closeIzinForm.addEventListener('click', function() {
+            formIzinContainer.style.display = 'none';
+        });
+
+        cancelIzin.addEventListener('click', function() {
+            formIzinContainer.style.display = 'none';
+        });
+
+        // Event listener untuk menutup form dinas
+        closeDinasForm.addEventListener('click', function() {
+            formDinasContainer.style.display = 'none';
+        });
+
+        cancelDinas.addEventListener('click', function() {
+            formDinasContainer.style.display = 'none';
+        });
+
+        // Event listener untuk menutup detail absensi
+        closeDetailAbsensi.addEventListener('click', function() {
+            hideDetailAbsensi();
+        });
+
+        // Fungsi untuk menampilkan riwayat
+        function showRiwayat() {
+            riwayatContainer.style.display = 'block';
+            riwayatVisible = true;
+
+            // Load data riwayat jika belum dimuat
+            if (riwayatData.length === 0) {
+                loadRiwayatAbsensi();
+            }
+
+            // Scroll ke riwayat
+            riwayatContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fungsi untuk menyembunyikan riwayat
+        function hideRiwayatSection() {
+            riwayatContainer.style.display = 'none';
+            riwayatVisible = false;
+        }
+
+        // Fungsi untuk menampilkan detail absensi
+        function showDetailAbsensi(id) {
+            // Tampilkan riwayat jika belum terlihat
+            if (!riwayatVisible) {
+                showRiwayat();
+            }
+
+            // Cari data absensi dari riwayatData
+            const absensi = riwayatData.find(a => a.id == id);
+            if (!absensi) return;
+
+            // Sembunyikan form izin dan dinas jika sedang terbuka
+            formIzinContainer.style.display = 'none';
+            formDinasContainer.style.display = 'none';
+
+            // Tampilkan container detail
+            detailAbsensiContainer.style.display = 'block';
+
+            // Render detail content
+            let html = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th width="30%">Tanggal</th>
+                                <td>${formatDate(absensi.tanggal)}</td>
+                            </tr>
+                            <tr>
+                                <th>Hari</th>
+                                <td>${formatDay(absensi.tanggal)}</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>${getStatusBadge(absensi)}</td>
+                            </tr>
+                            <tr>
+                                <th>Lokasi</th>
+                                <td>${absensi.lokasiIduka ? absensi.lokasiIduka.nama : '-'}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th width="30%">Jam Masuk</th>
+                                <td>${absensi.jam_masuk ? formatTime(absensi.jam_masuk) : '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Jam Pulang</th>
+                                <td>${absensi.jam_pulang ? formatTime(absensi.jam_pulang) : '-'}</td>
+                            </tr>
+                            <tr>
+                                <th>Durasi Kerja</th>
+                                <td>${calculateDuration(absensi.jam_masuk, absensi.jam_pulang)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Tambahkan informasi izin jika ada
+            if (absensi.status === 'izin') {
+                html += `
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title">Informasi Izin</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <th width="30%">Jenis</th>
+                                                    <td>${formatJenisIzin(absensi.jenis_izin)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Keterangan</th>
+                                                    <td>${absensi.keterangan_izin || '-'}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <th width="30%">Disetujui Oleh</th>
+                                                    <td>${absensi.approved_by ? absensi.approvedBy.name : '-'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Tanggal Disetujui</th>
+                                                    <td>${absensi.approved_at ? formatDateTime(absensi.approved_at) : '-'}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Tambahkan informasi dinas jika ada
+            if (absensi.status_dinas === 'disetujui') {
+                html += `
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Informasi Dinas Luar</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <th width="30%">Jenis</th>
+                                                    <td>${formatJenisDinas(absensi.jenis_dinas)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Keterangan</th>
+                                                    <td>${absensi.keterangan_dinas || '-'}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <th width="30%">Disetujui Oleh</th>
+                                                    <td>${absensi.approved_by ? absensi.approvedBy.name : '-'}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Tanggal Disetujui</th>
+                                                    <td>${absensi.approved_at ? formatDateTime(absensi.approved_at) : '-'}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Tambahkan peta jika ada koordinat
+            if (absensi.latitude && absensi.longitude) {
+                html += `
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Lokasi Absensi</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-borderless">
+                                                <tr>
+                                                    <th width="30%">Koordinat Masuk</th>
+                                                    <td>
+                                                        Lat: ${absensi.latitude},
+                                                        Lng: ${absensi.longitude}
+                                                    </td>
+                                                </tr>
+                                                ${absensi.latitude_pulang && absensi.longitude_pulang ? `
+                                                <tr>
+                                                    <th>Koordinat Pulang</th>
+                                                    <td>
+                                                        Lat: ${absensi.latitude_pulang},
+                                                        Lng: ${absensi.longitude_pulang}
+                                                    </td>
+                                                </tr>
+                                                ` : ''}
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div id="map-${absensi.id}" style="height: 300px; width: 100%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Inisialisasi peta setelah DOM diperbarui
+                setTimeout(() => {
+                    initMap(absensi);
+                }, 100);
+            }
+
+            detailAbsensiContent.innerHTML = html;
+
+            // Scroll ke detail
+            detailAbsensiContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fungsi untuk menyembunyikan detail absensi
+        function hideDetailAbsensi() {
+            detailAbsensiContainer.style.display = 'none';
+        }
 
         // Fungsi untuk menghitung jarak antara dua titik (Haversine formula)
         function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -1257,17 +1700,15 @@
         document.addEventListener('DOMContentLoaded', function () {
             const formIzin = document.getElementById('formIzin');
             const formDinas = document.getElementById('formDinas');
-            const modalIzin = new bootstrap.Modal(document.getElementById('modalIzin'));
-            const modalDinas = new bootstrap.Modal(document.getElementById('modalDinas'));
             let absensiHariIni = false; // Variabel untuk menyimpan status absensi
 
-            // Cek status izin saat modal dibuka
-            document.getElementById('modalIzin').addEventListener('show.bs.modal', function () {
+            // Cek status izin saat form dibuka
+            document.getElementById('btnIzin').addEventListener('click', function() {
                 cekStatusIzin();
             });
 
-            // Cek status dinas saat modal dibuka
-            document.getElementById('modalDinas').addEventListener('show.bs.modal', function () {
+            // Cek status dinas saat form dibuka
+            document.getElementById('btnDinas').addEventListener('click', function() {
                 cekStatusDinas();
             });
 
@@ -1371,7 +1812,7 @@
                 if (!alertDiv) {
                     alertDiv = document.createElement('div');
                     alertDiv.className = 'alert alert-info mt-3 izin-status-alert';
-                    formIzin.querySelector('.modal-body').appendChild(alertDiv);
+                    formIzin.querySelector('.card-body').appendChild(alertDiv);
                 }
                 alertDiv.innerHTML = `<i class="bi bi-info-circle me-2"></i> ${message}`;
             }
@@ -1400,7 +1841,7 @@
                 if (!alertDiv) {
                     alertDiv = document.createElement('div');
                     alertDiv.className = 'alert alert-info mt-3 dinas-status-alert';
-                    formDinas.querySelector('.modal-body').appendChild(alertDiv);
+                    formDinas.querySelector('.card-body').appendChild(alertDiv);
                 }
                 alertDiv.innerHTML = `<i class="bi bi-info-circle me-2"></i> ${message}`;
             }
@@ -1578,6 +2019,306 @@
             updateButtonStates();
         });
 
+        // Fungsi untuk load riwayat absensi
+        function loadRiwayatAbsensi() {
+            // Tampilkan loading
+            riwayatAbsensiTable.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="spinner-border spinner-border-sm me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        Memuat data riwayat absensi...
+                    </td>
+                </tr>
+            `;
+
+            // Ambil data dari server
+            fetch(`{{ route('absensi.riwayat.data') }}?page=${currentPage}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                riwayatData = data.data;
+                renderRiwayatTable(data);
+                renderPagination(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                riwayatAbsensiTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            Gagal memuat data riwayat absensi. Silakan coba lagi.
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Fungsi untuk render tabel riwayat
+        function renderRiwayatTable(data) {
+            if (data.data.length === 0) {
+                riwayatAbsensiTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            Tidak ada data riwayat absensi
+                        </td>
+                    </tr>
+                `;
+                showingCount.textContent = '0';
+                totalCount.textContent = '0';
+                return;
+            }
+
+            let html = '';
+            data.data.forEach(absensi => {
+                const statusBadge = getStatusBadge(absensi);
+                const jamMasuk = absensi.jam_masuk ? formatTime(absensi.jam_masuk) : '-';
+                const jamPulang = absensi.jam_pulang ? formatTime(absensi.jam_pulang) : '-';
+                const lokasi = absensi.lokasiIduka ? absensi.lokasiIduka.nama : '-';
+
+                html += `
+                    <tr data-id="${absensi.id}">
+                        <td>${formatDate(absensi.tanggal)}</td>
+                        <td>${jamMasuk}</td>
+                        <td>${jamPulang}</td>
+                        <td>${statusBadge}</td>
+                        <td>${lokasi}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info view-detail" data-id="${absensi.id}">
+                                <i class="bi bi-eye"></i> Detail
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            riwayatAbsensiTable.innerHTML = html;
+
+            // Update counter
+            const start = (data.current_page - 1) * data.per_page + 1;
+            const end = Math.min(data.current_page * data.per_page, data.total);
+            showingCount.textContent = `${start}-${end}`;
+            totalCount.textContent = data.total;
+
+            // Tambahkan event listener untuk tombol detail
+            document.querySelectorAll('.view-detail').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    showDetailAbsensi(id);
+                });
+            });
+
+            // Tambahkan event listener untuk klik baris
+            document.querySelectorAll('#riwayatAbsensiTable tr[data-id]').forEach(row => {
+                row.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    showDetailAbsensi(id);
+                });
+            });
+        }
+
+        // Fungsi untuk render pagination
+        function renderPagination(data) {
+            let html = '';
+
+            // Previous button
+            if (data.current_page > 1) {
+                html += `<li class="page-item">
+                    <a class="page-link" href="#" data-page="${data.current_page - 1}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>`;
+            } else {
+                html += `<li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>`;
+            }
+
+            // Page numbers
+            for (let i = 1; i <= data.last_page; i++) {
+                if (i === data.current_page) {
+                    html += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+                } else {
+                    html += `<li class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+                }
+            }
+
+            // Next button
+            if (data.current_page < data.last_page) {
+                html += `<li class="page-item">
+                    <a class="page-link" href="#" data-page="${data.current_page + 1}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>`;
+            } else {
+                html += `<li class="page-item disabled">
+                    <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>`;
+            }
+
+            paginationRiwayat.innerHTML = html;
+
+            // Tambahkan event listener untuk pagination
+            document.querySelectorAll('#paginationRiwayat .page-link[data-page]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    currentPage = parseInt(this.getAttribute('data-page'));
+                    loadRiwayatAbsensi();
+                });
+            });
+        }
+
+        // Fungsi untuk inisialisasi peta
+        function initMap(absensi) {
+            // Lokasi absensi masuk
+            const masukLocation = {
+                lat: parseFloat(absensi.latitude),
+                lng: parseFloat(absensi.longitude)
+            };
+
+            // Lokasi absensi pulang jika ada
+            let pulangLocation = null;
+            if (absensi.latitude_pulang && absensi.longitude_pulang) {
+                pulangLocation = {
+                    lat: parseFloat(absensi.latitude_pulang),
+                    lng: parseFloat(absensi.longitude_pulang)
+                };
+            }
+
+            // Buat peta
+            const map = new google.maps.Map(document.getElementById(`map-${absensi.id}`), {
+                zoom: 15,
+                center: masukLocation,
+            });
+
+            // Tambahkan marker lokasi masuk
+            const masukMarker = new google.maps.Marker({
+                position: masukLocation,
+                map: map,
+                title: "Lokasi Absen Masuk",
+                icon: {
+                    url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                }
+            });
+
+            // Tambahkan marker lokasi pulang jika ada
+            if (pulangLocation) {
+                const pulangMarker = new google.maps.Marker({
+                    position: pulangLocation,
+                    map: map,
+                    title: "Lokasi Absen Pulang",
+                    icon: {
+                        url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                    }
+                });
+
+                // Tambahkan garis antara dua lokasi
+                const line = new google.maps.Polyline({
+                    path: [masukLocation, pulangLocation],
+                    geodesic: true,
+                    strokeColor: '#FF0000',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+
+                line.setMap(map);
+            }
+        }
+
+        // Fungsi helper untuk format tanggal
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        // Fungsi helper untuk format hari
+        function formatDay(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', { weekday: 'long' });
+        }
+
+        // Fungsi helper untuk format waktu
+        function formatTime(timeString) {
+            const date = new Date(timeString);
+            return date.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Fungsi helper untuk format tanggal dan waktu
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Fungsi helper untuk menghitung durasi
+        function calculateDuration(jamMasuk, jamPulang) {
+            if (!jamMasuk || !jamPulang) return '-';
+
+            const start = new Date(jamMasuk);
+            const end = new Date(jamPulang);
+            const diffMs = end - start;
+            const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+            const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+            return `${diffHours} jam ${diffMinutes} menit`;
+        }
+
+        // Fungsi helper untuk badge status
+        function getStatusBadge(absensi) {
+            if (absensi.status === 'izin') {
+                return '<span class="badge bg-info">Izin</span>';
+            } else if (absensi.status_dinas === 'disetujui') {
+                return '<span class="badge bg-primary">Dinas Luar</span>';
+            } else if (absensi.status === 'tepat_waktu') {
+                return '<span class="badge bg-success">Tepat Waktu</span>';
+            } else if (absensi.status === 'terlambat') {
+                return '<span class="badge bg-warning">Terlambat</span>';
+            } else {
+                return `<span class="badge bg-secondary">${absensi.status}</span>`;
+            }
+        }
+
+        // Fungsi helper untuk format jenis izin
+        function formatJenisIzin(jenis) {
+            const jenisMap = {
+                'sakit': 'Sakit',
+                'keperluan_keluarga': 'Keperluan Keluarga',
+                'keperluan_sekolah': 'Keperluan Sekolah',
+                'lainnya': 'Lainnya'
+            };
+            return jenisMap[jenis] || jenis;
+        }
+
+        // Fungsi helper untuk format jenis dinas
+        function formatJenisDinas(jenis) {
+            const jenisMap = {
+                'perusahaan': 'Perusahaan',
+                'sekolah': 'Sekolah',
+                'instansi_pemerintah': 'Instansi Pemerintah',
+                'lainnya': 'Lainnya'
+            };
+            return jenisMap[jenis] || jenis;
+        }
 
         function updateButtonStates() {
             // Status dari server

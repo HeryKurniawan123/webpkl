@@ -118,11 +118,12 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
         Route::post('/pulang', [AbsensiController::class, 'pulang'])->name('pulang.siswa');
         Route::get('/status', [AbsensiController::class, 'getStatus'])->name('status');
         Route::get('/riwayat', [AbsensiController::class, 'riwayat'])->name('riwayat');
+        Route::get('/riwayat/data', [AbsensiController::class, 'getRiwayatData'])->name('riwayat.data');
+        Route::get('/detail/{id}', [AbsensiController::class, 'detailRiwayat'])->name('detail.riwayat');
         Route::get('/cek-izin', [AbsensiController::class, 'cekStatusIzin'])->name('cek-izin');
         Route::get('/cek-dinas', [AbsensiController::class, 'cekStatusDinas'])->name('cek-dinas');
-        Route::get('/absensi/get-status', [AbsensiController::class, 'getStatus'])->name('get-status');
+        Route::get('/get-status', [AbsensiController::class, 'getStatus'])->name('get-status');
     });
-
     //jurnal
     Route::get('/jurnal', [JournalController::class, 'index'])->name('jurnal.index');
     Route::post('/jurnal', [JournalController::class, 'store'])->name('jurnal.store');
@@ -448,7 +449,7 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
     });
 
     Route::post('/get-riwayat-absen', [KonfirAbsenSiswaController::class, 'getRiwayatAbsen'])
-    ->name('iduka.get-riwayat-absen');
+        ->name('iduka.get-riwayat-absen');
 
     Route::post('/clear-session', function () {
         session()->forget(['success', 'error']);
@@ -636,7 +637,7 @@ Route::middleware(['auth', 'hakakses:hubin,kaprog,kepsek'])->group(function () {
     Route::get('/progres/siswa', [ProgresSiswaController::class, 'index'])->name('progres.siswa.index');
     Route::get('/progres-siswa/export', [ProgresSiswaController::class, 'export'])->name('progres.siswa.export');
 
-        Route::get('/pembimbing/jurnal/siswa-belum-isi', [JournalController::class, 'siswaBelumIsi'])->name('jurnal.siswa-belum-isi');
+    Route::get('/pembimbing/jurnal/siswa-belum-isi', [JournalController::class, 'siswaBelumIsi'])->name('jurnal.siswa-belum-isi');
     Route::post('/pembimbing/jurnal/kirim-pengingat', [JournalController::class, 'kirimPengingat'])->name('jurnal.kirim-pengingat');
 });
 

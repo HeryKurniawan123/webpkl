@@ -89,6 +89,44 @@ class AbsensiController extends Controller
         ));
     }
 
+    public function getRiwayatData(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            // Query dasar
+            $query = Absensi::where('user_id', $user->id);
+
+            // Urutkan dari yang terbaru
+            $query->orderBy('tanggal', 'desc');
+
+            // Pagination
+            $perPage = $request->per_page ?? 10;
+            $page = $request->page ?? 1;
+
+            $data = $query->paginate($perPage, ['*'], 'page', $page);
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            Log::error('Error in getRiwayatData: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat mengambil data riwayat absensi'
+            ], 500);
+        }
+    }
+
+    public function detailRiwayat($id)
+    {
+        $user = Auth::user();
+
+        // Cari absensi berdasarkan ID dan pastikan milik user yang login
+        $absensi = Absensi::where('id', $id)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        return response()->json($absensi);
+    }
+
     public function masuk(Request $request)
     {
         try {
