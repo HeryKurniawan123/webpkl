@@ -7,6 +7,7 @@ use App\Models\PengajuanPkl;
 use App\Models\PengajuanUsulan;
 use App\Models\User;
 use App\Models\UsulanIduka;
+use App\Models\PindahPkl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -60,7 +61,6 @@ class HakAksesController extends Controller
 
         $user = Auth::user()->load('pembimbing');
 
-
         // ✅ Cek status spesifik: proses atau diterima
         $statusAjukan = UsulanIduka::where('user_id', $user->id)
             ->whereIn('status', ['proses', 'diterima'])
@@ -68,7 +68,29 @@ class HakAksesController extends Controller
                 ->whereIn('status', ['proses', 'diterima'])
                 ->value('status');
 
-        return view('siswa.dashboard', compact('usulanSiswa', 'pengajuanSiswa', 'usulanPkl', 'sudahDiterima', 'sudahAjukan', 'statusAjukan', 'user'));
+        // 🔍 Tambahan: Ambil data riwayat pindah PKL
+        $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
+            ->with(['idukaLama', 'idukaBaru'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // 🔍 Cek status pengajuan pindah PKL terbaru
+        $statusPindahPkl = PindahPkl::where('siswa_id', $user->id)
+            ->whereIn('status', ['menunggu', 'diterima', 'ditolak'])
+            ->latest()
+            ->first();
+
+        return view('siswa.dashboard', compact(
+            'usulanSiswa',
+            'pengajuanSiswa',
+            'usulanPkl',
+            'sudahDiterima',
+            'sudahAjukan',
+            'statusAjukan',
+            'user',
+            'riwayatPindahPkl',
+            'statusPindahPkl'
+        ));
     }
 
     function guru()

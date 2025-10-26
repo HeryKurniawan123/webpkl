@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
-class  UsulanIdukaController extends Controller
+class UsulanIdukaController extends Controller
 {
     public function index()
     {
@@ -79,44 +79,76 @@ class  UsulanIdukaController extends Controller
 
     public function storeAjukanPkl(Request $request, $iduka_id)
 {
-    $user = Auth::user();
-    $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
-    $iduka = Iduka::findOrFail($iduka_id);
-
-    if (!$dataPribadi) {
-        return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
-    }
-
-    // Cek apakah siswa sudah punya pengajuan PKL yang aktif (proses/diterima)
-    $cekPengajuanAktif = PengajuanUsulan::where('user_id', $user->id)
-        ->whereIn('status', ['proses', 'diterima'])
-        ->exists();
-
-    if ($cekPengajuanAktif) {
-        return redirect()->back()->with('error', 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.');
-    }
-
-    // Cek apakah siswa sudah mengajukan PKL ke IDUKA ini sebelumnya
-    $cekUsulan = PengajuanUsulan::where('user_id', $user->id)
-        ->where('iduka_id', $iduka_id)
-        ->first();
-
-    if ($cekUsulan) {
-        return redirect()->back()->with('error', 'Kamu sudah mengajukan PKL ke IDUKA ini.');
-    }
-
-    // Simpan data ke tabel pengajuan_pkls
-    PengajuanUsulan::create([
-        'user_id' => $user->id,
-        'konke_id' => $dataPribadi->konke_id,
+    \Log::info('StoreAjukanPkl called', [
+        'user_id' => Auth::id(),
         'iduka_id' => $iduka_id,
-        'status' => 'proses',
+        'request_data' => $request->all()
     ]);
 
-    return redirect()->route('siswa.dashboard')->with('success', 'Usulan PKL berhasil diajukan!');
+    try {
+        $user = Auth::user();
+        $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
+
+        \Log::info('User and DataPribadi', [
+            'user' => $user,
+            'dataPribadi' => $dataPribadi
+        ]);
+
+        if (!$dataPribadi) {
+            \Log::warning('Data pribadi tidak ditemukan', ['user_id' => $user->id]);
+            return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
+        }
+
+        // Cek apakah siswa sudah punya pengajuan PKL yang aktif
+        $cekPengajuanAktif = PengajuanUsulan::where('user_id', $user->id)
+            ->whereIn('status', ['proses', 'diterima'])
+            ->exists();
+
+        if ($cekPengajuanAktif) {
+            \Log::warning('Pengajuan aktif sudah ada', ['user_id' => $user->id]);
+            return redirect()->back()->with('error', 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.');
+        }
+
+        // Cek apakah sudah mengajukan ke IDUKA ini
+        $cekUsulan = PengajuanUsulan::where('user_id', $user->id)
+            ->where('iduka_id', $iduka_id)
+            ->first();
+
+        if ($cekUsulan) {
+            \Log::warning('Sudah mengajukan ke IDUKA ini', [
+                'user_id' => $user->id, 
+                'iduka_id' => $iduka_id
+            ]);
+            return redirect()->back()->with('error', 'Kamu sudah mengajukan PKL ke IDUKA ini.');
+        }
+
+        \Log::info('Creating PengajuanUsulan', [
+            'user_id' => $user->id,
+            'konke_id' => $dataPribadi->konke_id,
+            'iduka_id' => $iduka_id
+        ]);
+
+        // Simpan data
+        $pengajuan = PengajuanUsulan::create([
+            'user_id' => $user->id,
+            'konke_id' => $dataPribadi->konke_id,
+            'iduka_id' => $iduka_id,
+            'status' => 'proses',
+        ]);
+
+        \Log::info('PengajuanUsulan created successfully', ['pengajuan_id' => $pengajuan->id]);
+
+        return redirect()->route('siswa.dashboard')->with('success', 'Usulan PKL berhasil diajukan!');
+
+    } catch (\Exception $e) {
+        \Log::error('Error in storeAjukanPkl', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+    }
 }
-
-
 
     public function approvePengajuanUsulan($id)
     {
@@ -133,8 +165,6 @@ class  UsulanIdukaController extends Controller
 
         return redirect()->back()->with('error', 'Pengajuan PKL ditolak.');
     }
-
-
 
 
     public function approve($id)
@@ -160,22 +190,22 @@ class  UsulanIdukaController extends Controller
 
     public function dataIdukaUsulan()
     {
-        
+
         $today = Carbon::today();
-    
+
         $iduka = Iduka::where('hidden', false) // Hanya tampilkan yang tidak hidden
             ->where(function ($query) use ($today) {
                 $query->whereNull('akhir_kerjasama')
-                      ->orWhere('akhir_kerjasama', '>=', $today);
+                    ->orWhere('akhir_kerjasama', '>=', $today);
             })
             ->orderBy('rekomendasi', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
-    
+
         return view('siswa.usulan.dataIdukaUsulan', compact('iduka', 'today'));
     }
-    
-    
+
+
 
     public function detailIdukaUsulan($id)
     {

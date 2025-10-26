@@ -45,6 +45,7 @@ use App\Http\Controllers\DataPribadiController;
 use App\Http\Controllers\KaprogIdukaController;
 use App\Http\Controllers\UsulanIdukaController;
 use App\Http\Controllers\PengajuanPklController;
+use App\Http\Controllers\PindahPklController;
 use App\Http\Controllers\PusatbantuanController;
 use App\Http\Controllers\SuratPengantarController;
 use App\Http\Controllers\TenagaKependidikanController;
@@ -96,12 +97,25 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/siswa-usulan/PDF', [PdfController::class, 'siswaUsulanPdf'])->name('siswa.usulan.pdf');
     Route::get('/surat-pengajuan/detail', [DataController::class, 'detailPengajuan'])->name('detail.pengajuan');
 
+    //PINDAHTEMPAT
+    Route::get('/pindah-pkl/create', [PindahPklController::class, 'create'])->name('pindah-pkl.create');
+    Route::post('/pindah-pkl/store', [PindahPklController::class, 'store'])->name('pindah-pkl.store');
+    Route::post('/pindah-pkl/ajukan', [PindahPklController::class, 'ajukan'])->name('pindah-pkl.ajukan');
+    Route::get('/pindah-pkl/download/{id}', [PindahPklController::class, 'downloadSurat'])
+        ->name('pindah-pkl.download-surat');
+
+
+    // riwayat pengajuan pindah tempat PKL siswa
+    Route::get('/siswa/pindah-pkl/riwayat', [App\Http\Controllers\PindahPklController::class, 'riwayatPindah']);
+
     //MENAMPILKAN DATA IDUKA
     Route::get('/data-iduka/usulan', [UsulanIdukaController::class, 'dataIdukaUsulan'])->name('iduka.usulan');
     //MEMBUAT AJUAN USULAN
     Route::get('/iduka/{id}', [UsulanIdukaController::class, 'detailIdukaUsulan'])->name('detail.datausulan');
     //-------
-    Route::post('/usulan-iduka/{iduka}', [UsulanIdukaController::class, 'storeAjukanPkl'])->name('usulan.iduka.storeAjukanPkl');
+    Route::post('/usulan-iduka/{iduka_id}/store-ajukan-pkl', [IdukaController::class, 'storeAjukanPkl'])
+    ->name('usulan.iduka.storeAjukanPkl')
+    ->middleware('auth');
 
     Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
     Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
@@ -480,6 +494,12 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     //pengajuan usulan
     Route::get('/kaprog/review/usulan-pkl/{iduka_id}', [KaprogController::class, 'showDetailPengajuanIduka'])->name('kaprog.review.detailUsulanPkl');
     Route::put('/kaprog/review/usulan-pkl/status/{id}', [KaprogController::class, 'diterimaUsulan'])->name('kaprog.usulan-pkl.status');
+
+    // halaman list pengajuan pindah PKL
+    Route::get('/kaprog/pindah-pkl', [App\Http\Controllers\PindahPklController::class, 'indexKaprog']);
+
+    // aksi verifikasi diterima/ditolak
+    Route::post('/kaprog/pindah-pkl/{id}/verifikasi', [App\Http\Controllers\PindahPklController::class, 'verifikasi']);
 
     Route::post('/kaprog/update-surat-izin/{id}', [KaprogController::class, 'updateSuratIzin'])->name('kaprog.updateSuratIzin');
 

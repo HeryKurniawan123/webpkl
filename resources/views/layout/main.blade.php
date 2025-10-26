@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
-    data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -112,7 +112,7 @@
                         @elseif(auth()->user()->role == 'orangtua') /dashboard/orangtua
                         @elseif(auth()->user()->role == 'persuratan') /dashboard/persuratan
                         @elseif(auth()->user()->role == 'kepsek') /dashboard/kepsek
-                                @elseif(auth()->user()->role == 'pendamping') /dashboard/pendamping @endif"
+                        @elseif(auth()->user()->role == 'pendamping') /dashboard/pendamping @endif"
                             class="menu-link">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Dashboard</div>
@@ -189,11 +189,11 @@
 
 
                         <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                                                            <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
-                                                                <i class="menu-icon tf-icons bx bx-collection"></i>
-                                                                <div data-i18n="Basic">Pembimbing</div>
-                                                            </a>
-                                                        </li> -->
+                                                                <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
+                                                                    <i class="menu-icon tf-icons bx bx-collection"></i>
+                                                                    <div data-i18n="Basic">Pembimbing</div>
+                                                                </a>
+                                                            </li> -->
                     @endif
 
 
@@ -293,8 +293,7 @@
                         </li>
                     @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li
-                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -359,6 +358,12 @@
                             <a href="{{ route('kaprog.review.pengajuan') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::is('kaprog/pindah-pkl') ? 'active' : '' }}">
+                            <a href="/kaprog/pindah-pkl" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Review Pindah Pkl</div>
                             </a>
                         </li>
 
@@ -612,7 +617,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function(event) {
+                button.addEventListener('click', function (event) {
                     event.preventDefault();
 
                     Swal.fire({

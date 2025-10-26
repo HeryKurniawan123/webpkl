@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
-
+use App\Models\PengajuanUsulan;
+use App\Models\DataPribadi;
+use Illuminate\Support\Facades\Log;
 
 class IdukaController extends Controller
 {
@@ -149,9 +150,6 @@ public function index(Request $request)
 
         return redirect()->back()->with('success', 'Tanggal batas usulan berhasil diperbarui.');
     }
-
-
-
     public function edit()
     {
         $user = auth()->user();
@@ -250,20 +248,12 @@ public function index(Request $request)
         return redirect()->route('iduka.pribadi')->with('success', 'Data berhasil diperbarui.');
     }
 
-
-
-
-
-
     public function show($id)
     {
         $iduka = Iduka::where('id', $id)->first();
 
         return view('iduka.dataiduka.detailDataIduka', compact('iduka'));
     }
-
-
-
 
     public function updateInstitusi(Request $request, $id)
     {
@@ -322,7 +312,6 @@ public function index(Request $request)
         return redirect()->back()->with('success', 'Data institusi berhasil diperbarui!');
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
@@ -380,7 +369,6 @@ public function index(Request $request)
 
         return redirect()->back()->with('success', 'Data Institusi berhasil ditambahkan dan User berhasil dibuat.');
     }
-
 
     public function update(Request $request, $id)
     {
@@ -517,4 +505,80 @@ public function index(Request $request)
 
         return view('iduka.siswa_diterima', compact('pengajuanDiterima', 'pengajuanByYear'));
     }
+
+    /**
+ * Store pengajuan PKL dari siswa
+ */
+public function storeAjukanPkl(Request $request, $iduka_id)
+{
+    \Log::info('StoreAjukanPkl called', [
+        'user_id' => Auth::id(),
+        'iduka_id' => $iduka_id,
+        'request_data' => $request->all()
+    ]);
+
+    try {
+        $user = Auth::user();
+        $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
+
+        \Log::info('User and DataPribadi', [
+            'user' => $user,
+            'dataPribadi' => $dataPribadi
+        ]);
+
+        if (!$dataPribadi) {
+            \Log::warning('Data pribadi tidak ditemukan', ['user_id' => $user->id]);
+            return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
+        }
+
+        // Cek apakah siswa sudah punya pengajuan PKL yang aktif
+        $cekPengajuanAktif = PengajuanUsulan::where('user_id', $user->id)
+            ->whereIn('status', ['proses', 'diterima'])
+            ->exists();
+
+        if ($cekPengajuanAktif) {
+            \Log::warning('Pengajuan aktif sudah ada', ['user_id' => $user->id]);
+            return redirect()->back()->with('error', 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.');
+        }
+
+        // Cek apakah sudah mengajukan ke IDUKA ini
+        $cekUsulan = PengajuanUsulan::where('user_id', $user->id)
+            ->where('iduka_id', $iduka_id)
+            ->first();
+
+        if ($cekUsulan) {
+            \Log::warning('Sudah mengajukan ke IDUKA ini', [
+                'user_id' => $user->id, 
+                'iduka_id' => $iduka_id
+            ]);
+            return redirect()->back()->with('error', 'Kamu sudah mengajukan PKL ke IDUKA ini.');
+        }
+
+        \Log::info('Creating PengajuanUsulan', [
+            'user_id' => $user->id,
+            'konke_id' => $dataPribadi->konke_id,
+            'iduka_id' => $iduka_id
+        ]);
+
+        // Simpan data
+        $pengajuan = PengajuanUsulan::create([
+            'user_id' => $user->id,
+            'konke_id' => $dataPribadi->konke_id,
+            'iduka_id' => $iduka_id,
+            'status' => 'proses',
+        ]);
+
+        \Log::info('PengajuanUsulan created successfully', ['pengajuan_id' => $pengajuan->id]);
+
+        return redirect()->route('siswa.dashboard')->with('success', 'Usulan PKL berhasil diajukan!');
+
+    } catch (\Exception $e) {
+        \Log::error('Error in storeAjukanPkl', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+    }
+}
 }
