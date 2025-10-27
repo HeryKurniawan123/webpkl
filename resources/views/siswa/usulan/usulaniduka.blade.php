@@ -210,14 +210,28 @@
                                 </div>
                                 <div class="col-lg-12 d-flex justify-content-end mt-4">
                                     @if(auth()->user()->role == 'siswa')
-                                        <!-- Test form tanpa JavaScript -->
-                                        <form action="{{ route('usulan.iduka.storeAjukanPkl', $iduka->id) }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
-                                            <button type="submit" class="btn btn-primary shadow-sm">
-                                                <i class="bi bi-send-check"></i> Test Ajukan PKL (No JS)
-                                            </button>
-                                        </form>
+                                        <button id="btnBuatUsulan" type="button" class="btn btn-success btn-sm d-none">
+                                            <i class="bi bi-file-earmark-plus"></i> Buat Usulan
+                                        </button>
+                                        <form action="{{ route('usulan.iduka.storeAjukanPkl', $iduka->id) }}" method="POST" class="ajukan-form">
+    @csrf
+    @method('POST')
+    
+    <input type="hidden" name="iduka_id" value="{{ $iduka->id }}">
+    <input type="hidden" name="nama" value="{{ $iduka->nama }}">
+    <input type="hidden" name="alamat" value="{{ $iduka->alamat }}">
+    <input type="hidden" name="kode_pos" value="{{ $iduka->kode_pos}}">
+    <input type="hidden" name="telepon" value="{{ $iduka->telepon }}">
+    <input type="hidden" name="email" value="{{ $iduka->email }}">
+    <input type="hidden" name="bidang_industri" value="{{ $iduka->bidang_industri }}">
+    <input type="hidden" name="kerjasama" value="{{ $iduka->kerjasama }}">
+    <input type="hidden" name="kuota_pkl" value="{{ $iduka->kuota_pkl }}">
+
+    <button type="submit" class="ajukan-btn btn btn-primary shadow-sm">
+        <i class="bi bi-send-check"></i> Ajukan PKL
+    </button>
+</form>
+
                                     @endif
                                 </div>
                             </div>
@@ -228,57 +242,41 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.ajukan-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            
-            Swal.fire({
-                title: "Apakah kamu yakin?",
-                text: "Ingin mengajukan PKL di {{ $iduka->nama }}?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, Ajukan!",
-                cancelButtonText: "Batal"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Gunakan Fetch API instead of form submission
-                    fetch('{{ route("usulan.iduka.storeAjukanPkl", $iduka->id) }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            iduka_id: '{{ $iduka->id }}'
-                        })
-                    })
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            return response.json();
-                        }
-                    })
-                    .then(data => {
-                        if (data) {
-                            Swal.fire('Berhasil!', 'Usulan PKL berhasil diajukan!', 'success')
-                                .then(() => {
-                                    window.location.href = '{{ route("siswa.dashboard") }}';
-                                });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire('Error!', 'Terjadi kesalahan saat mengajukan PKL', 'error');
-                    });
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.ajukan-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                
+                const form = this.closest('.ajukan-form');
+                
+                Swal.fire({
+                    title: "Apakah kamu yakin?",
+                    text: "Ingin mengajukan PKL di {{ $iduka->nama }}?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Ajukan!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Tampilkan loading
+                        Swal.fire({
+                            title: 'Mengajukan...',
+                            text: 'Sedang memproses pengajuan PKL',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        });
+                        
+                        // Submit form
+                        form.submit();
+                    }
+                });
             });
         });
     });
-});
 </script>
 
         @include('iduka.dataiduka.editiduka')
