@@ -21,7 +21,7 @@ class DataPribadiController extends Controller
         return view('siswa.data_pribadi.form', compact('dataPribadi', 'siswa', 'kelas', 'konke'));
     }
 
-    public function store(Request $request)
+public function store(Request $request)
     {
         $dataPribadi = Auth::user()->dataPribadi;
 
@@ -36,19 +36,19 @@ class DataPribadiController extends Controller
             'jk' => 'required|string',
             'agama' => 'required|string',
             'tempat_lhr' => 'required|string',
-            'tanggal_lahir' => 'nullable|date',
+            'tgl_lahir' => 'nullable|date',
             'email' => 'required|email|unique:data_pribadis,email,' . ($dataPribadi->id ?? 'null') . ',id',
 
             'name_ayh' => 'required|string|max:255',
             'nik_ayh' => 'required|unique:data_pribadis,nik_ayh,' . ($dataPribadi->id ?? 'null') . ',id',
             'tempat_lhr_ayh' => 'required|string',
-            'tanggal_lahir_ayh' => 'nullable|date',
+            'tgl_lahir_ayh' => 'nullable|date',
             'pekerjaan_ayh' => 'nullable|string',
 
             'name_ibu' => 'required|string|max:255',
             'nik_ibu' => 'required|unique:data_pribadis,nik_ibu,' . ($dataPribadi->id ?? 'null') . ',id',
             'tempat_lhr_ibu' => 'required|string',
-            'tanggal_lahir_ibu' => 'nullable|date',
+            'tgl_lahir_ibu' => 'nullable|date',
             'pekerjaan_ibu' => 'nullable|string',
 
             'ttd_ortu_option' => 'nullable|string|max:255', // ayah / ibu / manual
@@ -90,7 +90,7 @@ class DataPribadiController extends Controller
             $dataPribadi->update($validated);
         }
 
-        
+
         if ($request->filled('nik_ayh')) {
             $userOrtu = User::where('nip', $dataPribadi->nik_ayh ?? $request->nik_ayh)->first();
 
@@ -115,6 +115,4 @@ class DataPribadiController extends Controller
             ->with('success', 'Data pribadi berhasil disimpan.');
     }
 
-
-
-}
+   }

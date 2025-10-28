@@ -345,7 +345,7 @@ class AbsensiController extends Controller
             } else {
                 // Untuk kasus normal, harus sudah absen masuk
                 if (!$absensiHariIni->jam_masuk) {
-                    return redirect()->back()->with('error', 'Anda belum melakukan absen masuk hari ini.');
+                    return redirect()->back()->with('error', 'Anda belum melakukan absensi masuk hari ini.');
                 }
 
                 // Tentukan lokasi yang digunakan (pusat atau cabang)
@@ -925,7 +925,7 @@ class AbsensiController extends Controller
 
     /**
      * Determine attendance status based on current time and IDUKA settings
-     * PERBAIKAN: Menggunakan toleransi 5 menit untuk keterlambatan
+     * PERBAIKAN: Menggunakan toleransi 15 menit untuk keterlambatan
      */
     private function getStatusAbsensi($waktu, $jamMasuk = null)
     {
@@ -939,16 +939,16 @@ class AbsensiController extends Controller
             $jamMasuk = $jamMasukDefault;
         }
 
-        // Hitung batas toleransi 5 menit setelah jam masuk
-        $batasLambat = $jamMasuk->copy()->addMinutes(5);
+        // Hitung batas toleransi 15 menit setelah jam masuk
+        $batasLambat = $jamMasuk->copy()->addMinutes(15);
 
         // Logika status
         if ($waktu->lte($jamMasuk)) {
             return 'tepat_waktu'; // Sebelum atau tepat pada jam masuk
         } elseif ($waktu->lte($batasLambat)) {
-            return 'terlambat'; // Terlambat tapi masih dalam toleransi 5 menit
+            return 'tepat_waktu'; // Terlambat tapi masih dalam toleransi 15 menit -> dianggap tepat waktu
         } else {
-            return 'terlambat'; // Terlambat lebih dari 5 menit
+            return 'terlambat'; // Terlambat lebih dari 15 menit
         }
     }
 }
