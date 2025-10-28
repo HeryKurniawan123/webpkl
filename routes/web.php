@@ -113,9 +113,7 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     //MEMBUAT AJUAN USULAN
     Route::get('/iduka/{id}', [UsulanIdukaController::class, 'detailIdukaUsulan'])->name('detail.datausulan');
     //-------
-    Route::post('/usulan-iduka/{iduka_id}/store-ajukan-pkl', [IdukaController::class, 'storeAjukanPkl'])
-    ->name('usulan.iduka.storeAjukanPkl')
-    ->middleware('auth');
+    Route::post('/usulan-iduka/{iduka}', [UsulanIdukaController::class, 'storeAjukanPkl'])->name('usulan.iduka.storeAjukanPkl');
 
     Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
     Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');

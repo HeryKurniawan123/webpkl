@@ -91,12 +91,6 @@ class PengajuanPklController extends Controller
         return view('pengajuan.review', compact('pengajuans', 'iduka', 'sisa_kuota', 'iduka_id'));
     }
 
-
-
-
-
-
-
     public function showPengajuan($id)
     {
         $pengajuan = PengajuanPkl::with(['dataPribadi.kelas', 'iduka'])->findOrFail($id);
@@ -129,51 +123,75 @@ class PengajuanPklController extends Controller
     }
 
     public function terima($id)
-    {
-        $pengajuan = PengajuanPkl::findOrFail($id);
+{
+    $pengajuan = PengajuanPkl::findOrFail($id);
 
-        // Pastikan hanya memproses jika belum diterima sebelumnya
-        if ($pengajuan->status !== 'diterima') {
-            $iduka = Iduka::findOrFail($pengajuan->iduka_id);
+    // Pastikan hanya memproses jika belum diterima sebelumnya
+    if ($pengajuan->status !== 'diterima') {
+        $iduka = Iduka::findOrFail($pengajuan->iduka_id);
 
-            // Cek apakah kuota tersedia
-            if ($iduka->kuota_pkl > 0) {
-                $iduka->decrement('kuota_pkl');
-                $pengajuan->update(['status' => 'diterima']);
-                // Cek dan update status di pengajuan_usulans atau usulan_idukas
-                $updated = false;
+        // Cek apakah kuota tersedia
+        if ($iduka->kuota_pkl > 0) {
+            // Kurangi kuota IDUKA
+            $iduka->decrement('kuota_pkl');
 
-                $usulan = \App\Models\PengajuanUsulan::where('user_id', $pengajuan->siswa_id)
-                    ->where('iduka_id', $pengajuan->iduka_id)
+            // Ubah status pengajuan menjadi diterima
+            $pengajuan->update(['status' => 'diterima']);
+
+            // ✅ Ambil data user terkait siswa
+            $user = \App\Models\User::find($pengajuan->siswa_id);
+            if ($user) {
+                $idukaLama = $user->iduka_id; // simpan iduka lama sebelum update
+
+                // ✅ Update iduka_id siswa di tabel users
+                $user->update(['iduka_id' => $pengajuan->iduka_id]);
+
+                // ✅ Simpan riwayat ke tabel history_pkl
+                \App\Models\HistoryPkl::create([
+                    'user_id' => $user->id,
+                    'iduka_lama_id' => $idukaLama,
+                    'iduka_baru_id' => $pengajuan->iduka_id,
+                    'tgl_pindah' => now(),
+                ]);
+            }
+
+            // Update status di pengajuan_usulans atau usulan_idukas
+            $updated = false;
+
+            $usulan = \App\Models\PengajuanUsulan::where('user_id', $pengajuan->siswa_id)
+                ->where('iduka_id', $pengajuan->iduka_id)
+                ->first();
+
+            if ($usulan) {
+                $usulan->status = 'diterima';
+                $usulan->save();
+                $updated = true;
+                Log::info('Status PengajuanUsulan updated', ['id' => $usulan->id, 'status' => $usulan->status]);
+            } else {
+                $usulanIduka = \App\Models\UsulanIduka::where('user_id', $pengajuan->siswa_id)
+                    ->latest()
                     ->first();
 
-                if ($usulan) {
-                    $usulan->status = 'diterima';
-                    $usulan->save();
+                if ($usulanIduka) {
+                    $usulanIduka->status = 'diterima';
+                    $usulanIduka->save();
                     $updated = true;
-                    Log::info('Status usulan_iduka updated', ['id' => $usulan->id, 'status' => $usulan->status]);
-                } else {
-                    $usulanIduka = \App\Models\UsulanIduka::where('user_id', $pengajuan->siswa_id)
-                        ->latest() // Ambil yang terbaru
-                        ->first();
-
-                    if ($usulanIduka) {
-                        $usulanIduka->status = 'diterima';
-                        $usulanIduka->save();
-                        $updated = true;
-
-                        Log::info('Status usulan_iduka updated', ['id' => $usulanIduka->id, 'status' => $usulanIduka->status]);
-                    }
+                    Log::info('Status UsulanIduka updated', ['id' => $usulanIduka->id, 'status' => $usulanIduka->status]);
                 }
-                return redirect()->route('pengajuan.review')->with('success', 'Pengajuan PKL telah diterima dan kuota dikurangi.');
-            } else {
-                // Jika kuota kosong, arahkan ke halaman iduka pribadi dengan alert error
-                return redirect()->route('iduka.pribadi')->with('error', 'IDUKA belum mengisi kuota PKL.');
             }
-        }
 
-        return redirect()->route('pengajuan.review')->with('info', 'Pengajuan sudah diterima sebelumnya.');
+            return redirect()->route('pengajuan.review')
+                ->with('success', 'Pengajuan PKL diterima, kuota dikurangi, data siswa & history PKL diperbarui.');
+        } else {
+            // Jika kuota kosong
+            return redirect()->route('iduka.pribadi')
+                ->with('error', 'IDUKA belum mengisi kuota PKL.');
+        }
     }
+
+    return redirect()->route('pengajuan.review')
+        ->with('info', 'Pengajuan sudah diterima sebelumnya.');
+}
 
     public function tolak($id)
     {

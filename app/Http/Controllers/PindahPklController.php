@@ -81,18 +81,44 @@ class PindahPklController extends Controller
 
     // verifikasi pengajuan pindah
     public function verifikasi(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required|in:diterima,ditolak',
-        ]);
+{
+    $request->validate([
+        'status' => 'required|in:diterima,ditolak',
+    ]);
 
-        DB::table('pindah_pkl')->where('id', $id)->update([
-            'status' => $request->status,
+    $pindah = DB::table('pindah_pkl')->where('id', $id)->first();
+
+    if (!$pindah) {
+        return redirect()->back()->with('error', 'Data pengajuan tidak ditemukan.');
+    }
+
+    // update status pengajuan
+    DB::table('pindah_pkl')->where('id', $id)->update([
+        'status' => $request->status,
+        'updated_at' => now(),
+    ]);
+
+    // kalau diterima, pindahkan ke tabel history_pkl dan kosongkan iduka_id di users
+    if ($request->status === 'diterima') {
+        // 1️⃣ simpan ke history_pkl
+        DB::table('history_pkl')->insert([
+            'user_id' => $pindah->siswa_id,
+            'iduka_lama_id' => $pindah->iduka_id, // iduka lama
+            'iduka_baru_id' => null, // nanti diisi saat ajukan PKL baru
+            'tgl_pindah' => now(),
+            'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Pengajuan pindah berhasil diverifikasi.');
+        // 2️⃣ kosongkan iduka_id di tabel users biar bisa ajukan baru
+        DB::table('users')->where('id', $pindah->siswa_id)->update([
+            'iduka_id' => null,
+            'updated_at' => now(),
+        ]);
     }
+
+    return redirect()->back()->with('success', 'Pengajuan pindah berhasil diverifikasi.');
+}
 
     public function riwayat()
     {
