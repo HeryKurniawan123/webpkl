@@ -20,7 +20,6 @@ class UsulanIdukaController extends Controller
         return view('data.usulan.formUsulan', compact('usulanSiswa'));
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
@@ -54,7 +53,6 @@ class UsulanIdukaController extends Controller
                 ->with('error', 'Silakan lengkapi data pribadi terlebih dahulu sebelum mengajukan usulan.');
         }
 
-
         UsulanIduka::create([
             'user_id' => $user->id,
             'konke_id' => $dataPribadi->konke_id, // Tambahkan konke_id
@@ -73,37 +71,29 @@ class UsulanIdukaController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-
         return redirect()->route('siswa.dashboard')->with('success', 'Usulan berhasil diajukan.');
     }
 
     public function storeAjukanPkl(Request $request, $iduka_id)
     {
-        \Log::info('StoreAjukanPkl called', [
-            'user_id' => Auth::id(),
-            'iduka_id' => $iduka_id,
-            'request_data' => $request->all()
-        ]);
-
         try {
             $user = Auth::user();
             $dataPribadi = DataPribadi::where('user_id', $user->id)->first();
 
-            \Log::info('User and DataPribadi', [
-                'user' => $user,
-                'dataPribadi' => $dataPribadi
-            ]);
-
             if (!$dataPribadi) {
-                \Log::warning('Data pribadi tidak ditemukan', ['user_id' => $user->id]);
-                return redirect()->back()->with('error', 'Data pribadi tidak ditemukan.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Silakan lengkapi data pribadi terlebih dahulu sebelum mengajukan PKL.'
+                ], 400);
             }
 
             // Validasi IDUKA exists
             $iduka = Iduka::find($iduka_id);
             if (!$iduka) {
-                \Log::warning('IDUKA tidak ditemukan', ['iduka_id' => $iduka_id]);
-                return redirect()->back()->with('error', 'IDUKA tidak ditemukan.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'IDUKA tidak ditemukan.'
+                ], 404);
             }
 
             // Cek apakah siswa sudah punya pengajuan PKL yang aktif
@@ -118,11 +108,10 @@ class UsulanIdukaController extends Controller
              * - Kecuali jika ingin pindah IDUKA, perlu mekanisme khusus
              */
             if ($cekPengajuanAktif && $user->iduka_id !== null) {
-                \Log::warning('User sudah memiliki pengajuan aktif dan iduka_id tidak null', [
-                    'user_id' => $user->id,
-                    'iduka_id' => $user->iduka_id
-                ]);
-                return redirect()->back()->with('error', 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kamu sudah memiliki pengajuan PKL yang sedang diproses atau sudah diterima.'
+                ], 400);
             }
 
             // Cek apakah sudah mengajukan ke IDUKA ini
@@ -131,26 +120,16 @@ class UsulanIdukaController extends Controller
                 ->first();
 
             if ($cekUsulan) {
-                \Log::warning('Sudah mengajukan ke IDUKA ini', [
-                    'user_id' => $user->id,
-                    'iduka_id' => $iduka_id,
-                    'status_sebelumnya' => $cekUsulan->status
-                ]);
-
                 $message = 'Kamu sudah mengajukan PKL ke IDUKA ini.';
                 if ($cekUsulan->status === 'ditolak') {
                     $message .= ' Pengajuan sebelumnya ditolak.';
                 }
 
-                return redirect()->back()->with('error', $message);
+                return response()->json([
+                    'success' => false,
+                    'message' => $message
+                ], 400);
             }
-
-            \Log::info('Creating PengajuanUsulan', [
-                'user_id' => $user->id,
-                'konke_id' => $dataPribadi->konke_id,
-                'iduka_id' => $iduka_id,
-                'user_iduka_null' => is_null($user->iduka_id)
-            ]);
 
             // Simpan data
             $pengajuan = PengajuanUsulan::create([
@@ -161,23 +140,20 @@ class UsulanIdukaController extends Controller
                 'tanggal_pengajuan' => now(), // tambahkan timestamp
             ]);
 
-            \Log::info('PengajuanUsulan created successfully', [
-                'pengajuan_id' => $pengajuan->id,
-                'user_previous_iduka' => $user->iduka_id
+            return response()->json([
+                'success' => true,
+                'message' => 'Usulan PKL berhasil diajukan!',
+                'redirect' => route('siswa.dashboard')
             ]);
-
-            return redirect()->route('siswa.dashboard')->with('success', 'Usulan PKL berhasil diajukan!');
 
         } catch (\Exception $e) {
-            \Log::error('Error in storeAjukanPkl', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
-    
+
     public function approvePengajuanUsulan($id)
     {
         $usulan = PengajuanUsulan::findOrFail($id);
@@ -193,7 +169,6 @@ class UsulanIdukaController extends Controller
 
         return redirect()->back()->with('error', 'Pengajuan PKL ditolak.');
     }
-
 
     public function approve($id)
     {
@@ -214,11 +189,8 @@ class UsulanIdukaController extends Controller
         return view('data.usulan.suratUsulanPDF');
     }
 
-
-
     public function dataIdukaUsulan()
     {
-
         $today = Carbon::today();
 
         $iduka = Iduka::where('hidden', false) // Hanya tampilkan yang tidak hidden
@@ -232,8 +204,6 @@ class UsulanIdukaController extends Controller
 
         return view('siswa.usulan.dataIdukaUsulan', compact('iduka', 'today'));
     }
-
-
 
     public function detailIdukaUsulan($id)
     {

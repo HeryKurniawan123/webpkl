@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Detail Institusi / Perusahaan</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
@@ -56,7 +57,6 @@
             overflow-x: auto;
         }
 
-
         /* Responsif untuk tabel */
         @media (max-width: 768px) {
             .table-responsive {
@@ -97,11 +97,42 @@
             }
         }
 
-
+        /* Custom Loading Overlay */
+        #loader-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Custom Loading Overlay -->
+    <div id="loader-overlay">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+        <p class="mt-3 fw-semibold text-primary">Antosan Kedap...</p>
+    </div>
+
+    <!-- Alert untuk pesan error/sukses -->
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="container-fluid">
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -111,35 +142,18 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">Detail Data Institusi / Perusahaan</h5>
-                                
+
                                 <!-- Tombol Titik Tiga -->
                                 <div class="d-flex gap-2 ms-auto">
                                     <a href="{{ route('iduka.usulan') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
                                         <i class="bi bi-arrow-left-circle"></i>
                                         <span class="d-none d-md-inline">Kembali</span>
                                     </a>
-                                    {{-- <div class="dropdown">
-                                        <button class="btn btn-light p-1 rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="bi bi-filetype-pdf text-danger"></i> <span class="text-danger">Export PDF</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="{{ route('iduka.edit', $iduka->id) }}" class="dropdown-item">
-                                                    <i class="bi bi-pencil-square text-warning"></i> <span class="text-warning">Edit</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div> --}}
                                 </div>
                             </div>
                         </div>
                     </div>
-                
+
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -176,7 +190,7 @@
                                         <td><i class="bi bi-telephone"></i> Nomor Telepon</td>
                                         <td>: {{ $iduka->telepon }}</td>
                                     </tr>
-    
+
                                     <tr>
                                         <td><i class="bi bi-envelope"></i> Email</td>
                                         <td>: {{ $iduka->email }}</td>
@@ -197,14 +211,11 @@
                                         <td><i class="bi bi-people"></i> Jumlah Kuota PKL</td>
                                         <td>: {{ $iduka->kuota_pkl }}</td>
                                     </tr>
-    
+
                                 </table>
                             </div>
                             <div class="col-lg-12 d-flex justify-content-end mt-4">
                                 @if(auth()->user()->role == 'siswa')
-                                <button id="btnBuatUsulan" type="button" class="btn btn-success btn-sm d-none">
-                                    <i class="bi bi-file-earmark-plus"></i> Buat Usulan
-                                </button>
                                 <form action="{{ route('usulan.iduka.storeAjukanPkl', $iduka->id) }}" method="POST" class="ajukan-form">
                                     @csrf
                                     <input type="hidden" name="nama" value="{{ $iduka->nama }}">
@@ -215,70 +226,121 @@
                                     <input type="hidden" name="bidang_industri" value="{{ $iduka->bidang_industri }}">
                                     <input type="hidden" name="kerjasama" value="{{ $iduka->kerjasama }}">
                                     <input type="hidden" name="kuota_pkl" value="{{ $iduka->kuota_pkl }}">
-                                    
-                                    <button type="submit" class="ajukan-btn btn btn-primary shadow-sm">
+
+                                    <button type="button" class="ajukan-btn btn btn-primary shadow-sm">
                                         Ajukan PKL
                                     </button>
                                 </form>
-                                                             
                                 @endif
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.querySelectorAll('.ajukan-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
-        
-                Swal.fire({
-                    title: "Apakah kamu yakin?",
-                    text: "Ingin mengajukan Institusi ini?",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Ya, Ajukan!"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.closest('.ajukan-form').submit();
-                    }
-                });
+
+                // Cek apakah data pribadi sudah lengkap
+                fetch('/api/check-data-pribadi')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.complete) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Data Belum Lengkap',
+                                text: 'Silakan lengkapi data pribadi terlebih dahulu sebelum mengajukan PKL.',
+                                confirmButtonText: 'OK'
+                            });
+                            return;
+                        }
+
+                        // Lanjutkan dengan konfirmasi SweetAlert
+                        Swal.fire({
+                            title: "Apakah kamu yakin?",
+                            text: "Ingin mengajukan Institusi ini?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Ya, Ajukan!"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Tampilkan custom loading overlay
+                                document.getElementById('loader-overlay').style.display = 'flex';
+
+                                // Submit form menggunakan fetch
+                                const form = this.closest('.ajukan-form');
+                                const formData = new FormData(form);
+
+                                fetch(form.action, {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                    }
+                                })
+                                .then(response => {
+                                    // Sembunyikan loading overlay
+                                    document.getElementById('loader-overlay').style.display = 'none';
+
+                                    if (!response.ok) {
+                                        return response.json().then(err => {
+                                            throw new Error(err.message || 'Terjadi kesalahan');
+                                        });
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Berhasil!',
+                                            text: data.message,
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                        }).then(() => {
+                                            window.location.href = data.redirect;
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Gagal!',
+                                            text: data.message,
+                                            confirmButtonText: 'OK'
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Terjadi Kesalahan',
+                                        text: error.message || 'Gagal mengajukan PKL. Silakan coba lagi.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error checking data:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi Kesalahan',
+                            text: 'Gagal memeriksa kelengkapan data. Silakan coba lagi.',
+                            confirmButtonText: 'OK'
+                        });
+                    });
             });
         });
-        
-        if (result.isConfirmed) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Pengajuan berhasil dikirim!',
-                text: 'Data kamu sudah terkirim ke sistem.',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(() => {
-                this.closest('.ajukan-form').submit();
-            });
-        }
-
-        
-        if (result.isConfirmed) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Pengajuan berhasil dikirim!',
-                text: 'Data kamu sudah terkirim ke sistem.',
-                showConfirmButton: false,
-                timer: 2000
-            }).then(() => {
-                this.closest('.ajukan-form').submit();
-            });
-        }
-        </script>
-        
-
-
-    @include('iduka.dataiduka.editiduka')
+    </script>
 </body>
 
 </html>

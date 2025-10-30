@@ -112,11 +112,20 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/data-iduka/usulan', [UsulanIdukaController::class, 'dataIdukaUsulan'])->name('iduka.usulan');
     //MEMBUAT AJUAN USULAN
     Route::get('/iduka/{id}', [UsulanIdukaController::class, 'detailIdukaUsulan'])->name('detail.datausulan');
+
     //-------
     Route::post('/usulan-iduka/{iduka}', [UsulanIdukaController::class, 'storeAjukanPkl'])->name('usulan.iduka.storeAjukanPkl');
 
     Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
     Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
+    Route::get('/api/check-data-pribadi', function() {
+    $user = Auth::user();
+    $dataPribadi = \App\Models\DataPribadi::where('user_id', $user->id)->first();
+
+    return response()->json([
+        'complete' => !is_null($dataPribadi)
+    ]);
+});
 
     //absensi
 
