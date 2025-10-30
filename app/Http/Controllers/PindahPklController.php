@@ -92,27 +92,30 @@ class PindahPklController extends Controller
         return redirect()->back()->with('error', 'Data pengajuan tidak ditemukan.');
     }
 
-    // update status pengajuan
-    DB::table('pindah_pkl')->where('id', $id)->update([
-        'status' => $request->status,
-        'updated_at' => now(),
-    ]);
-
-    // kalau diterima, pindahkan ke tabel history_pkl dan kosongkan iduka_id di users
-    if ($request->status === 'diterima') {
-        // 1️⃣ simpan ke history_pkl
-        DB::table('history_pkl')->insert([
-            'user_id' => $pindah->siswa_id,
-            'iduka_lama_id' => $pindah->iduka_id, // iduka lama
-            'iduka_baru_id' => null, // nanti diisi saat ajukan PKL baru
-            'tgl_pindah' => now(),
-            'created_at' => now(),
+    if ($request->status === 'ditolak') {
+        // kalau ditolak, cukup update status aja
+        DB::table('pindah_pkl')->where('id', $id)->update([
+            'status' => 'ditolak',
             'updated_at' => now(),
         ]);
 
-        // 2️⃣ kosongkan iduka_id di tabel users biar bisa ajukan baru
-        DB::table('users')->where('id', $pindah->siswa_id)->update([
-            'iduka_id' => null,
+        return redirect()->back()->with('success', 'Pengajuan pindah telah ditolak.');
+    }
+
+    if ($request->status === 'diterima') {
+        // ubah status jadi menunggu surat (belum kosongin iduka_id)
+        DB::table('pindah_pkl')->where('id', $id)->update([
+            'status' => 'menunggu_surat',
+            'updated_at' => now(),
+        ]);
+
+        // simpan ke history_pkl (biar ada catatan pindah)
+        DB::table('history_pkl')->insert([
+            'user_id' => $pindah->siswa_id,
+            'iduka_lama_id' => $pindah->iduka_id,
+            'iduka_baru_id' => null, // diisi nanti pas ajukan PKL baru
+            'tgl_pindah' => now(),
+            'created_at' => now(),
             'updated_at' => now(),
         ]);
     }
