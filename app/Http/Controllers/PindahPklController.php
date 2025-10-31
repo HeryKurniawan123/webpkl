@@ -35,7 +35,7 @@ class PindahPklController extends Controller
         // cek apakah sudah pernah ajukan pindah dan masih diproses
         $cek = DB::table('pindah_pkl')
             ->where('siswa_id', $user->id)
-            ->whereIn('status', ['menunggu', 'diterima'])
+            ->whereIn('status', ['menunggu', 'diterima', 'menunggu_surat', 'siap_kirim'])
             ->first();
 
         if ($cek) {
@@ -79,49 +79,45 @@ class PindahPklController extends Controller
         return view('kaprog.pindahpkl.index', compact('pindah'));
     }
 
-    // verifikasi pengajuan pindah
     public function verifikasi(Request $request, $id)
-{
-    $request->validate([
-        'status' => 'required|in:diterima,ditolak',
-    ]);
-
-    $pindah = DB::table('pindah_pkl')->where('id', $id)->first();
-
-    if (!$pindah) {
-        return redirect()->back()->with('error', 'Data pengajuan tidak ditemukan.');
-    }
-
-    if ($request->status === 'ditolak') {
-        // kalau ditolak, cukup update status aja
-        DB::table('pindah_pkl')->where('id', $id)->update([
-            'status' => 'ditolak',
-            'updated_at' => now(),
+    {
+        $request->validate([
+            'status' => 'required|in:diterima,ditolak',
         ]);
 
-        return redirect()->back()->with('success', 'Pengajuan pindah telah ditolak.');
+        $pindah = DB::table('pindah_pkl')->where('id', $id)->first();
+
+        if (!$pindah) {
+            return redirect()->back()->with('error', 'Data pengajuan tidak ditemukan.');
+        }
+
+        if ($request->status === 'ditolak') {
+            DB::table('pindah_pkl')->where('id', $id)->update([
+                'status' => 'ditolak', // status ditolak kaprog
+                'updated_at' => now(),
+            ]);
+
+            return redirect()->back()->with('success', 'Pengajuan pindah telah ditolak.');
+        }
+
+        if ($request->status === 'diterima') {
+            DB::table('pindah_pkl')->where('id', $id)->update([
+                'status' => 'menunggu_surat', // status menunggu persuratan
+                'updated_at' => now(),
+            ]);
+
+            DB::table('history_pkl')->insert([
+                'user_id' => $pindah->siswa_id,
+                'iduka_lama_id' => $pindah->iduka_id,
+                'iduka_baru_id' => null,
+                'tgl_pindah' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Pengajuan pindah berhasil diverifikasi.');
     }
-
-    if ($request->status === 'diterima') {
-        // ubah status jadi menunggu surat (belum kosongin iduka_id)
-        DB::table('pindah_pkl')->where('id', $id)->update([
-            'status' => 'menunggu_surat',
-            'updated_at' => now(),
-        ]);
-
-        // simpan ke history_pkl (biar ada catatan pindah)
-        DB::table('history_pkl')->insert([
-            'user_id' => $pindah->siswa_id,
-            'iduka_lama_id' => $pindah->iduka_id,
-            'iduka_baru_id' => null, // diisi nanti pas ajukan PKL baru
-            'tgl_pindah' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-    }
-
-    return redirect()->back()->with('success', 'Pengajuan pindah berhasil diverifikasi.');
-}
 
     public function riwayat()
     {
@@ -147,7 +143,7 @@ class PindahPklController extends Controller
             ->where('pindah_pkl.id', $id)
             ->first();
 
-        if (!$pindahPkl || $pindahPkl->status != 'diterima') {
+        if (!$pindahPkl || !in_array($pindahPkl->status, ['diterima_iduka', 'siap_kirim'])) {
             return redirect()->back()->with('error', 'Surat tidak tersedia atau pengajuan belum diterima.');
         }
 
@@ -162,5 +158,115 @@ class PindahPklController extends Controller
             echo "\nDengan ini mengundurkan diri dari tempat PKL tersebut.\n";
             echo "\nTerima kasih.\n";
         }, 'Surat_Pengunduran_Diri_' . $pindahPkl->nama_siswa . '.txt');
+    }
+
+    /**
+     * ✅ FIXED: Hapus dd($pindah) yang menyebabkan error
+     * Method untuk menampilkan pengajuan pindah PKL untuk IDUKA
+     */
+    public function indexIduka()
+    {
+        $iduka = auth()->user()->iduka;
+
+        if (!$iduka) {
+            return back()->with('error', 'Data IDUKA tidak ditemukan.');
+        }
+
+        $pindah = DB::table('pindah_pkl')
+            ->join('users', 'pindah_pkl.siswa_id', '=', 'users.id')
+            ->join('idukas', 'pindah_pkl.iduka_id', '=', 'idukas.id')
+            ->select(
+                'pindah_pkl.id',
+                'pindah_pkl.status',
+                'pindah_pkl.created_at',
+                'users.name as nama_siswa',
+                'users.kelas_id',
+                'idukas.nama as nama_iduka'
+            )
+            ->where('pindah_pkl.iduka_id', $iduka->id)
+            ->whereIn('pindah_pkl.status', ['siap_kirim', 'menunggu_konfirmasi_iduka'])
+            ->orderByDesc('pindah_pkl.created_at')
+            ->get();
+
+        return view('iduka.pindahpkl.index', compact('pindah'));
+    }
+
+
+    /**
+     * Konfirmasi pengajuan pindah PKL oleh IDUKA
+     */
+    public function konfirmasiIduka(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:diterima_iduka,ditolak_iduka',
+        ]);
+
+        $pindah = DB::table('pindah_pkl')->where('id', $id)->first();
+
+        if (!$pindah) {
+            return redirect()->back()->with('error', 'Data pengajuan tidak ditemukan.');
+        }
+
+        if ($request->status === 'ditolak_iduka') {
+            DB::table('pindah_pkl')->where('id', $id)->update([
+                'status' => 'ditolak_iduka', // Status ditolak IDUKA
+                'updated_at' => now(),
+            ]);
+
+            return redirect()->back()->with('success', 'Pengajuan pindah telah ditolak oleh IDUKA.');
+        }
+
+        if ($request->status === 'diterima_iduka') {
+            // Update status pindah PKL
+            DB::table('pindah_pkl')->where('id', $id)->update([
+                'status' => 'diterima_iduka', // Status diterima IDUKA
+                'updated_at' => now(),
+            ]);
+
+            // Update history PKL dengan IDUKA baru
+            DB::table('history_pkl')
+                ->where('user_id', $pindah->siswa_id)
+                ->whereNull('iduka_baru_id')
+                ->update([
+                    'iduka_baru_id' => $pindah->iduka_id, // IDUKA baru
+                    'updated_at' => now(),
+                ]);
+        }
+
+        return redirect()->back()->with('success', 'Pengajuan pindah berhasil dikonfirmasi oleh IDUKA.');
+    }
+
+    /**
+     * Menampilkan riwayat pengajuan pindah PKL untuk IDUKA
+     */
+    public function riwayatIduka()
+    {
+        $user = Auth::user();
+
+        // Ambil data IDUKA yang sedang login
+        $iduka = DB::table('idukas')->where('user_id', $user->id)->first();
+
+        if (!$iduka) {
+            return redirect()->back()->with('error', 'Data IDUKA tidak ditemukan.');
+        }
+
+        $pindah = DB::table('pindah_pkl')
+            ->join('users', 'pindah_pkl.siswa_id', '=', 'users.id')
+            ->join('idukas', 'pindah_pkl.iduka_id', '=', 'idukas.id')
+            ->select(
+                'pindah_pkl.id',
+                'pindah_pkl.status',
+                'pindah_pkl.created_at',
+                'pindah_pkl.updated_at',
+                'users.name as nama_siswa',
+                'users.kelas_id',
+                'idukas.nama as nama_iduka'
+            )
+            ->where('pindah_pkl.iduka_id', $iduka->id) // Hanya menampilkan untuk IDUKA yang login
+            ->whereIn('pindah_pkl.status', ['diterima_iduka', 'ditolak_iduka'])
+            ->orderBy('pindah_pkl.updated_at', 'desc')
+            ->get();
+
+        return view('iduka.pindahpkl.riwayat', compact('pindah'));
     }
 }

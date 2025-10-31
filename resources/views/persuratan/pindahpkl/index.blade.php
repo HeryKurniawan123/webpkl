@@ -3,7 +3,10 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Verifikasi Pengajuan Pindah PKL</h1>
+        <h1 class="h3">Konfirmasi Pengajuan Pindah PKL</h1>
+        <a href="{{ route('persuratan.dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
     </div>
 
     @if(session('success'))
@@ -19,7 +22,17 @@
         </div>
     @endif
 
-    <div class="card shadow-sm">
+    <div class="card shadow">
+        <div class="card-header bg-white">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Menunggu Konfirmasi</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('persuratan.pindah_pkl.selesai') }}">Selesai</a>
+                </li>
+            </ul>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -29,6 +42,7 @@
                             <th>Nama Siswa</th>
                             <th>Kelas</th>
                             <th>Tempat PKL</th>
+                            <th>Tanggal Pengajuan</th>
                             <th>Status</th>
                             <th width="20%">Aksi</th>
                         </tr>
@@ -51,21 +65,16 @@
                                 <span class="badge bg-info">{{ $item->kelas_id }}</span>
                             </td>
                             <td>{{ $item->nama_iduka }}</td>
+                            <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
                             <td>
                                 @switch($item->status)
-                                    @case('menunggu')
+                                    @case('menunggu_surat')
                                         <span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
                                         @break
-                                    @case('menunggu_surat')
-                                        <span class="badge bg-info">Menunggu Persuratan</span>
-                                        @break
                                     @case('siap_kirim')
-                                        <span class="badge bg-success">Siap Dikirim</span>
+                                        <span class="badge bg-success">Siap Dikirim ke IDUKA</span>
                                         @break
                                     @case('ditolak_persuratan')
-                                        <span class="badge bg-danger">Ditolak Persuratan</span>
-                                        @break
-                                    @case('ditolak')
                                         <span class="badge bg-danger">Ditolak</span>
                                         @break
                                     @default
@@ -74,14 +83,14 @@
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
-                                    <form action="{{ route('kaprog.pindah_pkl.verifikasi', $item->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('persuratan.pindah_pkl.konfirmasi', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" name="status" value="diterima" class="btn btn-success btn-sm"
                                                 onclick="return confirm('Apakah Anda yakin menerima pengajuan ini?')">
                                             <i class="fas fa-check"></i> Terima
                                         </button>
                                     </form>
-                                    <form action="{{ route('kaprog.pindah_pkl.verifikasi', $item->id) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('persuratan.pindah_pkl.konfirmasi', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" name="status" value="ditolak" class="btn btn-danger btn-sm"
                                                 onclick="return confirm('Apakah Anda yakin menolak pengajuan ini?')">
@@ -93,10 +102,10 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
-                                    Tidak ada pengajuan pindah PKL yang menunggu verifikasi
+                                    Tidak ada pengajuan pindah PKL yang menunggu konfirmasi
                                 </div>
                             </td>
                         </tr>

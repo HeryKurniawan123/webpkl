@@ -118,14 +118,14 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
     Route::post('/usulan-iduka/approve/{id}', [UsulanIdukaController::class, 'approvePengajuanPkl'])->name('usulan.iduka.approve');
     Route::post('/usulan-iduka/reject/{id}', [UsulanIdukaController::class, 'rejectPengajuanPkl'])->name('usulan.iduka.reject');
-    Route::get('/api/check-data-pribadi', function() {
-    $user = Auth::user();
-    $dataPribadi = \App\Models\DataPribadi::where('user_id', $user->id)->first();
+    Route::get('/api/check-data-pribadi', function () {
+        $user = Auth::user();
+        $dataPribadi = \App\Models\DataPribadi::where('user_id', $user->id)->first();
 
-    return response()->json([
-        'complete' => !is_null($dataPribadi)
-    ]);
-});
+        return response()->json([
+            'complete' => !is_null($dataPribadi)
+        ]);
+    });
 
     //absensi
 
@@ -342,10 +342,18 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
     Route::get('/surat-pengantar/cetak/{id}', [SuratPengantarPklController::class, 'cetak'])->name('surat-pengantar.cetak');
     Route::get('/surat-pengantar/cetak-semua', [SuratPengantarPklController::class, 'cetakSemua'])->name('surat-pengantar.cetak-semua');
+
+    // Route untuk pindah PKL
+    Route::get('/persuratan/pindah-pkl', [PersuratanController::class, 'pindahPklIndex'])->name('persuratan.pindah_pkl.index');
+    Route::post('/persuratan/pindah-pkl/konfirmasi/{id}', [PersuratanController::class, 'konfirmasiPindahPkl'])->name('persuratan.pindah_pkl.konfirmasi');
+    Route::get('/persuratan/pindah-pkl/selesai', [PersuratanController::class, 'pindahPklSelesai'])->name('persuratan.pindah_pkl.selesai');
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
+    Route::get('/iduka/pindah-pkl', [PindahPklController::class, 'indexIduka'])->name('iduka.pindah_pkl.index');
+    Route::post('/iduka/pindah-pkl/konfirmasi/{id}', [PindahPklController::class, 'konfirmasiIduka'])->name('iduka.pindah_pkl.konfirmasi');
+    Route::get('/iduka/pindah-pkl/riwayat', [PindahPklController::class, 'riwayatIduka'])->name('iduka.pindah_pkl.riwayat');
 
     Route::get('/data-pribadi/iduka', [IdukaController::class, 'dataPribadiIduka'])->name('iduka.pribadi');
     Route::get('/edit/data-pribadi/iduka', [IdukaController::class, 'editDataPribadiIduka'])->name('edit.iduka.pribadi');
@@ -375,15 +383,18 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     // ✅ Route untuk get CP & ATP berdasarkan konke_id (GANTI dengan method controller, bukan closure!)
     Route::get('/get-cp-atp/{konke_id}', [IdukaAtpController::class, 'getCpAtp']);
 
-    Route::get('/get-cp-atp/{konke_id}', function ($konke_id) {
-        $cps = Cp::where('konke_id', $konke_id)->with('atp')->get();
-        return response()->json($cps);
 
-        // //konfir absen
-        // Route::get('/konfirmasi-absen', [KonfirAbsenSiswaController::class, 'index'])->name('konfirmasi-absen');
-
-
+ // 🔍 ROUTE TEST - HAPUS SETELAH BERHASIL
+    Route::get('/iduka/test-route', function() {
+        $user = Auth::user();
+        $iduka = DB::table('idukas')->where('user_id', $user->id)->first();
+        return response()->json([
+            'user' => $user,
+            'iduka' => $iduka,
+            'message' => 'Route berhasil diakses!'
+        ]);
     });
+
     // Route untuk show TP berdasarkan iduka_id
     Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
 
@@ -505,8 +516,7 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     // halaman list pengajuan pindah PKL
     Route::get('/kaprog/pindah-pkl', [App\Http\Controllers\PindahPklController::class, 'indexKaprog']);
 
-    // aksi verifikasi diterima/ditolak
-    Route::post('/kaprog/pindah-pkl/{id}/verifikasi', [App\Http\Controllers\PindahPklController::class, 'verifikasi']);
+    Route::post('/kaprog/pindah-pkl/{id}/verifikasi', [PindahPklController::class, 'verifikasi'])->name('kaprog.pindah_pkl.verifikasi');
 
     Route::post('/kaprog/update-surat-izin/{id}', [KaprogController::class, 'updateSuratIzin'])->name('kaprog.updateSuratIzin');
 

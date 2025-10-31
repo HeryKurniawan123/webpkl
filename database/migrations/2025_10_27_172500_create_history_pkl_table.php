@@ -19,8 +19,8 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('iduka_lama_id')->references('id')->on('iduka')->onDelete('set null');
-            $table->foreign('iduka_baru_id')->references('id')->on('iduka')->onDelete('set null');
+            $table->foreign('iduka_lama_id')->references('id')->on('idukas')->onDelete('set null');
+            $table->foreign('iduka_baru_id')->references('id')->on('idukas')->onDelete('set null');
         });
     }
 

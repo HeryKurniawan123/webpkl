@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
-    data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+    data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -171,6 +171,7 @@
                                 <div data-i18n="Basic">Data Institusi / Perusahaan</div>
                             </a>
                         </li>
+
                         <li class="menu-item {{ Request::routeIs('tp.iduka') ? 'active' : '' }}">
                             <a href="{{ route('tp.iduka') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-map-pin"></i>
@@ -178,24 +179,27 @@
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('iduka.siswa.diterima') ? 'active' : '' }}">
-                            <a href="{{ route('iduka.siswa.diterima') }}" class="menu-link">
-                                <i class="menu-icon tf-icons bx bx-group"></i>
-                                <div data-i18n="Basic">Daftar Siswa</div>
+                        <li class="menu-item {{ Request::is('iduka/pindah-pkl*') ? 'active open' : '' }}">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-transfer"></i>
+                                <div data-i18n="Pindah PKL">Pindah PKL</div>
                             </a>
+                            <ul class="menu-sub">
+                                <li
+                                    class="menu-item {{ Request::routeIs('iduka.pindah_pkl.index') ? 'active' : '' }}">
+                                    <a href="{{ route('iduka.pindah_pkl.index') }}" class="menu-link">
+                                        <div data-i18n="Pengajuan Masuk">Pengajuan Masuk</div>
+                                    </a>
+                                </li>
+                                <li
+                                    class="menu-item {{ Request::routeIs('iduka.pindah_pkl.riwayat') ? 'active' : '' }}">
+                                    <a href="{{ route('iduka.pindah_pkl.riwayat') }}" class="menu-link">
+                                        <div data-i18n="Riwayat">Riwayat</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-
-
-
-
-                        <!-- <li class="menu-item {{ Request::routeIs('') ? 'active' : '' }}">
-                                                                <a href="{{ route('iduka.pembimbing.create') }}" class="menu-link">
-                                                                    <i class="menu-icon tf-icons bx bx-collection"></i>
-                                                                    <div data-i18n="Basic">Pembimbing</div>
-                                                                </a>
-                                                            </li> -->
                     @endif
-
 
                     @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
@@ -293,7 +297,8 @@
                         </li>
                     @endif
                     @if (auth()->user()->role == 'persuratan')
-                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -326,6 +331,12 @@
                                 <div data-i18n="Basic">surat pengantar pkl </div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('persuratan.pindah_pkl.index') ? 'active' : '' }}">
+                            <a href="{{ route('persuratan.pindah_pkl.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-collection"></i>
+                                <div data-i18n="Basic">Pindah Pkl </div>
+                            </a>
+                        </li>
                     @endif
                     @if (in_array(auth()->user()->role, ['iduka']))
                         <li class="menu-item {{ Request::routeIs('review.pengajuan') ? 'active' : '' }}">
@@ -333,6 +344,7 @@
                                 <i class="menu-icon tf-icons bx bx-collection"></i>
                                 <div data-i18n="Basic">Review Pengajuan</div>
                             </a>
+
                         </li>
                     @endif
                     @if (auth()->user()->role == 'kaprog')
@@ -617,7 +629,7 @@
 
         <script>
             document.querySelectorAll('.logout-btn').forEach(button => {
-                button.addEventListener('click', function (event) {
+                button.addEventListener('click', function(event) {
                     event.preventDefault();
 
                     Swal.fire({
