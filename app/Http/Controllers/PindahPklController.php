@@ -209,7 +209,7 @@ class PindahPklController extends Controller
 
         if ($request->status === 'ditolak_iduka') {
             DB::table('pindah_pkl')->where('id', $id)->update([
-                'status' => 'ditolak_iduka', // Status ditolak IDUKA
+                'status' => 'ditolak_iduka',
                 'updated_at' => now(),
             ]);
 
@@ -219,16 +219,24 @@ class PindahPklController extends Controller
         if ($request->status === 'diterima_iduka') {
             // Update status pindah PKL
             DB::table('pindah_pkl')->where('id', $id)->update([
-                'status' => 'diterima_iduka', // Status diterima IDUKA
+                'status' => 'diterima_iduka',
                 'updated_at' => now(),
             ]);
 
-            // Update history PKL dengan IDUKA baru
-            DB::table('history_pkl')
+            /* Update history PKL dengan IDUKA baru
+            /**  DB::table('history_pkl')
                 ->where('user_id', $pindah->siswa_id)
                 ->whereNull('iduka_baru_id')
                 ->update([
-                    'iduka_baru_id' => $pindah->iduka_id, // IDUKA baru
+                    'iduka_baru_id' => $pindah->iduka_id,
+                    'updated_at' => now(),
+                ]); */
+
+            // Kosongkan iduka_id di tabel users untuk siswa tersebut
+            DB::table('users')
+                ->where('id', $pindah->siswa_id)
+                ->update([
+                    'iduka_id' => null,
                     'updated_at' => now(),
                 ]);
         }

@@ -132,24 +132,25 @@
 
                                     <li>
     @php
-        // Cek apakah siswa sudah diterima di tempat PKL
-        // dan pengajuan pindah terakhir tidak aktif / diterima
-        $bisaPengajuanBaru = $sudahDiterima 
-                             && (!isset($statusPindahPkl) 
-                                 || !in_array($statusPindahPkl->status, ['menunggu', 'ditolak']));
-    @endphp
+    // Cek apakah siswa sudah diterima di tempat PKL
+    // dan pengajuan pindah terakhir tidak aktif / diterima
+    $bisaPengajuanBaru = $sudahDiterima 
+                         && (!isset($statusPindahPkl) 
+                             || !in_array($statusPindahPkl->status, ['menunggu', 'ditolak']))
+                         && (Auth::user()->iduka_id === null); // hanya jika iduka_id kosong
+@endphp
 
-    @if ($bisaPengajuanBaru)
-        <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Pengajuan Baru</a>
-    @else
-        <a href="#" class="dropdown-item" onclick="Swal.fire({
-            icon: 'info',
-            title: 'Tidak Bisa Pengajuan Baru',
-            text: 'Kamu hanya bisa membuat pengajuan baru jika pengajuan pindah tempat PKL diterima.',
-            showConfirmButton: true,
-            customClass: { popup: 'animate__animated animate__fadeIn' }
-        })">Pengajuan Baru</a>
-    @endif
+@if ($bisaPengajuanBaru)
+    <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Pengajuan Baru</a>
+@else
+    <a href="#" class="dropdown-item" onclick="Swal.fire({
+        icon: 'info',
+        title: 'Tidak Bisa Pengajuan Baru',
+        text: 'Kamu hanya bisa membuat pengajuan baru jika belum terdaftar di IDUKA manapun atau pengajuan pindah PKL sebelumnya diterima.',
+        showConfirmButton: true,
+        customClass: { popup: 'animate__animated animate__fadeIn' }
+    })">Pengajuan Baru</a>
+@endif
 </li>
                                 </ul>
                             </div>
@@ -157,7 +158,7 @@
                             {{-- Pindah Tempat PKL --}}
                             @if ($sudahDiterima)
                                 @php
-                                    $pengajuanAktif = isset($statusPindahPkl) && in_array($statusPindahPkl->status, ['menunggu', 'diterima']);
+                                    $pengajuanAktif = isset($statusPindahPkl) && in_array($statusPindahPkl->status, ['menunggu', 'menunggu_surat', 'diterima_iduka']);
                                 @endphp
                                 
                                 @if(!$pengajuanAktif)

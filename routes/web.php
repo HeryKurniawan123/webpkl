@@ -351,7 +351,7 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
 
-    Route::get('/iduka/pindah-pkl', [PindahPklController::class, 'indexIduka'])->name('iduka.pindah_pkl.index');
+    Route::get('/iduka/pindah-pkl/index', [PindahPklController::class, 'indexIduka'])->name('iduka.pindah_pkl.index');
     Route::post('/iduka/pindah-pkl/konfirmasi/{id}', [PindahPklController::class, 'konfirmasiIduka'])->name('iduka.pindah_pkl.konfirmasi');
     Route::get('/iduka/pindah-pkl/riwayat', [PindahPklController::class, 'riwayatIduka'])->name('iduka.pindah_pkl.riwayat');
 
