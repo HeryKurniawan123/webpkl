@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PindahPkl;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PindahPklController extends Controller
 {
@@ -133,33 +136,27 @@ class PindahPklController extends Controller
         return view('siswa.dashboard', compact('pengajuanPindah'));
     }
 
-    // Tambahkan method untuk download surat
     public function downloadSurat($id)
     {
-        $pindahPkl = DB::table('pindah_pkl')
-            ->join('users', 'pindah_pkl.siswa_id', '=', 'users.id')
-            ->join('idukas', 'pindah_pkl.iduka_id', '=', 'idukas.id')
-            ->select('pindah_pkl.*', 'users.name as nama_siswa', 'idukas.nama as nama_iduka')
-            ->where('pindah_pkl.id', $id)
-            ->first();
+        // Ambil data pindah PKL beserta relasi yang dibutuhkan
+        $pindah = PindahPkl::with(['siswa.kelas.konke', 'idukaLama', 'idukaBaru'])->findOrFail($id);
 
-        if (!$pindahPkl || !in_array($pindahPkl->status, ['diterima_iduka', 'siap_kirim'])) {
-            return redirect()->back()->with('error', 'Surat tidak tersedia atau pengajuan belum diterima.');
-        }
+        // Tentukan IDUKA tujuan (iduka baru)
+        $iduka = $pindah->idukaBaru ?? $pindah->idukaLama;
 
-        // Logika untuk generate PDF surat pengunduran diri
-        // Untuk sementara kita return response sederhana
-        return response()->streamDownload(function () use ($pindahPkl) {
-            echo "SURAT PENGUNDURAN DIRI\n";
-            echo "========================\n\n";
-            echo "Yang bertanda tangan di bawah ini:\n";
-            echo "Nama: " . $pindahPkl->nama_siswa . "\n";
-            echo "Tempat PKL: " . $pindahPkl->nama_iduka . "\n";
-            echo "\nDengan ini mengundurkan diri dari tempat PKL tersebut.\n";
-            echo "\nTerima kasih.\n";
-        }, 'Surat_Pengunduran_Diri_' . $pindahPkl->nama_siswa . '.txt');
+        // Tanggal surat
+        $tanggal = Carbon::now()->translatedFormat('d F Y');
+
+        // Generate PDF
+        $pdf = Pdf::loadView('siswa.pindahpkl.surat', [
+            'pindah' => [$pindah->siswa], // supaya foreach($pindah as $item) tetap berfungsi
+            'iduka' => $iduka,
+            'tanggal' => $tanggal,
+        ])->setPaper('a4', 'portrait');
+
+        // Download PDF
+        return $pdf->download('Surat_Pindah_PKL_' . str_replace(' ', '_', $pindah->siswa->name) . '.pdf');
     }
-
     /**
      * ✅ FIXED: Hapus dd($pindah) yang menyebabkan error
      * Method untuk menampilkan pengajuan pindah PKL untuk IDUKA

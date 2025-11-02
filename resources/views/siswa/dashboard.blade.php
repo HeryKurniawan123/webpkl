@@ -4,31 +4,50 @@
     <div class="container-fluid"><br>
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-                
+
                 {{-- NOTIFIKASI STATUS PINDAH PKL --}}
                 @if(isset($statusPindahPkl) && $statusPindahPkl)
-                    <div class="alert 
+                    <div class="alert
                         @if($statusPindahPkl->status == 'menunggu') alert-warning
-                        @elseif($statusPindahPkl->status == 'diterima') alert-success
-                        @elseif($statusPindahPkl->status == 'ditolak') alert-danger
-                        @else alert-info @endif
+                        @elseif($statusPindahPkl->status == 'diterima_iduka') alert-success
+                        @elseif($statusPindahPkl->status == 'ditolak_iduka') alert-danger
+                        @elseif($statusPindahPkl->status == 'menunggu_surat') alert-info
+                        @elseif($statusPindahPkl->status == 'siap_kirim') alert-info
+                        @elseif($statusPindahPkl->status == 'menunggu_konfirmasi_iduka') alert-info
+                        @else alert-secondary @endif
                     ">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <strong>Status Pengajuan Pindah Tempat PKL:</strong> 
-                                <span class="text-capitalize">{{ $statusPindahPkl->status }}</span>
-                                
-                                @if($statusPindahPkl->status == 'diterima')
-    <span class="ms-2">
-        <a href="{{ route('pindah-pkl.download-surat', $statusPindahPkl->id) }}" class="btn btn-danger btn-sm">
-    <i class="bi bi-filetype-pdf"></i>
-</a>
-    </span>
-@endif
+                                <strong>Status Pengajuan Pindah Tempat PKL:</strong>
+                                <span class="text-capitalize">
+                                    @if($statusPindahPkl->status == 'menunggu')
+                                        Menunggu Verifikasi
+                                    @elseif($statusPindahPkl->status == 'diterima_iduka')
+                                        Diterima
+                                    @elseif($statusPindahPkl->status == 'ditolak_iduka')
+                                        Ditolak
+                                    @elseif($statusPindahPkl->status == 'menunggu_surat')
+                                        Menunggu Surat
+                                    @elseif($statusPindahPkl->status == 'siap_kirim')
+                                        Siap Dikirim
+                                    @elseif($statusPindahPkl->status == 'menunggu_konfirmasi_iduka')
+                                        Menunggu Konfirmasi IDUKA
+                                    @else
+                                        {{ $statusPindahPkl->status }}
+                                    @endif
+                                </span>
+
+                                @if($statusPindahPkl->status == 'diterima_iduka')
+                                    <span class="ms-2">
+                                        <a href="{{ route('pindah-pkl.download-surat', $statusPindahPkl->id) }}" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-filetype-pdf"></i> Unduh Surat
+                                        </a>
+                                    </span>
+                                @endif
 
                             </div>
                             @if($statusPindahPkl->alasan)
-                                <button class="btn btn-sm btn-outline-secondary" 
+                                <button class="btn btn-sm btn-outline-secondary"
                                         onclick="Swal.fire({
                                             title: 'Alasan {{ ucfirst($statusPindahPkl->status) }}',
                                             text: '{{ $statusPindahPkl->alasan }}',
@@ -100,67 +119,67 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-right">
                                     <li>
-    @php
-        // Cek apakah ada pengajuan pindah diterima
-        $bisaAjukan = (!$sudahAjukan || ($statusPindahPkl && $statusPindahPkl->status == 'diterima'));
-    @endphp
+                                        @php
+                                            // Cek apakah ada pengajuan pindah diterima
+                                            $bisaAjukan = (!$sudahAjukan || ($statusPindahPkl && $statusPindahPkl->status == 'diterima_iduka'));
+                                        @endphp
 
-    @if ($bisaAjukan)
-        <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Buat Pengajuan</a>
-    @else
-        @if ($statusAjukan === 'proses')
-            <a href="#" class="dropdown-item" onclick="Swal.fire({
-                icon: 'warning',
-                title: 'Pengajuan Sedang Diproses',
-                text: 'Kamu sudah mengajukan tempat PKL dan sedang diproses.'
-            })">Buat Pengajuan</a>
-        @elseif($statusAjukan === 'diterima')
-            <a href="#" class="dropdown-item" onclick="Swal.fire({
-                icon: 'info',
-                title: 'Tidak dapat mengajukan!',
-                text: 'Kamu sudah mengajukan dan pengajuan telah diterima.'
-            })">Buat Pengajuan</a>
-        @else
-            <a href="#" class="dropdown-item" onclick="Swal.fire({
-                icon: 'info',
-                title: 'Pengajuan Tidak Diterima',
-                text: 'Pengajuan sedang diproses atau telah diterima.'
-            })">Buat Pengajuan</a>
-        @endif
-    @endif
-</li>
+                                        @if ($bisaAjukan)
+                                            <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Buat Pengajuan</a>
+                                        @else
+                                            @if ($statusAjukan === 'proses')
+                                                <a href="#" class="dropdown-item" onclick="Swal.fire({
+                                                    icon: 'warning',
+                                                    title: 'Pengajuan Sedang Diproses',
+                                                    text: 'Kamu sudah mengajukan tempat PKL dan sedang diproses.'
+                                                })">Buat Pengajuan</a>
+                                            @elseif($statusAjukan === 'diterima')
+                                                <a href="#" class="dropdown-item" onclick="Swal.fire({
+                                                    icon: 'info',
+                                                    title: 'Tidak dapat mengajukan!',
+                                                    text: 'Kamu sudah mengajukan dan pengajuan telah diterima.'
+                                                })">Buat Pengajuan</a>
+                                            @else
+                                                <a href="#" class="dropdown-item" onclick="Swal.fire({
+                                                    icon: 'info',
+                                                    title: 'Pengajuan Tidak Diterima',
+                                                    text: 'Pengajuan sedang diproses atau telah diterima.'
+                                                })">Buat Pengajuan</a>
+                                            @endif
+                                        @endif
+                                    </li>
 
                                     <li>
-    @php
-    // Cek apakah siswa sudah diterima di tempat PKL
-    // dan pengajuan pindah terakhir tidak aktif / diterima
-    $bisaPengajuanBaru = $sudahDiterima 
-                         && (!isset($statusPindahPkl) 
-                             || !in_array($statusPindahPkl->status, ['menunggu', 'ditolak']))
-                         && (Auth::user()->iduka_id === null); // hanya jika iduka_id kosong
-@endphp
+                                        @php
+                                            // Cek apakah siswa sudah diterima di tempat PKL
+                                            // dan pengajuan pindah terakhir tidak aktif / diterima
+                                            $bisaPengajuanBaru = $sudahDiterima
+                                                && (!isset($statusPindahPkl)
+                                                    || !in_array($statusPindahPkl->status, ['menunggu', 'ditolak_iduka']))
+                                                && (Auth::user()->iduka_id === null); // hanya jika iduka_id kosong
+                                        @endphp
 
-@if ($bisaPengajuanBaru)
-    <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Pengajuan Baru</a>
-@else
-    <a href="#" class="dropdown-item" onclick="Swal.fire({
-        icon: 'info',
-        title: 'Tidak Bisa Pengajuan Baru',
-        text: 'Kamu hanya bisa membuat pengajuan baru jika belum terdaftar di IDUKA manapun atau pengajuan pindah PKL sebelumnya diterima.',
-        showConfirmButton: true,
-        customClass: { popup: 'animate__animated animate__fadeIn' }
-    })">Pengajuan Baru</a>
-@endif
-</li>
+                                        @if ($bisaPengajuanBaru)
+                                            <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Pengajuan Baru</a>
+                                        @else
+                                            <a href="#" class="dropdown-item" onclick="Swal.fire({
+                                                icon: 'info',
+                                                title: 'Tidak Bisa Pengajuan Baru',
+                                                text: 'Kamu hanya bisa membuat pengajuan baru jika belum terdaftar di IDUKA manapun atau pengajuan pindah PKL sebelumnya diterima.',
+                                                showConfirmButton: true,
+                                                customClass: { popup: 'animate__animated animate__fadeIn' }
+                                            })">Pengajuan Baru</a>
+                                        @endif
+                                    </li>
                                 </ul>
                             </div>
 
                             {{-- Pindah Tempat PKL --}}
                             @if ($sudahDiterima)
                                 @php
-                                    $pengajuanAktif = isset($statusPindahPkl) && in_array($statusPindahPkl->status, ['menunggu', 'menunggu_surat', 'diterima_iduka']);
+                                    $pengajuanAktif = isset($statusPindahPkl) && in_array($statusPindahPkl->status, ['menunggu', 'menunggu_surat', 'diterima_iduka', 'siap_kirim', 'menunggu_konfirmasi_iduka']);
                                 @endphp
-                                
+
                                 @if(!$pengajuanAktif)
                                     <form action="{{ route('pindah-pkl.ajukan') }}" method="POST" style="display:inline;">
                                         @csrf
@@ -246,24 +265,30 @@
                                                         <td>{{ \Carbon\Carbon::parse($pindah->created_at)->format('d/m/Y') }}</td>
                                                         <td>
                                                             @if($pindah->status == 'menunggu')
-                                                                <span class="badge bg-warning">Menunggu</span>
-                                                            @elseif($pindah->status == 'diterima')
+                                                                <span class="badge bg-warning">Menunggu Verifikasi</span>
+                                                            @elseif($pindah->status == 'diterima_iduka')
                                                                 <span class="badge bg-success">Diterima</span>
-                                                            @elseif($pindah->status == 'ditolak')
+                                                            @elseif($pindah->status == 'ditolak_iduka')
                                                                 <span class="badge bg-danger">Ditolak</span>
+                                                            @elseif($pindah->status == 'menunggu_surat')
+                                                                <span class="badge bg-info">Menunggu Surat</span>
+                                                            @elseif($pindah->status == 'siap_kirim')
+                                                                <span class="badge bg-info">Siap Dikirim</span>
+                                                            @elseif($pindah->status == 'menunggu_konfirmasi_iduka')
+                                                                <span class="badge bg-info">Menunggu Konfirmasi IDUKA</span>
                                                             @else
                                                                 <span class="badge bg-secondary">{{ $pindah->status }}</span>
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            <button class="btn btn-info btn-sm" 
+                                                            <button class="btn btn-info btn-sm"
                                                                     onclick="showDetailPindah({{ $pindah }})">
                                                                 <i class="bi bi-eye"></i>
                                                             </button>
-                                                            @if($pindah->status == 'diterima')
-                                                                <a href="{{ route('pindah-pkl.download-surat', $pindah->id) }}" 
+                                                            @if($pindah->status == 'diterima_iduka')
+                                                                <a href="{{ route('pindah-pkl.download-surat', $pindah->id) }}"
                                                                    class="btn btn-success btn-sm">
-                                                                    <i class="bi bi-download"></i>
+                                                                    <i class="bi bi-download"></i> Unduh PDF
                                                                 </a>
                                                             @endif
                                                         </td>
@@ -489,6 +514,30 @@
 
 <script>
 function showDetailPindah(pindah) {
+    let statusText = '';
+    switch(pindah.status) {
+        case 'menunggu':
+            statusText = 'Menunggu Verifikasi';
+            break;
+        case 'diterima_iduka':
+            statusText = 'Diterima';
+            break;
+        case 'ditolak_iduka':
+            statusText = 'Ditolak';
+            break;
+        case 'menunggu_surat':
+            statusText = 'Menunggu Surat';
+            break;
+        case 'siap_kirim':
+            statusText = 'Siap Dikirim';
+            break;
+        case 'menunggu_konfirmasi_iduka':
+            statusText = 'Menunggu Konfirmasi IDUKA';
+            break;
+        default:
+            statusText = pindah.status;
+    }
+
     Swal.fire({
         title: 'Detail Pengajuan Pindah PKL',
         html: `
@@ -496,7 +545,7 @@ function showDetailPindah(pindah) {
                 <p><strong>Tempat PKL Lama:</strong> ${pindah.iduka_lama ? pindah.iduka_lama.nama : 'Tidak Diketahui'}</p>
                 <p><strong>Tempat PKL Baru:</strong> ${pindah.iduka_baru ? pindah.iduka_baru.nama : 'Tidak Diketahui'}</p>
                 <p><strong>Tanggal Pengajuan:</strong> ${new Date(pindah.created_at).toLocaleDateString('id-ID')}</p>
-                <p><strong>Status:</strong> <span class="text-capitalize">${pindah.status}</span></p>
+                <p><strong>Status:</strong> <span class="text-capitalize">${statusText}</span></p>
                 ${pindah.alasan ? `<p><strong>Alasan:</strong> ${pindah.alasan}</p>` : ''}
                 ${pindah.catatan ? `<p><strong>Catatan:</strong> ${pindah.catatan}</p>` : ''}
             </div>

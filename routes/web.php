@@ -101,8 +101,7 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/pindah-pkl/create', [PindahPklController::class, 'create'])->name('pindah-pkl.create');
     Route::post('/pindah-pkl/store', [PindahPklController::class, 'store'])->name('pindah-pkl.store');
     Route::post('/pindah-pkl/ajukan', [PindahPklController::class, 'ajukan'])->name('pindah-pkl.ajukan');
-    Route::get('/pindah-pkl/download/{id}', [PindahPklController::class, 'downloadSurat'])
-        ->name('pindah-pkl.download-surat');
+    Route::get('/pindah-pkl/download-surat/{id}', [PindahPklController::class, 'downloadSurat'])->name('pindah-pkl.download-surat');
 
 
     // riwayat pengajuan pindah tempat PKL siswa
@@ -384,8 +383,8 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/get-cp-atp/{konke_id}', [IdukaAtpController::class, 'getCpAtp']);
 
 
- // 🔍 ROUTE TEST - HAPUS SETELAH BERHASIL
-    Route::get('/iduka/test-route', function() {
+    // 🔍 ROUTE TEST - HAPUS SETELAH BERHASIL
+    Route::get('/iduka/test-route', function () {
         $user = Auth::user();
         $iduka = DB::table('idukas')->where('user_id', $user->id)->first();
         return response()->json([

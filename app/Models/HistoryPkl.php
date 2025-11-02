@@ -17,4 +17,22 @@ class HistoryPkl extends Model
         'iduka_baru_id',
         'tgl_pindah',
     ];
+
+    // Relasi ke IDUKA lama
+    public function idukaLama()
+    {
+        return $this->belongsTo(Iduka::class, 'iduka_lama_id');
+    }
+
+    // Relasi ke IDUKA baru
+    public function idukaBaru()
+    {
+        return $this->belongsTo(Iduka::class, 'iduka_baru_id');
+    }
+
+    // Relasi ke user
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
