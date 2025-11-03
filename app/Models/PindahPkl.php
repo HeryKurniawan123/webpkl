@@ -12,13 +12,24 @@ class PindahPkl extends Model
     // Relasi ke tempat PKL lama
     public function idukaLama()
     {
-        return $this->belongsTo(Iduka::class, 'iduka_id'); // kolom lama
+        return $this->belongsTo(Iduka::class, 'iduka_id');
     }
 
-    // Relasi ke tempat PKL baru (jika ada)
-    public function idukaBaru()
+    // Relasi ke history pkl untuk mendapatkan tempat PKL baru
+    public function historyPkl()
     {
-        return $this->belongsTo(Iduka::class, 'iduka_baru_id'); // kolom baru
+        return $this->hasOne(HistoryPkl::class, 'user_id', 'siswa_id')
+                    ->latest(); // Ambil yang terbaru
+    }
+
+    // Accessor untuk mendapatkan nama iduka baru
+    public function getIdukaBaruNamaAttribute()
+    {
+        if ($this->historyPkl && $this->historyPkl->iduka_baru_id) {
+            $idukaBaru = Iduka::find($this->historyPkl->iduka_baru_id);
+            return $idukaBaru->nama ?? 'Tidak Diketahui';
+        }
+        return 'Tidak Diketahui';
     }
 
     // Relasi ke siswa

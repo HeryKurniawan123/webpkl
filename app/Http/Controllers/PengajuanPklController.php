@@ -145,14 +145,7 @@ class PengajuanPklController extends Controller
 
                 // ✅ Update iduka_id siswa di tabel users
                 $user->update(['iduka_id' => $pengajuan->iduka_id]);
-
-                // ✅ Simpan riwayat ke tabel history_pkl
-                \App\Models\HistoryPkl::create([
-                    'user_id' => $user->id,
-                    'iduka_lama_id' => $idukaLama,
-                    'iduka_baru_id' => $pengajuan->iduka_id,
-                    'tgl_pindah' => now(),
-                ]);
+                
             }
 
             // Update status di pengajuan_usulans atau usulan_idukas

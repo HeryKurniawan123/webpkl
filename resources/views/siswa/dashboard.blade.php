@@ -239,69 +239,68 @@
                     </div>
 
                     {{-- RIWAYAT PINDAH PKL --}}
-                    @if(isset($riwayatPindahPkl) && $riwayatPindahPkl->count() > 0)
-                        <div class="col-lg-12 mb-4 order-0">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5>Riwayat Permintaan Pindah Tempat PKL</h5>
-                                    <div class="table-responsive">
-                                        <table class="table table-hover text-center">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Tempat PKL Lama</th>
-                                                    <th>Tempat PKL Baru</th>
-                                                    <th>Tanggal Pengajuan</th>
-                                                    <th>Status</th>
-                                                    <th>Aksi</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($riwayatPindahPkl as $index => $pindah)
-                                                    <tr>
-                                                        <td>{{ $index + 1 }}</td>
-                                                        <td>{{ $pindah->idukaLama->nama ?? 'Tidak Diketahui' }}</td>
-                                                        <td>{{ $pindah->idukaBaru->nama ?? 'Tidak Diketahui' }}</td>
-                                                        <td>{{ \Carbon\Carbon::parse($pindah->created_at)->format('d/m/Y') }}</td>
-                                                        <td>
-                                                            @if($pindah->status == 'menunggu')
-                                                                <span class="badge bg-warning">Menunggu Verifikasi</span>
-                                                            @elseif($pindah->status == 'diterima_iduka')
-                                                                <span class="badge bg-success">Diterima</span>
-                                                            @elseif($pindah->status == 'ditolak_iduka')
-                                                                <span class="badge bg-danger">Ditolak</span>
-                                                            @elseif($pindah->status == 'menunggu_surat')
-                                                                <span class="badge bg-info">Menunggu Surat</span>
-                                                            @elseif($pindah->status == 'siap_kirim')
-                                                                <span class="badge bg-info">Siap Dikirim</span>
-                                                            @elseif($pindah->status == 'menunggu_konfirmasi_iduka')
-                                                                <span class="badge bg-info">Menunggu Konfirmasi IDUKA</span>
-                                                            @else
-                                                                <span class="badge bg-secondary">{{ $pindah->status }}</span>
-                                                            @endif
-                                                        </td>
-                                                        <td>
-                                                            <button class="btn btn-info btn-sm"
-                                                                    onclick="showDetailPindah({{ $pindah }})">
-                                                                <i class="bi bi-eye"></i>
-                                                            </button>
-                                                            @if($pindah->status == 'diterima_iduka')
-                                                                <a href="{{ route('pindah-pkl.download-surat', $pindah->id) }}"
-                                                                   class="btn btn-success btn-sm">
-                                                                    <i class="bi bi-download"></i> Unduh PDF
-                                                                </a>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
+@if(isset($riwayatPindahPkl) && $riwayatPindahPkl->count() > 0)
+    <div class="col-lg-12 mb-4 order-0">
+        <div class="card">
+            <div class="card-body">
+                <h5>Riwayat Permintaan Pindah Tempat PKL</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tempat PKL Lama</th>
+                                <th>Tempat PKL Baru</th>
+                                <th>Tanggal Pengajuan</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($riwayatPindahPkl as $index => $pindah)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $pindah->idukaLama->nama ?? 'Tidak Diketahui' }}</td>
+                                    <td>{{ $pindah->iduka_baru_nama }}</td> {{-- Gunakan accessor --}}
+                                    <td>{{ \Carbon\Carbon::parse($pindah->created_at)->format('d/m/Y') }}</td>
+                                    <td>
+                                        @if($pindah->status == 'menunggu')
+                                            <span class="badge bg-warning">Menunggu Verifikasi</span>
+                                        @elseif($pindah->status == 'diterima_iduka')
+                                            <span class="badge bg-success">Diterima</span>
+                                        @elseif($pindah->status == 'ditolak_iduka')
+                                            <span class="badge bg-danger">Ditolak</span>
+                                        @elseif($pindah->status == 'menunggu_surat')
+                                            <span class="badge bg-info">Menunggu Surat</span>
+                                        @elseif($pindah->status == 'siap_kirim')
+                                            <span class="badge bg-info">Siap Dikirim</span>
+                                        @elseif($pindah->status == 'menunggu_konfirmasi_iduka')
+                                            <span class="badge bg-info">Menunggu Konfirmasi IDUKA</span>
+                                        @else
+                                            <span class="badge bg-secondary">{{ $pindah->status }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm"
+                                                onclick="showDetailPindah({{ $pindah }})">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        @if($pindah->status == 'diterima_iduka')
+                                            <a href="{{ route('pindah-pkl.download-surat', $pindah->id) }}"
+                                               class="btn btn-success btn-sm">
+                                                <i class="bi bi-download"></i> Unduh PDF
+                                            </a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
                     {{-- RIWAYAT USULAN --}}
                     <div class="col-lg-12 mb-4 order-0">
                         <div class="card">

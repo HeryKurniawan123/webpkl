@@ -69,10 +69,14 @@ class HakAksesController extends Controller
                 ->value('status');
 
         // 🔍 Tambahan: Ambil data riwayat pindah PKL
-        $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
-            ->with(['idukaLama', 'idukaBaru'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Di Controller function siswa()
+$riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
+    ->with([
+        'idukaLama:id,nama',
+        'historyPkl' // Load relasi historyPkl
+    ])
+    ->orderBy('created_at', 'desc')
+    ->get();
 
         // 🔍 Cek status pengajuan pindah PKL terbaru
         $statusPindahPkl = PindahPkl::where('siswa_id', $user->id)
