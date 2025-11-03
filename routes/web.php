@@ -20,6 +20,8 @@ use App\Http\Controllers\SuratPengantarPklController;
 use App\Http\Controllers\UsersController;
 use App\Models\Cp;
 use App\Models\Guru;
+use App\Models\Iduka;
+use App\Models\IdukaHoliday;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PdfController;
@@ -81,6 +83,24 @@ Route::get('/home', function () {
 // Siswa biodata
 Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/dashboard/siswa', [HakAksesController::class, 'siswa'])->name('siswa.dashboard');
+
+
+    Route::get('/test-absensi-sunday', function () {
+    // Simpan tanggal asli
+    $originalToday = Carbon::today();
+
+    // Override tanggal menjadi hari Minggu
+    Carbon::setTestNow(Carbon::parse('2025-11-02'));
+
+    // Panggil controller absensi
+    $controller = app(\App\Http\Controllers\AbsensiController::class);
+    $response = $controller->index();
+
+    // Kembalikan tanggal asli
+    Carbon::setTestNow();
+
+    return $response;
+});
 
     //DATA PRIBADI SISWA
     Route::get('/siswa/data-pribadi', [DataPribadiController::class, 'create'])->name('siswa.data_pribadi.create');
@@ -155,10 +175,14 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
 });
 
+
+
 Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     Route::get('/dashboard/hubin', [HakAksesController::class, 'hubin'])->name('hubin.dashboard');
 
+
     Route::put('/siswa/{id}/update-siswa', [SiswaController::class, 'updateSiswa'])->name('siswa.updateSiswa');
+
 
     //PENGAJUAN
     Route::get('/review-pengajuan', [HubinController::class, 'index'])->name('review.pengajuan');
@@ -431,6 +455,8 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
         ->name('iduka.getData');
 
 
+
+
     Route::prefix('iduka')->name('iduka.')->group(function () {
         // Tampil halaman konfirmasi
         Route::get('/konfirmasi-absen', [KonfirAbsenSiswaController::class, 'index'])
@@ -477,6 +503,15 @@ Route::middleware(['auth', 'hakakses:iduka,guru,kaprog'])->group(function () {
         // Route untuk koordinat
         Route::post('/tambah-kordinat', [KonfirAbsenSiswaController::class, 'kordinat'])
             ->name('tambah.kordinat');
+
+        // Routes for managing holidays per IDUKA
+        Route::get('/holidays/{iduka_id}', [KonfirAbsenSiswaController::class, 'getHolidays'])
+            ->name('holidays.get');
+        // Use a safer POST path to avoid collision with routes like /iduka/{id}/store
+        Route::post('/holidays', [KonfirAbsenSiswaController::class, 'saveHoliday'])
+            ->name('holidays.store');
+        Route::delete('/holidays/{id}', [KonfirAbsenSiswaController::class, 'deleteHoliday'])
+            ->name('holidays.destroy');
     });
 
     Route::post('/get-riwayat-absen', [KonfirAbsenSiswaController::class, 'getRiwayatAbsen'])

@@ -8,6 +8,8 @@ use App\Models\AbsensiPending;
 use App\Models\DinasPending;
 use App\Models\IzinPending;
 use App\Models\User;
+use App\Models\Iduka;
+use App\Models\IdukaHoliday;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -65,6 +67,54 @@ class DataAbsensiController extends Controller
 
         $jurusanData = $this->getKehadiranJurusan();
 
+        // Cari hari libur untuk hari ini (per IDUKA)
+        try {
+            $today = \Carbon\Carbon::today();
+
+            // Cek apakah hari ini Minggu
+            if ($today->isSunday()) {
+                // Ambil semua IDUKA yang aktif
+                $allIdukas = Iduka::all();
+
+                $holidaysByIduka = $allIdukas->map(function($iduka) {
+                    return [
+                        'iduka_id' => $iduka->id,
+                        'iduka_nama' => $iduka->nama,
+                        'holidays' => ['Hari Minggu (Libur Umum)']
+                    ];
+                })->values()->toArray();
+            } else {
+                // Cek hari libur khusus dari database
+                $holidays = IdukaHoliday::whereRaw("DATE(date) = ?", [$today->toDateString()])
+                    ->orWhere(function ($q) use ($today) {
+                        $q->where('recurring', true)
+                            ->whereRaw("DATE_FORMAT(date, '%m-%d') = ?", [$today->format('m-d')]);
+                    })->get();
+
+                $holidaysByIduka = [];
+                if ($holidays->isNotEmpty()) {
+                    $idukaIds = $holidays->pluck('iduka_id')->unique()->toArray();
+                    $idukas = Iduka::whereIn('id', $idukaIds)->get()->keyBy('id');
+
+                    foreach ($holidays->groupBy('iduka_id') as $idukaId => $group) {
+                        $names = $group->map(function ($h) {
+                            return $h->name ? $h->name : 'Hari Libur';
+                        })->toArray();
+
+                        $holidaysByIduka[] = [
+                            'iduka_id' => $idukaId,
+                            'iduka_nama' => isset($idukas[$idukaId]) ? $idukas[$idukaId]->nama : 'IDUKA #' . $idukaId,
+                            'holidays' => $names
+                        ];
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Jangan ganggu halaman jika ada error; log dan teruskan tanpa data
+            \Log::error('Error fetching iduka holidays: ' . $e->getMessage());
+            $holidaysByIduka = [];
+        }
+
         return view('data.absensi-siswa.index', compact(
             'totalSiswaPKL',
             'hadirHariIni',
@@ -72,7 +122,8 @@ class DataAbsensiController extends Controller
             'tidakHadir',
             'tingkatKehadiran',
             'mingguan',
-            'jurusanData'
+            'jurusanData',
+            'holidaysByIduka'
         ));
     }
 

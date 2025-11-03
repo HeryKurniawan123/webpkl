@@ -312,6 +312,15 @@ class IdukaController extends Controller
         return redirect()->back()->with('success', 'Data institusi berhasil diperbarui!');
     }
 
+    /**
+     * Compatibility wrapper: some routes expect storeInstitusi
+     */
+    public function storeInstitusi(Request $request, $id)
+    {
+        // Delegate to updateInstitusi which already validates and updates
+        return $this->updateInstitusi($request, $id);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

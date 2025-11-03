@@ -9,6 +9,7 @@ use App\Models\Atp;
 use App\Models\CetakUsulan;
 use App\Models\User;
 use App\Models\Iduka;
+use App\Models\IdukaHoliday;
 use App\Models\Kelas;
 use App\Models\PengajuanPkl;
 use App\Models\UsulanIduka;
@@ -836,6 +837,50 @@ class KaprogController extends Controller
     // Ambil data jurusan untuk analisis kehadiran per jurusan
     $jurusanData = $this->getKehadiranJurusan($konkeId);
 
+    // Cari hari libur untuk hari ini (hanya untuk IDUKA yang relevan dengan Kaprog ini)
+    try {
+        $today = Carbon::today();
+
+        // ambil iduka_id yang ada di daftar siswa jurusan ini
+        $idukaIds = User::whereIn('id', $allSiswaIds)
+            ->pluck('iduka_id')
+            ->unique()
+            ->filter()
+            ->toArray();
+
+        $holidays = collect();
+        if (!empty($idukaIds)) {
+            $holidays = IdukaHoliday::whereIn('iduka_id', $idukaIds)
+                ->where(function ($q) use ($today) {
+                    $q->whereRaw("DATE(date) = ?", [$today->toDateString()])
+                      ->orWhere(function ($q2) use ($today) {
+                          $q2->where('recurring', true)
+                             ->whereRaw("DATE_FORMAT(date, '%m-%d') = ?", [$today->format('m-d')]);
+                      });
+                })->get();
+        }
+
+        $holidaysByIduka = [];
+        if ($holidays->isNotEmpty()) {
+            $idukas = Iduka::whereIn('id', $holidays->pluck('iduka_id')->unique()->toArray())->get()->keyBy('id');
+
+            foreach ($holidays->groupBy('iduka_id') as $idukaId => $group) {
+                $names = $group->map(function ($h) {
+                    return $h->name ? $h->name : 'Hari Libur';
+                })->toArray();
+
+                $holidaysByIduka[] = [
+                    'iduka_id' => $idukaId,
+                    'iduka_nama' => isset($idukas[$idukaId]) ? $idukas[$idukaId]->nama : 'IDUKA #' . $idukaId,
+                    'holidays' => $names
+                ];
+            }
+        }
+    } catch (\Exception $e) {
+        \Log::error('Error fetching iduka holidays for kaprog: ' . $e->getMessage());
+        $holidaysByIduka = [];
+    }
+
     return view('kaprog.absensi.index', compact(
         'totalSiswaPKL',
         'hadirHariIni',
@@ -846,7 +891,8 @@ class KaprogController extends Controller
         'kelasValues',
         'kelasAnalisis',
         'detailAbsensiPerKelas',
-        'jurusanData'
+        'jurusanData',
+        'holidaysByIduka'
     ));
 }
 

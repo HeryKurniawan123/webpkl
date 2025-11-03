@@ -664,6 +664,66 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Pengaturan Hari Libur -->
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <h5 class="card-title mb-0">Pengaturan Hari Libur</h5>
+                                                <small class="text-muted">Setiap IDUKA memiliki hari libur sendiri</small>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label for="holiday_iduka_id">Pilih IDUKA</label>
+                                                        <select id="holiday_iduka_id" class="form-select select2">
+                                                            <option value="">-- Pilih IDUKA --</option>
+                                                            @foreach ($idukas as $item)
+                                                                <option value="{{ $item->id }}" {{ isset($iduka) && $iduka && $iduka->id == $item->id ? 'selected' : '' }}>
+                                                                    {{ $item->nama }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6 d-flex align-items-end">
+                                                        <button id="btnLoadHolidays" class="btn btn-outline-secondary ms-auto">Muat Hari Libur</button>
+                                                    </div>
+                                                </div>
+
+                                                <div id="holidayFormContainer" class="mb-4" style="display:none">
+                                                    <form id="holidayForm">
+                                                        @csrf
+                                                        <input type="hidden" name="iduka_id" id="holiday_form_iduka_id">
+                                                        <div class="row g-2">
+                                                            <div class="col-md-4">
+                                                                <label>Tanggal</label>
+                                                                <input type="date" name="date" class="form-control" required>
+                                                            </div>
+                                                            <div class="col-md-5">
+                                                                <label>Nama (opsional)</label>
+                                                                <input type="text" name="name" class="form-control" placeholder="Contoh: Hari Raya">
+                                                            </div>
+                                                            <div class="col-md-3 d-flex align-items-end">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" name="recurring" id="recurringCheckbox">
+                                                                    <label class="form-check-label" for="recurringCheckbox">Ulang setiap tahun</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mt-3 text-end">
+                                                            <button type="submit" class="btn btn-primary">Tambah Hari Libur</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+
+                                                <div id="holidaysList">
+                                                    <div class="text-center text-muted">Klik "Muat Hari Libur" untuk menampilkan daftar.</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             {{-- end --}}
                         </div>
@@ -1468,6 +1528,95 @@
                     $('input[name="jam_masuk"]').val('08:00');
                     $('input[name="jam_pulang"]').val('15:00');
                 }
+            });
+
+            // Holiday management
+            function loadHolidaysFor(idukaId) {
+                if (!idukaId) {
+                    $('#holidaysList').html('<div class="text-danger">Pilih IDUKA terlebih dahulu.</div>');
+                    return;
+                }
+
+                $('#holidaysList').html('<div class="text-center"><div class="spinner-border" role="status"></div></div>');
+
+                $.get(`/iduka/holidays/${idukaId}`, function(res) {
+                    if (!res.success) {
+                        $('#holidaysList').html('<div class="text-danger">Gagal memuat data.</div>');
+                        return;
+                    }
+
+                    const data = res.data;
+                    if (!data || data.length === 0) {
+                        $('#holidaysList').html('<div class="text-muted">Belum ada hari libur untuk IDUKA ini.</div>');
+                        return;
+                    }
+
+                    let html = '<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Nama</th><th>Ulang</th><th>Aksi</th></tr></thead><tbody>';
+                    data.forEach(item => {
+                        const tanggal = new Date(item.date).toLocaleDateString('id-ID');
+                        html += `<tr><td>${tanggal}</td><td>${item.name || '-'}</td><td>${item.recurring ? 'Ya' : 'Tidak'}</td><td><button class="btn btn-sm btn-danger btn-delete-holiday" data-id="${item.id}">Hapus</button></td></tr>`;
+                    });
+                    html += '</tbody></table></div>';
+
+                    $('#holidaysList').html(html);
+                }).fail(function() {
+                    $('#holidaysList').html('<div class="text-danger">Gagal memuat data (network).</div>');
+                });
+            }
+
+            $('#btnLoadHolidays').on('click', function(e) {
+                e.preventDefault();
+                const idukaId = $('#holiday_iduka_id').val() || $('#iduka_id').val();
+                if (!idukaId) {
+                    alert('Pilih IDUKA terlebih dahulu');
+                    return;
+                }
+
+                $('#holiday_form_iduka_id').val(idukaId);
+                $('#holidayFormContainer').show();
+                loadHolidaysFor(idukaId);
+            });
+
+            // Submit holiday form
+            $('#holidayForm').on('submit', function(e) {
+                e.preventDefault();
+                const form = $(this);
+                const payload = {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    iduka_id: $('#holiday_form_iduka_id').val(),
+                    date: form.find('input[name="date"]').val(),
+                    name: form.find('input[name="name"]').val(),
+                    recurring: form.find('input[name="recurring"]')[0].checked ? 1 : 0
+                };
+
+                $.post('/iduka/holidays', payload, function() {
+                    // refresh
+                    loadHolidaysFor(payload.iduka_id);
+                    form[0].reset();
+                }).fail(function(xhr) {
+                    alert('Gagal menyimpan hari libur: ' + (xhr.responseJSON?.message || 'error'));
+                });
+            });
+
+            // Delete holiday (delegated)
+            $(document).on('click', '.btn-delete-holiday', function() {
+                if (!confirm('Hapus hari libur ini?')) return;
+                const id = $(this).data('id');
+                const token = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: '/iduka/holidays/' + id,
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    success: function(res) {
+                        const idukaId = $('#holiday_iduka_id').val() || $('#iduka_id').val();
+                        loadHolidaysFor(idukaId);
+                    },
+                    error: function() {
+                        alert('Gagal menghapus hari libur');
+                    }
+                });
             });
         });
     </script>

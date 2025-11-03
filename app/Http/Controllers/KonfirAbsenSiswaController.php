@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Guru;
 use App\Models\DinasPending;
 use App\Models\Iduka;
+use App\Models\IdukaHoliday;
 use Illuminate\Http\Request;
 use App\Models\Absensi;
 use App\Models\AbsensiPending;
@@ -1610,6 +1611,120 @@ class KonfirAbsenSiswaController extends Controller
                 'success' => false,
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Get holidays for an iduka (JSON)
+     */
+    public function getHolidays(Request $request, $idukaId)
+    {
+        try {
+            $user = Auth::user();
+
+            // only iduka users or privileged roles can view; but allow guru/kaprog to view as well
+            if (!in_array($user->role, ['iduka', 'guru', 'kaprog'])) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $holidays = IdukaHoliday::where('iduka_id', $idukaId)->orderBy('date', 'desc')->get();
+
+            return response()->json(['success' => true, 'data' => $holidays]);
+        } catch (\Exception $e) {
+            Log::error('Error in getHolidays: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Store a holiday for an iduka
+     */
+    public function saveHoliday(Request $request)
+    {
+        $request->validate([
+            'iduka_id' => 'required|exists:idukas,id',
+            'date' => 'required|date',
+            'name' => 'nullable|string|max:255',
+            'recurring' => 'sometimes|boolean'
+        ]);
+
+        $user = Auth::user();
+
+        // Allow iduka, guru, kaprog to manage holidays.
+        // - iduka: only for their own iduka_id
+        // - guru/kaprog: only if they are pembimbing for students in that iduka
+        $allowed = false;
+        if ($user->role === 'iduka' && $user->iduka_id && $user->iduka_id == $request->iduka_id) {
+            $allowed = true;
+        } elseif (in_array($user->role, ['guru', 'kaprog'])) {
+            $guru = Guru::where('user_id', $user->id)->first();
+            if ($guru) {
+                // check if guru mentors any student in that iduka
+                $has = User::where('role', 'siswa')
+                    ->where('iduka_id', $request->iduka_id)
+                    ->where('pembimbing_id', $guru->id)
+                    ->exists();
+                if ($has) {
+                    $allowed = true;
+                }
+            }
+        }
+
+        if (! $allowed) {
+            return redirect()->back()->with('error', 'Anda tidak berwenang mengelola hari libur untuk IDUKA ini');
+        }
+
+        try {
+            IdukaHoliday::create([
+                'iduka_id' => $request->iduka_id,
+                'date' => $request->date,
+                'name' => $request->name,
+                'recurring' => $request->has('recurring') ? (bool) $request->recurring : false
+            ]);
+
+            return redirect()->back()->with('success', 'Hari libur berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error saving holiday: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menyimpan hari libur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete a holiday
+     */
+    public function deleteHoliday(Request $request, $id)
+    {
+        try {
+            $user = Auth::user();
+            $holiday = IdukaHoliday::find($id);
+            if (!$holiday) {
+                return response()->json(['success' => false, 'message' => 'Data tidak ditemukan'], 404);
+            }
+
+            // authorize: allow iduka owner or guru/kaprog who mentors students in that iduka
+            $allowed = false;
+            if ($user->role === 'iduka' && $user->iduka_id && $user->iduka_id == $holiday->iduka_id) {
+                $allowed = true;
+            } elseif (in_array($user->role, ['guru', 'kaprog'])) {
+                $guru = Guru::where('user_id', $user->id)->first();
+                if ($guru) {
+                    $has = User::where('role', 'siswa')
+                        ->where('iduka_id', $holiday->iduka_id)
+                        ->where('pembimbing_id', $guru->id)
+                        ->exists();
+                    if ($has) $allowed = true;
+                }
+            }
+
+            if (! $allowed) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+
+            $holiday->delete();
+            return response()->json(['success' => true, 'message' => 'Hari libur dihapus']);
+        } catch (\Exception $e) {
+            Log::error('Error deleting holiday: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
 }

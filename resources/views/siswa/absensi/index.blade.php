@@ -65,23 +65,23 @@
                                             berada di lokasi IDUKA yang benar.</p>
                                         @auth
                                             @if (Auth::user()->idukaDiterima)
-                                                                        <div class="alert alert-info mt-3">
-                                                                            <strong>IDUKA Anda:</strong> {{ Auth::user()->idukaDiterima->nama }}<br>
-                                                                            <strong>Lokasi:</strong> {{ Auth::user()->idukaDiterima->alamat }}<br>
-                                                                            <strong>Radius:</strong>
-                                                                            {{ Auth::user()->idukaDiterima->radius ?? 'Belum diatur' }} meter<br>
-                                                                            <strong>Jam Masuk:</strong>
-                                                                            {{ Auth::user()->idukaDiterima->jam_masuk
-                                                ? date('H:i', strtotime(Auth::user()->idukaDiterima->jam_masuk))
-                                                : 'Belum di tentukan' }}
+                                                <div class="alert alert-info mt-3">
+                                                    <strong>IDUKA Anda:</strong> {{ Auth::user()->idukaDiterima->nama }}<br>
+                                                    <strong>Lokasi:</strong> {{ Auth::user()->idukaDiterima->alamat }}<br>
+                                                    <strong>Radius:</strong>
+                                                    {{ Auth::user()->idukaDiterima->radius ?? 'Belum diatur' }} meter<br>
+                                                    <strong>Jam Masuk:</strong>
+                                                    {{ Auth::user()->idukaDiterima->jam_masuk
+                                                        ? date('H:i', strtotime(Auth::user()->idukaDiterima->jam_masuk))
+                                                        : 'Belum di tentukan' }}
 
-                                                                            <br>
-                                                                            <strong>Jam Pulang:</strong>
-                                                                            {{ Auth::user()->idukaDiterima->jam_pulang
-                                                ? date('H:i', strtotime(Auth::user()->idukaDiterima->jam_pulang))
-                                                : 'Belum Ditentukan' }}
+                                                    <br>
+                                                    <strong>Jam Pulang:</strong>
+                                                    {{ Auth::user()->idukaDiterima->jam_pulang
+                                                        ? date('H:i', strtotime(Auth::user()->idukaDiterima->jam_pulang))
+                                                        : 'Belum Ditentukan' }}
 
-                                                                        </div>
+                                                </div>
                                             @else
                                                 <div class="alert alert-warning">
                                                     Anda belum terdaftar di IDUKA manapun. Silakan hubungi administrator.
@@ -102,6 +102,27 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Alert jika hari libur --}}
+                @if ($isHoliday)
+                    <div class="row mb-4">
+                        <div class="col-lg-12">
+                            <div class="card border-danger">
+                                <div class="card-header bg-light-danger">
+                                    <h5 class="card-title text-danger mb-0">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>Hari Libur
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alert alert-danger">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <strong>Peringatan!</strong> Hari ini adalah hari libur ({{ $holidayLabel }}). Absensi ditutup.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Status Absensi Hari Ini --}}
                 @if ($absensiHariIni)
@@ -296,11 +317,13 @@
                                 <h5 class="card-title mb-0">Absensi Hari Ini</h5>
                                 <small class="text-muted">Pastikan GPS aktif dan Anda berada dalam radius IDUKA</small>
                                 <div class="form-check form-switch mt-2">
-                                    <input class="form-check-input" type="checkbox" id="locationSwitch" {{ $absensiHariIni && ($absensiHariIni->status === 'izin' || ($absensiHariIni->jam_masuk && $absensiHariIni->jam_pulang)) ? 'disabled' : '' }}>
+                                    <input class="form-check-input" type="checkbox" id="locationSwitch" {{ $absensiHariIni && ($absensiHariIni->status === 'izin' || ($absensiHariIni->jam_masuk && $absensiHariIni->jam_pulang)) ? 'disabled' : '' }} {{ $isHoliday ? 'disabled' : '' }}>
                                     <label class="form-check-label" for="locationSwitch">Akses Lokasi</label>
                                 </div>
                                 <small id="locationStatus" class="text-muted">
-                                    @if ($absensiHariIni && $absensiHariIni->status === 'izin')
+                                    @if ($isHoliday)
+                                        Hari ini adalah hari libur ({{ $holidayLabel }}). Absensi ditutup.
+                                    @elseif ($absensiHariIni && $absensiHariIni->status === 'izin')
                                         Anda sedang izin hari ini
                                     @elseif ($absensiHariIni && $absensiHariIni->status_dinas === 'disetujui')
                                         Anda sedang dinas luar hari ini - wajib absensi masuk dan pulang
@@ -316,7 +339,7 @@
                                 <div class="row mb-3">
                                     <div class="col-12">
                                         <label for="lokasiSelect" class="form-label">Pilih Lokasi Absensi:</label>
-                                        <select class="form-select" id="lokasiSelect">
+                                        <select class="form-select" id="lokasiSelect" {{ $isHoliday ? 'disabled' : '' }}>
                                             <option value="pusat">Lokasi Pusat</option>
                                             @if (Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->is_pusat)
                                                 @foreach (Auth::user()->idukaDiterima->cabangs as $cabang)
@@ -339,12 +362,17 @@
                                             <input type="hidden" name="accuracy" id="accuracyMasuk">
                                             <input type="hidden" name="lokasi_id" id="lokasiIdMasuk" value="pusat">
 
-                                            <button type="submit" class="btn btn-success w-100 btn-absensi" id="btnMasuk" {{ $absensiHariIni && ($absensiHariIni->jam_masuk || $hasApprovedIzin || $hasApprovedDinas) ? 'disabled' : '' }} {{ $hasPendingIzin || $hasPendingDinas || $hasPendingMasuk ? 'disabled' : '' }}>
+                                            <button type="submit" class="btn btn-success w-100 btn-absensi" id="btnMasuk"
+                                                {{ $absensiHariIni && ($absensiHariIni->jam_masuk || $hasApprovedIzin || $hasApprovedDinas) ? 'disabled' : '' }}
+                                                {{ $hasPendingIzin || $hasPendingDinas || $hasPendingMasuk ? 'disabled' : '' }}
+                                                {{ $isHoliday ? 'disabled' : '' }}>
                                                 <div class="btn-content">
                                                     <i class="bi bi-clock"></i>
                                                     <span class="btn-title">Absen Masuk</span>
                                                     <span class="btn-subtitle">
-                                                        @if ($absensiHariIni && $absensiHariIni->jam_masuk)
+                                                        @if ($isHoliday)
+                                                            Hari libur
+                                                        @elseif ($absensiHariIni && $absensiHariIni->jam_masuk)
                                                             Sudah absen: {{ $absensiHariIni->jam_masuk->format('H:i') }}
                                                         @elseif ($hasApprovedIzin)
                                                             Sedang izin
@@ -375,13 +403,18 @@
                                             <input type="hidden" name="lokasi_id" id="lokasiIdPulang" value="pusat">
 
                                             <button type="submit" class="btn btn-warning w-100 btn-absensi" id="btnPulang"
-                                                {{ !$absensiHariIni || !$absensiHariIni->jam_masuk || $absensiHariIni->jam_pulang || $hasApprovedIzin ? 'disabled' : '' }} {{ $hasPendingIzin ? 'disabled' : '' }} @if (!$hasApprovedDinas && $hasPendingDinas) disabled @endif>
+                                                {{ !$absensiHariIni || !$absensiHariIni->jam_masuk || $absensiHariIni->jam_pulang || $hasApprovedIzin ? 'disabled' : '' }}
+                                                {{ $hasPendingIzin ? 'disabled' : '' }}
+                                                @if (!$hasApprovedDinas && $hasPendingDinas) disabled @endif
+                                                {{ $isHoliday ? 'disabled' : '' }}>
                                                 @if ($hasPendingPulang) disabled @endif
                                                 <div class="btn-content">
                                                     <i class="bi bi-clock-history"></i>
                                                     <span class="btn-title">Absen Pulang</span>
                                                     <span class="btn-subtitle">
-                                                        @if ($absensiHariIni && $absensiHariIni->jam_pulang)
+                                                        @if ($isHoliday)
+                                                            Hari libur
+                                                        @elseif ($absensiHariIni && $absensiHariIni->jam_pulang)
                                                             Sudah absen: {{ $absensiHariIni->jam_pulang->format('H:i') }}
                                                         @elseif ($hasApprovedIzin)
                                                             Sedang izin
@@ -407,16 +440,20 @@
                                             </button>
                                         </form>
                                     </div>
+
                                     {{-- Tombol Izin --}}
                                     <div class="col-md-3 col-6">
                                         <button type="button" class="btn btn-info w-100 btn-absensi" id="btnIzin"
                                             {{ $absensiHariIni ? 'disabled' : '' }} {{ $hasPendingIzin || $hasApprovedIzin ? 'disabled' : '' }}
-                                            {{ $hasPendingDinas || $hasApprovedDinas ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}>
+                                            {{ $hasPendingDinas || $hasApprovedDinas ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}
+                                            {{ $isHoliday ? 'disabled' : '' }}>
                                             <div class="btn-content">
                                                 <i class="bi bi-file-earmark-text"></i>
                                                 <span class="btn-title">Izin</span>
                                                 <span class="btn-subtitle">
-                                                    @if ($hasApprovedIzin)
+                                                    @if ($isHoliday)
+                                                        Hari libur
+                                                    @elseif ($hasApprovedIzin)
                                                         Sudah izin
                                                     @elseif ($hasPendingIzin)
                                                         Izin menunggu konfirmasi
@@ -440,12 +477,15 @@
                                     <div class="col-md-3 col-6">
                                         <button type="button" class="btn btn-primary w-100 btn-absensi" id="btnDinas"
                                             {{ $absensiHariIni ? 'disabled' : '' }} {{ $hasPendingDinas || $hasApprovedDinas ? 'disabled' : '' }}
-                                            {{ $hasPendingIzin || $hasApprovedIzin ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}>
+                                            {{ $hasPendingIzin || $hasApprovedIzin ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}
+                                            {{ $isHoliday ? 'disabled' : '' }}>
                                             <div class="btn-content">
                                                 <i class="bi bi-briefcase"></i>
                                                 <span class="btn-title">Dinas Luar</span>
                                                 <span class="btn-subtitle">
-                                                    @if ($hasApprovedDinas)
+                                                    @if ($isHoliday)
+                                                        Hari libur
+                                                    @elseif ($hasApprovedDinas)
                                                         Sedang dinas
                                                     @elseif ($hasPendingDinas)
                                                         Dinas menunggu konfirmasi
@@ -472,9 +512,15 @@
                                         <div class="alert alert-info">
                                             <h6 class="alert-heading mb-2">Info Lokasi:</h6>
                                             <div id="locationInfo">
-                                                <p>Status: <span id="distanceStatus">Menunggu akses lokasi</span></p>
-                                                <p>Jarak: <span id="distanceValue">-</span></p>
-                                                <p>Lokasi Anda: <span id="userLocation">-</span></p>
+                                                @if ($isHoliday)
+                                                    <p>Status: <span id="distanceStatus" class="text-danger">Hari libur ({{ $holidayLabel }})</span></p>
+                                                    <p>Jarak: <span id="distanceValue">-</span></p>
+                                                    <p>Lokasi Anda: <span id="userLocation">-</span></p>
+                                                @else
+                                                    <p>Status: <span id="distanceStatus">Menunggu akses lokasi</span></p>
+                                                    <p>Jarak: <span id="distanceValue">-</span></p>
+                                                    <p>Lokasi Anda: <span id="userLocation">-</span></p>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -800,6 +846,10 @@
         const hasPendingMasuk = @json($absensiPending && $absensiPending->where('jenis', 'masuk')->count() > 0);
         const hasPendingPulang = @json($absensiPending && $absensiPending->where('jenis', 'pulang')->count() > 0);
 
+        // Status hari libur
+        const isHoliday = @json($isHoliday ?? false);
+        const holidayLabel = @json($holidayLabel ?? '');
+
         // Elemen UI
         const locationSwitch = document.getElementById('locationSwitch');
         const locationStatus = document.getElementById('locationStatus');
@@ -846,16 +896,16 @@
 
         // Koordinat IDUKA dari user yang login
         @auth
-                @if (Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->latitude && Auth::user()->idukaDiterima->longitude)
-                    const idukaLat = {{ Auth::user()->idukaDiterima->latitude }};
-                    const idukaLng = {{ Auth::user()->idukaDiterima->longitude }};
-                    const allowedRadius = {{ Auth::user()->idukaDiterima->radius ?? 100 }};
-                    const hasValidIduka = true;
-                    // Ambil jam operasional dari IDUKA
-                    const jamMasukIduka = "{{ Auth::user()->idukaDiterima->jam_masuk ? Auth::user()->idukaDiterima->jam_masuk->format('H:i') : '08:00' }}";
-                    const jamPulangIduka = "{{ Auth::user()->idukaDiterima->jam_pulang ? Auth::user()->idukaDiterima->jam_pulang->format('H:i') : '15:00' }}";
-                @else
-                                                                                                        const idukaLat = null;
+            @if (Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->latitude && Auth::user()->idukaDiterima->longitude)
+                const idukaLat = {{ Auth::user()->idukaDiterima->latitude }};
+                const idukaLng = {{ Auth::user()->idukaDiterima->longitude }};
+                const allowedRadius = {{ Auth::user()->idukaDiterima->radius ?? 100 }};
+                const hasValidIduka = true;
+                // Ambil jam operasional dari IDUKA
+                const jamMasukIduka = "{{ Auth::user()->idukaDiterima->jam_masuk ? Auth::user()->idukaDiterima->jam_masuk->format('H:i') : '08:00' }}";
+                const jamPulangIduka = "{{ Auth::user()->idukaDiterima->jam_pulang ? Auth::user()->idukaDiterima->jam_pulang->format('H:i') : '15:00' }}";
+            @else
+                const idukaLat = null;
                 const idukaLng = null;
                 const allowedRadius = 100;
                 const hasValidIduka = false;
@@ -863,16 +913,16 @@
                 const jamPulangIduka = "15:00";
             @endif
         @else
-                                                                                                        const idukaLat = null;
-                const idukaLng = null;
-                const allowedRadius = 100;
-                const hasValidIduka = false;
-                const jamMasukIduka = "08:00";
-                const jamPulangIduka = "15:00";
-            @endauth
+            const idukaLat = null;
+            const idukaLng = null;
+            const allowedRadius = 100;
+            const hasValidIduka = false;
+            const jamMasukIduka = "08:00";
+            const jamPulangIduka = "15:00";
+        @endauth
 
-                                    // Data cabang
-                                    const cabangs = @json(Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->is_pusat ? Auth::user()->idukaDiterima->cabangs : []);
+        // Data cabang
+        const cabangs = @json(Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->is_pusat ? Auth::user()->idukaDiterima->cabangs : []);
 
         // Event listener untuk tombol toggle riwayat
         toggleRiwayat.addEventListener('click', function() {
@@ -898,6 +948,12 @@
         btnIzin.addEventListener('click', function() {
             if (this.disabled) return;
 
+            // Cek jika hari libur
+            if (isHoliday) {
+                alert('Hari ini adalah hari libur (' + holidayLabel + '). Tidak bisa mengajukan izin.');
+                return;
+            }
+
             // Sembunyikan form dinas jika sedang terbuka
             formDinasContainer.style.display = 'none';
 
@@ -918,6 +974,12 @@
         // Event listener untuk tombol Dinas
         btnDinas.addEventListener('click', function() {
             if (this.disabled) return;
+
+            // Cek jika hari libur
+            if (isHoliday) {
+                alert('Hari ini adalah hari libur (' + holidayLabel + '). Tidak bisa mengajukan dinas luar.');
+                return;
+            }
 
             // Sembunyikan form izin jika sedang terbuka
             formIzinContainer.style.display = 'none';
@@ -1229,7 +1291,7 @@
             };
         }
 
-        // PERBAIKAN: Fungsi untuk validasi jam masuk
+        // Fungsi untuk validasi jam masuk
         function validateJamMasuk() {
             const now = new Date();
             const [jam, menit] = jamMasukIduka.split(':');
@@ -1253,6 +1315,12 @@
             // Jika sudah lengkap absensi atau sedang izin, jangan ambil lokasi
             if ((sudahAbsenMasuk && sudahAbsenPulang) || sedangIzin) {
                 locationStatus.textContent = sedangIzin ? "Sedang izin hari ini" : "Absensi hari ini sudah lengkap";
+                return;
+            }
+
+            // Jika hari libur, jangan ambil lokasi
+            if (isHoliday) {
+                locationStatus.textContent = "Hari ini adalah hari libur (" + holidayLabel + "). Absensi ditutup.";
                 return;
             }
 
@@ -1374,7 +1442,7 @@
             // Update UI
             distanceValue.textContent = Math.round(distance) + " meter dari " + lokasiName + " (akurasi: ±" + Math.round(accuracy) + "m)";
 
-            // PERBAIKAN: Gunakan akurasi GPS sebagai toleransi
+            // Gunakan akurasi GPS sebagai toleransi
             const effectiveRadius = targetRadius + accuracy;
             const isWithinRadius = distance <= effectiveRadius;
 
@@ -1382,7 +1450,7 @@
                 distanceStatus.textContent = `✅ Anda berada dalam radius yang diizinkan (${lokasiName})`;
                 distanceStatus.className = "text-success";
 
-                // PERBAIKAN: Validasi jam masuk
+                // Validasi jam masuk
                 const jamValidation = validateJamMasuk();
 
                 // Enable tombol sesuai kondisi
@@ -1422,6 +1490,7 @@
             if (longitudePulang) longitudePulang.value = userLng;
             if (accuracyPulang) accuracyPulang.value = accuracy;
         }
+
         // Fungsi untuk menangani error geolocation
         function showError(error) {
             let errorMessage = "";
@@ -1450,8 +1519,14 @@
             if (!sudahAbsenPulang && !sedangIzin) btnPulang.disabled = true;
         }
 
-        // Event listener untuk switch lokasi - PERBAIKAN UTAMA
+        // Event listener untuk switch lokasi
         locationSwitch.addEventListener('change', function () {
+            // Jika hari libur, jangan izinkan mengaktifkan lokasi
+            if (isHoliday) {
+                this.checked = false;
+                return;
+            }
+
             if (this.checked) {
                 // Aktifkan lokasi
                 getLocation();
@@ -1481,6 +1556,13 @@
 
         // Validasi form absen masuk
         document.getElementById('formMasuk').addEventListener('submit', function (e) {
+            // Cek jika hari libur
+            if (isHoliday) {
+                e.preventDefault();
+                alert('Hari ini adalah hari libur (' + holidayLabel + '). Absensi ditutup.');
+                return false;
+            }
+
             // Cek apakah lokasi diaktifkan
             if (!locationSwitch.checked) {
                 e.preventDefault();
@@ -1521,7 +1603,7 @@
                 return false;
             }
 
-            // PERBAIKAN: Validasi jam masuk
+            // Validasi jam masuk
             const jamValidation = validateJamMasuk();
             if (!jamValidation.valid) {
                 e.preventDefault();
@@ -1568,7 +1650,7 @@
             const accuracy = currentPosition.coords.accuracy;
             const distance = calculateDistance(userLat, userLng, targetLat, targetLng);
 
-            // PERBAIKAN: Gunakan akurasi GPS sebagai toleransi
+            // Gunakan akurasi GPS sebagai toleransi
             if (distance > (targetRadius + accuracy)) {
                 e.preventDefault();
                 alert(
@@ -1580,6 +1662,13 @@
 
         // Validasi form absen pulang
         document.getElementById('formPulang').addEventListener('submit', function (e) {
+            // Cek jika hari libur
+            if (isHoliday) {
+                e.preventDefault();
+                alert('Hari ini adalah hari libur (' + holidayLabel + '). Absensi ditutup.');
+                return false;
+            }
+
             // Cek apakah lokasi diaktifkan
             if (!locationSwitch.checked) {
                 e.preventDefault();
@@ -1686,7 +1775,7 @@
                 const accuracy = currentPosition.coords.accuracy;
                 const distance = calculateDistance(userLat, userLng, targetLat, targetLng);
 
-                // PERBAIKAN: Gunakan akurasi GPS sebagai toleransi
+                // Gunakan akurasi GPS sebagai toleransi
                 if (distance > (targetRadius + accuracy)) {
                     e.preventDefault();
                     alert(
@@ -1697,6 +1786,7 @@
             }
             // Jika dinas luar, kita tidak perlu validasi lokasi, jadi langsung lanjut
         });
+
         document.addEventListener('DOMContentLoaded', function () {
             const formIzin = document.getElementById('formIzin');
             const formDinas = document.getElementById('formDinas');
@@ -2328,6 +2418,42 @@
             const sudahAbsenPulang = absensiHariIni && absensiHariIni.jam_pulang;
             const sedangIzin = absensiHariIni && absensiHariIni.status === 'izin';
 
+            // Jika hari libur, nonaktifkan semua tombol absensi
+            if (isHoliday) {
+                btnMasuk.disabled = true;
+                btnMasuk.title = 'Hari ini adalah hari libur (' + holidayLabel + '). Absensi ditutup.';
+                btnMasuk.classList.remove('btn-success');
+                btnMasuk.classList.add('btn-secondary');
+
+                btnPulang.disabled = true;
+                btnPulang.title = 'Hari ini adalah hari libur (' + holidayLabel + '). Absensi ditutup.';
+                btnPulang.classList.remove('btn-warning');
+                btnPulang.classList.add('btn-secondary');
+
+                btnIzin.disabled = true;
+                btnIzin.title = 'Hari ini adalah hari libur (' + holidayLabel + '). Tidak bisa mengajukan izin.';
+                btnIzin.classList.remove('btn-info');
+                btnIzin.classList.add('btn-secondary');
+
+                btnDinas.disabled = true;
+                btnDinas.title = 'Hari ini adalah hari libur (' + holidayLabel + '). Tidak bisa mengajukan dinas luar.';
+                btnDinas.classList.remove('btn-primary');
+                btnDinas.classList.add('btn-secondary');
+
+                // Update status lokasi
+                locationStatus.textContent = "Hari ini adalah hari libur (" + holidayLabel + "). Absensi ditutup.";
+                distanceStatus.textContent = "Hari libur";
+                distanceStatus.className = "text-danger";
+                distanceValue.textContent = "-";
+                userLocation.textContent = "-";
+
+                // Nonaktifkan switch lokasi
+                locationSwitch.disabled = true;
+                locationSwitch.checked = false;
+
+                return;
+            }
+
             // Tombol Masuk - Nonaktifkan jika ada izin/dinas (pending/approved) atau sudah absen masuk
             if (sudahAbsenMasuk || sedangIzin || sedangDinas || hasPendingIzin || hasPendingDinas || hasApprovedIzin ||
                 hasApprovedDinas || hasPendingMasuk) {
@@ -2340,7 +2466,7 @@
                 btnMasuk.classList.remove('btn-success');
                 btnMasuk.classList.add('btn-secondary');
             } else {
-                // PERBAIKAN: Validasi jam masuk
+                // Validasi jam masuk
                 const jamValidation = validateJamMasuk();
                 if (!jamValidation.valid) {
                     btnMasuk.disabled = true;

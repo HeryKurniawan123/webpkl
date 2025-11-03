@@ -8,7 +8,8 @@
                 <div class="col-12">
                     <div class="card border-0 bg-white shadow-sm">
                         <div class="card-body p-4">
-                            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
                                 <div>
                                     <h4 class="mb-1 text-dark fw-bold">TATA RIKSA K-ONE</h4>
                                     <p class="text-secondary mb-0">Absensi - data siswa PKL Per Jurusan</p>
@@ -18,6 +19,30 @@
                     </div>
                 </div>
             </div>
+
+            {{-- Notifikasi Hari Libur untuk hari ini (jika ada) --}}
+            @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="alert alert-warning d-flex align-items-start" role="alert">
+                            <div class="me-3">
+                                <i class="fas fa-calendar-day fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
+                                <p class="mb-1">Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA
+                                    tersebut mungkin tidak lengkap atau dinonaktifkan.</p>
+                                <ul class="mb-0">
+                                    @foreach ($holidaysByIduka as $h)
+                                        <li><strong>{{ $h['iduka_nama'] }}</strong>: {{ implode(', ', $h['holidays']) }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Stats Overview Cards -->
             <div class="row g-4 mb-5">
@@ -31,6 +56,12 @@
                                 <div>
                                     <h3 class="mb-1 fw-bold text-dark">{{ $hadirHariIni }}</h3>
                                     <p class="text-secondary mb-0 small">Hadir Hari Ini</p>
+                                    @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+                                        <p class="text-warning mt-2 mb-0 small">
+                                            <i class="fas fa-calendar-day"></i>
+                                            Beberapa IDUKA libur hari ini
+                                        </p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -38,9 +69,8 @@
                 </div>
 
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
-                         data-bs-toggle="modal"
-                         data-bs-target="#modalBelumDikonfirmasi">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer" data-bs-toggle="modal"
+                        data-bs-target="#modalBelumDikonfirmasi">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -56,9 +86,8 @@
                 </div>
 
                 <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 cursor-pointer"
-                         data-bs-toggle="modal"
-                         data-bs-target="#modalBelumAbsen">
+                    <div class="card border-0 shadow-sm h-100 cursor-pointer" data-bs-toggle="modal"
+                        data-bs-target="#modalBelumAbsen">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center">
                                 <div class="bg-light rounded-4 p-3 me-3">
@@ -67,6 +96,12 @@
                                 <div>
                                     <h3 class="mb-1 fw-bold text-dark">{{ $tidakHadir }}</h3>
                                     <p class="text-secondary mb-0 small">Belum Absen</p>
+                                    @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+                                        <p class="text-warning mt-2 mb-0 small">
+                                            <i class="fas fa-info-circle"></i>
+                                            Siswa di IDUKA yang libur tidak perlu absen
+                                        </p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -124,6 +159,12 @@
                                 <div>
                                     <h5 class="mb-0 fw-semibold text-dark">Analisis Kehadiran per Kelas</h5>
                                     <p class="text-secondary mb-0 small">Tingkat kehadiran siswa per kelas hari ini</p>
+                                    @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+                                        <p class="text-warning mb-0 small mt-1">
+                                            <i class="fas fa-info-circle"></i>
+                                            Beberapa siswa di IDUKA yang libur tidak perlu melakukan absensi hari ini
+                                        </p>
+                                    @endif
                                 </div>
                                 <div>
                                     <button class="btn btn-sm btn-outline-primary" id="refreshAnalisis">
@@ -138,8 +179,7 @@
                                     @foreach ($kelasAnalisis as $index => $kelas)
                                         <div class="col-lg-2 col-md-4 col-6">
                                             <div class="kelas-card h-100 p-3 bg-light rounded-4 shadow-sm transition-all cursor-pointer"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#modalDetailKelas"
+                                                data-bs-toggle="modal" data-bs-target="#modalDetailKelas"
                                                 data-kelas="{{ $kelas['kelas'] }}"
                                                 data-total="{{ $kelas['total_siswa'] }}"
                                                 data-sudah-absen="{{ $kelas['sudah_absen'] }}"
@@ -156,17 +196,21 @@
                                                     <!-- Progress Circle -->
                                                     <div class="position-relative d-inline-block mb-2">
                                                         <svg class="progress-circle" width="80" height="80">
-                                                            <circle class="progress-circle-bg" cx="40" cy="40" r="35" fill="none" stroke="#e9ecef" stroke-width="8"></circle>
-                                                            <circle class="progress-circle-fill" cx="40" cy="40" r="35" fill="none"
+                                                            <circle class="progress-circle-bg" cx="40"
+                                                                cy="40" r="35" fill="none" stroke="#e9ecef"
+                                                                stroke-width="8"></circle>
+                                                            <circle class="progress-circle-fill" cx="40"
+                                                                cy="40" r="35" fill="none"
                                                                 stroke="{{ $kelas['persentase'] >= 90 ? '#27ae60' : ($kelas['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }}"
                                                                 stroke-width="8"
                                                                 stroke-dasharray="{{ 2 * 3.14159 * 35 }}"
                                                                 stroke-dashoffset="{{ 2 * 3.14159 * 35 * (1 - $kelas['persentase'] / 100) }}"
-                                                                stroke-linecap="round"
-                                                                transform="rotate(-90 40 40)"></circle>
+                                                                stroke-linecap="round" transform="rotate(-90 40 40)">
+                                                            </circle>
                                                         </svg>
                                                         <div class="position-absolute top-50 start-50 translate-middle">
-                                                            <span class="fw-bold" style="font-size: 0.9rem;">{{ $kelas['persentase'] }}%</span>
+                                                            <span class="fw-bold"
+                                                                style="font-size: 0.9rem;">{{ $kelas['persentase'] }}%</span>
                                                         </div>
                                                     </div>
 
@@ -178,19 +222,20 @@
                                                         </div>
                                                         <div class="text-center">
                                                             <div class="small text-muted">Hadir</div>
-                                                            <div class="fw-bold text-success">{{ $kelas['hadir_count'] }}</div>
+                                                            <div class="fw-bold text-success">{{ $kelas['hadir_count'] }}
+                                                            </div>
                                                         </div>
                                                         <div class="text-end">
                                                             <div class="small text-muted">Pending</div>
-                                                            <div class="fw-bold text-warning">{{ $kelas['belum_divalidasi'] }}</div>
+                                                            <div class="fw-bold text-warning">
+                                                                {{ $kelas['belum_divalidasi'] }}</div>
                                                         </div>
                                                     </div>
 
                                                     <div class="progress mt-2" style="height: 4px;">
                                                         <div class="progress-bar bg-success" role="progressbar"
                                                             style="width: {{ ($kelas['hadir_count'] / max($kelas['total_siswa'], 1)) * 100 }}%;"
-                                                            aria-valuenow="{{ $kelas['hadir_count'] }}"
-                                                            aria-valuemin="0"
+                                                            aria-valuenow="{{ $kelas['hadir_count'] }}" aria-valuemin="0"
                                                             aria-valuemax="{{ $kelas['total_siswa'] }}">
                                                         </div>
                                                     </div>
@@ -218,6 +263,18 @@
                                 <div>
                                     <h5 class="mb-0 fw-semibold text-dark">Detail Absensi per Kelas</h5>
                                     <p class="text-secondary mb-0 small">Data kehadiran siswa per kelas hari ini</p>
+                                    @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+                                        <div class="alert alert-warning py-2 px-3 mt-2 mb-0">
+                                            <i class="fas fa-calendar-day me-2"></i>
+                                            <span class="small">IDUKA yang libur hari ini:</span>
+                                            <ul class="mb-0 mt-1 small">
+                                                @foreach ($holidaysByIduka as $h)
+                                                    <li><strong>{{ $h['iduka_nama'] }}</strong>:
+                                                        {{ implode(', ', $h['holidays']) }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div>
                                     <button class="btn btn-sm btn-primary" id="refreshBtn">
@@ -422,11 +479,8 @@
                                 <span class="text-muted">Target: 90%</span>
                             </div>
                             <div class="progress" style="height: 10px;">
-                                <div class="progress-bar" id="modalPersentaseBar" role="progressbar"
-                                    style="width: 0%;"
-                                    aria-valuenow="0"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100">
+                                <div class="progress-bar" id="modalPersentaseBar" role="progressbar" style="width: 0%;"
+                                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </div>
                         </div>

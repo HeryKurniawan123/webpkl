@@ -161,6 +161,29 @@
         </div>
     </div>
 
+    {{-- Notifikasi Hari Libur untuk hari ini (jika ada) --}}
+    @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-warning d-flex align-items-start" role="alert">
+                    <div class="me-3">
+                        <i class="fas fa-calendar-day fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
+                        <p class="mb-1">Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
+                            mungkin tidak lengkap atau dinonaktifkan.</p>
+                        <ul class="mb-0">
+                            @foreach ($holidaysByIduka as $h)
+                                <li><strong>{{ $h['iduka_nama'] }}</strong>: {{ implode(', ', $h['holidays']) }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- MODAL UNTUK PEMBIMBING BELUM DIKONFIRMASI -->
     <div class="modal fade" id="modalPembimbingBelumKonfirmasi" tabindex="-1"
         aria-labelledby="modalPembimbingBelumKonfirmasiLabel" aria-hidden="true">
