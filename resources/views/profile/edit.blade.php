@@ -15,14 +15,14 @@
 
                 <div class="row align-items-center mb-4">
                     <div class="col-auto">
-                        <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default.jpg') }}" 
-                            alt="Foto Profil" 
-                            class="rounded-circle shadow-sm" 
+                        <img src="{{ Auth::user()->profile_photo ? asset(Auth::user()->profile_photo) : asset('images/default.jpg') }}"
+                            alt="Foto Profil"
+                            class="rounded-circle shadow-sm"
                             width="100" height="100">
                     </div>
                     <div class="col">
                         <label class="form-label">Foto Profil</label>
-                        <input type="file" name="profile_photo" class="form-control">
+                        <input type="file" name="profile_photo" class="form-control" id="profilePhotoInput">
                         @error('profile_photo')<div class="text-danger">{{ $message }}</div>@enderror
                     </div>
                 </div>
@@ -59,43 +59,64 @@
             <form action="{{ route('profile.update.password') }}" method="POST">
                 @csrf
 
-          <!-- Password Saat Ini -->
-<div class="mb-3">
-    <label class="form-label">Password Saat Ini</label>
-    <div class="input-group">
-        <input type="password" name="current_password" class="form-control" id="current_password">
-        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="current_password" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
-        </button>
-    </div>
-    @error('current_password')<div class="text-danger">{{ $message }}</div>@enderror
-</div>
+                <!-- Password Saat Ini -->
+                <div class="mb-3">
+                    <label class="form-label">Password Saat Ini</label>
+                    <div class="input-group">
+                        <input type="password" name="current_password" class="form-control" id="current_password">
+                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="current_password" tabindex="-1">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                    @error('current_password')<div class="text-danger">{{ $message }}</div>@enderror
+                </div>
 
-<!-- Password Baru -->
-<div class="mb-3">
-    <label class="form-label">Password Baru</label>
-    <div class="input-group">
-        <input type="password" name="new_password" class="form-control" id="new_password">
-        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
-        </button>
-    </div>
-    @error('new_password')<div class="text-danger">{{ $message }}</div>@enderror
-</div>
+                <!-- Password Baru -->
+                <div class="mb-3">
+                    <label class="form-label">Password Baru</label>
+                    <div class="input-group">
+                        <input type="password" name="new_password" class="form-control" id="new_password">
+                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password" tabindex="-1">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                    @error('new_password')<div class="text-danger">{{ $message }}</div>@enderror
+                </div>
 
-<!-- Konfirmasi Password Baru -->
-<div class="mb-3">
-    <label class="form-label">Konfirmasi Password Baru</label>
-    <div class="input-group">
-        <input type="password" name="new_password_confirmation" class="form-control" id="new_password_confirmation">
-        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password_confirmation" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
-        </button>
-    </div>
-</div>
+                <!-- Konfirmasi Password Baru -->
+                <div class="mb-3">
+                    <label class="form-label">Konfirmasi Password Baru</label>
+                    <div class="input-group">
+                        <input type="password" name="new_password_confirmation" class="form-control" id="new_password_confirmation">
+                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password_confirmation" tabindex="-1">
+                            <i class="bi bi-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <button class="btn btn-primary btn-sm">Ganti Password</button>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal untuk cropping gambar -->
+<div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropModalLabel">Crop Foto Profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="img-container">
+                    <img id="imageToCrop" src="" alt="Image to crop">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-primary" id="cropImageBtn">Crop</button>
+            </div>
         </div>
     </div>
 </div>
@@ -110,26 +131,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize variables
     let cropper;
     const profilePhotoInput = document.getElementById('profilePhotoInput');
-    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-    const imagePreview = document.getElementById('imagePreview');
-    const currentPhotoContainer = document.getElementById('currentPhotoContainer');
     const cropModal = new bootstrap.Modal(document.getElementById('cropModal'));
     const imageToCrop = document.getElementById('imageToCrop');
-    const croppedImageInput = document.getElementById('croppedImageInput');
+    const cropImageBtn = document.getElementById('cropImageBtn');
+
+    // Preview elements
+    const currentPhoto = document.querySelector('.rounded-circle.shadow-sm');
 
     // When file input changes
     profilePhotoInput.addEventListener('change', function(e) {
         if (e.target.files.length === 0) return;
-        
+
         const file = e.target.files[0];
         const reader = new FileReader();
-        
+
         reader.onload = function(event) {
             // Show the cropping modal
             imageToCrop.src = event.target.result;
             cropModal.show();
         };
-        
+
         reader.readAsDataURL(file);
     });
 
@@ -155,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Crop button click handler
-    document.getElementById('cropImageBtn').addEventListener('click', function() {
+    cropImageBtn.addEventListener('click', function() {
         // Get cropped canvas
         const canvas = cropper.getCroppedCanvas({
             width: 300,
@@ -170,23 +191,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (canvas) {
-            // Convert canvas to data URL
-            const croppedImageUrl = canvas.toDataURL('image/jpeg');
-            
-            // Set the cropped image to hidden input
-            croppedImageInput.value = croppedImageUrl;
-            
-            // Show preview
-            imagePreview.innerHTML = `<img src="${croppedImageUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
-            imagePreviewContainer.style.display = 'block';
-            currentPhotoContainer.style.display = 'none';
-            
-            // Hide modal
-            cropModal.hide();
+            // Convert canvas to blob
+            canvas.toBlob(function(blob) {
+                // Create a new file input
+                const newFile = new File([blob], "profile.jpg", { type: "image/jpeg" });
+
+                // Create a DataTransfer to make a new FileList
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(newFile);
+
+                // Set the new file to the input
+                profilePhotoInput.files = dataTransfer.files;
+
+                // Update preview
+                const url = URL.createObjectURL(blob);
+                currentPhoto.src = url;
+
+                // Hide modal
+                cropModal.hide();
+            }, 'image/jpeg', 0.9);
         }
     });
-});
 
+    // Toggle password visibility
     document.querySelectorAll('.toggle-password').forEach(button => {
         button.addEventListener('click', function () {
             const targetId = this.getAttribute('data-target');
@@ -204,7 +231,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-
+});
 </script>
 @endsection
