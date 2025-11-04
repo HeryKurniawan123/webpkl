@@ -765,27 +765,3 @@ Route::get('/api/chart-data', function () {
         'ditolak' => $ditolak,
     ]);
 });
-
-
-//tess
-
-// admin
-
-// teknisi
-
-// guru
-
-//LATIHAN
-//YTYTYFYDIO
-//HFDFSHRTERRS//
-//HFFYHGJGUGFUFUG
-//GDGDGGDGDGDGDG
-//YFYYYTETSRRR
-//JUFYDDDTDITO
-// hbdsfhbssbfj
-//Yuda kayak kintl
-<<<<<<< Updated upstream
-// testinggg tagfuayvdxusvcjhvcjfdjhbdbjscygdsucdsjhcbdjcdcugb
-=======
-//damdam yuda knti
->>>>>>> Stashed changes
