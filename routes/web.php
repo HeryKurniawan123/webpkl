@@ -784,4 +784,8 @@ Route::get('/api/chart-data', function () {
 //JUFYDDDTDITO
 // hbdsfhbssbfj
 //Yuda kayak kintl
+<<<<<<< Updated upstream
 // testinggg tagfuayvdxusvcjhvcjfdjhbdbjscygdsucdsjhcbdjcdcugb
+=======
+//damdam yuda knti
+>>>>>>> Stashed changes
