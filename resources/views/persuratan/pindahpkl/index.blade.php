@@ -86,8 +86,8 @@
                                     <form action="{{ route('persuratan.pindah_pkl.konfirmasi', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" name="status" value="diterima" class="btn btn-success btn-sm"
-                                                onclick="return confirm('Apakah Anda yakin menerima pengajuan ini?')">
-                                            <i class="fas fa-check"></i> Terima
+                                                onclick="return confirm('Apakah Anda yakin mengirim pengajuan ini?')">
+                                            <i class="fas fa-check"></i> Kirim
                                         </button>
                                     </form>
                                     <form action="{{ route('persuratan.pindah_pkl.konfirmasi', $item->id) }}" method="POST" class="d-inline">

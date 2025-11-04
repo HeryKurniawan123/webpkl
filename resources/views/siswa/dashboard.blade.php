@@ -29,7 +29,7 @@
                                     @elseif($statusPindahPkl->status == 'menunggu_surat')
                                         Menunggu Surat
                                     @elseif($statusPindahPkl->status == 'siap_kirim')
-                                        Siap Dikirim
+                                        Menunggu IDUKA
                                     @elseif($statusPindahPkl->status == 'menunggu_konfirmasi_iduka')
                                         Menunggu Konfirmasi IDUKA
                                     @else
@@ -40,7 +40,7 @@
                                 @if($statusPindahPkl->status == 'diterima_iduka')
                                     <span class="ms-2">
                                         <a href="{{ route('pindah-pkl.download-surat', $statusPindahPkl->id) }}" class="btn btn-danger btn-sm">
-                                            <i class="bi bi-filetype-pdf"></i> Unduh Surat
+                                            <i class="bi bi-filetype-pdf"></i> Unduh Surat Pengunduran Diri
                                         </a>
                                     </span>
                                 @endif
@@ -273,7 +273,7 @@
                                         @elseif($pindah->status == 'menunggu_surat')
                                             <span class="badge bg-info">Menunggu Surat</span>
                                         @elseif($pindah->status == 'siap_kirim')
-                                            <span class="badge bg-info">Siap Dikirim</span>
+                                            <span class="badge bg-info">Menunggu Iduka</span>
                                         @elseif($pindah->status == 'menunggu_konfirmasi_iduka')
                                             <span class="badge bg-info">Menunggu Konfirmasi IDUKA</span>
                                         @else
