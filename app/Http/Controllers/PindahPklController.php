@@ -38,7 +38,7 @@ class PindahPklController extends Controller
         // cek apakah sudah pernah ajukan pindah dan masih diproses
         $cek = DB::table('pindah_pkl')
             ->where('siswa_id', $user->id)
-            ->whereIn('status', ['menunggu', 'diterima', 'menunggu_surat', 'siap_kirim'])
+            ->whereIn('status', ['menunggu','menunggu_surat','diterima_iduka','siap_kirim','menunggu_konfirmasi_iduka'])
             ->first();
 
         if ($cek) {

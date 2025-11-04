@@ -7,10 +7,7 @@
     <title>TATA RIKSA K-ONE</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
-
-    <!-- Favicons -->
-    <link href="{{ asset('tmp_landing/assets/img/favicon.png')}}" rel="icon">
-    <link href="{{ asset('tmp_landing/assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">

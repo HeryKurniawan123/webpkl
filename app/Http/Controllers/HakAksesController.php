@@ -80,7 +80,7 @@ $riwayatPindahPkl = PindahPkl::where('siswa_id', $user->id)
 
         // 🔍 Cek status pengajuan pindah PKL terbaru
         $statusPindahPkl = PindahPkl::where('siswa_id', $user->id)
-            ->whereIn('status', ['menunggu', 'diterima', 'ditolak'])
+            ->whereIn('status', ['menunggu', 'menunggu_surat', 'diterima_iduka', 'siap_kirim', 'menunggu_konfirmasi_iduka'])
             ->latest()
             ->first();
 
