@@ -15,6 +15,11 @@ class PindahPkl extends Model
         return $this->belongsTo(Iduka::class, 'iduka_id');
     }
 
+    public function idukaBaru()
+    {
+        return $this->belongsTo(Iduka::class, 'iduka_baru_id');
+    }
+
     // Relasi ke history pkl untuk mendapatkan tempat PKL baru
     public function historyPkl()
     {

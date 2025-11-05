@@ -87,8 +87,6 @@ class KaprogController extends Controller
     //     return view('kaprog.review.detailusulanpkl', compact('usulan'));
     // }
 
-
-
     public function prosesPengajuan($id, Request $request)
     {
         // Validasi iduka_id
@@ -122,12 +120,6 @@ class KaprogController extends Controller
 
         return redirect()->back()->with('success', 'Pengajuan berhasil dikirim.');
     }
-
-
-
-
-
-
 
     public function diterima($id, Request $request)
     {
@@ -170,8 +162,6 @@ class KaprogController extends Controller
 
         return redirect()->route('review.usulan')->with('success', 'Usulan IDUKA diterima dan akun pengguna berhasil dibuat.');
     }
-
-
 
     public function ditolak($id)
     {

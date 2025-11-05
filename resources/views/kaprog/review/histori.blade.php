@@ -63,7 +63,7 @@
                                                 <span class="badge bg-warning text-dark">{{ $pengajuan->status }}</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $pengajuan->updated_at->format('d M Y H:i') }}</td>
+                                            <td>{{ optional($pengajuan->updated_at)->format('d M Y H:i') ?? '-' }}</td>
                                             
                                         </tr>
                                         @endforeach

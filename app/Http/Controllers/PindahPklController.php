@@ -149,7 +149,7 @@ class PindahPklController extends Controller
 
         // Generate PDF
         $pdf = Pdf::loadView('siswa.pindahpkl.surat', [
-            'pindah' => [$pindah->siswa], // supaya foreach($pindah as $item) tetap berfungsi
+            'pindah' => [$pindah->siswa],
             'iduka' => $iduka,
             'tanggal' => $tanggal,
         ])->setPaper('a4', 'portrait');
@@ -157,10 +157,7 @@ class PindahPklController extends Controller
         // Download PDF
         return $pdf->download('Surat_Pindah_PKL_' . str_replace(' ', '_', $pindah->siswa->name) . '.pdf');
     }
-    /**
-     * ✅ FIXED: Hapus dd($pindah) yang menyebabkan error
-     * Method untuk menampilkan pengajuan pindah PKL untuk IDUKA
-     */
+    
     public function indexIduka()
     {
         $iduka = auth()->user()->iduka;

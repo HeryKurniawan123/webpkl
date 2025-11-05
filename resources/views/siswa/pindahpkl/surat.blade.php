@@ -216,7 +216,7 @@
     <div class="content">
         <div class="two-column-section">
             <div class="left-column">
-                <p class="letter-info">Nomor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ………………..</p>
+                <p class="letter-info">Nomor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: /PK.06/SMKN1KWL</p>
                 <p class="letter-info">Lampiran : -</p>
                 <p class="letter-info">Perihal&nbsp;&nbsp;&nbsp;&nbsp;: Keterangan Pindah Tempat
                     Praktik<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kerja
