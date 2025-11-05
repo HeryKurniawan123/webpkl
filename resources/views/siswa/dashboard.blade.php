@@ -183,10 +183,10 @@
                                 @if(!$pengajuanAktif)
                                     <form action="{{ route('pindah-pkl.ajukan') }}" method="POST" style="display:inline;">
                                         @csrf
-                                        <button type="submit" class="btn btn-outline-warning ms-2"
-                                            onclick="return confirmAjukanPindah()">
-                                            <i class="bi bi-arrow-repeat me-1"></i> Pindah Tempat PKL
-                                        </button>
+                                        <button type="submit" class="btn btn-warning ms-2"
+        onclick="return confirmAjukanPindah()">
+    <i class="bi bi-arrow-repeat me-1"></i> Pindah Tempat PKL
+</button>
                                     </form>
                                 @else
                                     <button type="button" class="btn btn-outline-secondary ms-2" onclick="Swal.fire({

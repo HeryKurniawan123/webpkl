@@ -60,10 +60,6 @@ class KaprogController extends Controller
 
         return view('kaprog.review.reviewusulan', compact('usulanIdukas', 'pengajuanUsulans', 'groupedIduka', 'pengajuanUsulanSemua'));
     }
-
-
-
-
     public function detailPengajuanSiswa($pengajuanId)
     {
         $usulan = PengajuanUsulan::with(['user.dataPribadi.kelas', 'user.dataPribadi.konkes', 'iduka'])->findOrFail($pengajuanId);
