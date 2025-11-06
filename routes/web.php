@@ -86,21 +86,21 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
 
 
     Route::get('/test-absensi-sunday', function () {
-    // Simpan tanggal asli
-    $originalToday = Carbon::today();
+        // Simpan tanggal asli
+        $originalToday = Carbon::today();
 
-    // Override tanggal menjadi hari Minggu
-    Carbon::setTestNow(Carbon::parse('2025-11-02'));
+        // Override tanggal menjadi hari Minggu
+        Carbon::setTestNow(Carbon::parse('2025-11-02'));
 
-    // Panggil controller absensi
-    $controller = app(\App\Http\Controllers\AbsensiController::class);
-    $response = $controller->index();
+        // Panggil controller absensi
+        $controller = app(\App\Http\Controllers\AbsensiController::class);
+        $response = $controller->index();
 
-    // Kembalikan tanggal asli
-    Carbon::setTestNow();
+        // Kembalikan tanggal asli
+        Carbon::setTestNow();
 
-    return $response;
-});
+        return $response;
+    });
 
     //DATA PRIBADI SISWA
     Route::get('/siswa/data-pribadi', [DataPribadiController::class, 'create'])->name('siswa.data_pribadi.create');
@@ -121,7 +121,6 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::get('/pindah-pkl/create', [PindahPklController::class, 'create'])->name('pindah-pkl.create');
     Route::post('/pindah-pkl/store', [PindahPklController::class, 'store'])->name('pindah-pkl.store');
     Route::post('/pindah-pkl/ajukan', [PindahPklController::class, 'ajukan'])->name('pindah-pkl.ajukan');
-    Route::get('/pindah-pkl/download-surat/{id}', [PindahPklController::class, 'downloadSurat'])->name('pindah-pkl.download-surat');
 
 
     // riwayat pengajuan pindah tempat PKL siswa
@@ -370,6 +369,8 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::get('/persuratan/pindah-pkl', [PersuratanController::class, 'pindahPklIndex'])->name('persuratan.pindah_pkl.index');
     Route::post('/persuratan/pindah-pkl/konfirmasi/{id}', [PersuratanController::class, 'konfirmasiPindahPkl'])->name('persuratan.pindah_pkl.konfirmasi');
     Route::get('/persuratan/pindah-pkl/selesai', [PersuratanController::class, 'pindahPklSelesai'])->name('persuratan.pindah_pkl.selesai');
+    Route::get('/pindah-pkl/download-surat/{id}', [PindahPklController::class, 'downloadSurat'])->name('pindah-pkl.download-surat');
+
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {

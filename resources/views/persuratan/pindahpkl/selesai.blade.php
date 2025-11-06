@@ -31,6 +31,7 @@
                             <th>Tempat PKL</th>
                             <th>Tanggal Selesai</th>
                             <th>Status</th>
+                            <th width="15%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,7 +45,14 @@
                                             {{ strtoupper(substr($item->nama_siswa, 0, 1)) }}
                                         </span>
                                     </div>
-                                    <span>{{ $item->nama_siswa }}</span>
+                                    <div>
+                                        <span>{{ $item->nama_siswa }}</span>
+                                        @if($item->jumlah_siswa > 1)
+                                        <div class="small text-muted">
+                                            <i class="fas fa-users"></i> {{ $item->jumlah_siswa }} siswa: {{ $item->daftar_siswa }}
+                                        </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </td>
                             <td>
@@ -64,10 +72,17 @@
                                         <span class="badge bg-secondary">{{ $item->status }}</span>
                                 @endswitch
                             </td>
+                            <td>
+                                @if(in_array($item->status , ['siap_kirim' , 'diterima_iduka']))
+                                    <a href="{{ route('pindah-pkl.download-surat', $item->id) }}" class="btn btn-primary btn-sm" target="_blank">
+                                        <i class="fas fa-file-pdf"></i> Cetak Surat
+                                    </a>
+                                @endif
+                            </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="fas fa-check-circle fa-2x mb-2 d-block"></i>
                                     Belum ada pengajuan pindah PKL yang selesai

@@ -4,63 +4,6 @@
     <div class="container-fluid"><br>
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
-
-                {{-- NOTIFIKASI STATUS PINDAH PKL --}}
-                @if(isset($statusPindahPkl) && $statusPindahPkl)
-                    <div class="alert
-                        @if($statusPindahPkl->status == 'menunggu') alert-warning
-                        @elseif($statusPindahPkl->status == 'diterima_iduka') alert-success
-                        @elseif($statusPindahPkl->status == 'ditolak_iduka') alert-danger
-                        @elseif($statusPindahPkl->status == 'menunggu_surat') alert-info
-                        @elseif($statusPindahPkl->status == 'siap_kirim') alert-info
-                        @elseif($statusPindahPkl->status == 'menunggu_konfirmasi_iduka') alert-info
-                        @else alert-secondary @endif
-                    ">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Status Pengajuan Pindah Tempat PKL:</strong>
-                                <span class="text-capitalize">
-                                    @if($statusPindahPkl->status == 'menunggu')
-                                        Menunggu Verifikasi
-                                    @elseif($statusPindahPkl->status == 'diterima_iduka')
-                                        Diterima
-                                    @elseif($statusPindahPkl->status == 'ditolak_iduka')
-                                        Ditolak
-                                    @elseif($statusPindahPkl->status == 'menunggu_surat')
-                                        Menunggu Surat
-                                    @elseif($statusPindahPkl->status == 'siap_kirim')
-                                        Menunggu IDUKA
-                                    @elseif($statusPindahPkl->status == 'menunggu_konfirmasi_iduka')
-                                        Menunggu Konfirmasi IDUKA
-                                    @else
-                                        {{ $statusPindahPkl->status }}
-                                    @endif
-                                </span>
-
-                                @if($statusPindahPkl->status == 'diterima_iduka')
-                                    <span class="ms-2">
-                                        <a href="{{ route('pindah-pkl.download-surat', $statusPindahPkl->id) }}" class="btn btn-danger btn-sm">
-                                            <i class="bi bi-filetype-pdf"></i> Unduh Surat Pengunduran Diri
-                                        </a>
-                                    </span>
-                                @endif
-
-                            </div>
-                            @if($statusPindahPkl->alasan)
-                                <button class="btn btn-sm btn-outline-secondary"
-                                        onclick="Swal.fire({
-                                            title: 'Alasan {{ ucfirst($statusPindahPkl->status) }}',
-                                            text: '{{ $statusPindahPkl->alasan }}',
-                                            icon: 'info',
-                                            confirmButtonText: 'Tutup'
-                                        })">
-                                    <i class="bi bi-info-circle"></i> Lihat Alasan
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-
                 <div class="row">
                     <div class="col-lg-12 mb-3 order-0">
                         <div class="card">
@@ -285,12 +228,6 @@
                                                 onclick="showDetailPindah({{ $pindah }})">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                        @if($pindah->status == 'diterima_iduka')
-                                            <a href="{{ route('pindah-pkl.download-surat', $pindah->id) }}"
-                                               class="btn btn-success btn-sm">
-                                                <i class="bi bi-download"></i> Unduh PDF
-                                            </a>
-                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

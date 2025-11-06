@@ -333,6 +333,7 @@ class PersuratanController extends Controller
 
 public function pindahPklSelesai()
 {
+    // Mengambil data pindah PKL yang sudah selesai
     $pindah = DB::table('pindah_pkl')
         ->join('users', 'pindah_pkl.siswa_id', '=', 'users.id')
         ->join('idukas', 'pindah_pkl.iduka_id', '=', 'idukas.id')
@@ -343,11 +344,26 @@ public function pindahPklSelesai()
             'pindah_pkl.updated_at',
             'users.name as nama_siswa',
             'users.kelas_id',
-            'idukas.nama as nama_iduka'
+            'idukas.nama as nama_iduka',
+            'idukas.id as iduka_id'
         )
-        ->whereIn('pindah_pkl.status', ['siap_kirim', 'ditolak_persuratan'])
+        ->whereIn('pindah_pkl.status', ['siap_kirim', 'ditolak_persuratan', 'diterima_iduka'])
         ->get();
 
-    return view('persuratan.pindahpkl.selesai', compact('pindah'));
+    // Kelompokkan data berdasarkan IDUKA dan status
+    $groupedPindah = $pindah->groupBy(function ($item) {
+        return $item->iduka_id . '_' . $item->status;
+    });
+
+    // Buat koleksi baru untuk ditampilkan di view
+    $result = collect();
+    foreach ($groupedPindah as $group) {
+        $firstItem = $group->first();
+        $firstItem->jumlah_siswa = $group->count();
+        $firstItem->daftar_siswa = $group->pluck('nama_siswa')->implode(', ');
+        $result->push($firstItem);
+    }
+
+    return view('persuratan.pindahpkl.selesai', ['pindah' => $result]);
 }
 }

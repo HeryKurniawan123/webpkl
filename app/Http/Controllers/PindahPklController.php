@@ -38,7 +38,7 @@ class PindahPklController extends Controller
         // cek apakah sudah pernah ajukan pindah dan masih diproses
         $cek = DB::table('pindah_pkl')
             ->where('siswa_id', $user->id)
-            ->whereIn('status', ['menunggu','menunggu_surat','diterima_iduka','siap_kirim','menunggu_konfirmasi_iduka'])
+            ->whereIn('status', ['menunggu', 'menunggu_surat', 'diterima_iduka', 'siap_kirim', 'menunggu_konfirmasi_iduka'])
             ->first();
 
         if ($cek) {
@@ -138,26 +138,43 @@ class PindahPklController extends Controller
 
     public function downloadSurat($id)
     {
-        // Ambil data pindah PKL beserta relasi yang dibutuhkan
-        $pindah = PindahPkl::with(['siswa.kelas.konke', 'idukaLama', 'idukaBaru'])->findOrFail($id);
+        // Ambil data pindah PKL yang dipilih
+        $pindahAcuan = PindahPkl::with(['siswa.kelas.konke', 'idukaLama', 'idukaBaru'])->findOrFail($id);
 
-        // Tentukan IDUKA tujuan (iduka baru)
-        $iduka = $pindah->idukaBaru ?? $pindah->idukaLama;
+        // Tentukan IDUKA tujuan
+        $iduka = $pindahAcuan->idukaBaru ?? $pindahAcuan->idukaLama;
+
+        // Ambil semua pindah PKL dengan IDUKA tujuan yang sama dan status 'siap_kirim'
+        $pindahList = PindahPkl::with(['siswa.kelas.konke'])
+            ->where('status', 'siap_kirim')
+            ->where(function ($query) use ($iduka) {
+                $query->where('iduka_baru_id', $iduka->id)
+                    ->orWhere('iduka_id', $iduka->id);
+            })
+            ->get();
+
+        // Siapkan koleksi siswa
+        $siswaList = collect();
+        foreach ($pindahList as $pindah) {
+            if ($pindah->siswa) {
+                $siswaList->push($pindah->siswa);
+            }
+        }
 
         // Tanggal surat
         $tanggal = Carbon::now()->translatedFormat('d F Y');
 
         // Generate PDF
         $pdf = Pdf::loadView('siswa.pindahpkl.surat', [
-            'pindah' => [$pindah->siswa],
+            'pindah' => $siswaList,
             'iduka' => $iduka,
             'tanggal' => $tanggal,
         ])->setPaper('a4', 'portrait');
 
         // Download PDF
-        return $pdf->download('Surat_Pindah_PKL_' . str_replace(' ', '_', $pindah->siswa->name) . '.pdf');
+        return $pdf->download('Surat_Pindah_PKL_' . str_replace(' ', '_', $iduka->nama) . '.pdf');
     }
-    
+
     public function indexIduka()
     {
         $iduka = auth()->user()->iduka;
