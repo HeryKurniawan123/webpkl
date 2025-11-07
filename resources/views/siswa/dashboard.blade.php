@@ -2,6 +2,63 @@
 
 @section('content')
     <div class="container-fluid"><br>
+    @if(isset($statusPindahPkl) && $statusPindahPkl->status == 'menunggu')
+    <div class="alert alert-warning alert-dismissible fade show mt-3 shadow-sm border-0" role="alert"
+         style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left: 4px solid #f39c12;">
+        <div class="d-flex align-items-start">
+            <div class="flex-shrink-0">
+                <div class="alert-icon-wrapper waiting-pulse" 
+                     style="width: 40px; height: 40px; background: #f39c12; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-hourglass-split text-white fs-5"></i>
+                </div>
+            </div>
+            <div class="flex-grow-1 ms-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="alert-heading mb-1" style="color: #856404;">
+                        <span class="waiting-dots">Menunggu Verifikasi</span>
+                    </h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <p class="mb-0 text-dark" style="font-size: 0.9rem;">
+                    Pengajuan pindah PKL Anda sedang dalam proses verifikasi. 
+                    Silakan hubungi Kaprog jurusan Anda untuk mempercepat proses.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .waiting-pulse {
+            animation: waitingPulse 2s infinite ease-in-out;
+        }
+        
+        .waiting-dots::after {
+            content: '';
+            animation: waitingDots 1.5s infinite;
+        }
+        
+        @keyframes waitingPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(243, 156, 18, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+            }
+        }
+        
+        @keyframes waitingDots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+@endif
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">

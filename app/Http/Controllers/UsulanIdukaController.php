@@ -103,8 +103,8 @@ class UsulanIdukaController extends Controller
 
             /**
              * LOGIKA UTAMA:
-             * - Jika user TIDAK memiliki iduka_id (null) → BOLEH ajukan
-             * - Jika user SUDAH memiliki iduka_id → TIDAK BOLEH ajukan baru
+             * - Jika user TIDAK memiliki iduka_id (null) ? BOLEH ajukan
+             * - Jika user SUDAH memiliki iduka_id ? TIDAK BOLEH ajukan baru
              * - Kecuali jika ingin pindah IDUKA, perlu mekanisme khusus
              */
             if ($cekPengajuanAktif && $user->iduka_id !== null) {
@@ -140,11 +140,9 @@ class UsulanIdukaController extends Controller
                 'tanggal_pengajuan' => now(), // tambahkan timestamp
             ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Usulan PKL berhasil diajukan!',
-                'redirect' => route('siswa.dashboard')
-            ]);
+            return redirect()
+                ->route('siswa.dashboard')
+                ->with('success', 'Usulan PKL berhasil diajukan!');
 
         } catch (\Exception $e) {
             return response()->json([
