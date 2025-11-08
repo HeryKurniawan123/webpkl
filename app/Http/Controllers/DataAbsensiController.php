@@ -115,6 +115,22 @@ class DataAbsensiController extends Controller
             $holidaysByIduka = [];
         }
 
+        // Top 5 siswa paling rajin (berdasarkan total kehadiran)
+        $top5Siswa = DB::table('absensi')
+            ->join('users', 'absensi.user_id', '=', 'users.id')
+            ->leftJoin('idukas', 'users.iduka_id', '=', 'idukas.id')
+            ->select(
+                'users.id as user_id',
+                'users.name',
+                'users.email',
+                DB::raw('COALESCE(idukas.nama, "-") as iduka_nama'),
+                DB::raw('COUNT(absensi.id) as total_hadir')
+            )
+            ->groupBy('users.id', 'users.name', 'users.email', 'idukas.nama')
+            ->orderByDesc('total_hadir')
+            ->take(5)
+            ->get();
+
         return view('data.absensi-siswa.index', compact(
             'totalSiswaPKL',
             'hadirHariIni',
@@ -123,7 +139,8 @@ class DataAbsensiController extends Controller
             'tingkatKehadiran',
             'mingguan',
             'jurusanData',
-            'holidaysByIduka'
+            'holidaysByIduka',
+            'top5Siswa'
         ));
     }
 
