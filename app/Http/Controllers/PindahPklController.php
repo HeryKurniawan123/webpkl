@@ -144,9 +144,9 @@ class PindahPklController extends Controller
         // Tentukan IDUKA tujuan
         $iduka = $pindahAcuan->idukaBaru ?? $pindahAcuan->idukaLama;
 
-        // Ambil semua pindah PKL dengan IDUKA tujuan yang sama dan status 'siap_kirim'
+        // Ambil semua pindah PKL dengan IDUKA tujuan yang sama dan 2 status
         $pindahList = PindahPkl::with(['siswa.kelas.konke'])
-            ->where('status', 'siap_kirim')
+            ->whereIn('status', ['siap_kirim', 'diterima_iduka'])   // ✅ status 2 kondisi
             ->where(function ($query) use ($iduka) {
                 $query->where('iduka_baru_id', $iduka->id)
                     ->orWhere('iduka_id', $iduka->id);
@@ -174,6 +174,7 @@ class PindahPklController extends Controller
         // Download PDF
         return $pdf->download('Surat_Pindah_PKL_' . str_replace(' ', '_', $iduka->nama) . '.pdf');
     }
+
 
     public function indexIduka()
     {

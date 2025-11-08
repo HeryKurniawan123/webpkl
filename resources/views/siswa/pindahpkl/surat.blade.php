@@ -285,7 +285,7 @@
 
         <div class="signature-section">
             @php
-                $ttdPath = public_path('images/ttd_kepsek.png');
+                $ttdPath = public_path('images/ttd_kepsek_baru.jpeg');
                 $ttdBase64 = '';
                 if (file_exists($ttdPath)) {
                     $ttdBase64 = base64_encode(file_get_contents($ttdPath));
