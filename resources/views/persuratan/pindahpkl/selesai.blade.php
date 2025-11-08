@@ -4,9 +4,6 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3">Pengajuan Pindah PKL Selesai</h1>
-        <a href="{{ route('persuratan.dashboard') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Kembali
-        </a>
     </div>
 
     <div class="card shadow">
@@ -26,9 +23,7 @@
                     <thead class="table-light">
                         <tr>
                             <th width="5%">No</th>
-                            <th>Nama Siswa</th>
-                            <th>Kelas</th>
-                            <th>Tempat PKL</th>
+                            <th>Nama Institusi/Perusahaan</th>
                             <th>Tanggal Selesai</th>
                             <th>Status</th>
                             <th width="15%">Aksi</th>
@@ -39,26 +34,13 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-sm me-2">
-                                        <span class="avatar-title rounded-circle bg-primary text-white">
-                                            {{ strtoupper(substr($item->nama_siswa, 0, 1)) }}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span>{{ $item->nama_siswa }}</span>
-                                        @if($item->jumlah_siswa > 1)
-                                        <div class="small text-muted">
-                                            <i class="fas fa-users"></i> {{ $item->jumlah_siswa }} siswa: {{ $item->daftar_siswa }}
-                                        </div>
-                                        @endif
+                                <div>
+                                    <span class="fw-bold">{{ $item->nama_iduka }}</span>
+                                    <div class="small text-muted">
+                                        {{ $item->jumlah_siswa ?? 1 }} siswa mengajukan ke sini
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <span class="badge bg-info">{{ $item->kelas_id }}</span>
-                            </td>
-                            <td>{{ $item->nama_iduka }}</td>
                             <td>{{ date('d M Y', strtotime($item->updated_at)) }}</td>
                             <td>
                                 @switch($item->status)
@@ -73,8 +55,9 @@
                                 @endswitch
                             </td>
                             <td>
-                                @if(in_array($item->status , ['siap_kirim' , 'diterima_iduka']))
-                                    <a href="{{ route('pindah-pkl.download-surat', $item->id) }}" class="btn btn-primary btn-sm" target="_blank">
+                                @if (in_array($item->status, ['siap_kirim', 'diterima_iduka']))
+                                    <a href="{{ route('pindah-pkl.download-surat', $item->id) }}"
+                                        class="btn btn-primary btn-sm" target="_blank">
                                         <i class="fas fa-file-pdf"></i> Cetak Surat
                                     </a>
                                 @endif
@@ -82,7 +65,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="5" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="fas fa-check-circle fa-2x mb-2 d-block"></i>
                                     Belum ada pengajuan pindah PKL yang selesai

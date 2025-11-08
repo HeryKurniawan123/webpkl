@@ -3,10 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Konfirmasi Pengajuan Pindah PKL</h1>
-        <a href="{{ route('persuratan.dashboard') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Kembali
-        </a>
+        <h1 class="h3">Review Pengajuan Institusional / Perusahaan</h1>
     </div>
 
     @if(session('success'))
@@ -39,10 +36,7 @@
                     <thead class="table-light">
                         <tr>
                             <th width="5%">No</th>
-                            <th>Nama Siswa</th>
-                            <th>Kelas</th>
-                            <th>Tempat PKL</th>
-                            <th>Tanggal Pengajuan</th>
+                            <th>Nama Institusi/Perusahaan</th>
                             <th>Status</th>
                             <th width="20%">Aksi</th>
                         </tr>
@@ -52,49 +46,26 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-sm me-2">
-                                        <span class="avatar-title rounded-circle bg-primary text-white">
-                                            {{ strtoupper(substr($item->nama_siswa, 0, 1)) }}
-                                        </span>
+                                <div>
+                                    <span class="fw-bold">{{ $item->nama_iduka }}</span>
+                                    <div class="small text-muted">
+                                        {{ $item->jumlah_siswa ?? 1 }} siswa mengajukan ke sini
                                     </div>
-                                    <span>{{ $item->nama_siswa }}</span>
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-info">{{ $item->kelas_id }}</span>
-                            </td>
-                            <td>{{ $item->nama_iduka }}</td>
-                            <td>{{ date('d M Y', strtotime($item->created_at)) }}</td>
-                            <td>
-                                @switch($item->status)
-                                    @case('menunggu_surat')
-                                        <span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
-                                        @break
-                                    @case('siap_kirim')
-                                        <span class="badge bg-success">Siap Dikirim ke IDUKA</span>
-                                        @break
-                                    @case('ditolak_persuratan')
-                                        <span class="badge bg-danger">Ditolak</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-secondary">{{ $item->status }}</span>
-                                @endswitch
+                                <span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
                             </td>
                             <td>
                                 <div class="btn-group" role="group">
+                                    <a href="{{ route('persuratan.pindah_pkl.detail', $item->id) }}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> Detail
+                                    </a>
                                     <form action="{{ route('persuratan.pindah_pkl.konfirmasi', $item->id) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" name="status" value="diterima" class="btn btn-success btn-sm"
                                                 onclick="return confirm('Apakah Anda yakin mengirim pengajuan ini?')">
-                                            <i class="fas fa-check"></i> Kirim
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('persuratan.pindah_pkl.konfirmasi', $item->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" name="status" value="ditolak" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Apakah Anda yakin menolak pengajuan ini?')">
-                                            <i class="fas fa-times"></i> Tolak
+                                            <i class="fas fa-paper-plane"></i> Kirim
                                         </button>
                                     </form>
                                 </div>
@@ -102,10 +73,10 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4">
+                            <td colspan="4" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
-                                    Tidak ada pengajuan pindah PKL yang menunggu konfirmasi
+                                    Tidak ada pengajuan institusi/perusahaan yang menunggu konfirmasi
                                 </div>
                             </td>
                         </tr>
