@@ -3,7 +3,6 @@
 @section('content')
     <div class="container-fluid">
         <div class="container-xxl flex-grow-1 container-p-y">
-
             <!-- Simple Header Card -->
             <div class="row mb-4">
                 <div class="col-12">
@@ -20,44 +19,43 @@
                 </div>
             </div>
 
-            <div class="my-3">
-                @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="alert alert-warning d-flex align-items-start" role="alert">
-                                <div class="me-3">
-                                    <i class="fas fa-calendar-day fa-2x"></i>
-                                </div>
-                                <div>
-                                    <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
-                                    <p class="mb-1">
-                                        Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
-                                        mungkin tidak lengkap atau dinonaktifkan.
 
-                                        {{-- Tampilkan tombol modal jika lebih dari 2 IDUKA libur --}}
-                                        @if (count($holidaysByIduka) > 2)
-                                            <button type="button" class="btn btn-sm btn-outline-warning mt-2"
-                                                data-bs-toggle="modal" data-bs-target="#holidayModal">
-                                                Lihat Daftar Lengkap ({{ count($holidaysByIduka) }} IDUKA)
-                                            </button>
-                                        @else
-                                            {{-- Tampilkan langsung jika 2 IDUKA atau kurang --}}
-                                            <ul class="mb-0 mt-2">
-                                                @foreach ($holidaysByIduka as $h)
-                                                    <li><strong>{{ $h['iduka_nama'] }}</strong>:
-                                                        {{ implode(', ', $h['holidays']) }}
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
-                                    </p>
-                                </div>
+            {{-- Notifikasi Hari Libur untuk hari ini (jika ada) --}}
+            @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="alert alert-warning d-flex align-items-start" role="alert">
+                            <div class="me-3">
+                                <i class="fas fa-calendar-day fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
+                                <p class="mb-1">
+                                    Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
+                                    mungkin tidak lengkap atau dinonaktifkan.
+
+                                    {{-- Tampilkan tombol modal jika lebih dari 2 IDUKA libur --}}
+                                    @if (count($holidaysByIduka) > 2)
+                                        <button type="button" class="btn btn-sm btn-outline-warning mt-2"
+                                            data-bs-toggle="modal" data-bs-target="#holidayModal">
+                                            Lihat Daftar Lengkap ({{ count($holidaysByIduka) }} IDUKA)
+                                        </button>
+                                    @else
+                                        {{-- Tampilkan langsung jika 2 IDUKA atau kurang --}}
+                                        <ul class="mb-0 mt-2">
+                                            @foreach ($holidaysByIduka as $h)
+                                                <li><strong>{{ $h['iduka_nama'] }}</strong>:
+                                                    {{ implode(', ', $h['holidays']) }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </p>
                             </div>
                         </div>
                     </div>
-                @endif
-            </div>
-
+                </div>
+            @endif
 
             <!-- Stats Overview Cards -->
             <div class="row g-4 mb-5">
@@ -177,17 +175,19 @@
                             <h5 class="mb-0 fw-semibold text-dark">5 Siswa Paling Rajin Absen</h5>
                         </div>
                         <div class="card-body p-4">
-                            @if(!empty($top5Siswa) && $top5Siswa->count() > 0)
+                            @if (!empty($top5Siswa) && $top5Siswa->count() > 0)
                                 <div class="list-group list-group-flush">
-                                    @foreach($top5Siswa as $s)
+                                    @foreach ($top5Siswa as $s)
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <div class="d-flex align-items-center">
-                                                <div class="avatar rounded-circle bg-light me-3" style="width:48px;height:48px; display:flex;align-items:center;justify-content:center;font-weight:700;">
-                                                    {{ strtoupper(substr($s->name,0,1)) }}
+                                                <div class="avatar rounded-circle bg-light me-3"
+                                                    style="width:48px;height:48px; display:flex;align-items:center;justify-content:center;font-weight:700;">
+                                                    {{ strtoupper(substr($s->name, 0, 1)) }}
                                                 </div>
                                                 <div>
                                                     <div class="fw-semibold">{{ $s->name }}</div>
-                                                    <small class="text-secondary">{{ $s->iduka_nama ?? ($s->iduka ?? '-') }}</small>
+                                                    <small
+                                                        class="text-secondary">{{ $s->iduka_nama ?? ($s->iduka ?? '-') }}</small>
                                                 </div>
                                             </div>
                                             <div class="text-end">
