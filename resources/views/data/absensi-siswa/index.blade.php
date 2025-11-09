@@ -169,6 +169,42 @@
                 </div>
             </div>
 
+            <!-- Top 5 Siswa Paling Rajin -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-4">
+                            <h5 class="mb-0 fw-semibold text-dark">5 Siswa Paling Rajin Absen</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            @if(!empty($top5Siswa) && $top5Siswa->count() > 0)
+                                <div class="list-group list-group-flush">
+                                    @foreach($top5Siswa as $s)
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar rounded-circle bg-light me-3" style="width:48px;height:48px; display:flex;align-items:center;justify-content:center;font-weight:700;">
+                                                    {{ strtoupper(substr($s->name,0,1)) }}
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold">{{ $s->name }}</div>
+                                                    <small class="text-secondary">{{ $s->iduka_nama ?? ($s->iduka ?? '-') }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="text-end">
+                                                <div class="h5 mb-0 fw-bold">{{ $s->total_hadir }}</div>
+                                                <small class="text-secondary">Kehadiran</small>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="mb-0 text-secondary">Belum ada data absensi untuk menampilkan ranking.</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Analisis Kehadiran per Jurusan -->
             <div class="row">
                 <div class="col-12">
