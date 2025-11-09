@@ -3,6 +3,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="container-xxl flex-grow-1 container-p-y">
+
             <!-- Simple Header Card -->
             <div class="row mb-4">
                 <div class="col-12">
@@ -18,6 +19,45 @@
                     </div>
                 </div>
             </div>
+
+            <div class="my-3">
+                @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="alert alert-warning d-flex align-items-start" role="alert">
+                                <div class="me-3">
+                                    <i class="fas fa-calendar-day fa-2x"></i>
+                                </div>
+                                <div>
+                                    <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
+                                    <p class="mb-1">
+                                        Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
+                                        mungkin tidak lengkap atau dinonaktifkan.
+
+                                        {{-- Tampilkan tombol modal jika lebih dari 2 IDUKA libur --}}
+                                        @if (count($holidaysByIduka) > 2)
+                                            <button type="button" class="btn btn-sm btn-outline-warning mt-2"
+                                                data-bs-toggle="modal" data-bs-target="#holidayModal">
+                                                Lihat Daftar Lengkap ({{ count($holidaysByIduka) }} IDUKA)
+                                            </button>
+                                        @else
+                                            {{-- Tampilkan langsung jika 2 IDUKA atau kurang --}}
+                                            <ul class="mb-0 mt-2">
+                                                @foreach ($holidaysByIduka as $h)
+                                                    <li><strong>{{ $h['iduka_nama'] }}</strong>:
+                                                        {{ implode(', ', $h['holidays']) }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
 
             <!-- Stats Overview Cards -->
             <div class="row g-4 mb-5">
@@ -148,7 +188,8 @@
                                                 style="color: {{ $j['persentase'] >= 90 ? '#27ae60' : ($j['persentase'] >= 85 ? '#f39c12' : '#e74c3c') }};">
                                                 {{ $j['persentase'] }}%
                                             </div>
-                                            <small class="text-secondary">{{ $j['jumlah_hadir'] }}/{{ $j['total_siswa'] }}
+                                            <small
+                                                class="text-secondary">{{ $j['jumlah_hadir'] }}/{{ $j['total_siswa'] }}
                                                 siswa</small>
                                         </div>
                                     </div>
@@ -161,28 +202,42 @@
         </div>
     </div>
 
-    {{-- Notifikasi Hari Libur untuk hari ini (jika ada) --}}
-    @if (!empty($holidaysByIduka) && count($holidaysByIduka) > 0)
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="alert alert-warning d-flex align-items-start" role="alert">
-                    <div class="me-3">
-                        <i class="fas fa-calendar-day fa-2x"></i>
+
+
+    {{-- Modal untuk menampilkan daftar lengkap --}}
+    <div class="modal fade" id="holidayModal" tabindex="-1" aria-labelledby="holidayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="holidayModalLabel">Daftar IDUKA Libur Hari Ini</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nama IDUKA</th>
+                                    <th>Keterangan Libur</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($holidaysByIduka as $h)
+                                    <tr>
+                                        <td><strong>{{ $h['iduka_nama'] }}</strong></td>
+                                        <td>{{ implode(', ', $h['holidays']) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
-                    <div>
-                        <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
-                        <p class="mb-1">Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
-                            mungkin tidak lengkap atau dinonaktifkan.</p>
-                        <ul class="mb-0">
-                            @foreach ($holidaysByIduka as $h)
-                                <li><strong>{{ $h['iduka_nama'] }}</strong>: {{ implode(', ', $h['holidays']) }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
-    @endif
+    </div>
 
     <!-- MODAL UNTUK PEMBIMBING BELUM DIKONFIRMASI -->
     <div class="modal fade" id="modalPembimbingBelumKonfirmasi" tabindex="-1"
