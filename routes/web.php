@@ -401,14 +401,14 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     // Route untuk cetak
     Route::get('/cetak-atp-langsung', [IdukaAtpController::class, 'cetakAtpLangsung'])->name('cetak.atp.langsung');
 
-    // ✅ Route untuk get semua data IdukaAtp (TAMBAHKAN INI - PENTING untuk Modal Update!)
+    // ? Route untuk get semua data IdukaAtp (TAMBAHKAN INI - PENTING untuk Modal Update!)
     Route::get('/get-all-iduka-atp', [IdukaAtpController::class, 'getAllIdukaAtp']);
 
-    // ✅ Route untuk get CP & ATP berdasarkan konke_id (GANTI dengan method controller, bukan closure!)
+    // ? Route untuk get CP & ATP berdasarkan konke_id (GANTI dengan method controller, bukan closure!)
     Route::get('/get-cp-atp/{konke_id}', [IdukaAtpController::class, 'getCpAtp']);
 
 
-    // 🔍 ROUTE TEST - HAPUS SETELAH BERHASIL
+    // ?? ROUTE TEST - HAPUS SETELAH BERHASIL
     Route::get('/iduka/test-route', function () {
         $user = Auth::user();
         $iduka = DB::table('idukas')->where('user_id', $user->id)->first();

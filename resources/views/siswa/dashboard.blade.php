@@ -2,34 +2,140 @@
 
 @section('content')
     <div class="container-fluid"><br>
-    @if(isset($statusPindahPkl) && $statusPindahPkl->status == 'menunggu')
-    <div class="alert alert-warning alert-dismissible fade show mt-3 shadow-sm border-0" role="alert"
-         style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left: 4px solid #f39c12;">
-        <div class="d-flex align-items-start">
-            <div class="flex-shrink-0">
-                <div class="alert-icon-wrapper waiting-pulse" 
-                     style="width: 40px; height: 40px; background: #f39c12; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="bi bi-hourglass-split text-white fs-5"></i>
+    @if(isset($statusPindahPkl))
+    @if($statusPindahPkl->status == 'menunggu')
+        <div class="alert alert-warning alert-dismissible fade show mt-3 shadow-sm border-0" role="alert"
+             style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left: 4px solid #f39c12;">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="alert-icon-wrapper waiting-pulse" 
+                         style="width: 40px; height: 40px; background: #f39c12; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-hourglass-split text-white fs-5"></i>
+                    </div>
                 </div>
-            </div>
-            <div class="flex-grow-1 ms-3">
-                <div class="d-flex justify-content-between align-items-start">
-                    <h6 class="alert-heading mb-1" style="color: #856404;">
-                        <span class="waiting-dots">Menunggu Verifikasi</span>
-                    </h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="alert-heading mb-1" style="color: #856404;">
+                            <span class="waiting-dots">Menunggu Verifikasi</span>
+                        </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <p class="mb-0 text-dark" style="font-size: 0.9rem;">
+                        Pengajuan pindah PKL Anda sedang dalam proses verifikasi. 
+                        Silakan hubungi Kaprog jurusan Anda untuk mempercepat proses.
+                    </p>
                 </div>
-                <p class="mb-0 text-dark" style="font-size: 0.9rem;">
-                    Pengajuan pindah PKL Anda sedang dalam proses verifikasi. 
-                    Silakan hubungi Kaprog jurusan Anda untuk mempercepat proses.
-                </p>
             </div>
         </div>
-    </div>
+
+    @elseif($statusPindahPkl->status == 'menunggu_surat')
+        <div class="alert alert-info alert-dismissible fade show mt-3 shadow-sm border-0" role="alert"
+             style="background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); border-left: 4px solid #17a2b8;">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="alert-icon-wrapper waiting-pulse" 
+                         style="width: 40px; height: 40px; background: #17a2b8; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-printer text-white fs-5"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="alert-heading mb-1" style="color: #0c5460;">
+                            <span class="waiting-dots">Menunggu Surat Dicetak</span>
+                        </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <p class="mb-0 text-dark" style="font-size: 0.9rem;">
+                        Pengajuan pindah PKL anda telah diterima, selanjutnya menunggu surat dicetak.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    @elseif($statusPindahPkl->status == 'siap_kirim')
+        <div class="alert alert-primary alert-dismissible fade show mt-3 shadow-sm border-0" role="alert"
+             style="background: linear-gradient(135deg, #cce7ff 0%, #b3d9ff 100%); border-left: 4px solid #3498db;">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="alert-icon-wrapper waiting-pulse" 
+                         style="width: 40px; height: 40px; background: #3498db; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-send-check text-white fs-5"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="alert-heading mb-1" style="color: #004085;">
+                            <span class="waiting-dots">Surat telah dicetak</span>
+                        </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <p class="mb-0 text-dark" style="font-size: 0.9rem;">
+                        Surat pengajuan pindah tempat PKL kamu telah dicetak dan telah dikirim ke IDUKA, silahkan tunggu verifikasi dari IDUKA.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    @elseif($statusPindahPkl->status == 'diterima_iduka')
+        <div class="alert alert-success alert-dismissible fade show mt-3 shadow-sm border-0" role="alert"
+             style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border-left: 4px solid #28a745;">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="alert-icon-wrapper success-pulse" 
+                         style="width: 40px; height: 40px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-check-circle text-white fs-5"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="alert-heading mb-1" style="color: #155724;">
+                            <span>Pindah PKL Diterima</span>
+                        </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <p class="mb-0 text-dark" style="font-size: 0.9rem;">
+                        Pengajuan pindah PKL anda telah diterima, silahkan buat pengajuan baru untuk mengajukan tempat PKL kamu.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    @elseif($statusPindahPkl->status == 'ditolak_iduka')
+        <div class="alert alert-danger alert-dismissible fade show mt-3 shadow-sm border-0" role="alert"
+             style="background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); border-left: 4px solid #dc3545;">
+            <div class="d-flex align-items-start">
+                <div class="flex-shrink-0">
+                    <div class="alert-icon-wrapper error-pulse" 
+                         style="width: 40px; height: 40px; background: #dc3545; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-x-circle text-white fs-5"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="alert-heading mb-1" style="color: #721c24;">
+                            <span>Pindah PKL Ditolak</span>
+                        </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <p class="mb-0 text-dark" style="font-size: 0.9rem;">
+                        Pengajuan pindah PKL anda ditolak, silahkan hubungi kaprog jurusan kamu atau iduka kamu untuk alasan lebih lanjut.
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <style>
         .waiting-pulse {
             animation: waitingPulse 2s infinite ease-in-out;
+        }
+        
+        .success-pulse {
+            animation: successPulse 2s infinite ease-in-out;
+        }
+        
+        .error-pulse {
+            animation: errorPulse 2s infinite ease-in-out;
         }
         
         .waiting-dots::after {
@@ -49,6 +155,36 @@
             100% {
                 transform: scale(1);
                 box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+            }
+        }
+        
+        @keyframes successPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+        
+        @keyframes errorPulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
             }
         }
         
@@ -137,7 +273,7 @@
                                                 <a href="#" class="dropdown-item" onclick="Swal.fire({
                                                     icon: 'info',
                                                     title: 'Tidak dapat mengajukan!',
-                                                    text: 'Kamu sudah mengajukan dan pengajuan telah diterima.'
+                                                    text: 'Kamu sudah mengajukan dan pengajuan telah diterima, kecuali permintaan pindah tempat PKL anda sudah diterima.'
                                                 })">Buat Pengajuan</a>
                                             @else
                                                 <a href="#" class="dropdown-item" onclick="Swal.fire({
@@ -158,18 +294,6 @@
                                                     || !in_array($statusPindahPkl->status, ['menunggu', 'ditolak_iduka']))
                                                 && (Auth::user()->iduka_id === null); // hanya jika iduka_id kosong
                                         @endphp
-
-                                        @if ($bisaPengajuanBaru)
-                                            <a href="{{ route('iduka.usulan') }}" class="dropdown-item">Pengajuan Baru</a>
-                                        @else
-                                            <a href="#" class="dropdown-item" onclick="Swal.fire({
-                                                icon: 'info',
-                                                title: 'Tidak Bisa Pengajuan Baru',
-                                                text: 'Kamu hanya bisa membuat pengajuan baru jika belum terdaftar di IDUKA manapun atau pengajuan pindah PKL sebelumnya diterima.',
-                                                showConfirmButton: true,
-                                                customClass: { popup: 'animate__animated animate__fadeIn' }
-                                            })">Pengajuan Baru</a>
-                                        @endif
                                     </li>
                                 </ul>
                             </div>
