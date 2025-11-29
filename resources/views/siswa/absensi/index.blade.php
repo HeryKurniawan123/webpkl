@@ -60,7 +60,7 @@
                             <div class="d-flex align-items-end row">
                                 <div class="col-sm-7">
                                     <div class="card-body">
-                                        <h5 class="card-title text-primary">Selamat Datang di Sistem Absensi! 👋</h5>
+                                        <h5 class="card-title text-primary">Selamat Datang di Sistem Absensi! ??</h5>
                                         <p class="mb-4">Jangan lupa untuk melakukan absensi setiap hari. Pastikan Anda
                                             berada di lokasi IDUKA yang benar.</p>
                                         @auth
@@ -921,6 +921,19 @@
             const jamPulangIduka = "15:00";
         @endauth
 
+        // Hitung jam masuk awal (1 jam sebelum jam masuk resmi)
+        const jamMasukAllowStart = (function() {
+            try {
+                const [h, m] = jamMasukIduka.split(':').map(Number);
+                const d = new Date();
+                d.setHours(h, m, 0, 0);
+                d.setTime(d.getTime() - 60 * 60 * 1000); // mundur 1 jam
+                return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+                return jamMasukIduka; // fallback
+            }
+        })();
+
         // Data cabang
         const cabangs = @json(Auth::user()->idukaDiterima && Auth::user()->idukaDiterima->is_pusat ? Auth::user()->idukaDiterima->cabangs : []);
 
@@ -1294,14 +1307,17 @@
         // Fungsi untuk validasi jam masuk
         function validateJamMasuk() {
             const now = new Date();
-            const [jam, menit] = jamMasukIduka.split(':');
+            const [jam, menit] = jamMasukIduka.split(':').map(Number);
             const jamMasukDate = new Date();
-            jamMasukDate.setHours(parseInt(jam), parseInt(menit), 0, 0);
+            jamMasukDate.setHours(jam, menit, 0, 0);
 
-            if (now < jamMasukDate) {
+            // Tegaskan bahwa absensi dapat dimulai 1 jam sebelum jam masuk
+            const jamMasukStart = new Date(jamMasukDate.getTime() - 60 * 60 * 1000);
+
+            if (now < jamMasukStart) {
                 return {
                     valid: false,
-                    message: `Absen masuk hanya dapat dilakukan mulai pukul ${jamMasukIduka}.`
+                    message: `Absen masuk hanya dapat dilakukan mulai pukul ${jamMasukAllowStart}.`
                 };
             }
 
@@ -1378,7 +1394,7 @@
 
             // Jika sedang dinas luar, tampilkan pesan khusus dan skip validasi lokasi
             if (sedangDinas) {
-                distanceStatus.textContent = "✅ Anda sedang dinas luar, dapat absen pulang dari mana saja setelah jam 12.00";
+                distanceStatus.textContent = "? Anda sedang dinas luar, dapat absen pulang dari mana saja setelah jam 12.00";
                 distanceStatus.className = "text-success";
                 distanceValue.textContent = "Tidak dibatasi lokasi (dinas luar)";
 
@@ -1447,7 +1463,7 @@
             const isWithinRadius = distance <= effectiveRadius;
 
             if (isWithinRadius) {
-                distanceStatus.textContent = `✅ Anda berada dalam radius yang diizinkan (${lokasiName})`;
+                distanceStatus.textContent = `? Anda berada dalam radius yang diizinkan (${lokasiName})`;
                 distanceStatus.className = "text-success";
 
                 // Validasi jam masuk
@@ -1473,7 +1489,7 @@
                     }
                 }
             } else {
-                distanceStatus.textContent = `❌ Anda berada di luar radius yang diizinkan (${lokasiName})`;
+                distanceStatus.textContent = `? Anda berada di luar radius yang diizinkan (${lokasiName})`;
                 distanceStatus.className = "text-danger";
 
                 // Disable tombol jika di luar radius
