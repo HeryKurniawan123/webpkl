@@ -6,13 +6,13 @@
     <title>TATA RIKSA K-ONE</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
-    
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+
     <style>
         * {
             margin: 0;
@@ -900,7 +900,7 @@
                     <div class="button-group">
                         <a href="/login" class="btn-get-started">Log In</a>
                         <a href="#about" class="btn-get-started">Pelajari Lebih Lanjut</a>
-                        <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA hidden 
+                        <a id="install-btn" class="btn-get-started animate__animated animate__fadeInUp scrollto installPWA hidden
    bg-[#5656f0] text-white font-medium px-6 py-3 rounded-lg
    transition duration-300 ease-in-out
    hover:bg-[#4343c9] hover:scale-105 hover:shadow-lg" href="javascript:void(0)">
@@ -1022,7 +1022,7 @@
                         <div class="client-logo"><img src="/images/asn.png" alt=""></div>
                         <div class="client-logo"><img src="/images/UNY.png" alt=""></div>
                         <div class="client-logo"><img src="/images/sanggarseni.jpeg" alt=""></div>
-                        
+
                         <div class="client-logo"><img src="/images/daihatsu.jpg" alt=""></div>
                         <div class="client-logo"><img src="/images/inovindo.png" alt=""></div>
                         <div class="client-logo"><img src="/images/oracle.png" alt=""></div>
@@ -1140,7 +1140,7 @@
                         <img src="{{ asset('images/pkl6.jpg') }}?v={{ filemtime(public_path('images/pkl6.jpg')) }}" alt="TKRO">
                     </div>
                     <div class="gallery-item">
-                        <img src="{{ asset('images/pkl8.jpeg') }}?v={{ filemtime(public_path('images/pkl8.jpeg')) }}" alt="Akuntansi">
+                        <img src="{{ asset('images/pkl8.jpg') }}?v={{ filemtime(public_path('images/pkl8.jpg')) }}" alt="Akuntansi">
                     </div>
                     <div class="gallery-item">
                         <img src="{{ asset('images/pkl7.jpg') }}?v={{ filemtime(public_path('images/pkl7.jpg')) }}" alt="PPLG">
@@ -1212,7 +1212,7 @@
         <div class="container">
             <h3>TATA RIKSA K-ONE</h3>
             <p>Platform untuk memudahkan siswa SMK dalam mencari, mendaftar, dan menjalani Praktik Kerja Lapangan (PKL) di dunia industri.</p>
-            
+
             <div class="social-links">
                 <a href="https://twitter.com/smkn1kawali" target="_blank"><i class="bi bi-twitter-x"></i></a>
                 <a href="https://www.facebook.com/SMK-Negeri-1-Kawali-1081500078563328/" target="_blank"><i class="bi bi-facebook"></i></a>

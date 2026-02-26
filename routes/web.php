@@ -16,6 +16,7 @@ use App\Http\Controllers\PembimbingDataController;
 use App\Http\Controllers\PendampingController;
 use App\Http\Controllers\PengajuanIzinSiswaController;
 use App\Http\Controllers\ProgresSiswaController;
+use App\Http\Controllers\RekapAbsensiController;
 use App\Http\Controllers\SuratPengantarPklController;
 use App\Http\Controllers\UsersController;
 use App\Models\Cp;
@@ -753,6 +754,11 @@ Route::middleware(['auth', 'hakakses:guru'])->group(function () {
 });
 
 
+Route::middleware(['auth', 'hakakses:hubin,kepsek,kaprog,guru'])->group(function () {
+    Route::get('/rekap-absensi', action: [RekapAbsensiController::class, 'index'])->name('rekap.absensi.index');
+    Route::get('/rekap-absensi/data', [RekapAbsensiController::class, 'data'])->name('rekap.absensi.data');
+    Route::get('/rekap-absensi/filter-options', [RekapAbsensiController::class, 'filterOptions'])->name('rekap.absensi.filterOptions');
+});
 
 //api data siswa, diterima,ditolak,
 Route::get('/api/chart-data', function () {

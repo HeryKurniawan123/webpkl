@@ -30,7 +30,8 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap"
         rel="stylesheet" />
 
     <!-- Icons -->
@@ -82,10 +83,12 @@
                         <span class="app-brand-logo demo">
                             <img src="{{ asset('images/logoo.png') }}" width="40px" height="40px" alt="">
                         </span>
-                        <span class="app-brand-text demo fw-bolder ms-2" style="font-size: 18px;">TATA RIKSA K-ONE</span>
+                        <span class="app-brand-text demo fw-bolder ms-2" style="font-size: 18px;">TATA RIKSA
+                            K-ONE</span>
                     </a>
 
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                    <a href="javascript:void(0);"
+                        class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
                         <i class="bx bx-chevron-left bx-sm align-middle"></i>
                     </a>
                 </div>
@@ -132,7 +135,8 @@
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
@@ -183,13 +187,15 @@
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('iduka.pindah_pkl.index') ? 'active' : '' }}">
+                                <li
+                                    class="menu-item {{ Request::routeIs('iduka.pindah_pkl.index') ? 'active' : '' }}">
                                     <a href="{{ route('iduka.pindah_pkl.index') }}" class="menu-link">
                                         <div data-i18n="Pengajuan Masuk">Pengajuan Masuk</div>
                                     </a>
                                 </li>
 
-                                <li class="menu-item {{ Request::routeIs('iduka.pindah_pkl.riwayat') ? 'active' : '' }}">
+                                <li
+                                    class="menu-item {{ Request::routeIs('iduka.pindah_pkl.riwayat') ? 'active' : '' }}">
                                     <a href="{{ route('iduka.pindah_pkl.riwayat') }}" class="menu-link">
                                         <div data-i18n="Riwayat">Riwayat</div>
                                     </a>
@@ -253,6 +259,12 @@
                                 <div data-i18n="Basic">monitoring</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::routeIs('rekap.absensi.index') ? 'active' : '' }}">
+                            <a href="{{ route('rekap.absensi.index') }}" class="menu-link">
+                                <i class="menu-icon tf-icons bx bx-calendar-event"></i>
+                                <div data-i18n="Basic">Rekap Absensi</div>
+                            </a>
+                        </li>
                     @endif
 
                     @if (in_array(auth()->user()->role, ['hubin', 'psekolah']))
@@ -295,7 +307,8 @@
                     @endif
 
                     @if (auth()->user()->role == 'persuratan')
-                        <li class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('persuratan.data_pribadi.create') ? 'active' : '' }}">
                             <a href="{{ route('persuratan.data_pribadi.create') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-file"></i>
                                 <div data-i18n="Basic">Data Pribadi Persuratan</div>
@@ -454,14 +467,16 @@
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
                             </a>
 
                             <ul class="menu-sub">
-                                <li class="menu-item {{ Request::routeIs('pendamping.guru.index') ? 'active' : '' }}">
+                                <li
+                                    class="menu-item {{ Request::routeIs('pendamping.guru.index') ? 'active' : '' }}">
                                     <a href="{{ route('pendamping.guru.index') }}" class="menu-link">
                                         <div data-i18n="Without menu">Guru</div>
                                     </a>
@@ -498,7 +513,8 @@
                             </a>
                         </li>
 
-                        <li class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
+                        <li
+                            class="menu-item {{ Request::routeIs('admin.pemantauanGtk', 'admin.gtkKependidikan') ? 'active open' : '' }}">
                             <a href="javascript:void(0);" class="menu-link menu-toggle">
                                 <i class="menu-icon tf-icons bx bx-group"></i>
                                 <div data-i18n="Layouts">GTK</div>
