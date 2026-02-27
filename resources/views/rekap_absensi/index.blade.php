@@ -321,11 +321,6 @@
                     params += 'konke_id=' + encodeURIComponent(kaprogKonkeId);
                 }
 
-                // for non-guru we want to force a very large per_page so the JS can aggregate all rows
-                if (currentRole !== 'guru') {
-                    params += '&per_page=99999';
-                }
-
                 const tableEl = document.getElementById('rekap-table');
                 if (tableEl) {
                     tableEl.innerHTML =
