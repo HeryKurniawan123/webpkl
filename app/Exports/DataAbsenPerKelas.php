@@ -130,6 +130,12 @@ class DataAbsenPerKelas implements FromCollection, WithHeadings, WithEvents, Sho
             // Hitung Alpha
             $A = max(0, $effectiveDays - ($H + $S + $I));
 
+            // hitung persentase kehadiran dari hari efektif
+            $percent = 0;
+            if ($effectiveDays > 0) {
+                $percent = round(($H / $effectiveDays) * 100, 2);
+            }
+
             return [
                 'Nama Siswa' => $s->name ?? '-',
                 'NIS' => $s->nip ?? '-',
@@ -138,7 +144,7 @@ class DataAbsenPerKelas implements FromCollection, WithHeadings, WithEvents, Sho
                 'Sakit (S)' => $S,
                 'Izin (I)' => $I,
                 'Alpha (A)' => $A,
-                'Total' => ($H + $S + $I + $A),
+                'Persentase Kehadiran (%)' => $percent,
             ];
         });
 
@@ -155,7 +161,7 @@ class DataAbsenPerKelas implements FromCollection, WithHeadings, WithEvents, Sho
             'Sakit (S)',
             'Izin (I)',
             'Alpha (A)',
-            'Total',
+            'Persentase Kehadiran (%)',
         ];
     }
 
