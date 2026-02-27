@@ -758,6 +758,8 @@ Route::middleware(['auth', 'hakakses:hubin,kepsek,kaprog,guru'])->group(function
     Route::get('/rekap-absensi', action: [RekapAbsensiController::class, 'index'])->name('rekap.absensi.index');
     Route::get('/rekap-absensi/data', [RekapAbsensiController::class, 'data'])->name('rekap.absensi.data');
     Route::get('/rekap-absensi/filter-options', [RekapAbsensiController::class, 'filterOptions'])->name('rekap.absensi.filterOptions');
+    // export per kelas (Excel)
+    Route::get('/rekap-absensi/export-perkelas', [RekapAbsensiController::class, 'exportPerKelas'])->name('rekap.absensi.exportPerKelas');
 });
 
 //api data siswa, diterima,ditolak,

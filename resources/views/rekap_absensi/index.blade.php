@@ -78,9 +78,14 @@
 
                                             <div class="col-md-4 d-flex align-items-end">
                                                 <div class="form-group w-100">
-                                                    <button type="submit" class="btn btn-primary btn-block">
-                                                        <i class="fas fa-search"></i> Tampilkan
-                                                    </button>
+                                                    <div class="d-flex">
+                                                        <button type="submit" class="btn btn-primary">
+                                                            <i class="fas fa-search"></i> Tampilkan
+                                                        </button>
+                                                        <button type="button" class="btn btn-success ms-2" id="export-perkelas-btn">
+                                                            <i class="fas fa-file-excel"></i> Export Excel
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -344,6 +349,24 @@
                     });
             }
 
+                function exportPerKelas() {
+                    let params = '';
+                    const form = document.getElementById('filter-form');
+                    if (form) {
+                        const fd = new FormData(form);
+                        params = new URLSearchParams(fd).toString();
+                    }
+
+                    if (currentRole === 'kaprog' && kaprogKonkeId) {
+                        if (params) params += '&';
+                        params += 'konke_id=' + encodeURIComponent(kaprogKonkeId);
+                    }
+
+                    const url = `/rekap-absensi/export-perkelas?${params}`;
+                    // trigger download
+                    window.location = url;
+                }
+
             document.addEventListener('DOMContentLoaded', function() {
                 $('.select2').select2({
                     placeholder: '-- pilih --',
@@ -356,6 +379,13 @@
                     filterForm.addEventListener('submit', function(e) {
                         e.preventDefault();
                         fetchData(); // Panggil tanpa argumen page
+                    });
+                }
+
+                const exportBtn = document.getElementById('export-perkelas-btn');
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', function() {
+                        exportPerKelas();
                     });
                 }
 

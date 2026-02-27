@@ -7,6 +7,8 @@ use App\Models\Absensi;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\DataAbsenPerKelas;
 
 class RekapAbsensiController extends Controller
 {    // Endpoint untuk filter dropdown
@@ -225,5 +227,72 @@ class RekapAbsensiController extends Controller
         $perPage = $request->input('per_page', 25);
         $absensi = $query->orderBy('tanggal', 'desc')->paginate($perPage);
         return response()->json($absensi);
+    }
+
+    // Export aggregated absensi per kelas (Excel)
+    public function exportPerKelas(Request $request)
+    {
+        $user = Auth::user();
+        $role = $user->role ?? null;
+
+        // determine guru id same as other methods
+        $guruId = null;
+        if ($user && $role === 'guru') {
+            $guruId = optional($user->guru)->id ?: $user->id;
+        }
+
+        $start = $request->input('start_date');
+        $end = $request->input('end_date');
+
+        if (!($start && $end) && $role !== 'guru') {
+            return response()->json(['error' => 'Tanggal awal dan akhir wajib diisi untuk ekspor.'], 422);
+        }
+
+        // role-based constraints: for kaprog use user's konke_id; for guru limit to pembimbing; hubin/kepsek no restriction
+        $konkeId = null;
+        $kelasId = $request->input('kelas_id');
+        if ($role === 'kaprog') {
+            $konkeId = $user->konke_id ?? null;
+        }
+
+        // resolve readable names for filename and title
+        $konkeName = null;
+        $kelasName = null;
+
+        if ($role === 'guru') {
+            // for guru, use "Bimbingan - {GuruName}" as konkeName so title shows guru's name
+            $gurName = $user->name ?? 'Guru';
+            $konkeName = 'Bimbingan - ' . $gurName;
+            // build filename: rekapabsen_bimbingan_{guru_name}_{dates}...
+            $parts = ['rekapabsen_bimbingan'];
+            $parts[] = preg_replace('/[^A-Za-z0-9_\-]/', '_', str_replace(' ', '_', strtolower($gurName)));
+            if ($start) $parts[] = $start;
+            if ($end) $parts[] = $end;
+            $fileName = implode('_', $parts) . '_' . date('Ymd_His') . '.xlsx';
+        } else {
+            // for non-guru (kaprog, hubin, kepsek): use jurusan/kelas
+            if ($konkeId) {
+                $konke = \App\Models\Konke::find($konkeId);
+                $konkeName = $konke ? ($konke->singkatan ?? $konke->name_konke) : null;
+            } elseif ($user && isset($user->konke_id)) {
+                $k = \App\Models\Konke::find($user->konke_id);
+                $konkeName = $k ? ($k->singkatan ?? $k->name_konke) : null;
+            }
+            if ($kelasId) {
+                $kls = \App\Models\Kelas::find($kelasId);
+                $kelasName = $kls ? $kls->name_kelas : null;
+            }
+
+            // build a friendly filename: rekap_absensi_{konke}_{kelas}_{start}_{end}.xlsx
+            $parts = ['rekap_absensi'];
+            if ($konkeName) $parts[] = preg_replace('/[^A-Za-z0-9_\-]/', '_', str_replace(' ', '_', strtolower($konkeName)));
+            if ($kelasName) $parts[] = preg_replace('/[^A-Za-z0-9_\-]/', '_', str_replace(' ', '_', strtolower($kelasName)));
+            if ($start) $parts[] = $start;
+            if ($end) $parts[] = $end;
+            $fileName = implode('_', $parts) . '_' . date('Ymd_His') . '.xlsx';
+        }
+
+        $export = new DataAbsenPerKelas($start, $end, $konkeId, $kelasId, $guruId, $konkeName, $kelasName);
+        return Excel::download($export, $fileName);
     }
 }
