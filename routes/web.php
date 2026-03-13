@@ -5,6 +5,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AbsensiGuruController;
 use App\Http\Controllers\DataAbsensiController;
 use App\Http\Controllers\Hubin\JurnalController;
+use App\Http\Controllers\IndikatorPenilaianController;
 use App\Http\Controllers\JournalApprovalController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\JurnalSiswaController;
@@ -18,6 +19,8 @@ use App\Http\Controllers\PengajuanIzinSiswaController;
 use App\Http\Controllers\ProgresSiswaController;
 use App\Http\Controllers\RekapAbsensiController;
 use App\Http\Controllers\SuratPengantarPklController;
+use App\Http\Controllers\TujuanPembelajaranController;
+use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\UsersController;
 use App\Models\Cp;
 use App\Models\Guru;
@@ -57,6 +60,7 @@ use App\Http\Controllers\KepsekController;
 use App\Http\Controllers\Pembimbingsiswacontroller;
 use App\Http\Controllers\PercetakanAtpController;
 use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\NilaiAkhirController;
 use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/PKL SMKN 1 Kawali', function () {
@@ -172,7 +176,6 @@ Route::middleware(['auth', 'hakakses:siswa'])->group(function () {
     Route::put('/jurnal/{jurnal}', [JournalController::class, 'update'])->name('jurnal.update');
     Route::delete('/jurnal/{jurnal}', [JournalController::class, 'destroy'])->name('jurnal.destroy');
     Route::get('/jurnal/riwayat', [JournalController::class, 'riwayat'])->name('jurnal.riwayat');
-
 });
 
 
@@ -220,8 +223,6 @@ Route::middleware(['auth', 'hakakses:hubin'])->group(function () {
     //users guru
     Route::get('/user-guru', [UsersController::class, 'guruIndex'])->name('user.guru');
     Route::post('/siswa', [UsersController::class, 'guruStore'])->name('user.guru.store');
-
-
 });
 
 // Route monitoring hanya untuk login dan role kaprog, hubin, pembimbing
@@ -371,7 +372,6 @@ Route::middleware(['auth', 'hakakses:persuratan'])->group(function () {
     Route::post('/persuratan/pindah-pkl/konfirmasi/{id}', [PersuratanController::class, 'konfirmasiPindahPkl'])->name('persuratan.pindah_pkl.konfirmasi');
     Route::get('/persuratan/pindah-pkl/selesai', [PersuratanController::class, 'pindahPklSelesai'])->name('persuratan.pindah_pkl.selesai');
     Route::get('/pindah-pkl/download-surat/{id}', [PindahPklController::class, 'downloadSurat'])->name('pindah-pkl.download-surat');
-
 });
 
 Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
@@ -447,7 +447,6 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     Route::get('/review/pengajuan/ditolak', [PengajuanPklController::class, 'reviewPengajuanDitolak'])->name('review.pengajuanditolak');
 
     Route::get('/iduka/daftar/siswa-diterima', [IdukaController::class, 'siswaDiterima'])->name('iduka.siswa.diterima');
-
 });
 
 
@@ -619,7 +618,6 @@ Route::middleware(['auth', 'hakakses:kaprog'])->group(function () {
     Route::get('/kaprog/siswa-belum-dikonfirmasi', [KaprogController::class, 'getSiswaBelumDikonfirmasi'])->name('kaprog.siswa-belum-dikonfirmasi');
     Route::get('/kaprog/siswa-belum-absen', [KaprogController::class, 'getSiswaBelumAbsen'])->name('kaprog.siswa-belum-absen');
     Route::get('/kaprog/pembimbing-belum-konfirmasi', [KaprogController::class, 'getPembimbingBelumKonfirmasi'])->name('kaprog.pembimbing-belum-konfirmasi');
-
 });
 
 
@@ -690,8 +688,6 @@ Route::middleware(['auth', 'hakakses:kepsek'])->group(function () {
     Route::get('/kepsek/siswa/{id}/detail', [SiswaController::class, 'show'])->name('kepsek.siswa.detail');
 
     Route::get('/kepsek/siswa', [SiswaController::class, 'index'])->name('kepsek.siswa.index');
-
-
 });
 
 
@@ -753,6 +749,17 @@ Route::middleware(['auth', 'hakakses:guru'])->group(function () {
         ->name('absensi.pulang');
 });
 
+Route::middleware(['auth', 'hakakses:guru,hubin,kaprog,iduka'])->group(function () {
+    Route::resource('indikator', IndikatorPenilaianController::class);
+    Route::resource('tujuan-pembelajaran', TujuanPembelajaranController::class)->except(['create', 'edit', 'show', 'destroy']);
+
+    Route::get('/penilaian', [PenilaianController::class, 'index'])->name('penilaian.index');
+    Route::post('/penilaian/store', [PenilaianController::class, 'store'])->name('penilaian.store');
+    Route::get('/penilaian/get-indikator/{siswa_id}', [PenilaianController::class, 'getIndikator'])->name('penilaian.get-indikator');
+
+    Route::get('/nilai-akhir', [NilaiAkhirController::class,'index'])->name('nilai-akhir.index');
+    Route::get('/penilaian/export/{id}', [PenilaianController::class, 'export'])->name('penilaian.export');
+});
 
 Route::middleware(['auth', 'hakakses:hubin,kepsek,kaprog,guru'])->group(function () {
     Route::get('/rekap-absensi', action: [RekapAbsensiController::class, 'index'])->name('rekap.absensi.index');

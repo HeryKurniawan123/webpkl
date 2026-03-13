@@ -3,7 +3,6 @@
 @section('content')
     <div class="container-fluid"><br>
         {{-- Flash Messages --}}
-        <div class="container-xxl flex-grow-1 container-p-y">
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="bi bi-check-circle me-2"></i>
@@ -85,6 +84,13 @@
                                             @else
                                                 <div class="alert alert-warning">
                                                     Anda belum terdaftar di IDUKA manapun. Silakan hubungi administrator.
+                                                </div>
+                                            @endif
+
+                                            @if(isset($pkEnded) && $pkEnded)
+                                                <div class="alert alert-warning mt-3">
+                                                    <i class="bi bi-info-circle me-2"></i>
+                                                    <strong>Periode PKL telah selesai.</strong> Absensi tidak lagi dibuka.
                                                 </div>
                                             @endif
                                         @endauth
@@ -849,6 +855,10 @@
         // Status hari libur
         const isHoliday = @json($isHoliday ?? false);
         const holidayLabel = @json($holidayLabel ?? '');
+
+        // PKL period flag (set server-side)
+        const pkEnded = @json($pkEnded ?? false);
+
 
         // Elemen UI
         const locationSwitch = document.getElementById('locationSwitch');
@@ -2427,6 +2437,27 @@
         }
 
         function updateButtonStates() {
+            // PKL period ended? jika ya, kunci semua tombol
+            if (pkEnded) {
+                btnMasuk.disabled = true;
+                btnPulang.disabled = true;
+                btnIzin.disabled = true;
+                btnDinas.disabled = true;
+                btnMasuk.classList.remove('btn-success');
+                btnMasuk.classList.add('btn-secondary');
+                btnPulang.classList.remove('btn-warning');
+                btnPulang.classList.add('btn-secondary');
+                btnIzin.classList.remove('btn-info');
+                btnIzin.classList.add('btn-secondary');
+                btnDinas.classList.remove('btn-primary');
+                btnDinas.classList.add('btn-secondary');
+
+                locationStatus.textContent = 'Periode PKL telah selesai. Tidak dapat melakukan absensi.';
+                distanceStatus.textContent = '';
+                distanceValue.textContent = '-';
+                userLocation.textContent = '-';
+                return;
+            }
             // Status dari server
             const absensiHariIni = @json($absensiHariIni);
             const sedangDinas = absensiHariIni && absensiHariIni.status_dinas === 'disetujui';
@@ -2468,6 +2499,17 @@
                 locationSwitch.checked = false;
 
                 return;
+            }
+
+            // Tombol Masuk - penguncian global bila periode PKL selesai
+            if (pkEnded) {
+                btnMasuk.disabled = true;
+                btnPulang.disabled = true;
+                btnMasuk.classList.remove('btn-success');
+                btnMasuk.classList.add('btn-secondary');
+                btnPulang.classList.remove('btn-warning');
+                btnPulang.classList.add('btn-secondary');
+                return; // tidak perlu evaluasi lainnya
             }
 
             // Tombol Masuk - Nonaktifkan jika ada izin/dinas (pending/approved) atau sudah absen masuk

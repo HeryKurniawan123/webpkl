@@ -204,7 +204,7 @@
                         </li>
                     @endif
 
-                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog']))
+                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog' , 'hubin']))
                         <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
                             <a href="{{ route('approval.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
@@ -218,7 +218,64 @@
                                 <div data-i18n="Basic">Absensi</div>
                             </a>
                         </li>
+
+                        <li
+                            class="menu-item
+{{ Request::routeIs('tujuan-pembelajaran.*') ||
+Request::routeIs('indikator.*') ||
+Request::routeIs('penilaian.*') ||
+Request::routeIs('nilai-akhir.*')
+    ? 'active open'
+    : '' }}">
+
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <i class="menu-icon tf-icons bx bx-bar-chart"></i>
+                                <div>Nilai</div>
+                            </a>
+
+                            <ul class="menu-sub">
+
+                                {{-- Tujuan Pembelajaran --}}
+                                <li
+                                    class="menu-item 
+    {{ Request::routeIs('tujuan-pembelajaran.*') ? 'active' : '' }}
+    {{ !in_array(auth()->user()->role, ['hubin', 'kaprog']) ? 'd-none' : '' }}">
+
+                                    <a href="{{ route('tujuan-pembelajaran.index') }}" class="menu-link">
+                                        <div>Tujuan Pembelajaran</div>
+                                    </a>
+
+                                </li>
+
+                                {{-- Indikator Penilaian --}}
+                                <li
+                                    class="menu-item 
+    {{ Request::routeIs('indikator.*') ? 'active' : '' }}
+    {{ !in_array(auth()->user()->role, ['hubin', 'kaprog']) ? 'd-none' : '' }}">
+
+                                    <a href="{{ route('indikator.index') }}" class="menu-link">
+                                        <div>Indikator Penilaian</div>
+                                    </a>
+
+                                </li>
+                                
+
+                                <li class="menu-item {{ Request::routeIs('penilaian.*') ? 'active' : '' }}">
+                                    <a href="{{ route('penilaian.index') }}" class="menu-link">
+                                        <div>Penilaian</div>
+                                    </a>
+                                </li>
+
+                                <li class="menu-item {{ Request::routeIs('nilai-akhir.*') ? 'active' : '' }}">
+                                    <a href="{{ route('nilai-akhir.index') }}" class="menu-link">
+                                        <div>Nilai Akhir</div>
+                                    </a>
+                                </li> 
+
+                            </ul>
+                        </li>
                     @endif
+
 
                     @if (in_array(auth()->user()->role, ['guru', 'kaprog']))
                         <li class="menu-item {{ Request::routeIs('pembimbing.dashboard') ? 'active' : '' }}">

@@ -18,9 +18,32 @@ use Illuminate\Support\Facades\Log;
 
 class AbsensiController extends Controller
 {
+    /**
+     * Returns true when today's date is within the configured PKL period.
+     */
+    private function isPklActive()
+    {
+        $today = Carbon::today();
+        $start = Carbon::parse(config('pkl.start'));
+        $end   = Carbon::parse(config('pkl.end'));
+
+        return $today->between($start, $end);
+    }
+
+    /**
+     * Throw exception if PKL period has ended; used to guard write actions.
+     */
+    private function ensurePklActive()
+    {
+        if (!$this->isPklActive()) {
+            throw new \Exception('Periode PKL telah selesai. Absensi tidak dapat dilakukan lagi.');
+        }
+    }
+
     public function index()
     {
         $user = Auth::user();
+        $pkEnded = !$this->isPklActive();
         $absensiHariIni = null;
         $riwayatAbsensi = collect();
         $canPulang = false;
@@ -115,7 +138,8 @@ class AbsensiController extends Controller
             'hasPendingMasuk',
             'hasPendingPulang',
             'isHoliday',
-            'holidayLabel'
+            'holidayLabel',
+            'pkEnded'
         ));
     }
 
@@ -160,6 +184,7 @@ class AbsensiController extends Controller
     public function masuk(Request $request)
     {
         try {
+            $this->ensurePklActive();
             DB::beginTransaction();
 
             $user = Auth::user();
@@ -340,6 +365,7 @@ class AbsensiController extends Controller
 
     public function pulang(Request $request)
     {
+        $this->ensurePklActive();
         Log::info('=== ABSEN PULANG DIPANGGIL ===', [
             'user_id' => Auth::id(),
             'request_data' => $request->all()
@@ -553,6 +579,7 @@ class AbsensiController extends Controller
 
     public function izin(Request $request)
     {
+        $this->ensurePklActive();
         Log::info('=== AJUKAN IZIN DIPANGGIL ===', [
             'user_id' => Auth::id(),
             'request_data' => $request->all()
@@ -655,6 +682,7 @@ class AbsensiController extends Controller
     // Tambahkan method ini di AbsensiController
     public function dinasLuar(Request $request)
     {
+        $this->ensurePklActive();
         Log::info('=== AJUKAN DINAS LUAR DIPANGGIL ===', [
             'user_id' => Auth::id(),
             'request_data' => $request->all()
