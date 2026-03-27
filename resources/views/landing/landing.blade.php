@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://diagyar.cloud/api/agent.js" data-key="5c5d61a02e66da9802d1d64f30e672c7f035a6f3022a8b802dc3c84bca490bd5"></script>
     
     <script>
         tailwind.config = {
@@ -97,6 +99,47 @@
             transition: transform 0.5s ease;
         }
         .gallery-item:hover img { transform: scale(1.1); }
+
+        .clients-slider {
+            overflow: hidden;
+            position: relative;
+            height: 120px;
+            display: flex;
+            align-items: center;
+        }
+
+        .clients-track {
+            display: flex;
+            animation: scrollClients 30s linear infinite;
+            gap: 24px;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .client-logo {
+            flex: 0 0 auto;
+            width: 120px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            padding: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+        }
+
+        .client-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes scrollClients {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -312,6 +355,45 @@
             <div class="card-dark rounded-2xl p-6 lg:p-10">
                 <div class="w-full h-[400px] relative">
                     <canvas id="pklChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clients Section -->
+    <section id="clients" class="py-24 px-6 bg-navy-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8">Mitra Industri Kami</h2>
+            <div class="overflow-hidden">
+                <div class="clients-slider">
+                    <div class="clients-track">
+                        <div class="client-logo"><img src="/images/daihatsu.jpg" alt="Daihatsu"></div>
+                        <div class="client-logo"><img src="/images/inovindo.png" alt="Inovindo"></div>
+                        <div class="client-logo"><img src="/images/oracle.png" alt="Oracle"></div>
+                        <div class="client-logo"><img src="/images/skyline.png" alt="Skyline"></div>
+                        <div class="client-logo"><img src="/images/pptik itb.png" alt="PPTIK ITB"></div>
+                        <div class="client-logo"><img src="/images/logopupr.png" alt="PUPR"></div>
+                        <div class="client-logo"><img src="/images/mikrotikjpeg.jpeg" alt="Mikrotik"></div>
+                        <div class="client-logo"><img src="/images/isi.png" alt="ISI"></div>
+                        <div class="client-logo"><img src="/images/pixy.png" alt="Pixy"></div>
+                        <div class="client-logo"><img src="/images/balai budaya.jpeg" alt="Balai Budaya"></div>
+                        <div class="client-logo"><img src="/images/asn.png" alt="ASN"></div>
+                        <div class="client-logo"><img src="/images/UNY.png" alt="UNY"></div>
+                        <div class="client-logo"><img src="/images/sanggarseni.jpeg" alt="Sanggar Seni"></div>
+                        <div class="client-logo"><img src="/images/daihatsu.jpg" alt="Daihatsu"></div>
+                        <div class="client-logo"><img src="/images/inovindo.png" alt="Inovindo"></div>
+                        <div class="client-logo"><img src="/images/oracle.png" alt="Oracle"></div>
+                        <div class="client-logo"><img src="/images/skyline.png" alt="Skyline"></div>
+                        <div class="client-logo"><img src="/images/pptik itb.png" alt="PPTIK ITB"></div>
+                        <div class="client-logo"><img src="/images/logopupr.png" alt="PUPR"></div>
+                        <div class="client-logo"><img src="/images/mikrotikjpeg.jpeg" alt="Mikrotik"></div>
+                        <div class="client-logo"><img src="/images/isi.png" alt="ISI"></div>
+                        <div class="client-logo"><img src="/images/pixy.png" alt="Pixy"></div>
+                        <div class="client-logo"><img src="/images/balai budaya.jpeg" alt="Balai Budaya"></div>
+                        <div class="client-logo"><img src="/images/asn.png" alt="ASN"></div>
+                        <div class="client-logo"><img src="/images/UNY.png" alt="UNY"></div>
+                        <div class="client-logo"><img src="/images/sanggarseni.jpeg" alt="Sanggar Seni"></div>
+                    </div>
                 </div>
             </div>
         </div>
