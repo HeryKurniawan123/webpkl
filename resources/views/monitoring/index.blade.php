@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container">
@@ -137,7 +137,7 @@
             </div>
 
             <div class="card-body p-0">
-                <div class="table-responsive">
+                <div class="table-responsive text-nowrap">
                     <table class="table table-hover mb-0">
                         <thead class="bg-light">
                             <tr>
@@ -311,7 +311,7 @@
                             </tbody>
                         </table>
                     @else
-                        <p class="text-muted">Semua guru/kaprog sudah membuat monitoring âœ…</p>
+                        <p class="text-muted">Semua guru/kaprog sudah membuat monitoring Ã¢Å“â€¦</p>
                     @endif
 
                 </div>
@@ -364,3 +364,4 @@
         }
     </script>
 @endpush
+

@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <div class="container-fluid">
@@ -17,7 +17,7 @@
                 <div class="col-md-12 mt-3">
                     @if($pengajuanUsulans->isEmpty())
                     <div class="alert alert-info text-center mt-4" role="alert">
-                        🎉 Semua pengajuan sudah berhasil dikirim ke Iduka, dan tidak ada pengajuan yang tersedia.
+                         Semua pengajuan sudah berhasil dikirim ke Iduka, dan tidak ada pengajuan yang tersedia.
                     </div>
                     @else
                     @if(session('success'))

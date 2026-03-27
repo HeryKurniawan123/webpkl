@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
 
 <!DOCTYPE html>
@@ -113,7 +113,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h5>Data Siswa</h5>
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-striped">
                                     <tr>
                                         <td>Nama Siswa</td>
@@ -139,7 +139,7 @@
                             </div>
 
                             <h5 class="mt-4">Data Institusi / Perusahaan</h5>
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-striped">
                                     <tr>
                                         <td>Nama Institusi</td>
@@ -175,7 +175,7 @@
                             </div>
 
                             <h5 class="mt-4">Data Pimpinan</h5>
-                           <div class="table-responsive">
+                           <div class="table-responsive text-nowrap">
                             <table class="table table-striped">
                                 <tr>
                                     <td>Nama Pimpinan</td>
@@ -201,7 +201,7 @@
                            </div>
 
                             <h5 class="mt-4">Data Pembimbing</h5>
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-striped">
                                     <tr>
                                         <td>Nama Pembimbing</td>

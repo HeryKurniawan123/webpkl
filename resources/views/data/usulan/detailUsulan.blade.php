@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
 
 <!DOCTYPE html>
@@ -74,7 +74,7 @@
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-hover">
                                 <tr>
                                     <td>Nama Siswa</td>
@@ -139,7 +139,7 @@
                     <div class="card">
                         <div class="card-body">
                             @if ($usulanIduka)
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-hover">
                                 <tr>
                                     <td>Nama Institusi / Perusahaan</td>
@@ -194,7 +194,7 @@
                             </table>
                             </div>
                             @elseif ($pengajuanUsulan && $pengajuanUsulan->iduka)
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-hover">
                                 <tr>
                                     <td>Nama IDUKA</td>

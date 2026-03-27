@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container-fluid">
@@ -29,7 +29,7 @@
                                 <i class="fas fa-calendar-day fa-2x"></i>
                             </div>
                             <div>
-                                <h5 class="alert-heading mb-1">Perhatian — Hari Libur Hari Ini</h5>
+                                <h5 class="alert-heading mb-1">Perhatian â€” Hari Libur Hari Ini</h5>
                                 <p class="mb-1">
                                     Beberapa IDUKA memiliki hari libur hari ini. Data absensi untuk IDUKA tersebut
                                     mungkin tidak lengkap atau dinonaktifkan.
@@ -249,7 +249,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="table-responsive">
+                    <div class="table-responsive text-nowrap">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -292,7 +292,7 @@
                         <span class="badge bg-info fs-5" id="countPembimbingBelumKonfirmasi">0 GURU</span>
                     </div>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive text-nowrap">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -345,7 +345,7 @@
                         <span class="badge bg-warning fs-5" id="countBelumDikonfirmasi">0 SISWA</span>
                     </div>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive text-nowrap">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -400,7 +400,7 @@
                         <span class="badge bg-danger fs-5" id="countBelumAbsen">0 SISWA</span>
                     </div>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive text-nowrap">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -1002,3 +1002,4 @@
         });
     </script>
 @endsection
+

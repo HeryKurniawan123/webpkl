@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <div class="container mt-4">
@@ -7,7 +7,7 @@
     @if($pengajuans->isEmpty())
         <div class="alert alert-info">Belum ada siswa yang mengajukan PKL ke institusi ini.</div>
     @else
-        <div class="table-responsive">
+        <div class="table-responsive text-nowrap">
             <table class="table table-bordered align-middle">
                 <thead class="table-light">
                     <tr>
@@ -54,3 +54,4 @@
     @endif
 </div>
 @endsection
+

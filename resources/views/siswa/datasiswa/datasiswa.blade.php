@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
     <!DOCTYPE html>
     <html lang="en">
@@ -139,7 +139,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
+                        <div class="card shadow-sm border-0 mb-4">
                             <div class="card-body">
                                 @if ($errors->any())
                                 <div class="alert alert-danger">
@@ -150,7 +150,7 @@
                                     </ul>
                                 </div>
                                 @endif
-                                <div class="table-responsive">
+                                <div class="table-responsive text-nowrap">
                                     <table class="table table-hover">
                                         <thead style="text-align: center">
                                             <tr>
@@ -187,15 +187,15 @@
                                                           
                                                              @if (auth()->user()->role == 'kaprog')
                                                             <a href="{{ route('kaprog.siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
-                                                                <i class="bi bi-eye"></i>
+                                                                <i class="fas fa-eye"></i>
                                                             </a>
                                                         @elseif(auth()->user()->role == 'hubin')
                                                             <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
-                                                                <i class="bi bi-eye"></i>
+                                                                <i class="fas fa-eye"></i>
                                                             </a>
                                                         @elseif(auth()->user()->role == 'kepsek')
                                                             <a href="{{ route('kepsek.siswa.detail', $s->id) }}" class="btn btn-info btn-sm d-flex align-items-center">
-                                                                <i class="bi bi-eye"></i>
+                                                                <i class="fas fa-eye"></i>
                                                             </a>
                                                         @endif
                                                             @if(in_array(auth()->user()->role, ['hubin', 'guru']))
@@ -203,7 +203,7 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
-                                                                    <i class="bi bi-trash3"></i>
+                                                                    <i class="fas fa-trash-alt3"></i>
                                                                 </button>
                                                             </form>           
                                                             @endif                                                 
@@ -280,7 +280,7 @@
                                                                         <input type="password"  id="password-edit-{{ $s->id }}" class="form-control"
                                                                             name="password">
                                                                             <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-edit-{{ $s->id }}" tabindex="-1">
-                                                                            <i class="bi bi-eye-slash"></i>
+                                                                            <i class="fas fa-eye-slash"></i>
                                                                         </button>
                                                                     </div>
                                                                         <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
@@ -388,7 +388,7 @@
                                     placeholder="Masukkan Password" required>
                                 <button type="button" class="btn btn-outline-secondary toggle-password"
                                     data-target="password-create" tabindex="-1">
-                                    <i class="bi bi-eye-slash"></i>
+                                    <i class="fas fa-eye-slash"></i>
                                 </button>
                             </div>
                             <small class="form-text text-muted"><i>Password minimal 8 karakter.</i></small>
@@ -495,3 +495,4 @@
         });
     </script>
 @endsection
+

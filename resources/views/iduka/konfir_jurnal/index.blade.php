@@ -4,7 +4,7 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="mb-4">
             {{-- PERUBAHAN: Judul dinamis berdasarkan role --}}
-            <h3 class="fw-bold">Persetujuan Jurnal - {{ Auth::user()->role === 'kaprog' ? 'Kepala Program' : 'Guru/Pembimbing' }} 📖</h3>
+            <h3 class="fw-bold">Persetujuan Jurnal - {{ Auth::user()->role === 'kaprog' ? 'Kepala Program' : 'Guru/Pembimbing' }} ??</h3>
             <p class="text-muted">Daftar jurnal yang membutuhkan persetujuan</p>
 
             {{-- Tab Navigation --}}
@@ -12,14 +12,14 @@
                 <li class="nav-item">
                     <a class="nav-link {{ Request::routeIs('approval.index') ? 'active' : '' }}"
                         href="{{ route('approval.index') }}">
-                        <i class="bx bx-time me-1"></i> Menunggu Persetujuan
+                        <i class="fas fa-clock me-1"></i> Menunggu Persetujuan
                         <span class="badge bg-primary rounded-pill ms-1">{{ $jurnals->total() }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::routeIs('approval.riwayat') ? 'active' : '' }}"
                         href="{{ route('approval.riwayat') }}">
-                        <i class="bx bx-history me-1"></i> Riwayat
+                        <i class="fas fa-history me-1"></i> Riwayat
                     </a>
                 </li>
             </ul>
@@ -45,7 +45,7 @@
                 <div class="row g-4">
                     @foreach ($jurnals as $jurnal)
                         <div class="col-md-6 col-lg-4">
-                            <div class="card h-100 border rounded shadow-sm">
+                            <div class="card h-100 border-0 rounded-4 shadow-sm card-hover">
                                 <div class="card-body d-flex flex-column">
                                     <div class="mb-2">
                                         <small class="text-muted">
@@ -59,17 +59,17 @@
                                         {{ Str::limit($jurnal->uraian, 120) }}
                                     </p>
                                     <div class="d-flex align-items-center gap-3 mb-3 small text-muted">
-                                        <span>🕐 {{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</span>
+                                        <span> {{ $jurnal->jam_mulai }} - {{ $jurnal->jam_selesai }}</span>
                                         @if ($jurnal->foto)
-                                            <span>📷 Dengan foto</span>
+                                            <span>?? Dengan foto</span>
                                         @endif
                                     </div>
                                     <div class="mb-3">
                                         {{-- PERUBAHAN: Tampilkan status tunggal --}}
-                                        <span class="badge bg-warning text-dark">⏳ Menunggu Persetujuan</span>
+                                        <span class="badge bg-warning text-dark">? Menunggu Persetujuan</span>
                                     </div>
                                     <div class="mt-auto d-flex gap-2">
-                                        <button type="button" class="btn btn-sm btn-outline-primary view-detail"
+                                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 view-detail"
                                             data-id="{{ $jurnal->id }}">
                                             Lihat Detail
                                         </button>
@@ -78,13 +78,13 @@
                                         <form action="{{ route('approval.approve', $jurnal->id) }}" method="POST"
                                             class="d-inline approve-form">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-success"
+                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm"
                                                 onclick="return confirmApproval('{{ $jurnal->user ? $jurnal->user->name : 'User' }}')">
                                                 Setujui
                                             </button>
                                         </form>
 
-                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                        <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm" data-bs-toggle="modal"
                                             data-bs-target="#rejectModal{{ $jurnal->id }}">
                                             Tolak
                                         </button>
@@ -120,7 +120,7 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-light"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-danger">Tolak Jurnal</button>
+                                            <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm">Tolak Jurnal</button>
                                         </div>
                                     </form>
                                 </div>
@@ -134,7 +134,7 @@
                 </div>
             @else
                 <div class="text-center py-5">
-                    <div style="font-size: 50px;">✅</div>
+                    <div style="font-size: 50px;"></div>
                     <h5 class="fw-bold mt-3">Tidak ada jurnal yang perlu disetujui</h5>
                     <p class="text-muted">Semua jurnal telah diproses.</p>
                     {{-- PERUBAHAN: Gunakan route yang sesuai --}}
@@ -252,7 +252,7 @@
                                     <i class="bi bi-exclamation-triangle me-2"></i>
                                     <strong>Error:</strong> ${error.message}
                                     <div class="mt-3">
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="retryFetch(${jurnalId})">
+                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="retryFetch(${jurnalId})">
                                             <i class="bi bi-arrow-clockwise me-1"></i> Coba Lagi
                                         </button>
                                     </div>
@@ -315,7 +315,7 @@
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <strong>Error:</strong> ${error.message}
                             <div class="mt-3">
-                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="retryFetch(${jurnalId})">
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="retryFetch(${jurnalId})">
                                     <i class="bi bi-arrow-clockwise me-1"></i> Coba Lagi
                                 </button>
                                 <button type="button" class="btn btn-secondary btn-sm ms-2" data-bs-dismiss="modal">
@@ -427,3 +427,5 @@
         }
     </style>
 @endsection
+
+

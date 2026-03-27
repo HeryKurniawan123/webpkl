@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <div class="container-fluid px-4 py-4">
@@ -13,7 +13,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Berhasil!</strong> {{ session('success') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertSuccess')">✕</button>
+        <button class="alert-close" onclick="closeAlert('alertSuccess')">âœ•</button>
     </div>
     @endif
 
@@ -26,7 +26,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Gagal!</strong> {{ session('error') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertError')">✕</button>
+        <button class="alert-close" onclick="closeAlert('alertError')">âœ•</button>
     </div>
     @endif
 
@@ -77,7 +77,7 @@
                                 <div class="siswa-avatar" id="siswaAvatar">S</div>
                                 <div>
                                     <div class="siswa-name" id="siswaName">-</div>
-                                    <div class="siswa-badge">✓ Siswa Terpilih</div>
+                                    <div class="siswa-badge">âœ“ Siswa Terpilih</div>
                                 </div>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                 </div>
 
                 <div class="card-modern-body p-0">
-                    <div class="table-responsive">
+                    <div class="table-responsive text-nowrap">
                         <table class="table-modern">
                             <thead>
                                 <tr>
@@ -157,11 +157,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <span>Draft Penilaian — Menunggu Penilaian Pihak Lain</span>
+                <span>Draft Penilaian â€” Menunggu Penilaian Pihak Lain</span>
             </div>
         </div>
         <div class="card-modern-body p-0">
-            <div class="table-responsive">
+            <div class="table-responsive text-nowrap">
                 <table class="table-modern">
                     <thead>
                         <tr>
@@ -183,22 +183,22 @@
                             </td>
                             <td>
                                 @if($draft['guru']->count())
-                                    <span class="draft-done-badge">✓ Sudah Dinilai</span>
+                                    <span class="draft-done-badge">âœ“ Sudah Dinilai</span>
                                     <div class="draft-detail mt-1">
                                         Rata-rata: <strong>{{ round($draft['guru']->avg('nilai'), 1) }}</strong>
                                     </div>
                                 @else
-                                    <span class="draft-pending-badge">⏳ Belum Dinilai</span>
+                                    <span class="draft-pending-badge">â³ Belum Dinilai</span>
                                 @endif
                             </td>
                             <td>
                                 @if($draft['iduka']->count())
-                                    <span class="draft-done-badge">✓ Sudah Dinilai</span>
+                                    <span class="draft-done-badge">âœ“ Sudah Dinilai</span>
                                     <div class="draft-detail mt-1">
                                         Rata-rata: <strong>{{ round($draft['iduka']->avg('nilai'), 1) }}</strong>
                                     </div>
                                 @else
-                                    <span class="draft-pending-badge">⏳ Belum Dinilai</span>
+                                    <span class="draft-pending-badge">â³ Belum Dinilai</span>
                                 @endif
                             </td>
                         </tr>
@@ -396,7 +396,7 @@ function showToast(message, type = 'success') {
 @if(session('error'))   showToast("{{ session('error') }}",   'error');   @endif
 
 /* ===========================
-   SELECT SISWA → LOAD INDIKATOR GROUPED
+   SELECT SISWA â†’ LOAD INDIKATOR GROUPED
 =========================== */
 document.getElementById('siswaSelect').addEventListener('change', function () {
     const siswaId        = this.value;
@@ -452,7 +452,7 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
             tujuanList.forEach((tp, tpIndex) => {
                 const indikators = tp.indikator_penilaians || [];
 
-                // ── ROW HEADER: Tujuan Pembelajaran ──────────────────────
+                // â”€â”€ ROW HEADER: Tujuan Pembelajaran â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 const rowTP = document.createElement('tr');
                 rowTP.className = 'row-tp';
                 rowTP.innerHTML = `
@@ -465,7 +465,7 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
                 `;
                 tabelBody.appendChild(rowTP);
 
-                // ── ROW INDIKATOR: satu baris per indikator ───────────────
+                // â”€â”€ ROW INDIKATOR: satu baris per indikator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                 indikators.forEach((indikator, iIdx) => {
                     const rowInd = document.createElement('tr');
                     rowInd.className = 'row-indikator';
@@ -482,8 +482,8 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
                         <td>
                             <select name="ketercapaian_indikator[${indikator.id}]" class="select-table" required>
                                 <option value="">-- Pilih --</option>
-                                <option value="Ya">✓ Ya</option>
-                                <option value="Tidak">✗ Tidak</option>
+                                <option value="Ya">âœ“ Ya</option>
+                                <option value="Tidak">âœ— Tidak</option>
                             </select>
                         </td>
                         <td>
@@ -495,7 +495,7 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
                         </td>
                         <td>
                             <input type="number" name="nilai[${indikator.id}]"
-                                class="input-table" min="0" max="100" placeholder="0–100" required>
+                                class="input-table" min="0" max="100" placeholder="0â€“100" required>
                         </td>
                         <td>
                             <input type="text" name="deskripsi[${indikator.id}]"
@@ -516,7 +516,7 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
 });
 
 /* ===========================
-   SUBMIT — loading state
+   SUBMIT â€” loading state
 =========================== */
 document.getElementById('formPenilaian').addEventListener('submit', function () {
     const btn = document.getElementById('btnSubmit');

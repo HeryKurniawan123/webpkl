@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container-xxl flex-grow-1 container-p-y">
@@ -39,7 +39,7 @@
 
                 @if ($siswaBelumIsi->count() > 0)
                     <!-- Tampilan untuk semua role -->
-                    <div class="table-responsive">
+                    <div class="table-responsive text-nowrap">
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
                                 <tr>
@@ -249,3 +249,4 @@
         }
     </script>
 @endsection
+

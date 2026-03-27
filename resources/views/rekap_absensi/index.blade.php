@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container-fluid mt-3">
@@ -244,7 +244,7 @@
 
                 // 4. Buat Tabel
                 html += `
-        <div class="table-responsive">
+        <div class="table-responsive text-nowrap">
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr class="text-center">
@@ -494,3 +494,4 @@
             }
         </script>
     @endpush
+

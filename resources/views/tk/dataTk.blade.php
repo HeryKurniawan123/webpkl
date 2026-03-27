@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
 <div class="container-fluid">
     <div class="content-wrapper">
@@ -44,7 +44,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="table-responsive text-nowrap">
                             <table class="table table-hover" style="text-align: center">
                                 <thead>
                                     <th>No</th>

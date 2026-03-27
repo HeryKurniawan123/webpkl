@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <div class="container-fluid">
@@ -30,7 +30,7 @@
                 <div class="col-md-12 mt-3">
                     @if($pengajuanUsulans->isEmpty())
                     <div class="alert alert-info text-center mt-4" role="alert">
-                        🎉 Semua pengajuan sudah berhasil dikirim ke Iduka, dan tidak ada pengajuan yang tersedia.
+                         Semua pengajuan sudah berhasil dikirim ke Iduka, dan tidak ada pengajuan yang tersedia.
                     </div>
                     @else
 
@@ -95,7 +95,7 @@
                                 <small class="text-muted">{{ $filteredPengajuan->count() }} siswa mengajukan ke sini</small>
                                 @if($jumlahMenunggu > 0)
                                     <div class="text-danger mt-1" style="font-size: 13px;">
-                                        ⚠️ {{ $jumlahMenunggu }} siswa sedang mengajukan pembatalan (menunggu)
+                                         {{ $jumlahMenunggu }} siswa sedang mengajukan pembatalan (menunggu)
                                     </div>
                                 @endif
                             </div>
@@ -188,3 +188,4 @@
     });
 </script>
 @endif
+

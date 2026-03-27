@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <div class="container-fluid px-4 py-4">
@@ -12,7 +12,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Berhasil!</strong> {{ session('success') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertSuccess')">✕</button>
+        <button class="alert-close" onclick="closeAlert('alertSuccess')">âœ•</button>
     </div>
     @endif
 
@@ -24,7 +24,7 @@
             </svg>
         </div>
         <div class="alert-content"><strong>Gagal!</strong> {{ session('error') }}</div>
-        <button class="alert-close" onclick="closeAlert('alertError')">✕</button>
+        <button class="alert-close" onclick="closeAlert('alertError')">âœ•</button>
     </div>
     @endif
 
@@ -91,7 +91,7 @@
 
         <div class="card-modern-body p-0">
             @if(count($data) > 0)
-            <div class="table-responsive">
+            <div class="table-responsive text-nowrap">
                 <table class="table-modern" id="rekapTable">
                     <thead>
                         <tr>

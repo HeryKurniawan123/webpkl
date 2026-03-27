@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <h4 class="mb-4">Profil Saya</h4>
+    <div class="card border-0 shadow-sm mb-4 card-hover">
+        <div class="card-body p-4">
+            <h5 class="mb-4 fw-bold"><i class="fas fa-user-circle text-primary me-2"></i>Profil Saya</h5>
 
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -21,80 +21,102 @@
                             width="100" height="100">
                     </div>
                     <div class="col">
-                        <label class="form-label">Foto Profil</label>
-                        <input type="file" name="profile_photo" class="form-control" id="profilePhotoInput">
-                        @error('profile_photo')<div class="text-danger">{{ $message }}</div>@enderror
+                        <label class="form-label fw-medium">Foto Profil</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-camera text-muted"></i></span>
+                            <input type="file" name="profile_photo" class="form-control border-start-0 ps-0" id="profilePhotoInput">
+                        </div>
+                        @error('profile_photo')<div class="text-danger mt-1 small">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Nama</label>
-                    <input type="text" name="name" class="form-control" value="{{ old('name', $user->name) }}">
-                    @error('name')<div class="text-danger">{{ $message }}</div>@enderror
+                    <label class="form-label fw-medium">Nama Lengkap</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-id-badge text-muted"></i></span>
+                        <input type="text" name="name" class="form-control border-start-0 ps-0" value="{{ old('name', $user->name) }}">
+                    </div>
+                    @error('name')<div class="text-danger mt-1 small">{{ $message }}</div>@enderror
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     @if(auth()->user()->role === 'siswa')
-                        <label class="form-label">NIS</label>
-                        <input type="text" name="nip" class="form-control" value="{{ old('nip', $user->nip) }}" placeholder="Masukkan NIS">
+                        <label class="form-label fw-medium">NIS</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-hashtag text-muted"></i></span>
+                            <input type="text" name="nip" class="form-control border-start-0 ps-0" value="{{ old('nip', $user->nip) }}" placeholder="Masukkan NIS">
+                        </div>
                     @elseif(in_array(auth()->user()->role, ['iduka', 'industri']))
-                        <label class="form-label">Email</label>
-                        <input type="email" name="nip" class="form-control" value="{{ old('nip', $user->nip) }}" placeholder="Masukkan email">
+                        <label class="form-label fw-medium">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-envelope text-muted"></i></span>
+                            <input type="email" name="nip" class="form-control border-start-0 ps-0" value="{{ old('nip', $user->nip) }}" placeholder="Masukkan email">
+                        </div>
                     @else
-                        <label class="form-label">NIP</label>
-                        <input type="text" name="nip" class="form-control" value="{{ old('nip', $user->nip) }}" placeholder="Masukkan NIP">
+                        <label class="form-label fw-medium">NIP</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-hashtag text-muted"></i></span>
+                            <input type="text" name="nip" class="form-control border-start-0 ps-0" value="{{ old('nip', $user->nip) }}" placeholder="Masukkan NIP">
+                        </div>
                     @endif
-                    @error('nip')<div class="text-danger">{{ $message }}</div>@enderror
+                    @error('nip')<div class="text-danger mt-1 small">{{ $message }}</div>@enderror
                 </div>
 
-                <button class="btn btn-primary btn-sm">Simpan Profil</button>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary px-4 fw-medium shadow-sm"><i class="fas fa-save me-2"></i>Simpan Profil</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <h4 class="mb-4">Ganti Password</h4>
+    <div class="card border-0 shadow-sm card-hover">
+        <div class="card-body p-4">
+            <h5 class="mb-4 fw-bold"><i class="fas fa-lock text-primary me-2"></i>Keamanan & Password</h5>
 
             <form action="{{ route('profile.update.password') }}" method="POST">
                 @csrf
 
                 <!-- Password Saat Ini -->
                 <div class="mb-3">
-                    <label class="form-label">Password Saat Ini</label>
+                    <label class="form-label fw-medium">Password Saat Ini</label>
                     <div class="input-group">
-                        <input type="password" name="current_password" class="form-control" id="current_password">
-                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="current_password" tabindex="-1">
-                            <i class="bi bi-eye-slash"></i>
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-key text-muted"></i></span>
+                        <input type="password" name="current_password" class="form-control border-start-0 ps-0" id="current_password" placeholder="••••••••">
+                        <button type="button" class="btn btn-light border toggle-password" data-target="current_password" tabindex="-1">
+                            <i class="bi bi-eye-slash text-muted"></i>
                         </button>
                     </div>
-                    @error('current_password')<div class="text-danger">{{ $message }}</div>@enderror
+                    @error('current_password')<div class="text-danger mt-1 small">{{ $message }}</div>@enderror
                 </div>
 
                 <!-- Password Baru -->
                 <div class="mb-3">
-                    <label class="form-label">Password Baru</label>
+                    <label class="form-label fw-medium">Password Baru</label>
                     <div class="input-group">
-                        <input type="password" name="new_password" class="form-control" id="new_password">
-                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password" tabindex="-1">
-                            <i class="bi bi-eye-slash"></i>
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-asterisk text-muted"></i></span>
+                        <input type="password" name="new_password" class="form-control border-start-0 ps-0" id="new_password" placeholder="••••••••">
+                        <button type="button" class="btn btn-light border toggle-password" data-target="new_password" tabindex="-1">
+                            <i class="bi bi-eye-slash text-muted"></i>
                         </button>
                     </div>
-                    @error('new_password')<div class="text-danger">{{ $message }}</div>@enderror
+                    @error('new_password')<div class="text-danger mt-1 small">{{ $message }}</div>@enderror
                 </div>
 
                 <!-- Konfirmasi Password Baru -->
-                <div class="mb-3">
-                    <label class="form-label">Konfirmasi Password Baru</label>
+                <div class="mb-4">
+                    <label class="form-label fw-medium">Konfirmasi Password Baru</label>
                     <div class="input-group">
-                        <input type="password" name="new_password_confirmation" class="form-control" id="new_password_confirmation">
-                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="new_password_confirmation" tabindex="-1">
-                            <i class="bi bi-eye-slash"></i>
+                        <span class="input-group-text bg-light border-end-0"><i class="fas fa-asterisk text-muted"></i></span>
+                        <input type="password" name="new_password_confirmation" class="form-control border-start-0 ps-0" id="new_password_confirmation" placeholder="••••••••">
+                        <button type="button" class="btn btn-light border toggle-password" data-target="new_password_confirmation" tabindex="-1">
+                            <i class="bi bi-eye-slash text-muted"></i>
                         </button>
                     </div>
                 </div>
 
-                <button class="btn btn-primary btn-sm">Ganti Password</button>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary px-4 fw-medium shadow-sm"><i class="fas fa-sync-alt me-2"></i>Perbarui Password</button>
+                </div>
             </form>
         </div>
     </div>

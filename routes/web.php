@@ -408,18 +408,6 @@ Route::middleware(['auth', 'hakakses:iduka'])->group(function () {
     // ? Route untuk get CP & ATP berdasarkan konke_id (GANTI dengan method controller, bukan closure!)
     Route::get('/get-cp-atp/{konke_id}', [IdukaAtpController::class, 'getCpAtp']);
 
-
-    // ?? ROUTE TEST - HAPUS SETELAH BERHASIL
-    Route::get('/iduka/test-route', function () {
-        $user = Auth::user();
-        $iduka = DB::table('idukas')->where('user_id', $user->id)->first();
-        return response()->json([
-            'user' => $user,
-            'iduka' => $iduka,
-            'message' => 'Route berhasil diakses!'
-        ]);
-    });
-
     // Route untuk show TP berdasarkan iduka_id
     Route::get('/iduka_atp/{iduka_id}', [IdukaAtpController::class, 'show'])->name('iduka.tp.tp_show');
 

@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
 <!DOCTYPE html>
 <html lang="en">
@@ -369,7 +369,7 @@
                                 </ul>
                             </div>
                             @endif
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-hover mb-3">
                                     <tr>
                                         <td>1.</td>
@@ -511,7 +511,7 @@
                             <div class="keterangan">
                                 <span>Keterangan :</span>
                                 <div class="isi-keterangan">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive text-nowrap">
                                         <table class="table table-hover">
                                             <tr>
                                                 <td>1.</td>

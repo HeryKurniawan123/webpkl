@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <div class="container-fluid">
@@ -34,7 +34,7 @@
                                     </div>
                                     @if($pengajuan->dikirim === 'menunggu')
                                     <div class="text-danger mt-1" style="font-size: 13px;">
-                                        ⚠️ Siswa mengajukan pembatalan!
+                                         Siswa mengajukan pembatalan!
                                     </div>
                                     @endif
                                 </div>

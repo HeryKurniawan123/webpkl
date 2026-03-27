@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <div class="container-fluid">
@@ -11,7 +11,7 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive text-nowrap">
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
@@ -88,3 +88,4 @@
 }
 </style>
 @endpush
+

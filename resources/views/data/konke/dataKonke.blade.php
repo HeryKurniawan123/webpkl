@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
 <style>
     @media (max-width: 768px) {
@@ -93,7 +93,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif   
-                        <div class="table-responsive">
+                        <div class="table-responsive text-nowrap">
                             <table class="table table-striped" style="text-align: center">
                                 <thead>
                                     <tr>
@@ -167,7 +167,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary">Simpan Data</button>
                 </div>
-            </form>
+   Â Â Â Â Â Â Â Â Â </form>
         </div>
     </div>
 </div>
@@ -268,4 +268,5 @@
 
     </script>
 @endsection
+
 

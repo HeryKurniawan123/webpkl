@@ -58,18 +58,8 @@
     <script src="{{ asset('snet/assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('snet/assets/js/config.js') }}"></script>
 
-    <style>
-        .sidebar,
-        .navbar {
-            background-color: #ffffff !important;
-        }
-
-        .app-brand-text.demo {
-            font-size: 18px !important;
-            text-transform: uppercase !important;
-            font-variant: normal !important;
-        }
-    </style>
+    <!-- Custom App CSS -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 
 <body>
@@ -87,10 +77,26 @@
                             K-ONE</span>
                     </a>
 
-                    <a href="javascript:void(0);"
-                        class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
-                    </a>
+                    <button type="button"
+                        class="layout-menu-toggle btn btn-sm ms-auto d-flex align-items-center justify-content-center d-lg-none"
+                        style="
+                            background: black;
+                            border: 1px solid rgba(255,255,255,0.1);
+                            color: #cbd5e1;
+                            width: 44px;
+                            height: 44px;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            padding: 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        "
+                        onmouseover="this.style.backgroundColor='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.2)'; this.style.color='#f1f5f9';"
+                        onmouseout="this.style.backgroundColor='transparent'; this.style.borderColor='rgba(255,255,255,0.1)'; this.style.color='#cbd5e1';">
+                        <i class="bx bx-chevron-left" style="font-size: 20px;"></i>
+                    </button>
                 </div>
 
                 <div class="menu-inner-shadow"></div>
@@ -622,75 +628,78 @@ Request::routeIs('nilai-akhir.*')
                 <!-- Navbar -->
                 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                     id="layout-navbar">
+                    <!-- Sidebar menu toggle (All screens) -->
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
-                            <i class="bx bx-menu bx-sm"></i>
+                            <i class="fas fa-bars" style="font-size:22px; color:#64748b;"></i>
                         </a>
                     </div>
 
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-                        <ul class="navbar-nav flex-row align-items-center ms-auto">
-                            <!-- User -->
-                            <li style="margin-right: 10px">
+                        <ul class="navbar-nav flex-row align-items-center ms-auto gap-2">
+
+                            <!-- Username text -->
+                            <li class="d-none d-md-flex align-items-center" style="color:#64748b;font-size:13.5px;font-weight:500;">
+                                <i class="fas fa-user-circle me-2" style="color:#94a3b8;"></i>
                                 {{ auth()->user()->profile->nama ?? auth()->user()->name }}
                             </li>
 
+                            <!-- Role badge -->
+                            <li class="d-none d-md-flex align-items-center">
+                                <span class="badge" style="background:#eff6ff;color:#2563eb;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">
+                                    {{ ucfirst(auth()->user()->role) }}
+                                </span>
+                            </li>
+
+                            <!-- User Dropdown -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
                                         <img src="{{ Auth::user()->profile_photo ? asset(Auth::user()->profile_photo) : asset('images/default.jpg') }}"
-                                            alt="Foto Profil" class="rounded-circle" width="50" height="50">
+                                            alt="Foto Profil" class="rounded-circle" width="36" height="36"
+                                            style="border:2px solid #e2e8f0;object-fit:cover;">
                                     </div>
                                 </a>
 
                                 <ul class="dropdown-menu dropdown-menu-end">
+                                    <!-- Profile Info -->
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="{{ Auth::user()->profile_photo ? asset(Auth::user()->profile_photo) : asset('images/default.jpg') }}"
-                                                            alt="Foto Profil" class="rounded-circle" width="50"
-                                                            height="50">
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block text-truncate"
-                                                        style="max-width: 150px;"
+                                        <a class="dropdown-item" href="#" style="pointer-events:none;">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="{{ Auth::user()->profile_photo ? asset(Auth::user()->profile_photo) : asset('images/default.jpg') }}"
+                                                    alt="Foto Profil" class="rounded-circle" width="40" height="40"
+                                                    style="border:2px solid #e2e8f0;object-fit:cover;">
+                                                <div>
+                                                    <div class="fw-semibold text-truncate" style="max-width:140px;font-size:13.5px;color:#0f172a;"
                                                         title="{{ auth()->user()->profile->nama ?? auth()->user()->name }}">
                                                         {{ auth()->user()->profile->nama ?? auth()->user()->name }}
-                                                    </span>
-                                                    <small class="text-muted">{{ auth()->user()->role }}</small>
+                                                    </div>
+                                                    <div style="font-size:12px;color:#64748b;">{{ ucfirst(auth()->user()->role) }}</div>
                                                 </div>
                                             </div>
                                         </a>
                                     </li>
 
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
+                                    <li><div class="dropdown-divider"></div></li>
 
                                     <li>
                                         <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                            <i class="bx bx-user me-2"></i>
-                                            <span class="align-middle">My Profile</span>
+                                            <i class="fas fa-user-edit me-2" style="color:#64748b;width:16px;"></i>
+                                            <span>Edit Profil</span>
                                         </a>
                                     </li>
 
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
+                                    <li><div class="dropdown-divider"></div></li>
 
                                     <li>
-                                        <a class="dropdown-item logout-btn" href="/logout">
-                                            <i class="bx bx-power-off me-2"></i>
-                                            <span class="align-middle">Log Out</span>
+                                        <a class="dropdown-item logout-btn" href="/logout" style="color:#dc2626;">
+                                            <i class="fas fa-sign-out-alt me-2" style="width:16px;"></i>
+                                            <span>Keluar</span>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
-                            <!--/ User -->
                         </ul>
                     </div>
                 </nav>

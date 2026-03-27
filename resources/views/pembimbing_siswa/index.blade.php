@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container">
@@ -84,7 +84,7 @@
                                         </h6>
 
                                         @if ($pembimbing->siswas->count() > 0)
-                                            <div class="table-responsive">
+                                            <div class="table-responsive text-nowrap">
                                                 <table class="table table-bordered align-middle">
                                                     <thead class="table-light">
                                                         <tr>
@@ -205,3 +205,4 @@
             });
         </script>
     @endpush
+

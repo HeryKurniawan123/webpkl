@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
 <!-- nyobaan ngepush -->
 <div class="container mt-4">
@@ -14,7 +14,7 @@
     @else
     <div class="card">
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive text-nowrap">
                 <table class="table table-bordered table-striped align-middle">
                     <thead class="table-primary">
                         <tr>
@@ -45,3 +45,4 @@
 </div>
 
 @endsection
+

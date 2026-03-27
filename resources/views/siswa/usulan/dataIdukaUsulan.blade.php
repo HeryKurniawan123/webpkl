@@ -6,75 +6,30 @@
 <head>
     <title>Data Institusi / Perusahaan</title>
     <style>
-        .card-hover {
-            transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: scale(1.03);
-            background-color: #7e7dfb !important;
-            color: white !important;
-        }
-
-        .card-hover:hover .btn-hover {
-            background-color: white;
-            color: #7e7dfb;
-            border-color: white;
-        }
-
-        .btn-hover {
-            background-color: #7e7dfb;
-            color: white;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            border-radius: 50px;
-            border: 2px solid #7e7dfb;
-        }
-
-        .btn-hover:hover {
-            background-color: white;
-            color: #7e7dfb;
-            border-color: white;
-        }
-
         .dropdown-btn {
-            color: #7e7dfb;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            border-radius: 50px;
+            color: var(--primary-color, #0d6efd);
+            transition: all 0.3s ease;
+            border-radius: 50%;
             padding: 5px 12px;
-            font-size: 25px;
+            font-size: 20px;
         }
 
         .card-hover:hover .dropdown-btn {
-            color: white !important;
-        }
-
-        .btn-warning {
-            background-color: #ffc107 !important;
-            border-color: #ffc107 !important;
-            color: black !important;
+            color: var(--primary-color, #0d6efd) !important;
         }
 
         .btn-kuota {
-            background-color: #ffc107;
-            color: black;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            background-color: var(--bs-warning);
+            color: #000;
+            transition: all 0.3s ease;
             border-radius: 50px;
-            border: 2px solid #ffc107;
+            font-weight: 600;
         }
 
         .btn-kuota:hover {
-            background-color: white;
-            color: #ffc107;
-            border-color: white;
+            background-color: #ffca2c;
+            transform: translateY(-1px);
         }
-
-        .card-hover:hover .btn-kuota {
-            background-color: white;
-            color: #ffbf00;
-            border-color: white;
-        }
-        
-       
     </style>
 </head>
 
@@ -86,13 +41,9 @@
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5 class="mb-0">Data Institusi / Perusahaan</h5>
+                                <h5 class="mb-0">Data IDUKA</h5>
 
                                 <div class="d-none d-md-flex gap-2 align-items-center">
-                                    <a href="{{ route('siswa.dashboard') }}" class="btn btn-primary btn-back btn-sm shadow-sm">
-                                        <i class="bi bi-arrow-left-circle"></i>
-                                        <span class="d-none d-md-inline">Kembali</span>
-                                    </a>
                                     
                                     <select class="form-select form-select-sm w-auto" id="filterIduka">
                                         <option value="all">Semua</option>
@@ -121,33 +72,18 @@
                                     </div>
                                 </div>
 
-                                <div class="d-flex d-md-none justify-content-end">
-                                    <div class="dropdown">
-                                        <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <a href="{{ route('siswa.dashboard') }}" class="dropdown-item text-primary">
-                                                    <i class="bi bi-arrow-left-circle me-2"></i> Kembali
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <button type="button" class="dropdown-item text-warning" data-bs-toggle="modal" data-bs-target="#searchModal">
-                                                    <i class="bi bi-search me-2"></i> Cari
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <div class="px-3 pt-2">
-                                                    <select class="form-select form-select-sm" id="filterIdukaMobile">
-                                                        <option value="all">Semua</option>
-                                                        <option value="rekomendasi">Rekomendasi</option>
-                                                        <option value="ajuan">Ajuan</option>
-                                                    </select>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div class="d-flex d-md-none gap-1 align-items-center justify-content-end">
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#searchModal">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                    <a href="{{ route('usulan.index') }}" class="btn btn-success btn-sm">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </a>
+                                    <select class="form-select form-select-sm w-auto" id="filterIdukaMobile">
+                                        <option value="all">Semua</option>
+                                        <option value="rekomendasi">Rekomendasi</option>
+                                        <option value="ajuan">Ajuan</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -172,16 +108,24 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12 mt-3" id="idukaContainer">
+                    <div class="row mt-3" id="idukaContainer">
                         @if ($iduka->isEmpty())
-                        <div class="alert alert-warning">
-                            Belum ada data institusi / perusahaan yang tersedia.
+                        <div class="col-12">
+                            <div class="card shadow-sm border-0 bg-light" style="border: 2px dashed #dee2e6 !important;">
+                                <div class="card-body text-center py-5">
+                                    <i class="fas fa-building text-muted mb-3" style="font-size: 4rem; opacity: 0.5;"></i>
+                                    <h5 class="fw-bold text-muted">Data IDUKA Kosong</h5>
+                                    <p class="text-muted mb-0">Belum ada data institusi atau perusahaan yang ditambahkan.</p>
+                                </div>
+                            </div>
                         </div>
                         @else
                         @if(session()->has('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <div class="col-12 mb-3">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
                         </div>
                         @endif
                         
@@ -190,45 +134,47 @@
                         $kuota = $i->kuota_pkl;
                         @endphp
 
-                        <div class="card mb-3 shadow-sm card-hover p-3 {{ $kuota <= 0 ? 'bg-light text-muted' : '' }}" style="border-radius: 10px;" 
-                             data-nama="{{ strtolower($i->nama) }}" 
-                             data-alamat="{{ strtolower($i->alamat) }}"
-                             data-rekomendasi="{{ $i->rekomendasi ? 'rekomendasi' : 'ajuan' }}">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div style="min-width: 0;">
-                                    <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
-                                        {{ $i->nama }}
-                                    </div>
-                                    <div class="text-muted text-truncate w-100" style="font-size: 14px;">
-                                        {{ $i->alamat }}
-                                    </div>
-                                    @if ($i->rekomendasi == 1)
-                                    <div class="text-success mt-1" style="font-size: 13px;">
-                                        <strong>Rekomendasi:</strong> Institusi ini direkomendasikan
-                                    </div>
-                                    @endif
-                                </div>
-                                <div class="d-flex align-items-center">
-                                    @php
-                                    $awal = $i->tanggal_awal;
-                                    $akhir = $i->tanggal_akhir;
-                                    @endphp
-                                    @if ($kuota <= 0)
-                                        <button
-                                        class="btn btn-kuota rounded-pill btn-sm btn-kuota-penuh"
-                                        data-nama="{{ $i->nama }}">
-                                        Kuota Penuh
-                                        </button>
-                                        @else
-                                        <button
-                                            class="btn btn-hover rounded-pill btn-sm btn-detail"
-                                            data-id="{{ $i->id }}"
-                                            data-url="{{ route('detail.datausulan', $i->id) }}"
-                                            data-awal="{{ $awal }}"
-                                            data-akhir="{{ $akhir }}">
-                                            Detail
-                                        </button>
+                        <div class="col-lg-6 col-xl-4 mb-3">
+                            <div class="card shadow-sm card-hover p-3 {{ $kuota <= 0 ? 'bg-light text-muted' : '' }}" style="border-radius: 10px;" 
+                                 data-nama="{{ strtolower($i->nama) }}" 
+                                 data-alamat="{{ strtolower($i->alamat) }}"
+                                 data-rekomendasi="{{ $i->rekomendasi ? 'rekomendasi' : 'ajuan' }}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div style="min-width: 0;">
+                                        <div class="fw-bold text-truncate d-inline-block w-100" style="font-size: 16px; max-height: 40px; overflow: hidden;">
+                                            {{ $i->nama }}
+                                        </div>
+                                        <div class="text-muted text-truncate w-100" style="font-size: 14px;">
+                                            {{ $i->alamat }}
+                                        </div>
+                                        @if ($i->rekomendasi == 1)
+                                        <div class="text-success mt-1" style="font-size: 13px;">
+                                            <strong>Rekomendasi:</strong> Institusi ini direkomendasikan
+                                        </div>
                                         @endif
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        @php
+                                        $awal = $i->tanggal_awal;
+                                        $akhir = $i->tanggal_akhir;
+                                        @endphp
+                                        @if ($kuota <= 0)
+                                            <button
+                                            class="btn btn-kuota rounded-pill btn-sm btn-kuota-penuh"
+                                            data-nama="{{ $i->nama }}">
+                                            Kuota Penuh
+                                            </button>
+                                            @else
+                                            <button
+                                                class="btn btn-primary rounded-pill btn-sm btn-detail px-4 fw-medium shadow-sm"
+                                                data-id="{{ $i->id }}"
+                                                data-url="{{ route('detail.datausulan', $i->id) }}"
+                                                data-awal="{{ $awal }}"
+                                                data-akhir="{{ $akhir }}">
+                                                Detail
+                                            </button>
+                                            @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

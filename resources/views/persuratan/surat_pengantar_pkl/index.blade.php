@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container-fluid">
@@ -98,7 +98,7 @@
                                     @if ($i->siswa->isEmpty())
                                         <div class="alert alert-warning mb-0">Belum ada siswa di IDUKA ini.</div>
                                     @else
-                                        <div class="table-responsive">
+                                        <div class="table-responsive text-nowrap">
                                             <table class="table table-striped table-sm align-middle">
                                                 <thead class="table-light">
                                                     <tr>
@@ -163,3 +163,4 @@
         }
     </style>
 @endsection
+

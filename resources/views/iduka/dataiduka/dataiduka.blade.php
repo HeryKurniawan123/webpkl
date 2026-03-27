@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
 <style>
@@ -249,7 +249,7 @@
                                         </div>
                                         @if ($expired)
                                         <div class="text-danger mt-1" style="font-size: 13px;">
-                                            ⚠️ <strong>Catatan:</strong> Masa kerja sama sudah habis
+                                             <strong>Catatan:</strong> Masa kerja sama sudah habis
                                         </div>
                                         @endif
                                         @if ($i->rekomendasi == 1)

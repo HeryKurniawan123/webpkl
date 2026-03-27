@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
     <!DOCTYPE html>
     <html lang="en">
@@ -78,7 +78,7 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="row">
                         <div class="col-md-12 mt-3">
-                            <div class="card">
+                            <div class="card shadow-sm border-0 mb-4">
                                 @if(session()->has('success'))
                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                                         {{ session('success') }}

@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <style>
@@ -54,7 +54,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif   
-                        <div class="table-responsive">
+                        <div class="table-responsive text-nowrap">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -100,3 +100,4 @@
         </div>
     </div>
 @endsection
+

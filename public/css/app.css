@@ -70,7 +70,6 @@ html, body {
     background-color: var(--sidebar-bg) !important;
     border-right: 1px solid var(--sidebar-border) !important;
     box-shadow: 4px 0 24px rgba(0,0,0,0.12) !important;
-    position: relative;
 }
 
 /* Brand / Logo area */
@@ -129,7 +128,7 @@ html, body {
 
 /* Menu list */
 .menu-inner.py-1 {
-    padding: 12px 12px !important;
+    padding: 12px 0 !important;
 }
 
 /* Menu items */
@@ -147,6 +146,7 @@ html, body {
     font-weight: 500 !important;
     transition: var(--transition) !important;
     text-decoration: none !important;
+    margin: 0 14px !important;
     gap: 4px;
     position: relative;
 }
@@ -715,6 +715,29 @@ nav.layout-navbar {
 #loader-overlay {
     background: rgba(15, 23, 42, 0.6) !important;
     backdrop-filter: blur(4px);
+}
+
+/* =============================================
+   SIDEBAR SPACING FIX
+   ============================================= */
+/* Remove extra spacing on sidebar edges */
+.app-brand.demo {
+    padding: 16px 16px 12px !important;
+}
+
+.menu-inner {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.menu-item {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.menu-link {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
 }
 
 /* =============================================

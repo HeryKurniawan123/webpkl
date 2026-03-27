@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
     <!DOCTYPE html>
     <html lang="en">
@@ -94,9 +94,9 @@
                             </div>
                         </div>
                         <div class="col-md-12 mt-3">
-                            <div class="card">
+                            <div class="card shadow-sm border-0 mb-4">
                                 <div class="card-body">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive text-nowrap">
                                         <table class="table table-hover" style="text-align: center">
                                             <thead>
                                                 <tr>
@@ -135,7 +135,7 @@
                                                                 </button>
                                                                 <a href="{{ route('siswa.detail', $s->id) }}"
                                                                     class="btn btn-info btn-sm">
-                                                                    <i class="bi bi-eye"></i>
+                                                                    <i class="fas fa-eye"></i>
                                                                 </a>
                                                                 <form action="{{ route('siswa.destroy', $s->id) }}"
                                                                     method="POST"class="delete-form d-inline">
@@ -143,7 +143,7 @@
                                                                     @method('DELETE')
                                                                     <button type="submit"
                                                                         class="delete-btn btn btn-danger btn-sm">
-                                                                        <i class="bi bi-trash3"></i></button>
+                                                                        <i class="fas fa-trash-alt3"></i></button>
                                                                 </form>
                                                             </div>
                                                         </td>
@@ -217,7 +217,7 @@
     <div class="input-group">
         <input type="password" class="form-control" id="password-optional" name="password">
         <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-optional" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
+            <i class="fas fa-eye-slash"></i>
         </button>
     </div>
 </div>
@@ -299,7 +299,7 @@
     <div class="input-group">
         <input type="password" class="form-control" id="password-input" name="password" placeholder="Masukkan Password" required>
         <button type="button" class="btn btn-outline-secondary toggle-password" data-target="password-input" tabindex="-1">
-            <i class="bi bi-eye-slash"></i>
+            <i class="fas fa-eye-slash"></i>
         </button>
     </div>
     <small class="form-text text-muted">Password minimal 8 karakter.</small>
@@ -389,3 +389,5 @@
     });
     </script>
 @endsection
+
+

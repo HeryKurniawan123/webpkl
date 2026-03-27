@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container-fluid"><br>
@@ -6,53 +6,62 @@
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="row">
                     <div class="col-lg-12 mb-3 order-0">
-                        <div class="card">
-                            <div class="d-flex align-items-end row">
+                        <div class="card" style="border-left:4px solid #3b82f6;">
+                            <div class="d-flex align-items-center row">
                                 <div class="col-sm-7">
                                     <div class="card-body">
-                                        <h5 class="card-title text-primary">Halo {{ Auth::user()->name }}! 🎉</h5>
+                                        <div class="d-flex align-items-center gap-3 mb-3">
+                                            <div style="width:44px;height:44px;background:#eff6ff;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                <i class="fas fa-hand-wave" style="font-size:20px;color:#3b82f6;"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="card-title mb-0" style="color:#0f172a;">Halo, {{ Auth::user()->name }}!</h5>
+                                                <small style="color:#64748b;">Selamat datang kembali</small>
+                                            </div>
+                                        </div>
 
                                         @if (auth()->user()->role == 'siswa')
-                                            <p class="mb-4">Data kamu belum terisi sepenuhnya nih. Ayo isi terlebih
-                                                dahulu!</p>
+                                            <p class="mb-3" style="color:#64748b;font-size:14px;">Data kamu belum terisi sepenuhnya nih. Ayo isi terlebih dahulu!</p>
                                             <a href="{{ route('siswa.data_pribadi.create') }}"
-                                                class="btn btn-sm btn-outline-primary">Lengkapi Data</a>
+                                                class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i> Lengkapi Data
+                                            </a>
                                         @elseif(in_array(auth()->user()->role, ['guru', 'hubin', 'kaprog']))
-                                            <p class="mb-4">Silakan lakukan absensi berbasis lokasi Anda</p>
+                                            <p class="mb-3" style="color:#64748b;font-size:14px;">Silakan lakukan absensi berbasis lokasi Anda</p>
 
                                             <div class="btn-group gap-2" role="group">
                                                 @if (!$sudahAbsen)
                                                     <button id="absenMasukBtn" class="btn btn-primary">
-                                                        <i class="fas fa-sign-in-alt me-2"></i>
+                                                        <i class="fas fa-sign-in-alt"></i>
                                                         Absen Masuk
                                                     </button>
                                                     <button id="manualLocationBtn" class="btn btn-outline-secondary">
-                                                        <i class="fas fa-map-marker-alt me-2"></i> Input Manual
+                                                        <i class="fas fa-map-marker-alt"></i> Input Manual
                                                     </button>
                                                 @elseif($statusHariIni === 'hadir' && !$sudahPulang)
                                                     <button id="absenPulangBtn" class="btn btn-info"
                                                         data-absensi-id="{{ $todayAbsensi->id }}">
-                                                        <i class="fas fa-sign-out-alt me-2"></i>
+                                                        <i class="fas fa-sign-out-alt"></i>
                                                         Absen Pulang
                                                     </button>
                                                 @else
                                                     <button class="btn btn-success disabled">
-                                                        <i class="fas fa-check-circle me-2"></i>
+                                                        <i class="fas fa-check-circle"></i>
                                                         Absensi Selesai
                                                     </button>
                                                 @endif
 
                                                 @if (!$sudahAbsen)
                                                     <button id="izinBtn" class="btn btn-warning">
-                                                        <i class="fas fa-file-alt me-2"></i>
+                                                        <i class="fas fa-file-alt"></i>
                                                         Ajukan Izin/Sakit
                                                     </button>
                                                 @endif
                                             </div>
                                         @else
-                                            <p class="mb-4">Selamat datang di sistem absensi!</p>
-                                            <p class="text-muted">Anda login sebagai:
-                                                <strong>{{ ucfirst(auth()->user()->role) }}</strong>
+                                            <p class="mb-2" style="color:#64748b;font-size:14px;">Selamat datang di sistem manajemen PKL.</p>
+                                            <p style="font-size:13px;color:#94a3b8;">Login sebagai:
+                                                <strong style="color:#3b82f6;">{{ ucfirst(auth()->user()->role) }}</strong>
                                             </p>
                                         @endif
                                     </div>
@@ -77,27 +86,36 @@
                         <div class="col-lg-12 mb-4">
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Status Absensi Hari Ini</h5>
-                                    <span class="badge bg-primary">{{ date('d F Y') }}</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="fas fa-calendar-check" style="color:#3b82f6;"></i>
+                                        <h5 class="mb-0">Status Absensi Hari Ini</h5>
+                                    </div>
+                                    <span class="badge" style="background:#eff6ff;color:#2563eb;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;">
+                                        <i class="fas fa-calendar me-1"></i>{{ date('d F Y') }}
+                                    </span>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div id="statusAbsensiMasuk" class="text-center py-3">
                                                 @if ($sudahAbsen)
-                                                    <div class="text-success">
-                                                        <i class="fas fa-check-circle fa-3x mb-3"></i>
-                                                        <h4>Sudah Absen</h4>
-                                                        <p>Status: <strong>{{ ucfirst($statusHariIni) }}</strong></p>
+                                                    <div style="color:#15803d;">
+                                                        <div style="width:64px;height:64px;background:#f0fdf4;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                                                            <i class="fas fa-check-circle" style="font-size:28px;color:#22c55e;"></i>
+                                                        </div>
+                                                        <h5 style="font-weight:700;">Sudah Absen Masuk</h5>
+                                                        <p style="font-size:13px;color:#64748b;">Status: <strong>{{ ucfirst($statusHariIni) }}</strong></p>
                                                         @if ($todayAbsensi->jam_masuk)
-                                                            <p>Jam Masuk: {{ $todayAbsensi->jam_masuk }}</p>
+                                                            <p style="font-size:13px;color:#64748b;"><i class="fas fa-clock me-1"></i>{{ $todayAbsensi->jam_masuk }}</p>
                                                         @endif
                                                     </div>
                                                 @else
-                                                    <div class="text-warning">
-                                                        <i class="fas fa-exclamation-circle fa-3x mb-3"></i>
-                                                        <h4>Belum Absen</h4>
-                                                        <p>Silakan lakukan absensi sekarang</p>
+                                                    <div style="color:#b45309;">
+                                                        <div style="width:64px;height:64px;background:#fffbeb;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                                                            <i class="fas fa-exclamation-circle" style="font-size:28px;color:#f59e0b;"></i>
+                                                        </div>
+                                                        <h5 style="font-weight:700;">Belum Absen Masuk</h5>
+                                                        <p style="font-size:13px;color:#64748b;">Silakan lakukan absensi sekarang</p>
                                                     </div>
                                                 @endif
                                             </div>
@@ -105,22 +123,28 @@
                                         <div class="col-md-6">
                                             <div id="statusAbsensiPulang" class="text-center py-3">
                                                 @if ($sudahPulang)
-                                                    <div class="text-success">
-                                                        <i class="fas fa-check-circle fa-3x mb-3"></i>
-                                                        <h4>Sudah Absen Pulang</h4>
-                                                        <p>{{ $todayAbsensi->jam_pulang }}</p>
+                                                    <div style="color:#15803d;">
+                                                        <div style="width:64px;height:64px;background:#f0fdf4;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                                                            <i class="fas fa-sign-out-alt" style="font-size:28px;color:#22c55e;"></i>
+                                                        </div>
+                                                        <h5 style="font-weight:700;">Sudah Absen Pulang</h5>
+                                                        <p style="font-size:13px;color:#64748b;"><i class="fas fa-clock me-1"></i>{{ $todayAbsensi->jam_pulang }}</p>
                                                     </div>
                                                 @elseif($statusHariIni === 'hadir')
-                                                    <div class="text-warning">
-                                                        <i class="fas fa-exclamation-circle fa-3x mb-3"></i>
-                                                        <h4>Belum Absen Pulang</h4>
-                                                        <p>Silakan absen pulang nanti</p>
+                                                    <div style="color:#b45309;">
+                                                        <div style="width:64px;height:64px;background:#fffbeb;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                                                            <i class="fas fa-hourglass-half" style="font-size:28px;color:#f59e0b;"></i>
+                                                        </div>
+                                                        <h5 style="font-weight:700;">Belum Absen Pulang</h5>
+                                                        <p style="font-size:13px;color:#64748b;">Silakan absen pulang nanti</p>
                                                     </div>
                                                 @else
-                                                    <div class="text-muted">
-                                                        <i class="fas fa-minus-circle fa-3x mb-3"></i>
-                                                        <h4>Tidak Perlu Absen Pulang</h4>
-                                                        <p>Status: {{ ucfirst($statusHariIni ?? '-') }}</p>
+                                                    <div style="color:#94a3b8;">
+                                                        <div style="width:64px;height:64px;background:#f1f5f9;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                                                            <i class="fas fa-minus-circle" style="font-size:28px;color:#94a3b8;"></i>
+                                                        </div>
+                                                        <h5 style="font-weight:700;">Tidak Perlu Absen Pulang</h5>
+                                                        <p style="font-size:13px;color:#94a3b8;">Status: {{ ucfirst($statusHariIni ?? '-') }}</p>
                                                     </div>
                                                 @endif
                                             </div>
@@ -136,12 +160,17 @@
                         <div class="col-lg-6 mb-4">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="mb-0">Lokasi Anda Saat Ini</h5>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="fas fa-location-arrow" style="color:#3b82f6;"></i>
+                                        <h5 class="mb-0">Lokasi Anda Saat Ini</h5>
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <div id="lokasiInfo" class="text-center py-4">
-                                        <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
-                                        <p>Klik tombol absen untuk mendeteksi lokasi Anda</p>
+                                        <div style="width:56px;height:56px;background:#f1f5f9;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                                            <i class="fas fa-map-marked-alt" style="font-size:24px;color:#94a3b8;"></i>
+                                        </div>
+                                        <p style="font-size:13.5px;color:#64748b;">Klik tombol absen untuk mendeteksi lokasi Anda</p>
                                     </div>
                                 </div>
                             </div>
@@ -151,14 +180,19 @@
                         <div class="col-lg-6 mb-4">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="mb-0">Lokasi Sekolah</h5>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="fas fa-school" style="color:#3b82f6;"></i>
+                                        <h5 class="mb-0">Lokasi Sekolah</h5>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <i class="fas fa-school fa-2x text-primary me-3"></i>
+                                    <div class="d-flex align-items-center mb-3" style="gap:14px;">
+                                        <div style="width:44px;height:44px;background:#eff6ff;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                            <i class="fas fa-map-pin" style="font-size:18px;color:#3b82f6;"></i>
+                                        </div>
                                         <div>
-                                            <h6 class="mb-0">SMKN 1 Kawali</h6>
-                                            <small class="text-muted">Jl. Pendidikan No. 123, Kawali</small>
+                                            <div style="font-size:14px;font-weight:600;color:#0f172a;">SMKN 1 Kawali</div>
+                                            <small style="color:#64748b;">Jl. Pendidikan No. 123, Kawali</small>
                                         </div>
                                     </div>
                                     <div class="alert alert-info d-flex align-items-center">
@@ -178,18 +212,21 @@
                         <div class="col-lg-12 mb-4">
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Riwayat Absensi</h5>
-                                    <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="fas fa-history" style="color:#3b82f6;"></i>
+                                        <h5 class="mb-0">Riwayat Absensi</h5>
+                                    </div>
+                                    <div class="d-flex gap-2">
                                         <button class="btn btn-sm btn-outline-secondary">
-                                            <i class="fas fa-filter me-1"></i>Filter
+                                            <i class="fas fa-filter"></i> Filter
                                         </button>
                                         <button class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-download me-1"></i>Export
+                                            <i class="fas fa-download"></i> Export
                                         </button>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive text-nowrap">
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
@@ -229,8 +266,10 @@
                                                 @else
                                                     <tr>
                                                         <td colspan="6" class="text-center py-4">
-                                                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                                            <p>Belum ada riwayat absensi</p>
+                                                            <div style="width:56px;height:56px;background:#f1f5f9;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;">
+                                                                <i class="fas fa-inbox" style="font-size:22px;color:#94a3b8;"></i>
+                                                            </div>
+                                                            <p style="color:#94a3b8;font-size:13.5px;margin:0;">Belum ada riwayat absensi</p>
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -880,3 +919,4 @@
         });
     </script>
 @endif
+

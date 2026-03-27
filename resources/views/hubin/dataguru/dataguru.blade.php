@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container-fluid">
@@ -62,7 +62,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-hover" style="text-align: center">
                                     <thead>
                                         <tr>
@@ -453,3 +453,4 @@
         });
     </script>
 @endsection
+

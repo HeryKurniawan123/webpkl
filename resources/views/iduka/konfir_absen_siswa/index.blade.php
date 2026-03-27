@@ -22,53 +22,53 @@
                 <div class="row">
                     <!-- Sidebar Konfirmasi Absen -->
                     <div class="col-lg-3">
-                        <div class="card">
+                        <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">Menu Konfirmasi</h5>
                             </div>
                             <div class="card-body">
-                                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
+                                <div class="nav flex-column nav-pills gap-2" id="v-pills-tab" role="tablist"
                                     aria-orientation="vertical">
-                                    <button class="nav-link active" id="v-pills-hari-ini-tab" data-bs-toggle="pill"
+                                    <button class="nav-link active rounded-pill text-start px-4" id="v-pills-hari-ini-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-hari-ini" type="button" role="tab"
                                         aria-controls="v-pills-hari-ini" aria-selected="true">
-                                        <i class="bi bi-calendar-check me-2"></i>Absen Hari Ini
+                                        <i class="fas fa-calendar-day me-2"></i>Absensi Hari Ini
                                     </button>
-                                    <button class="nav-link" id="v-pills-absen-pending-tab" data-bs-toggle="pill"
+                                    <button class="nav-link rounded-pill text-start px-4 d-flex justify-content-between align-items-center" id="v-pills-absen-pending-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-absen-pending" type="button" role="tab"
                                         aria-controls="v-pills-absen-pending" aria-selected="false">
-                                        <i class="bi bi-clock-history me-2"></i>Absensi Pending
-                                        <span class="badge bg-warning ms-2"
+                                        <div><i class="fas fa-clock me-2"></i>Absensi Pending</div>
+                                        <span class="badge bg-warning rounded-pill"
                                             id="badge-absen-pending">{{ $absensiPending->count() }}</span>
                                     </button>
-                                    <button class="nav-link" id="v-pills-perlu-konfirmasi-tab" data-bs-toggle="pill"
+                                    <button class="nav-link rounded-pill text-start px-4 d-flex justify-content-between align-items-center" id="v-pills-perlu-konfirmasi-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-perlu-konfirmasi" type="button" role="tab"
                                         aria-controls="v-pills-perlu-konfirmasi" aria-selected="false">
-                                        <i class="bi bi-clock-history me-2"></i>Perlu Konfirmasi
-                                        <span class="badge bg-danger ms-2"
+                                        <div><i class="fas fa-exclamation-circle me-2"></i>Izin Menunggu</div>
+                                        <span class="badge bg-danger rounded-pill"
                                             id="badge-pending">{{ $izinPending->count() }}</span>
                                     </button>
-                                    <button class="nav-link" id="v-pills-dinas-pending-tab" data-bs-toggle="pill"
+                                    <button class="nav-link rounded-pill text-start px-4 d-flex justify-content-between align-items-center" id="v-pills-dinas-pending-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-dinas-pending" type="button" role="tab"
                                         aria-controls="v-pills-dinas-pending" aria-selected="false">
-                                        <i class="bi bi-briefcase me-2"></i>Dinas Luar
-                                        <span class="badge bg-primary ms-2"
+                                        <div><i class="fas fa-briefcase me-2"></i>Dinas Luar</div>
+                                        <span class="badge bg-primary rounded-pill"
                                             id="badge-dinas-pending">{{ $dinasPending->count() }}</span>
                                     </button>
-                                    <button class="nav-link" id="v-pills-riwayat-tab" data-bs-toggle="pill"
+                                    <button class="nav-link rounded-pill text-start px-4" id="v-pills-riwayat-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-riwayat" type="button" role="tab"
                                         aria-controls="v-pills-riwayat" aria-selected="false">
-                                        <i class="bi bi-list-check me-2"></i>Riwayat Absen
+                                        <i class="fas fa-history me-2"></i>Riwayat Absen
                                     </button>
-                                    <button class="nav-link" id="v-pills-statistik-tab" data-bs-toggle="pill"
+                                    <button class="nav-link rounded-pill text-start px-4" id="v-pills-statistik-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-statistik" type="button" role="tab"
                                         aria-controls="v-pills-statistik" aria-selected="false">
-                                        <i class="bi bi-bar-chart me-2"></i>Statistik
+                                        <i class="fas fa-chart-pie me-2"></i>Statistik Kehadiran
                                     </button>
-                                    <button class="nav-link" id="v-pills-kordinat-tab" data-bs-toggle="pill"
+                                    <button class="nav-link rounded-pill text-start px-4" id="v-pills-kordinat-tab" data-bs-toggle="pill"
                                         data-bs-target="#v-pills-kordinat" type="button" role="tab"
                                         aria-controls="v-pills-kordinat" aria-selected="false">
-                                        <i class="bi bi-bar-chart me-2"></i>Kordinat / Lokasi
+                                        <i class="fas fa-map-marker-alt me-2 text-primary d-inline-block"></i>Koordinat / Lokasi
                                     </button>
                                 </div>
 
@@ -83,7 +83,7 @@
                             <!-- Tab Absen Hari Ini -->
                             <div class="tab-pane fade show active" id="v-pills-hari-ini" role="tabpanel"
                                 aria-labelledby="v-pills-hari-ini-tab">
-                                <div class="card">
+                                <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5 class="card-title mb-0">Absensi Hari Ini</h5>
                                         <div>
@@ -92,7 +92,7 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive text-nowrap">
                                             <table class="table table-hover" id="tabel-absen-hari-ini">
                                                 <thead>
                                                     <tr>
@@ -171,7 +171,7 @@
                             <!-- Tab Absensi Pending -->
                             <div class="tab-pane fade" id="v-pills-absen-pending" role="tabpanel"
                                 aria-labelledby="v-pills-absen-pending-tab">
-                                <div class="card">
+                                <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">Absensi Menunggu Konfirmasi</h5>
                                     </div>
@@ -186,17 +186,17 @@
                                                 </div>
                                                 <div>
                                                     <button type="submit" name="status" value="disetujui"
-                                                        class="btn btn-sm btn-success me-1">
+                                                        class="btn btn-sm btn-success rounded-pill px-3 shadow-sm me-1">
                                                         <i class="bi bi-check-lg"></i> Setujui yang Dipilih
                                                     </button>
                                                     <button type="submit" name="status" value="ditolak"
-                                                        class="btn btn-sm btn-danger">
+                                                        class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm">
                                                         <i class="bi bi-x-lg"></i> Tolak yang Dipilih
                                                     </button>
                                                 </div>
                                             </div>
 
-                                            <div class="table-responsive">
+                                            <div class="table-responsive text-nowrap">
                                                 <table class="table table-hover">
                                                     <thead>
                                                         <tr>
@@ -245,13 +245,13 @@
                                                                 <td>
                                                                     <div class="btn-group" role="group">
                                                                         <button type="button"
-                                                                            class="btn btn-success btn-sm"
+                                                                            class="btn btn-sm btn-success rounded-pill px-3 shadow-sm"
                                                                             onclick="konfirmasiAbsensi({{ $absensi->id }}, 'disetujui')"
                                                                             title="Setujui">
                                                                             <i class="bi bi-check-lg"></i>
                                                                         </button>
                                                                         <button type="button"
-                                                                            class="btn btn-danger btn-sm"
+                                                                            class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm"
                                                                             onclick="konfirmasiAbsensi({{ $absensi->id }}, 'ditolak')"
                                                                             title="Tolak">
                                                                             <i class="bi bi-x-lg"></i>
@@ -277,12 +277,12 @@
                             <!-- Tab Dinas Luar Perlu Konfirmasi -->
                             <div class="tab-pane fade" id="v-pills-dinas-pending" role="tabpanel"
                                 aria-labelledby="v-pills-dinas-pending-tab">
-                                <div class="card">
+                                <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">Dinas Luar Perlu Konfirmasi</h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive text-nowrap">
                                             <table class="table table-hover">
                                                 <thead>
                                                     <tr>
@@ -336,7 +336,7 @@
                                                                         title="Setujui">
                                                                         <i class="bi bi-check-lg"></i>
                                                                     </button>
-                                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                                    <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm"
                                                                         onclick="konfirmasiDinas({{ $dinas->id }}, 'ditolak')"
                                                                         title="Tolak">
                                                                         <i class="bi bi-x-lg"></i>
@@ -359,12 +359,12 @@
 
                             <div class="tab-pane fade" id="v-pills-perlu-konfirmasi" role="tabpanel"
                                 aria-labelledby="v-pills-perlu-konfirmasi-tab">
-                                <div class="card">
+                                <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                     <div class="card-header">
                                         <h5 class="card-title mb-0">Izin Perlu Konfirmasi</h5>
                                     </div>
                                     <div class="card-body">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive text-nowrap">
                                             <table class="table table-hover">
                                                 <thead>
                                                     <tr>
@@ -413,7 +413,7 @@
                                                                 @if ($izin->file_pendukung)
                                                                     <a href="{{ Storage::url($izin->file_pendukung) }}"
                                                                         target="_blank"
-                                                                        class="btn btn-sm btn-outline-secondary">
+                                                                        class="btn btn-sm btn-outline-secondary rounded-pill px-3">
                                                                         <i class="bi bi-file-earmark"></i>
                                                                     </a>
                                                                 @else
@@ -432,13 +432,13 @@
                                                                         title="Setujui">
                                                                         <i class="bi bi-check-lg"></i>
                                                                     </button>
-                                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                                    <button type="button" class="btn btn-sm btn-danger rounded-pill px-3 shadow-sm"
                                                                         onclick="konfirmasiIzin({{ $izin->id }}, 'ditolak')"
                                                                         title="Tolak">
                                                                         <i class="bi bi-x-lg"></i>
                                                                     </button>
                                                                     <a href="{{ route('iduka.detail-izin', $izin->id) }}"
-                                                                        class="btn btn-sm btn-outline-primary"
+                                                                        class="btn btn-sm btn-outline-primary rounded-pill px-3"
                                                                         title="Detail">
                                                                         <i class="bi bi-eye"></i>
                                                                     </a>
@@ -461,7 +461,7 @@
                             <!-- Tab Riwayat Absen -->
                             <div class="tab-pane fade" id="v-pills-riwayat" role="tabpanel"
                                 aria-labelledby="v-pills-riwayat-tab">
-                                <div class="card">
+                                <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5 class="card-title mb-0">Riwayat Absensi</h5>
                                         <form id="filterRiwayatForm" class="d-flex gap-2">
@@ -483,7 +483,7 @@
                                     </div>
 
                                     <div class="card-body">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive text-nowrap">
                                             <table class="table table-hover">
                                                 <thead>
                                                     <tr>
@@ -512,14 +512,14 @@
                                 aria-labelledby="v-pills-statistik-tab">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="card">
+                                        <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                             <div class="card-header">
                                                 <h5 class="card-title mb-0">Statistik Kehadiran Bulan Ini</h5>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row mb-4">
                                                     <div class="col-md-3">
-                                                        <div class="card text-center">
+                                                        <div class="card text-center border-0 rounded-4 shadow-sm card-hover">
                                                             <div class="card-body">
                                                                 <i class="bi bi-check-circle text-success"
                                                                     style="font-size: 2rem;"></i>
@@ -531,7 +531,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <div class="card text-center">
+                                                        <div class="card text-center border-0 rounded-4 shadow-sm card-hover">
                                                             <div class="card-body">
                                                                 <i class="bi bi-clock text-warning"
                                                                     style="font-size: 2rem;"></i>
@@ -541,7 +541,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <div class="card text-center">
+                                                        <div class="card text-center border-0 rounded-4 shadow-sm card-hover">
                                                             <div class="card-body">
                                                                 <i class="bi bi-x-circle text-danger"
                                                                     style="font-size: 2rem;"></i>
@@ -551,7 +551,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <div class="card text-center">
+                                                        <div class="card text-center border-0 rounded-4 shadow-sm card-hover">
                                                             <div class="card-body">
                                                                 <i class="bi bi-e-earmark-text text-info"
                                                                     style="font-size: 2rem;"></i>
@@ -564,7 +564,7 @@
 
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <div class="card">
+                                                        <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                                             <div class="card-header">
                                                                 <h5 class="card-title mb-0">Statistik per Siswa</h5>
                                                             </div>
@@ -574,7 +574,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <div class="card">
+                                                        <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                                             <div class="card-header">
                                                                 <h5 class="card-title mb-0">Persentase Kehadiran</h5>
                                                             </div>
@@ -595,7 +595,7 @@
                                 aria-labelledby="v-pills-kordinat-tab">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="card">
+                                        <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                             <div class="card-header">
                                                 <h5 class="card-title mb-0">Tentukan Titik Koordinat</h5>
                                             </div>
@@ -658,7 +658,7 @@
                                                         <div class="form-text">Default: 15:00</div>
                                                     </div>
 
-                                                    <button type="submit" class="btn btn-outline-primary">Simpan</button>
+                                                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">Simpan</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -668,7 +668,7 @@
                                 <!-- Pengaturan Hari Libur -->
                                 <div class="row mt-3">
                                     <div class="col-md-12">
-                                        <div class="card">
+                                        <div class="card border-0 rounded-4 shadow-sm card-hover mb-4">
                                             <div class="card-header d-flex justify-content-between align-items-center">
                                                 <h5 class="card-title mb-0">Pengaturan Hari Libur</h5>
                                                 <small class="text-muted">Setiap IDUKA memiliki hari libur sendiri</small>
@@ -1551,7 +1551,7 @@
                         return;
                     }
 
-                    let html = '<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Nama</th><th>Ulang</th><th>Aksi</th></tr></thead><tbody>';
+                    let html = '<div class="table-responsive text-nowrap"><table class="table table-sm"><thead><tr><th>Tanggal</th><th>Nama</th><th>Ulang</th><th>Aksi</th></tr></thead><tbody>';
                     data.forEach(item => {
                         const tanggal = new Date(item.date).toLocaleDateString('id-ID');
                         html += `<tr><td>${tanggal}</td><td>${item.name || '-'}</td><td>${item.recurring ? 'Ya' : 'Tidak'}</td><td><button class="btn btn-sm btn-danger btn-delete-holiday" data-id="${item.id}">Hapus</button></td></tr>`;
@@ -1621,3 +1621,5 @@
         });
     </script>
 @endpush
+
+

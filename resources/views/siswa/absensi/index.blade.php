@@ -5,7 +5,7 @@
         {{-- Flash Messages --}}
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i>
+                    <i class="fas fa-check-circle me-2"></i>
                     <strong>Berhasil!</strong> {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -13,7 +13,7 @@
 
             @if (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     <strong>Error!</strong> {{ session('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -21,7 +21,7 @@
 
             @if (session('warning'))
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <i class="fas fa-exclamation-triangle me-2"></i>
                     <strong>Peringatan!</strong> {{ session('warning') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -29,7 +29,7 @@
 
             @if (session('info'))
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <i class="bi bi-info-circle me-2"></i>
+                    <i class="fas fa-info-circle me-2"></i>
                     <strong>Informasi:</strong> {{ session('info') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -38,7 +38,7 @@
 
         @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
+                <i class="fas fa-exclamation-triangle me-2"></i>
                 <strong>Validasi Error!</strong>
                 <ul class="mb-0 mt-2">
                     @foreach ($errors->all() as $error)
@@ -55,13 +55,12 @@
                 {{-- Welcome Card --}}
                 <div class="row">
                     <div class="col-lg-12 mb-3 order-0">
-                        <div class="card">
+                        <div class="card shadow-sm border-0 mb-3 card-hover" style="border-left: 4px solid var(--accent) !important;">
                             <div class="d-flex align-items-end row">
                                 <div class="col-sm-7">
                                     <div class="card-body">
-                                        <h5 class="card-title text-primary">Selamat Datang di Sistem Absensi! ??</h5>
-                                        <p class="mb-4">Jangan lupa untuk melakukan absensi setiap hari. Pastikan Anda
-                                            berada di lokasi IDUKA yang benar.</p>
+                                        <h5 class="card-title fw-bold" style="color: var(--text-primary);"><i class="fas fa-satellite-dish text-primary me-2"></i>Absensi PKL</h5>
+                                        <p class="mb-4 text-muted">Jangan lupa untuk melakukan absensi setiap hari. Pastikan Anda berada tepat di radius IDUKA.</p>
                                         @auth
                                             @if (Auth::user()->idukaDiterima)
                                                 <div class="alert alert-info mt-3">
@@ -89,7 +88,7 @@
 
                                             @if(isset($pkEnded) && $pkEnded)
                                                 <div class="alert alert-warning mt-3">
-                                                    <i class="bi bi-info-circle me-2"></i>
+                                                    <i class="fas fa-info-circle me-2"></i>
                                                     <strong>Periode PKL telah selesai.</strong> Absensi tidak lagi dibuka.
                                                 </div>
                                             @endif
@@ -113,15 +112,15 @@
                 @if ($isHoliday)
                     <div class="row mb-4">
                         <div class="col-lg-12">
-                            <div class="card border-danger">
-                                <div class="card-header bg-light-danger">
+                            <div class="card shadow-sm border-0 mb-3" style="border-left: 4px solid #ef4444 !important;">
+                                <div class="card-header bg-white border-bottom">
                                     <h5 class="card-title text-danger mb-0">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>Hari Libur
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Hari Libur
                                     </h5>
                                 </div>
                                 <div class="card-body">
                                     <div class="alert alert-danger">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
                                         <strong>Peringatan!</strong> Hari ini adalah hari libur ({{ $holidayLabel }}). Absensi ditutup.
                                     </div>
                                 </div>
@@ -134,10 +133,10 @@
                 @if ($absensiHariIni)
                     <div class="row mb-4">
                         <div class="col-lg-12">
-                            <div class="card border-success">
-                                <div class="card-header bg-light-success">
-                                    <h5 class="card-title text-success mb-0">
-                                        <i class="bi bi-check-circle me-2"></i>Status Absensi Hari Ini
+                            <div class="card shadow-sm border-0 mb-3 card-hover" style="border-left: 4px solid #22c55e !important;">
+                                <div class="card-header bg-white border-bottom pb-3">
+                                    <h5 class="card-title text-success mb-0 fw-bold">
+                                        <i class="fas fa-check-circle me-2"></i>Status Absensi Hari Ini
                                     </h5>
                                 </div>
                                 <div class="card-body">
@@ -145,7 +144,7 @@
                                         @if ($absensiHariIni->status === 'izin')
                                             <div class="col-12">
                                                 <div class="alert alert-info">
-                                                    <i class="bi bi-info-circle me-2"></i>
+                                                    <i class="fas fa-info-circle me-2"></i>
                                                     <strong>Anda sedang izin hari ini</strong><br>
                                                     Alasan: {{ $absensiHariIni->keterangan_izin }}<br>
                                                     Waktu pengajuan: {{ $absensiHariIni->created_at->format('d/m/Y H:i') }}
@@ -169,7 +168,7 @@
                                                 <div class="col-md-6">
                                                     <div class="d-flex align-items-center mb-3">
                                                         <div class="flex-shrink-0">
-                                                            <i class="bi bi-clock text-success" style="font-size: 24px;"></i>
+                                                            <i class="fas fa-clock text-success" style="font-size: 24px;"></i>
                                                         </div>
                                                         <div class="flex-grow-1 ms-3">
                                                             <h6 class="mb-1">Absen Masuk</h6>
@@ -200,7 +199,7 @@
                                                 <div class="col-md-6">
                                                     <div class="d-flex align-items-center mb-3">
                                                         <div class="flex-shrink-0">
-                                                            <i class="bi bi-clock-history text-warning" style="font-size: 24px;"></i>
+                                                            <i class="fas fa-history text-warning" style="font-size: 24px;"></i>
                                                         </div>
                                                         <div class="flex-grow-1 ms-3">
                                                             <h6 class="mb-1">Absen Pulang</h6>
@@ -227,10 +226,10 @@
                 @elseif ($hasPendingIzin || $hasPendingDinas || $hasPendingMasuk || $hasPendingPulang)
                     <div class="row mb-4">
                         <div class="col-lg-12">
-                            <div class="card border-warning">
-                                <div class="card-header bg-light-warning">
-                                    <h5 class="card-title text-warning mb-0">
-                                        <i class="bi bi-clock-history me-2"></i>Status Menunggu Konfirmasi
+                            <div class="card shadow-sm border-0 mb-3 card-hover" style="border-left: 4px solid #f59e0b !important;">
+                                <div class="card-header bg-white border-bottom pb-3">
+                                    <h5 class="card-title text-warning mb-0 fw-bold">
+                                        <i class="fas fa-history me-2"></i>Status Menunggu Konfirmasi
                                     </h5>
                                 </div>
                                 <div class="card-body">
@@ -239,7 +238,7 @@
                                             <div class="col-md-6">
                                                 <div class="d-flex align-items-center mb-3">
                                                     <div class="flex-shrink-0">
-                                                        <i class="bi bi-clock text-warning" style="font-size: 24px;"></i>
+                                                        <i class="fas fa-clock text-warning" style="font-size: 24px;"></i>
                                                     </div>
                                                     <div class="flex-grow-1 ms-3">
                                                         <h6 class="mb-1">Absen Masuk</h6>
@@ -262,7 +261,7 @@
                                             <div class="col-md-6">
                                                 <div class="d-flex align-items-center mb-3">
                                                     <div class="flex-shrink-0">
-                                                        <i class="bi bi-clock-history text-warning" style="font-size: 24px;"></i>
+                                                        <i class="fas fa-history text-warning" style="font-size: 24px;"></i>
                                                     </div>
                                                     <div class="flex-grow-1 ms-3">
                                                         <h6 class="mb-1">Absen Pulang</h6>
@@ -284,7 +283,7 @@
                                         @if ($hasPendingIzin)
                                             <div class="col-12">
                                                 <div class="alert alert-info">
-                                                    <i class="bi bi-info-circle me-2"></i>
+                                                    <i class="fas fa-info-circle me-2"></i>
                                                     <strong>Izin menunggu konfirmasi</strong><br>
                                                     Jenis:
                                                     {{ ucfirst(str_replace('_', ' ', $izinPending->jenis_izin)) }}<br>
@@ -318,10 +317,10 @@
                 {{-- Tombol Absensi, Izin, dan Dinas Luar --}}
                 <div class="row mb-4">
                     <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Absensi Hari Ini</h5>
-                                <small class="text-muted">Pastikan GPS aktif dan Anda berada dalam radius IDUKA</small>
+                        <div class="card shadow-sm border-0 mb-3 card-hover">
+                            <div class="card-header border-bottom mb-3 pb-3">
+                                <h5 class="card-title mb-0 fw-bold"><i class="fas fa-street-view text-primary me-2"></i>Panel Tindakan Absensi</h5>
+                                <small class="text-muted">Pastikan GPS aktif dan Anda berada dalam radius target</small>
                                 <div class="form-check form-switch mt-2">
                                     <input class="form-check-input" type="checkbox" id="locationSwitch" {{ $absensiHariIni && ($absensiHariIni->status === 'izin' || ($absensiHariIni->jam_masuk && $absensiHariIni->jam_pulang)) ? 'disabled' : '' }} {{ $isHoliday ? 'disabled' : '' }}>
                                     <label class="form-check-label" for="locationSwitch">Akses Lokasi</label>
@@ -373,7 +372,7 @@
                                                 {{ $hasPendingIzin || $hasPendingDinas || $hasPendingMasuk ? 'disabled' : '' }}
                                                 {{ $isHoliday ? 'disabled' : '' }}>
                                                 <div class="btn-content">
-                                                    <i class="bi bi-clock"></i>
+                                                    <i class="fas fa-clock"></i>
                                                     <span class="btn-title">Absen Masuk</span>
                                                     <span class="btn-subtitle">
                                                         @if ($isHoliday)
@@ -415,7 +414,7 @@
                                                 {{ $isHoliday ? 'disabled' : '' }}>
                                                 @if ($hasPendingPulang) disabled @endif
                                                 <div class="btn-content">
-                                                    <i class="bi bi-clock-history"></i>
+                                                    <i class="fas fa-clock-rotate-left"></i>
                                                     <span class="btn-title">Absen Pulang</span>
                                                     <span class="btn-subtitle">
                                                         @if ($isHoliday)
@@ -454,7 +453,7 @@
                                             {{ $hasPendingDinas || $hasApprovedDinas ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}
                                             {{ $isHoliday ? 'disabled' : '' }}>
                                             <div class="btn-content">
-                                                <i class="bi bi-file-earmark-text"></i>
+                                                <i class="fas fa-file-alt"></i>
                                                 <span class="btn-title">Izin</span>
                                                 <span class="btn-subtitle">
                                                     @if ($isHoliday)
@@ -486,7 +485,7 @@
                                             {{ $hasPendingIzin || $hasApprovedIzin ? 'disabled' : '' }} {{ $hasPendingMasuk ? 'disabled' : '' }} {{ $hasPendingPulang ? 'disabled' : '' }}
                                             {{ $isHoliday ? 'disabled' : '' }}>
                                             <div class="btn-content">
-                                                <i class="bi bi-briefcase"></i>
+                                                <i class="fas fa-briefcase"></i>
                                                 <span class="btn-title">Dinas Luar</span>
                                                 <span class="btn-subtitle">
                                                     @if ($isHoliday)
@@ -539,10 +538,10 @@
                 {{-- Form Izin --}}
                 <div class="row mb-4" id="formIzinContainer" style="display: none;">
                     <div class="col-lg-12">
-                        <div class="card border-info">
-                            <div class="card-header bg-light-info">
-                                <h5 class="card-title text-info mb-0">
-                                    <i class="bi bi-file-earmark-text me-2"></i>Ajukan Izin Tidak Masuk
+                        <div class="card shadow-sm border-0 mb-3 card-hover" style="border-left: 4px solid #06b6d4 !important;">
+                            <div class="card-header bg-white border-bottom pb-3">
+                                <h5 class="card-title text-info mb-0 fw-bold">
+                                    <i class="fas fa-envelope-open-text me-2"></i>Form Pengajuan Izin
                                 </h5>
                                 <button type="button" class="btn-close float-end" id="closeIzinForm"></button>
                             </div>
@@ -572,7 +571,7 @@
                                         </div>
                                     </div>
                                     <div class="alert alert-warning">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
                                         <strong>Perhatian:</strong> Setelah mengajukan izin, Anda tidak bisa melakukan absensi
                                         masuk/pulang hari ini.
                                     </div>
@@ -589,10 +588,10 @@
                 {{-- Form Dinas Luar --}}
                 <div class="row mb-4" id="formDinasContainer" style="display: none;">
                     <div class="col-lg-12">
-                        <div class="card border-primary">
-                            <div class="card-header bg-light-primary">
-                                <h5 class="card-title text-primary mb-0">
-                                    <i class="bi bi-briefcase me-2"></i>Ajukan Dinas Luar
+                        <div class="card shadow-sm border-0 mb-3 card-hover" style="border-left: 4px solid #3b82f6 !important;">
+                            <div class="card-header bg-white border-bottom pb-3">
+                                <h5 class="card-title text-primary mb-0 fw-bold">
+                                    <i class="fas fa-briefcase me-2"></i>Form Pengajuan Dinas Luar
                                 </h5>
                                 <button type="button" class="btn-close float-end" id="closeDinasForm"></button>
                             </div>
@@ -622,7 +621,7 @@
                                         </div>
                                     </div>
                                     <div class="alert alert-info">
-                                        <i class="bi bi-info-circle me-2"></i>
+                                        <i class="fas fa-info-circle me-2"></i>
                                         <strong>Informasi:</strong> Setelah mengajukan dinas luar dan disetujui, Anda tetap wajib
                                         melakukan absensi pulang seperti biasa.
                                     </div>
@@ -639,11 +638,11 @@
                 {{-- Tombol untuk menampilkan riwayat --}}
                 <div class="row mb-4">
                     <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">Riwayat Absensi</h5>
-                                <button type="button" class="btn btn-primary btn-sm" id="toggleRiwayat">
-                                    <i class="bi bi-calendar-history me-2"></i>Lihat Riwayat Absensi
+                        <div class="card shadow-sm border-0 mb-3 card-hover">
+                            <div class="card-header d-flex justify-content-between align-items-center pb-3">
+                                <h5 class="card-title mb-0 fw-bold"><i class="fas fa-list-alt text-primary me-2"></i>Riwayat Absensi</h5>
+                                <button type="button" class="btn btn-primary px-3" id="toggleRiwayat">
+                                    <i class="fas fa-eye me-2"></i>Lihat Riwayat
                                 </button>
                             </div>
                         </div>
@@ -653,15 +652,15 @@
                 {{-- Riwayat Absensi (disembunyikan secara default) --}}
                 <div class="row mb-4" id="riwayatContainer" style="display: none;">
                     <div class="col-lg-12">
-                        <div class="card">
+                        <div class="card shadow-sm border-0 mb-3">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0">Daftar Riwayat Absensi</h5>
                                 <button type="button" class="btn btn-secondary btn-sm" id="hideRiwayat">
-                                    <i class="bi bi-eye-slash me-2"></i>Sembunyikan
+                                    <i class="fas fa-eye-slash me-2"></i>Sembunyikan
                                 </button>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+                                <div class="table-responsive text-nowrap">
                                     <table class="table table-bordered table-striped table-hover">
                                         <thead>
                                             <tr>
@@ -703,10 +702,10 @@
                 {{-- Detail Absensi (disembunyikan secara default) --}}
                 <div class="row mb-4" id="detailAbsensiContainer" style="display: none;">
                     <div class="col-lg-12">
-                        <div class="card border-primary">
-                            <div class="card-header bg-light-primary">
+                        <div class="card shadow-sm border-0 mb-3" style="border-left: 4px solid #3b82f6 !important;">
+                            <div class="card-header bg-white border-bottom">
                                 <h5 class="card-title text-primary mb-0">
-                                    <i class="bi bi-info-circle me-2"></i>Detail Absensi
+                                    <i class="fas fa-info-circle me-2"></i>Detail Absensi
                                 </h5>
                                 <button type="button" class="btn-close float-end" id="closeDetailAbsensi"></button>
                             </div>
@@ -1400,7 +1399,7 @@
 
             // Update lokasi user
             userLocation.textContent = userLat.toFixed(6) + ", " + userLng.toFixed(6);
-            locationStatus.textContent = "Lokasi terdeteksi dengan akurasi ±" + Math.round(accuracy) + "m";
+            locationStatus.textContent = "Lokasi terdeteksi dengan akurasi Â±" + Math.round(accuracy) + "m";
 
             // Jika sedang dinas luar, tampilkan pesan khusus dan skip validasi lokasi
             if (sedangDinas) {
@@ -1466,7 +1465,7 @@
             const distance = calculateDistance(userLat, userLng, targetLat, targetLng);
 
             // Update UI
-            distanceValue.textContent = Math.round(distance) + " meter dari " + lokasiName + " (akurasi: ±" + Math.round(accuracy) + "m)";
+            distanceValue.textContent = Math.round(distance) + " meter dari " + lokasiName + " (akurasi: Â±" + Math.round(accuracy) + "m)";
 
             // Gunakan akurasi GPS sebagai toleransi
             const effectiveRadius = targetRadius + accuracy;
@@ -1680,7 +1679,7 @@
             if (distance > (targetRadius + accuracy)) {
                 e.preventDefault();
                 alert(
-                    `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: ±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
+                    `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: Â±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
                 );
                 return false;
             }
@@ -1805,7 +1804,7 @@
                 if (distance > (targetRadius + accuracy)) {
                     e.preventDefault();
                     alert(
-                        `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: ±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
+                        `Anda berada di luar radius yang diizinkan untuk absensi di ${lokasiName}.\nJarak Anda: ${Math.round(distance)} meter\nRadius maksimal: ${targetRadius} meter\nAkurasi GPS: Â±${Math.round(accuracy)}m\nTotal toleransi: ${Math.round(targetRadius + accuracy)}m`
                     );
                     return false;
                 }
@@ -1930,7 +1929,7 @@
                     alertDiv.className = 'alert alert-info mt-3 izin-status-alert';
                     formIzin.querySelector('.card-body').appendChild(alertDiv);
                 }
-                alertDiv.innerHTML = `<i class="bi bi-info-circle me-2"></i> ${message}`;
+                alertDiv.innerHTML = `<i class="fas fa-info-circle me-2"></i> ${message}`;
             }
 
             function enableIzinForm() {
@@ -1959,7 +1958,7 @@
                     alertDiv.className = 'alert alert-info mt-3 dinas-status-alert';
                     formDinas.querySelector('.card-body').appendChild(alertDiv);
                 }
-                alertDiv.innerHTML = `<i class="bi bi-info-circle me-2"></i> ${message}`;
+                alertDiv.innerHTML = `<i class="fas fa-info-circle me-2"></i> ${message}`;
             }
 
             function enableDinasForm() {
@@ -2205,7 +2204,7 @@
                         <td>${lokasi}</td>
                         <td>
                             <button class="btn btn-sm btn-info view-detail" data-id="${absensi.id}">
-                                <i class="bi bi-eye"></i> Detail
+                                <i class="fas fa-eye"></i> Detail
                             </button>
                         </td>
                     </tr>
@@ -2626,3 +2625,6 @@
         updateButtonStates();
     </script>
 @endsection
+
+
+

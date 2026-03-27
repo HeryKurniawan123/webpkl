@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <!-- Gaya CSS Tambahan untuk Menyesuaikan Template (Bisa dipindah ke file css terpisah) -->
@@ -143,7 +143,7 @@
                 </button>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="table-responsive text-nowrap">
                     <table class="table table-bordered" width="100%" cellspacing="0">
                         <thead>
                             <tr>
@@ -227,3 +227,4 @@
         </div>
     </div>
 @endsection
+

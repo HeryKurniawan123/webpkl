@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container">
@@ -113,7 +113,7 @@
             </div>
 
             <div class="card-body p-0">
-                <div class="table-responsive">
+                <div class="table-responsive text-nowrap">
                     <table class="table table-hover mb-0" id="siswaTable">
                         <thead class="bg-light">
                             <tr>

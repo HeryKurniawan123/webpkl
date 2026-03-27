@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 @section('content')
 
 <!DOCTYPE html>
@@ -154,9 +154,9 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card shadow-sm border-0 mb-4">
                         <div class="card-body">
-                            <div class="table-responsive">
+                            <div class="table-responsive text-nowrap">
                                 <table class="table table-hover">
                                     <tr>
                                         <td><i class="bi bi-building"></i> Nama Institusi</td>
@@ -346,3 +346,5 @@
 </html>
 
 @endsection
+
+

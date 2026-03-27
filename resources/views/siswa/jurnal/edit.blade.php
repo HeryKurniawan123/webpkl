@@ -1,30 +1,30 @@
-{{-- File: resources/views/siswa/jurnal/partials/edit.blade.php --}}
+﻿{{-- File: resources/views/siswa/jurnal/partials/edit.blade.php --}}
 
 <div class="row g-3">
     <div class="col-md-6">
         <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
-            <i class="bi bi-calendar3 me-1"></i>Tanggal
+            <i class="fas fa-calendar-alt me-1"></i>Tanggal
         </label>
         <input type="date" class="form-control form-control-lg" name="tgl" value="{{ old('tgl', $jurnal->tgl) }}" required>
     </div>
     <div class="col-md-6">
         <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
-            <i class="bi bi-image me-1"></i>Foto Kegiatan
+            <i class="fas fa-image me-1"></i>Foto Kegiatan
         </label>
         <input type="file" class="form-control form-control-lg" name="foto" accept="image/*" id="editFotoInput">
         @if($jurnal->foto)
             <div class="mt-2 p-2 bg-light rounded">
                 <small class="text-muted d-flex align-items-center">
-                    <i class="bi bi-image-fill text-primary me-2"></i>
+                    <i class="fas fa-image-fill text-primary me-2"></i>
                     <span>Foto saat ini: </span>
                     <a href="{{ asset($jurnal->foto) }}" target="_blank" class="text-primary ms-1 text-decoration-none fw-semibold">
-                        <i class="bi bi-eye me-1"></i>Lihat foto
+                        <i class="fas fa-eye me-1"></i>Lihat foto
                     </a>
                 </small>
             </div>
         @else
             <small class="text-muted d-block mt-1">
-                <i class="bi bi-info-circle me-1"></i>Belum ada foto. Upload foto baru jika diperlukan.
+                <i class="fas fa-info-circle me-1"></i>Belum ada foto. Upload foto baru jika diperlukan.
             </small>
         @endif
         <small class="text-muted d-block mt-1">Format: JPG, PNG, GIF (Max: 2MB)</small>
@@ -34,13 +34,13 @@
 <div class="row g-3 mt-1">
     <div class="col-md-6">
         <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
-            <i class="bi bi-clock me-1"></i>Jam Mulai
+            <i class="fas fa-clock me-1"></i>Jam Mulai
         </label>
         <input type="time" class="form-control form-control-lg" name="jam_mulai" value="{{ old('jam_mulai', $jurnal->jam_mulai) }}" required>
     </div>
     <div class="col-md-6">
         <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
-            <i class="bi bi-clock-history me-1"></i>Jam Selesai
+            <i class="fas fa-history me-1"></i>Jam Selesai
         </label>
         <input type="time" class="form-control form-control-lg" name="jam_selesai" value="{{ old('jam_selesai', $jurnal->jam_selesai) }}" required>
     </div>
@@ -48,12 +48,12 @@
 
 <div class="mt-3">
     <label class="form-label fw-semibold text-uppercase small text-muted mb-2">
-        <i class="bi bi-file-text me-1"></i>Uraian Kegiatan
+        <i class="fas fa-file-alt me-1"></i>Uraian Kegiatan
     </label>
     <textarea class="form-control form-control-lg" name="uraian" rows="5" 
         placeholder="Tuliskan uraian kegiatan yang dilakukan..." required>{{ old('uraian', $jurnal->uraian) }}</textarea>
     <small class="text-muted">
-        <i class="bi bi-info-circle me-1"></i>Maksimal 1000 karakter
+        <i class="fas fa-info-circle me-1"></i>Maksimal 1000 karakter
     </small>
 </div>
 
@@ -63,7 +63,7 @@
             id="edit_is_pengetahuan_baru" value="1" 
             {{ old('is_pengetahuan_baru', $jurnal->is_pengetahuan_baru) ? 'checked' : '' }}>
         <label class="form-check-label fw-semibold" for="edit_is_pengetahuan_baru">
-            <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+            <i class="fas fa-lightbulb text-warning text-warning me-1"></i>
             Termasuk pengetahuan baru
         </label>
     </div>
@@ -73,7 +73,7 @@
             id="edit_is_dalam_mapel" value="1" 
             {{ old('is_dalam_mapel', $jurnal->is_dalam_mapel) ? 'checked' : '' }}>
         <label class="form-check-label fw-semibold" for="edit_is_dalam_mapel">
-            <i class="bi bi-book-fill text-primary me-1"></i>
+            <i class="fas fa-book-open text-primary text-primary me-1"></i>
             Kegiatan ada dalam mapel sekolah
         </label>
     </div>
@@ -82,7 +82,7 @@
 @if($jurnal->status === 'rejected')
     <div class="alert alert-danger mt-4 border-0 shadow-sm">
         <div class="d-flex align-items-center">
-            <i class="bi bi-exclamation-triangle-fill fs-3 me-3"></i>
+            <i class="fas fa-exclamation-triangle fs-3 me-3"></i>
             <div>
                 <strong class="d-block mb-1">Jurnal Ditolak</strong>
                 <small>Silakan perbaiki jurnal Anda dan kirim ulang untuk validasi.</small>

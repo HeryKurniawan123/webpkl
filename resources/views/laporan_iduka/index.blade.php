@@ -1,4 +1,4 @@
-@extends('layout.main')
+﻿@extends('layout.main')
 
 @section('content')
     <div class="container py-4">
@@ -36,7 +36,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="card-title fw-bold mb-0">📋 Daftar Laporan Iduka</h5>
+                            <h5 class="card-title fw-bold mb-0"> Daftar Laporan Iduka</h5>
                             <div class="col-lg-4">
                                 <div class="d-flex gap-2 justify-content-lg-end mt-3 mt-lg-0">
                                     <a href="{{ route('laporan.iduka.export.all') }}" class="btn btn-outline-success">
@@ -48,7 +48,7 @@
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <div class="table-responsive">
+                        <div class="table-responsive text-nowrap">
                             <table class="table table-hover mb-0" id="idukaTable">
                                 <thead class="bg-light">
                                     <tr>
@@ -220,3 +220,5 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs
+
+

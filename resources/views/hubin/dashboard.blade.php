@@ -1,120 +1,98 @@
 @extends('layout.main')
 
 @section('content')
-<style>
-  .card-custom {
-    border-radius: 1rem;
-    border: none;
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05);
-    transition: 0.3s;
-    min-width: 0;
-  }
-
-  .card-custom:hover {
-    transform: translateY(-3px);
-  }
-
-  .icon-wrapper {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--bs-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-  }
-
-  .grid-custom {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    justify-content: end;
-  }
-</style>
-
-<div class="container-fluid"><br>
-  <div class="content-wrapper">
-    <div class="container-xxl flex-grow-1 container-p-y">
-
-      {{-- Welcome Card --}}
-      <div class="row">
-        <div class="col-lg-12 mb-3 order-0">
-          <div class="card">
-            <div class="d-flex align-items-end row">
-              <div class="col-sm-7">
-                <div class="card-body">
-                  <h5 class="card-title text-primary">Halo {{ Auth::user()->name }}! 🎉</h5>
-                  <p class="mb-4">Data kamu belum terisi sepenuhnya nih. Ayo isi terlebih dahulu!</p>
-                </div>
-              </div>
-              <div class="col-sm-5 text-center text-sm-left">
-                <div class="card-body pb-0 px-0 px-md-4">
-                  <img
-                    src="{{ asset('snet/assets/img/illustrations/man-with-laptop-light.png') }}"
-                    height="140"
-                    alt="View Badge User"
-                    data-app-dark-img="illustrations/man-with-laptop-dark.png"
-                    data-app-light-img="illustrations/man-with-laptop-light.png" />
-                </div>
-              </div>
+<div class="container-xxl flex-grow-1 container-p-y">
+  {{-- Welcome Card --}}
+  <div class="row">
+    <div class="col-lg-12 mb-4 order-0">
+      <div class="card shadow-sm border-0 bg-primary text-white card-hover">
+        <div class="d-flex align-items-end row">
+          <div class="col-sm-8">
+            <div class="card-body">
+              <h4 class="card-title text-white mb-2 fw-bold">Selamat Datang, {{ Auth::user()->name }}!</h4>
+              <p class="mb-4 text-white-50">
+                Ini adalah dashboard panel Hubin. Anda dapat memantau statistik dan rekapitulasi data usulan PKL siswa secara keseluruhan.
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-4 text-center text-sm-left">
+            <div class="card-body pb-0 px-0 px-md-4">
+              <img src="{{ asset('snet/assets/img/illustrations/man-with-laptop-light.png') }}" 
+                   height="140" 
+                   alt="Welcome Hubin" 
+                   class="d-none d-sm-block ms-auto">
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      {{-- Cards --}}
-      <div class="row mt-3">
-        <div class="grid-custom">
-
-          <div class="card card-custom">
-            <div class="d-flex align-items-center p-3">
-              <div class="icon-wrapper me-3">
-                <i class="fas fa-lightbulb"></i>
-              </div>
-              <div>
-                <h6 class="text-muted mb-0">Jumlah Usulan</h6>
-                <h4 class="mb-0 fw-bold text-primary">{{ $jumlahUsulan }}</h4>
-              </div>
-            </div>
+  {{-- Cards --}}
+  <div class="row">
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow-sm border-0 h-100 card-hover">
+        <div class="card-body d-flex align-items-center">
+          <div class="avatar flex-shrink-0 me-3">
+            <span class="avatar-initial rounded bg-label-primary">
+              <i class="fas fa-lightbulb fs-4"></i>
+            </span>
           </div>
-          <div class="card card-custom">
-            <div class="d-flex align-items-center p-3">
-              <div class="icon-wrapper me-3">
-                <i class="fas fa-check-circle"></i>
-              </div>
-              <div>
-                <h6 class="text-muted mb-0">Jumlah Usulan Diterima</h6>
-                <h4 class="mb-0 fw-bold text-primary">{{ $jumlahDiterima }}</h4>
-              </div>
-            </div>
+          <div>
+            <h6 class="text-muted mb-0">Total Penempatan Siswa</h6>
+            <h4 class="mb-0 fw-bold text-dark mt-1">{{ $jumlahUsulan }}</h4>
           </div>
-
-          <div class="card card-custom">
-            <div class="d-flex align-items-center p-3">
-              <div class="icon-wrapper me-3">
-                <i class="fas fa-times-circle"></i>
-              </div>
-              <div>
-                <h6 class="text-muted mb-0">Jumlah Usulan Ditolak</h6>
-                <h4 class="mb-0 fw-bold text-primary">{{ $jumlahDitolak }}</h4>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
-
-      {{-- Chart --}}
-    <div class="card mt-4">
-        <div class="card-body">
-          <h5 class="card-title text-center">Statistik Usulan</h5>
-          <canvas id="statistikChart" height="100"></canvas>
-        </div>
     </div>
 
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card shadow-sm border-0 h-100 card-hover">
+        <div class="card-body d-flex align-items-center">
+          <div class="avatar flex-shrink-0 me-3">
+            <span class="avatar-initial rounded bg-label-success">
+              <i class="fas fa-check-circle fs-4"></i>
+            </span>
+          </div>
+          <div>
+            <h6 class="text-muted mb-0">Jumlah Diterima</h6>
+            <h4 class="mb-0 fw-bold text-dark mt-1">{{ $jumlahDiterima }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="col-lg-4 col-md-12 mb-4">
+      <div class="card shadow-sm border-0 h-100 card-hover">
+        <div class="card-body d-flex align-items-center">
+          <div class="avatar flex-shrink-0 me-3">
+            <span class="avatar-initial rounded bg-label-danger">
+              <i class="fas fa-times-circle fs-4"></i>
+            </span>
+          </div>
+          <div>
+            <h6 class="text-muted mb-0">Jumlah Ditolak</h6>
+            <h4 class="mb-0 fw-bold text-dark mt-1">{{ $jumlahDitolak }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- Chart --}}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm border-0 card-hover">
+        <div class="card-body">
+          <h5 class="card-title text-center mb-3">Statistik Usulan</h5>
+          <div class="table-responsive">
+            <p class="text-center text-muted mb-3">Grafik ini menggambarkan jumlah usulan, diterima, dan ditolak.</p>
+          </div>
+          <div class="chart-container" style="min-height: 250px;">
+            <canvas id="statistikChart" height="100"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -189,5 +167,6 @@
     });
   });
 </script>
+
 
 

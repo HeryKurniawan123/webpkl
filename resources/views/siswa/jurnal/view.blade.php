@@ -1,4 +1,4 @@
-<div class="journal-view">
+﻿<div class="journal-view">
     <div class="row mb-4">
         <div class="col-md-6">
             <h6 class="text-muted">Tanggal</h6>
@@ -42,7 +42,7 @@
         <div class="card mb-3 border-0 shadow-sm">
             <div class="card-body">
                 <h6 class="text-muted mb-3">
-                    <i class="bi bi-camera me-1"></i> Dokumentasi Kegiatan
+                    <i class="fas fa-camera me-1"></i> Dokumentasi Kegiatan
                 </h6>
                 <div class="text-center">
                     <img src="{{ asset($jurnal->foto) }}" alt="Dokumentasi kegiatan"
@@ -61,14 +61,14 @@
                 <span class="badge bg-danger">❌ Ditolak</span>
                 @if ($jurnal->rejected_reason)
                     <div class="mt-2 small text-danger">
-                        <i class="bi bi-info-circle"></i> Alasan: {{ $jurnal->rejected_reason }}
+                        <i class="fas fa-info-circle"></i> Alasan: {{ $jurnal->rejected_reason }}
                     </div>
                 @endif
             @elseif($jurnal->status == 'approved')
-                <span class="badge bg-success">✅ Disetujui</span>
+                <span class="badge bg-success"> Disetujui</span>
                 @if ($jurnal->approved_by)
                     <div class="mt-2 small text-success">
-                        <i class="bi bi-check-circle"></i> Disetujui oleh: {{ $jurnal->approved_by }}
+                        <i class="fas fa-check-circle"></i> Disetujui oleh: {{ $jurnal->approved_by }}
                     </div>
                 @endif
             @else
@@ -92,3 +92,5 @@
         </div>
     </div>
 </div>
+
+
