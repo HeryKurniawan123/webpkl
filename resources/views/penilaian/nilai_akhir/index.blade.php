@@ -154,6 +154,15 @@
                                     </svg>
                                     Export .docx
                                 </a>
+                                <a href="{{ route('sertifikat.cetak.pdf', ['id' => $d['id']]) }}" target="_blank"
+                                   class="btn-export" style="margin-top:6px;background:linear-gradient(135deg,#f7c32e,#c1272d);color:#222;"
+                                   title="Cetak Sertifikat {{ $d['nama'] }}">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z" />
+                                        <polyline points="17 21 17 13 7 13 7 21" />
+                                    </svg>
+                                    Cetak Sertifikat
+                                </a>
                             </td>
                         </tr>
                         @endforeach

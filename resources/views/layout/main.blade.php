@@ -210,7 +210,7 @@
                         </li>
                     @endif
 
-                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog' , 'hubin']))
+                    @if (in_array(auth()->user()->role, ['iduka', 'guru', 'kaprog', 'hubin']))
                         <li class="menu-item {{ Request::routeIs('approval.index') ? 'active' : '' }}">
                             <a href="{{ route('approval.index') }}" class="menu-link">
                                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
@@ -264,7 +264,7 @@ Request::routeIs('nilai-akhir.*')
                                     </a>
 
                                 </li>
-                                
+
 
                                 <li class="menu-item {{ Request::routeIs('penilaian.*') ? 'active' : '' }}">
                                     <a href="{{ route('penilaian.index') }}" class="menu-link">
@@ -276,7 +276,7 @@ Request::routeIs('nilai-akhir.*')
                                     <a href="{{ route('nilai-akhir.index') }}" class="menu-link">
                                         <div>Nilai Akhir</div>
                                     </a>
-                                </li> 
+                                </li>
 
                             </ul>
                         </li>
@@ -639,14 +639,16 @@ Request::routeIs('nilai-akhir.*')
                         <ul class="navbar-nav flex-row align-items-center ms-auto gap-2">
 
                             <!-- Username text -->
-                            <li class="d-none d-md-flex align-items-center" style="color:#64748b;font-size:13.5px;font-weight:500;">
+                            <li class="d-none d-md-flex align-items-center"
+                                style="color:#64748b;font-size:13.5px;font-weight:500;">
                                 <i class="fas fa-user-circle me-2" style="color:#94a3b8;"></i>
                                 {{ auth()->user()->profile->nama ?? auth()->user()->name }}
                             </li>
 
                             <!-- Role badge -->
                             <li class="d-none d-md-flex align-items-center">
-                                <span class="badge" style="background:#eff6ff;color:#2563eb;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">
+                                <span class="badge"
+                                    style="background:#eff6ff;color:#2563eb;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">
                                     {{ ucfirst(auth()->user()->role) }}
                                 </span>
                             </li>
@@ -668,20 +670,24 @@ Request::routeIs('nilai-akhir.*')
                                         <a class="dropdown-item" href="#" style="pointer-events:none;">
                                             <div class="d-flex align-items-center gap-3">
                                                 <img src="{{ Auth::user()->profile_photo ? asset(Auth::user()->profile_photo) : asset('images/default.jpg') }}"
-                                                    alt="Foto Profil" class="rounded-circle" width="40" height="40"
-                                                    style="border:2px solid #e2e8f0;object-fit:cover;">
+                                                    alt="Foto Profil" class="rounded-circle" width="40"
+                                                    height="40" style="border:2px solid #e2e8f0;object-fit:cover;">
                                                 <div>
-                                                    <div class="fw-semibold text-truncate" style="max-width:140px;font-size:13.5px;color:#0f172a;"
+                                                    <div class="fw-semibold text-truncate"
+                                                        style="max-width:140px;font-size:13.5px;color:#0f172a;"
                                                         title="{{ auth()->user()->profile->nama ?? auth()->user()->name }}">
                                                         {{ auth()->user()->profile->nama ?? auth()->user()->name }}
                                                     </div>
-                                                    <div style="font-size:12px;color:#64748b;">{{ ucfirst(auth()->user()->role) }}</div>
+                                                    <div style="font-size:12px;color:#64748b;">
+                                                        {{ ucfirst(auth()->user()->role) }}</div>
                                                 </div>
                                             </div>
                                         </a>
                                     </li>
 
-                                    <li><div class="dropdown-divider"></div></li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
 
                                     <li>
                                         <a class="dropdown-item" href="{{ route('profile.edit') }}">
@@ -690,7 +696,9 @@ Request::routeIs('nilai-akhir.*')
                                         </a>
                                     </li>
 
-                                    <li><div class="dropdown-divider"></div></li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
 
                                     <li>
                                         <a class="dropdown-item logout-btn" href="/logout" style="color:#dc2626;">

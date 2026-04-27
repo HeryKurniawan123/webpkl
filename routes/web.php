@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Exports\DataAbsenKaprog;
@@ -24,6 +25,7 @@ use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\UsersController;
 use App\Models\Cp;
 use App\Models\Guru;
+use App\Http\Controllers\SertifikatController;
 use App\Models\Iduka;
 use App\Models\IdukaHoliday;
 use Illuminate\Support\Carbon;
@@ -745,8 +747,10 @@ Route::middleware(['auth', 'hakakses:guru,hubin,kaprog,iduka'])->group(function 
     Route::post('/penilaian/store', [PenilaianController::class, 'store'])->name('penilaian.store');
     Route::get('/penilaian/get-indikator/{siswa_id}', [PenilaianController::class, 'getIndikator'])->name('penilaian.get-indikator');
 
-    Route::get('/nilai-akhir', [NilaiAkhirController::class,'index'])->name('nilai-akhir.index');
+    Route::get('/nilai-akhir', [NilaiAkhirController::class, 'index'])->name('nilai-akhir.index');
     Route::get('/penilaian/export/{id}', [PenilaianController::class, 'export'])->name('penilaian.export');
+    Route::get('/sertifikat/cetak', [SertifikatController::class, 'cetak'])->name('sertifikat.cetak');
+    Route::get('/sertifikat/cetak/pdf/{id}', [SertifikatController::class, 'cetakPdf'])->name('sertifikat.cetak.pdf');
 });
 
 Route::middleware(['auth', 'hakakses:hubin,kepsek,kaprog,guru'])->group(function () {

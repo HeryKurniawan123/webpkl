@@ -449,23 +449,38 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
             // Render grouped: 1 row header TP + N rows indikator di bawahnya
             // Persis seperti format docx
             // ============================================================
+
             tujuanList.forEach((tp, tpIndex) => {
                 const indikators = tp.indikator_penilaians || [];
 
-                // â”€â”€ ROW HEADER: Tujuan Pembelajaran â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ROW HEADER: Tujuan Pembelajaran (input jenis penilaian, nilai, deskripsi)
                 const rowTP = document.createElement('tr');
                 rowTP.className = 'row-tp';
                 rowTP.innerHTML = `
                     <td>
                         <div class="tp-nomor">${tpIndex + 1}</div>
                     </td>
-                    <td colspan="5">
+                    <td>
                         <span class="tp-label">${tp.tujuan_pembelajaran}</span>
+                    </td>
+                    <td></td>
+                    <td>
+                        <select name="jenis_penilaian_tp[${tp.id}]" class="select-table" required>
+                            <option value="">-- Pilih --</option>
+                            <option value="guru_pembimbing">Guru Pembimbing</option>
+                            <option value="instruktur_iduka">Instruktur IDUKA</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="nilai_tp[${tp.id}]" class="input-table" min="0" max="100" placeholder="0–100" required>
+                    </td>
+                    <td>
+                        <input type="text" name="deskripsi_tp[${tp.id}]" class="input-table" placeholder="Opsional">
                     </td>
                 `;
                 tabelBody.appendChild(rowTP);
 
-                // â”€â”€ ROW INDIKATOR: satu baris per indikator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                // ROW INDIKATOR: satu baris per indikator (hanya input ketercapaian)
                 indikators.forEach((indikator, iIdx) => {
                     const rowInd = document.createElement('tr');
                     rowInd.className = 'row-indikator';
@@ -480,27 +495,13 @@ document.getElementById('siswaSelect').addEventListener('change', function () {
                             </div>
                         </td>
                         <td>
-                            <select name="ketercapaian_indikator[${indikator.id}]" class="select-table" required>
+                            <select name="ketercapaian[${indikator.id}]" class="select-table" required>
                                 <option value="">-- Pilih --</option>
-                                <option value="Ya">âœ“ Ya</option>
-                                <option value="Tidak">âœ— Tidak</option>
+                                <option value="Ya">✓ Ya</option>
+                                <option value="Tidak">✗ Tidak</option>
                             </select>
                         </td>
-                        <td>
-                            <select name="jenis_penilaian[${indikator.id}]" class="select-table" required>
-                                <option value="">-- Pilih --</option>
-                                <option value="guru_pembimbing">Guru Pembimbing</option>
-                                <option value="instruktur_iduka">Instruktur IDUKA</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="number" name="nilai[${indikator.id}]"
-                                class="input-table" min="0" max="100" placeholder="0â€“100" required>
-                        </td>
-                        <td>
-                            <input type="text" name="deskripsi[${indikator.id}]"
-                                class="input-table" placeholder="Opsional">
-                        </td>
+                        <td colspan="3"></td>
                     `;
                     tabelBody.appendChild(rowInd);
                 });

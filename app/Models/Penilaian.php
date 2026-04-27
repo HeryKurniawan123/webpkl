@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Penilaian extends Model
 {
@@ -15,12 +14,12 @@ class Penilaian extends Model
         'ketercapaian_indikator',
         'jenis_penilaian',
         'nilai',
-        'deskripsi'
+        'deskripsi',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'users_id');
     }
 
     public function tujuanPembelajaran()

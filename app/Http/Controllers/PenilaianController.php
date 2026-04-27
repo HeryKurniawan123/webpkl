@@ -8,6 +8,7 @@ use App\Models\Penilaian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PenilaianController extends Controller
 {
@@ -19,26 +20,38 @@ class PenilaianController extends Controller
         if ($role === 'hubin') {
             $allSiswa = User::where('role', 'siswa')->get();
         } elseif ($role === 'kaprog' || $role === 'guru') {
-            $guru = $user->guru;
+            $guru     = $user->guru;
             $allSiswa = $guru ? $guru->siswas : collect();
         } elseif ($role === 'iduka') {
-            $iduka = $user->iduka;
-            $allSiswa = $iduka ? User::where('role', 'siswa')->where('iduka_id', $iduka->id)->get() : collect();
+            $iduka    = $user->iduka;
+            $allSiswa = $iduka
+                ? User::where('role', 'siswa')->where('iduka_id', $iduka->id)->get()
+                : collect();
         } else {
             $allSiswa = collect();
         }
 
-        // Filter siswa: hanya yang belum dinilai oleh kedua pihak
         $siswa = $allSiswa->filter(function ($s) {
-            $nilaiGuru  = Penilaian::where('users_id', $s->id)->where('jenis_penilaian', 'guru_pembimbing')->exists();
-            $nilaiIduka = Penilaian::where('users_id', $s->id)->where('jenis_penilaian', 'instruktur_iduka')->exists();
+            $nilaiGuru  = Penilaian::where('users_id', $s->id)
+                ->where('jenis_penilaian', 'guru_pembimbing')
+                ->whereNull('ketercapaian_indikator')
+                ->exists();
+            $nilaiIduka = Penilaian::where('users_id', $s->id)
+                ->where('jenis_penilaian', 'instruktur_iduka')
+                ->whereNull('ketercapaian_indikator')
+                ->exists();
             return !($nilaiGuru && $nilaiIduka);
         })->values();
 
-        // Draft: sudah dinilai salah satu tapi belum dua-duanya
         $draft = $allSiswa->filter(function ($s) {
-            $nilaiGuru  = Penilaian::where('users_id', $s->id)->where('jenis_penilaian', 'guru_pembimbing')->exists();
-            $nilaiIduka = Penilaian::where('users_id', $s->id)->where('jenis_penilaian', 'instruktur_iduka')->exists();
+            $nilaiGuru  = Penilaian::where('users_id', $s->id)
+                ->where('jenis_penilaian', 'guru_pembimbing')
+                ->whereNull('ketercapaian_indikator')
+                ->exists();
+            $nilaiIduka = Penilaian::where('users_id', $s->id)
+                ->where('jenis_penilaian', 'instruktur_iduka')
+                ->whereNull('ketercapaian_indikator')
+                ->exists();
             return ($nilaiGuru xor $nilaiIduka);
         })->values();
 
@@ -46,8 +59,14 @@ class PenilaianController extends Controller
         foreach ($draft as $ds) {
             $draftData[] = [
                 'siswa' => $ds,
-                'guru'  => Penilaian::where('users_id', $ds->id)->where('jenis_penilaian', 'guru_pembimbing')->get(),
-                'iduka' => Penilaian::where('users_id', $ds->id)->where('jenis_penilaian', 'instruktur_iduka')->get(),
+                'guru'  => Penilaian::where('users_id', $ds->id)
+                    ->where('jenis_penilaian', 'guru_pembimbing')
+                    ->whereNull('ketercapaian_indikator')
+                    ->get(),
+                'iduka' => Penilaian::where('users_id', $ds->id)
+                    ->where('jenis_penilaian', 'instruktur_iduka')
+                    ->whereNull('ketercapaian_indikator')
+                    ->get(),
             ];
         }
 
@@ -63,9 +82,9 @@ class PenilaianController extends Controller
             ->get()
             ->map(function ($tp) {
                 return [
-                    'id'                    => $tp->id,
-                    'tujuan_pembelajaran'   => $tp->tujuan_pembelajaran,  // pastikan ini string
-                    'indikator_penilaians'  => $tp->indikatorPenilaians->map(function ($i) {
+                    'id'                   => $tp->id,
+                    'tujuan_pembelajaran'  => $tp->tujuan_pembelajaran,
+                    'indikator_penilaians' => $tp->indikatorPenilaians->map(function ($i) {
                         return [
                             'id'        => $i->id,
                             'indikator' => $i->indikator,
@@ -80,23 +99,40 @@ class PenilaianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'nilai'   => 'required|array',
+            'user_id'            => 'required|exists:users,id',
+            'nilai_tp'           => 'required|array',
+            'ketercapaian'       => 'required|array',
+            'jenis_penilaian_tp' => 'required|array',
         ]);
 
         DB::beginTransaction();
 
         try {
-            foreach ($request->nilai as $indikator_id => $nilai) {
-                $indikator = IndikatorPenilaian::findOrFail($indikator_id);
+            foreach ($request->nilai_tp as $tp_id => $nilai) {
+                Penilaian::create([
+                    'users_id'               => $request->user_id,
+                    'id_tujuan_pembelajaran' => $tp_id,
+                    'jenis_penilaian'        => $request->jenis_penilaian_tp[$tp_id] ?? null,
+                    'nilai'                  => $nilai,
+                    'ketercapaian_indikator' => null,
+                    'deskripsi'              => $request->deskripsi_tp[$tp_id] ?? null,
+                ]);
+            }
+
+            foreach ($request->ketercapaian as $indikator_id => $ketercapaian) {
+                $indikator       = \App\Models\IndikatorPenilaian::find($indikator_id);
+                $tp_id           = $indikator ? $indikator->id_tujuan_pembelajaran : null;
+                $jenis_penilaian = ($tp_id && isset($request->jenis_penilaian_tp[$tp_id]))
+                    ? $request->jenis_penilaian_tp[$tp_id]
+                    : null;
 
                 Penilaian::create([
                     'users_id'               => $request->user_id,
-                    'id_tujuan_pembelajaran' => $indikator->id_tujuan_pembelajaran,
-                    'ketercapaian_indikator' => $request->ketercapaian_indikator[$indikator_id],
-                    'jenis_penilaian'        => $request->jenis_penilaian[$indikator_id],
-                    'nilai'                  => $nilai,
-                    'deskripsi'              => $request->deskripsi[$indikator_id] ?? null,
+                    'id_tujuan_pembelajaran' => $tp_id,
+                    'ketercapaian_indikator' => $ketercapaian, // 'ya' atau 'tidak'
+                    'jenis_penilaian'        => $jenis_penilaian,
+                    'nilai'                  => null,
+                    'deskripsi'              => null,
                 ]);
             }
 
@@ -104,33 +140,47 @@ class PenilaianController extends Controller
             return redirect()->route('penilaian.index')->with('success', 'Penilaian berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Penilaian Store Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan saat menyimpan penilaian. Silakan coba lagi.')
                 ->withInput();
         }
     }
 
-
-
     public function export($id)
     {
-        $siswa     = User::findOrFail($id);
-        $namaGuru  = $siswa->pembimbing ? $siswa->pembimbing->nama : '-';
+        $siswa          = User::findOrFail($id);
+        $namaGuru       = $siswa->pembimbing ? $siswa->pembimbing->nama : '-';
         $namaInstruktur = $siswa->iduka ? ($siswa->iduka->nama_pimpinan ?? '-') : '-';
-        $namaIduka = $siswa->iduka ? $siswa->iduka->nama : '-';
-        $namaKonke = $siswa->konke ? $siswa->konke->name_konke : '-';
+        $namaIduka      = $siswa->iduka ? $siswa->iduka->nama : '-';
+        $namaKonke      = $siswa->konke ? $siswa->konke->name_konke : '-';
 
+        // Ambil penilaian TP (nilai numerik, ketercapaian_indikator IS NULL)
         $penilaianGuru = Penilaian::where('users_id', $id)
             ->where('jenis_penilaian', 'guru_pembimbing')
+            ->whereNull('ketercapaian_indikator')
             ->with('tujuanPembelajaran.indikatorPenilaians')
             ->get()
             ->keyBy('id_tujuan_pembelajaran');
 
         $penilaianIduka = Penilaian::where('users_id', $id)
             ->where('jenis_penilaian', 'instruktur_iduka')
+            ->whereNull('ketercapaian_indikator')
             ->with('tujuanPembelajaran.indikatorPenilaians')
             ->get()
             ->keyBy('id_tujuan_pembelajaran');
+
+        // Ambil ketercapaian per TP, urutkan by id agar urutan indikator konsisten
+        $ketercapaianByTp = [];
+        $ketercapaianRows = Penilaian::where('users_id', $id)
+            ->whereNotNull('ketercapaian_indikator')
+            ->orderBy('id_tujuan_pembelajaran')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($ketercapaianRows as $row) {
+            $ketercapaianByTp[$row->id_tujuan_pembelajaran][] = $row->ketercapaian_indikator;
+        }
 
         $allTujuanIds = $penilaianGuru->keys()->merge($penilaianIduka->keys())->unique();
 
@@ -142,27 +192,44 @@ class PenilaianController extends Controller
         if ($nilaiAkhir >= 86)     $predikat = 'Sangat Baik';
         elseif ($nilaiAkhir >= 71) $predikat = 'Baik';
 
-        $groups = [];
+        $groups    = [];
         $tpCounter = 0;
+
         foreach ($allTujuanIds as $tpId) {
             $g  = $penilaianGuru->get($tpId);
             $i  = $penilaianIduka->get($tpId);
             $tp = $g ? $g->tujuanPembelajaran : ($i ? $i->tujuanPembelajaran : null);
             if (!$tp) continue;
+
             $tpCounter++;
-            $indikators = $tp->indikatorPenilaians ?? collect();
-            $indRows = [];
+            $indikators   = $tp->indikatorPenilaians ?? collect();
+            $ketercapaian = $ketercapaianByTp[$tpId] ?? [];
+            $indRows      = [];
+
             foreach ($indikators as $idx => $indikator) {
+                // Ambil nilai mentah dari DB, format jadi 'Ya' / 'Tidak' / '-'
+                $raw = isset($ketercapaian[$idx]) ? strtolower(trim($ketercapaian[$idx])) : null;
+
+                if ($raw === 'ya' || $raw === '1' || $raw === 'true') {
+                    $labelKetercapaian = 'Ya';
+                } elseif ($raw === 'tidak' || $raw === '0' || $raw === 'false') {
+                    $labelKetercapaian = 'Tidak';
+                } else {
+                    $labelKetercapaian = '-';
+                }
+
                 $indRows[] = [
-                    'no'        => $tpCounter . '.' . ($idx + 1),
-                    'indikator' => $indikator->indikator,
+                    'no'           => $tpCounter . '.' . ($idx + 1),
+                    'indikator'    => $indikator->indikator,
+                    'ketercapaian' => $labelKetercapaian,
                 ];
             }
+
             $groups[] = [
-                'no'         => (string)$tpCounter,
+                'no'         => (string) $tpCounter,
                 'tujuan'     => $tp->tujuan_pembelajaran,
-                'nilaiIduka' => $i ? (string)$i->nilai : '',
-                'nilaiGuru'  => $g ? (string)$g->nilai : '',
+                'nilaiIduka' => $i ? (string) $i->nilai : '',
+                'nilaiGuru'  => $g ? (string) $g->nilai : '',
                 'deskripsi'  => $g ? ($g->deskripsi ?? '') : ($i ? ($i->deskripsi ?? '') : ''),
                 'skorLabel'  => 'Skor ' . $tpCounter,
                 'indikators' => $indRows,
@@ -170,22 +237,23 @@ class PenilaianController extends Controller
         }
 
         $dataJson = json_encode([
-            'nama'        => $siswa->name,
-            'konke'       => $namaKonke,
-            'iduka'       => $namaIduka,
-            'instruktur'  => $namaInstruktur,
-            'guru'        => $namaGuru,
-            'groups'      => $groups,
-            'nilaiGuru'   => $nilaiGuru,
-            'nilaiIduka'  => $nilaiIduka,
-            'nilaiAkhir'  => $nilaiAkhir,
-            'predikat'    => $predikat,
+            'nama'       => $siswa->name,
+            'konke'      => $namaKonke,
+            'iduka'      => $namaIduka,
+            'instruktur' => $namaInstruktur,
+            'guru'       => $namaGuru,
+            'groups'     => $groups,
+            'nilaiGuru'  => $nilaiGuru,
+            'nilaiIduka' => $nilaiIduka,
+            'nilaiAkhir' => $nilaiAkhir,
+            'predikat'   => $predikat,
         ], JSON_UNESCAPED_UNICODE);
 
-        $safeName    = preg_replace('/[^a-zA-Z0-9_]/', '_', $siswa->name);
-        $dataFile    = storage_path('app/export_data_'      . $safeName . '.json');
-        $scriptPath  = storage_path('app/gen_lembar_'       . $safeName . '.cjs');
-        $outputPath  = storage_path('app/Lembar_Penilaian_' . $safeName . '.docx');
+        $safeName   = preg_replace('/[^a-zA-Z0-9_]/', '_', $siswa->name);
+        $dataFile   = storage_path('app/export_data_'      . $safeName . '.json');
+        $scriptPath = storage_path('app/gen_lembar_'       . $safeName . '.cjs');
+        $outputPath = storage_path('app/Lembar_Penilaian_' . $safeName . '.docx');
+
         $projectRoot = base_path();
         $nodeModules = $projectRoot . '/node_modules';
 
@@ -202,7 +270,11 @@ class PenilaianController extends Controller
             return redirect()->back()->with('error', 'Gagal generate dokumen: ' . implode("\n", $out));
         }
 
-        return response()->download($outputPath, 'Lembar_Penilaian_' . $siswa->name . '.doc')
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        return response()->download($outputPath, 'Lembar_Penilaian_' . $siswa->name . '.docx')
             ->deleteFileAfterSend(true);
     }
 
@@ -220,7 +292,6 @@ const { execSync } = require('child_process');
 
 const data = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
 
-
 function x(s) {
     return String(s ?? '')
         .replace(/&/g, '&amp;')
@@ -235,7 +306,6 @@ function tc(w, text, opts = {}) {
     const va   = opts.va  || 'center';
     const bold = opts.bold ? '<w:b/>' : '';
 
-    // Border
     const border_style = opts.nb
         ? '<w:top w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:left w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:right w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/>'
         : '<w:top w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:left w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:right w:val="single" w:sz="6" w:space="0" w:color="000000"/>';
@@ -249,7 +319,7 @@ function tc(w, text, opts = {}) {
     tcPr += `<w:tcMar><w:top w:w="55" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:bottom w:w="55" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tcMar>`;
     tcPr += `<w:vAlign w:val="${va}"/>`;
 
-    const jc = al === 'center' ? '<w:jc w:val="center"/>' : '';
+    const jc   = al === 'center' ? '<w:jc w:val="center"/>' : '';
     const font = `<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>`;
 
     return `<w:tc><w:tcPr>${tcPr}</w:tcPr>` +
@@ -263,45 +333,41 @@ function tr_row(cells_xml, is_header = false) {
     return `<w:tr>${trPr}${cells_xml}</w:tr>`;
 }
 
-
 const G   = [468, 2252, 451, 1383, 1113, 229, 764, 2691];
-const TW  = G.reduce((a,b) => a+b, 0); 
+const TW  = G.reduce((a,b) => a+b, 0);
 
-const WNO   = G[0];              
-const WTP   = G[1]+G[2];         
-const WKET  = G[3];              
-const WIDUK = G[4];              
+const WNO   = G[0];
+const WTP   = G[1]+G[2];
+const WKET  = G[3];
+const WIDUK = G[4];
 const WGURU = G[5]+G[6];
-const WDESC = G[7];              
-const WTP3  = G[1]+G[2]+G[3];  
-const WSKOR = G[0]+G[1]+G[2]+G[3]; 
-
+const WDESC = G[7];
+const WTP3  = G[1]+G[2]+G[3];
+const WSKOR = G[0]+G[1]+G[2]+G[3];
 
 const hdr1 = tr_row(
     tc(WNO,   'No',                              {gs:1,  vm:'restart', bg:'D9D9D9', bold:true, al:'center'}) +
     tc(WTP,   'Tujuan Pembelajaran / Indikator', {gs:2,  vm:'restart', bg:'D9D9D9', bold:true, al:'center'}) +
     tc(WKET,  'Ketercapaian Ya/Tidak',           {gs:1,  vm:'restart', bg:'D9D9D9', bold:true, al:'center'}) +
-    tc(WIDUK, 'Instruktur Iduka',                {gs:1,              bg:'D9D9D9', bold:true, al:'center'}) +
-    tc(WGURU, 'Guru Pembimbing',                 {gs:2,              bg:'D9D9D9', bold:true, al:'center'}) +
+    tc(WIDUK, 'Instruktur Iduka',                {gs:1,               bg:'D9D9D9', bold:true, al:'center'}) +
+    tc(WGURU, 'Guru Pembimbing',                 {gs:2,               bg:'D9D9D9', bold:true, al:'center'}) +
     tc(WDESC, 'Deskripsi',                       {gs:1,  vm:'restart', bg:'D9D9D9', bold:true, al:'center'}),
     true
 );
 
 const hdr2 = tr_row(
-    tc(WNO,   '',             {gs:1, vm:'cont', bg:'D9D9D9'}) +
-    tc(WTP,   '',             {gs:2, vm:'cont', bg:'D9D9D9'}) +
-    tc(WKET,  '',             {gs:1, vm:'cont', bg:'D9D9D9'}) +
+    tc(WNO,   '',               {gs:1, vm:'cont', bg:'D9D9D9'}) +
+    tc(WTP,   '',               {gs:2, vm:'cont', bg:'D9D9D9'}) +
+    tc(WKET,  '',               {gs:1, vm:'cont', bg:'D9D9D9'}) +
     tc(WIDUK, 'Nilai\n(0-100)', {gs:1, bg:'D9D9D9', bold:true, al:'center', sz:18}) +
     tc(WGURU, 'Nilai\n(0-100)', {gs:2, bg:'D9D9D9', bold:true, al:'center', sz:18}) +
-    tc(WDESC, '',             {gs:1, vm:'cont', bg:'D9D9D9'}),
+    tc(WDESC, '',               {gs:1, vm:'cont', bg:'D9D9D9'}),
     true
 );
-
 
 let dataRowsXml = '';
 
 for (const grp of data.groups) {
-    
     dataRowsXml += tr_row(
         tc(WNO,   grp.no,         {vm:'restart', al:'center', bold:true}) +
         tc(WTP3,  grp.tujuan,     {gs:3, va:'top'}) +
@@ -311,13 +377,15 @@ for (const grp of data.groups) {
     );
 
     for (const ind of grp.indikators) {
+        // ✅ FIX: tampilkan nilai ketercapaian dari data (Ya / Tidak / -)
+        // bukan lagi hardcode 'Ya/Tidak*)'
         dataRowsXml += tr_row(
-            tc(WNO,   '',             {vm:'cont'}) +
-            tc(WTP,   ind.indikator,  {gs:2}) +
-            tc(WKET,  'Ya/Tidak*)',   {al:'center'}) +
-            tc(WIDUK, '',             {vm:'cont'}) +
-            tc(WGURU, '',             {gs:2, vm:'cont'}) +
-            tc(WDESC, '',             {vm:'cont'})
+            tc(WNO,   '',                   {vm:'cont'}) +
+            tc(WTP,   ind.indikator,        {gs:2}) +
+            tc(WKET,  ind.ketercapaian,     {al:'center'}) +
+            tc(WIDUK, '',                   {vm:'cont'}) +
+            tc(WGURU, '',                   {gs:2, vm:'cont'}) +
+            tc(WDESC, '',                   {vm:'cont'})
         );
     }
 
@@ -330,8 +398,6 @@ for (const grp of data.groups) {
 }
 
 function iRow(lbl, val) {
-    const nb = true;
-    const margin = 'top="36" bottom="36" left="0" right="0"';
     const font = `<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>`;
     function icell(w, txt) {
         return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>` +
@@ -345,11 +411,11 @@ function iRow(lbl, val) {
 }
 
 const identitasXml =
-    iRow('Nama Peserta Didik',   data.nama      || '') +
-    iRow('Konsentrasi Keahlian', data.konke     || '') +
-    iRow('IDUKA Tempat PKL',     data.iduka     || '') +
+    iRow('Nama Peserta Didik',   data.nama       || '') +
+    iRow('Konsentrasi Keahlian', data.konke      || '') +
+    iRow('IDUKA Tempat PKL',     data.iduka      || '') +
     iRow('Nama Instruktur',      data.instruktur || '') +
-    iRow('Nama Guru Pembimbing', data.guru      || '');
+    iRow('Nama Guru Pembimbing', data.guru       || '');
 
 function para(text, opts = {}) {
     const sz   = opts.sz  || 19;
@@ -372,7 +438,7 @@ function dotLine() {
 }
 function noteCell(w, label) {
     const font = `<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>`;
-    const bdr = `<w:tcBorders><w:top w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:left w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:right w:val="single" w:sz="6" w:space="0" w:color="000000"/></w:tcBorders>`;
+    const bdr  = `<w:tcBorders><w:top w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:left w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:right w:val="single" w:sz="6" w:space="0" w:color="000000"/></w:tcBorders>`;
     const head = `<w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr><w:r><w:rPr><w:b/>${font}<w:sz w:val="19"/><w:szCs w:val="19"/></w:rPr><w:t>${label}</w:t></w:r></w:p>`;
     return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${bdr}` +
            `<w:tcMar><w:top w:w="80" w:type="dxa"/><w:left w:w="120" w:type="dxa"/><w:bottom w:w="320" w:type="dxa"/><w:right w:w="120" w:type="dxa"/></w:tcMar></w:tcPr>` +
@@ -382,9 +448,9 @@ const catatanXml = `<w:tr>${noteCell(half,'Catatan Guru Pembimbing:')}${noteCell
 
 const w1 = 3400, w2 = TW - 3400;
 function nilaiRow(label, value, boldVal = false) {
-    const font = `<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>`;
-    const nb = `<w:tcBorders><w:top w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:left w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:right w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/></w:tcBorders>`;
-    const bold_open  = boldVal ? '<w:b/>' : '';
+    const font      = `<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>`;
+    const nb        = `<w:tcBorders><w:top w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:left w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:right w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/></w:tcBorders>`;
+    const bold_open = boldVal ? '<w:b/>' : '';
     return `<w:tr>` +
            `<w:tc><w:tcPr><w:tcW w:w="${w1}" w:type="dxa"/>${nb}</w:tcPr><w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr><w:r><w:rPr><w:b/>${font}<w:sz w:val="19"/><w:szCs w:val="19"/></w:rPr><w:t xml:space="preserve">${x(label)}</w:t></w:r></w:p></w:tc>` +
            `<w:tc><w:tcPr><w:tcW w:w="${w2}" w:type="dxa"/>${nb}</w:tcPr><w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr><w:r><w:rPr>${bold_open}${font}<w:sz w:val="19"/><w:szCs w:val="19"/></w:rPr><w:t xml:space="preserve">${x(value)}</w:t></w:r></w:p></w:tc>` +
@@ -397,11 +463,11 @@ const nilaiXml =
     nilaiRow('', '= (' + data.nilaiIduka + ' + ' + data.nilaiGuru + ') / 2  =  ' + data.nilaiAkhir, true);
 
 function rtRow(r, p, isHeader = false) {
-    const bg  = isHeader ? `<w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"/>` : '';
-    const bld = isHeader ? '<w:b/>' : '';
+    const bg   = isHeader ? `<w:shd w:val="clear" w:color="auto" w:fill="D9D9D9"/>` : '';
+    const bld  = isHeader ? '<w:b/>' : '';
     const font = `<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>`;
-    const bdr = `<w:tcBorders><w:top w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:left w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:right w:val="single" w:sz="6" w:space="0" w:color="000000"/></w:tcBorders>`;
-    function rcell(w, txt, al='left') {
+    const bdr  = `<w:tcBorders><w:top w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:left w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:bottom w:val="single" w:sz="6" w:space="0" w:color="000000"/><w:right w:val="single" w:sz="6" w:space="0" w:color="000000"/></w:tcBorders>`;
+    function rcell(w, txt, al = 'left') {
         const jc = al === 'center' ? '<w:jc w:val="center"/>' : '';
         return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${bg}${bdr}</w:tcPr>` +
                `<w:p><w:pPr>${jc}<w:spacing w:before="0" w:after="0"/></w:pPr>` +
@@ -416,11 +482,13 @@ const rentangXml =
     rtRow('56 \u2013 70',  'Cukup');
 
 function tbl(colWidths, rowsXml, opts = {}) {
-    const totalW = colWidths.reduce((a,b) => a+b, 0);
+    const totalW   = colWidths.reduce((a,b) => a+b, 0);
     const gridCols = colWidths.map(w => `<w:gridCol w:w="${w}"/>`).join('');
     return `<w:tbl>` +
            `<w:tblPr><w:tblW w:w="${totalW}" w:type="dxa"/>` +
-           (opts.noTblBorder ? `<w:tblBorders><w:top w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:left w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:right w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:insideH w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:insideV w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/></w:tblBorders>` : '') +
+           (opts.noTblBorder
+               ? `<w:tblBorders><w:top w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:left w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:bottom w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:right w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:insideH w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/><w:insideV w:val="none" w:sz="0" w:space="0" w:color="FFFFFF"/></w:tblBorders>`
+               : '') +
            `<w:tblLook w:val="0000"/></w:tblPr>` +
            `<w:tblGrid>${gridCols}</w:tblGrid>` +
            rowsXml +
@@ -456,15 +524,11 @@ const bodyContent =
     `<w:p><w:pPr><w:spacing w:before="0" w:after="100"/></w:pPr>` +
     `<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/><w:sz w:val="19"/><w:szCs w:val="19"/></w:rPr><w:t xml:space="preserve">dengan predikat:   </w:t></w:r>` +
     `<w:r><w:rPr><w:b/><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/><w:sz w:val="19"/><w:szCs w:val="19"/></w:rPr><w:t xml:space="preserve">${x(data.predikat)}</w:t></w:r>` +
-    `<w:r><w:rPr><w:i/><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/><w:sz w:val="19"/><w:szCs w:val="19"/></w:rPr><w:t xml:space="preserve">   (Sangat Baik / Baik / Cukup*)</w:t></w:r></w:p>` +
+    `<w:r><w:rPr><w:i/><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/><w:sz w:val="19"/><w:szCs w:val="19"/></w:rPr><w:t xml:space="preserve">   (Sangat Baik / Baik / Cukup)</w:t></w:r></w:p>` +
 
     para('Rentang Nilai & Kategori', {bold:true, after:60}) +
     tbl([1400, 1400], rentangXml) +
     para('', {after:80}) +
-
-    para('Keterangan:', {sz:18, after:40}) +
-    para('*) \t= Coret salah satu  / pilih yang tidak perlu', {sz:18, after:40}) +
-    para('**) \t= Indikator disesuaikan dengan peningkatan / pengadaan kompetensi baru', {sz:18, after:180}) +
 
     para('\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026\u2026, 2026', {al:'right', after:80}) +
 
