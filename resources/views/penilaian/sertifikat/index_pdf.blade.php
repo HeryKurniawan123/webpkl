@@ -191,7 +191,7 @@
             <tr>
                 <td class="kop-logo">
                     @if(!empty($foto_iduka))
-                        <img src="{{ public_path('storage/' . $foto_iduka) }}">
+                        <img src="{{ storage_path('app/public/' . $foto_iduka) }}">
                     @endif
                 </td>
                 <td class="kop-text">
