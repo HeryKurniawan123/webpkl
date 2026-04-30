@@ -5,25 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Penilaian;
-use Barryvdh\DomPDF\Facade\Pdf; // <-- Ganti 'Facades\Pdf' jadi 'Facade\Pdf'
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SertifikatController extends Controller
 {
-    public function cetak()
-    {
-        $data = [
-            'nama'             => 'Ade fikri',
-            'konsentrasi'      => 'Teknik Kendaraan Ringan',
-            'lama'             => '5 bulan',
-            'tanggal_mulai'    => '13 Oktober 2025',
-            'tanggal_selesai'  => '14 Februari 2026',
-            'predikat'         => '',
-            'kepala_sekolah'   => 'Fajriadi, S.Pd., M.Pd',
-        ];
-
-        return view('penilaian.sertifikat.index', $data);
-    }
-
     public function cetakPdf($id)
     {
         $user      = User::findOrFail($id);
@@ -42,12 +27,14 @@ class SertifikatController extends Controller
 
         $data = [
             'nama'            => $user->name,
-            'konsentrasi'     => 'Teknik Kendaraan Ringan',
-            'lama'            => '5 bulan',
+            'konsentrasi'     => $user->konke->name_konke ?? 'Konsentrasi Belum Diatur',
+            'lama'            => '4 bulan',
             'tanggal_mulai'   => '13 Oktober 2025',
             'tanggal_selesai' => '14 Februari 2026',
             'predikat'        => $predikat,
-            'kepala_sekolah'  => 'Fajriadi, S.Pd., M.Pd',
+            'kepala_sekolah'  => 'DEDE FAJRIADI, S.Pd., M.Pd',
+            'nama_iduka'      => $user->iduka->nama ?? 'NAMA IDUKA',
+            'foto_iduka'      => $user->iduka->foto ?? null,
         ];
 
         $pdf      = Pdf::loadView('penilaian.sertifikat.index_pdf', $data)->setPaper('a4', 'landscape');

@@ -1,290 +1,195 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Sertifikat PKL</title>
-    <style>
-        @page {
-            size: 297mm 210mm landscape;
-            margin: 0;
-        }
+<meta charset="UTF-8">
+<title>Sertifikat PKL</title>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<style>
+    @page {
+        margin: 0cm;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Times New Roman', Times, serif;
+    }
 
-        html, body {
-            width: 297mm;
-            height: 210mm;
-            margin: 0;
-            padding: 0;
-            background: #ffffff;
-            overflow: hidden;
-        }
+    /* ===== BACKGROUND IMAGE ===== */
+    .bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
 
-        .page {
-            width: 297mm;
-            height: 210mm;
-            position: relative;
-            background: #ffffff;
-            overflow: hidden;
-        }
+    /* ===== CONTENT ===== */
+    .content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
 
-        /* ========== BACKGROUND WATERMARK ========== */
-        .bg-image {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0.07;
-            z-index: 0;
-        }
+    /* ===== TEXT POSITIONS ===== */
+    .logo-container {
+        position: absolute;
+        top: 50px;
+        width: 100%;
+        text-align: center;
+    }
 
-        /* ========== TOP LEFT — 3 segitiga bertumpuk ========== */
-        .corner-tl-navy {
-            position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 54mm 54mm 0 0;
-            border-color: #0d2b5b transparent transparent transparent;
-            z-index: 2;
-        }
-        .corner-tl-yellow {
-            position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 36mm 36mm 0 0;
-            border-color: #f7c32e transparent transparent transparent;
-            z-index: 3;
-        }
-        .corner-tl-red {
-            position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 19mm 19mm 0 0;
-            border-color: #c1272d transparent transparent transparent;
-            z-index: 4;
-        }
+    .logo-img {
+        max-height: 80px;
+        max-width: 150px;
+        object-fit: contain;
+    }
 
-        /* ========== TOP RIGHT — 3 blok persegi bertangga ========== */
-        .corner-tr-navy-rect {
-            position: absolute;
-            top: 0; right: 0;
-            width: 37mm; height: 54mm;
-            background: #0d2b5b;
-            z-index: 2;
-        }
-        .corner-tr-yellow-rect {
-            position: absolute;
-            top: 0; right: 37mm;
-            width: 19mm; height: 36mm;
-            background: #f7c32e;
-            z-index: 2;
-        }
-        .corner-tr-red-rect {
-            position: absolute;
-            top: 0; right: 56mm;
-            width: 13mm; height: 19mm;
-            background: #c1272d;
-            z-index: 2;
-        }
+    .title {
+        position: absolute;
+        top: 150px;
+        width: 100%;
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 48px;
+        font-weight: bold;
+        letter-spacing: 5px;
+        color: #0f766e;
+    }
 
-        /* ========== BOTTOM RIGHT — 2 segitiga ========== */
-        .corner-br-yellow {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 0 0 37mm 37mm;
-            border-color: transparent transparent #f7c32e transparent;
-            z-index: 2;
-        }
-        .corner-br-navy {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 0 0 23mm 23mm;
-            border-color: transparent transparent #0d2b5b transparent;
-            z-index: 3;
-        }
+    .subtitle {
+        position: absolute;
+        top: 215px;
+        width: 100%;
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+        font-size: 14px;
+        letter-spacing: 3px;
+        color: #555;
+    }
 
-        /* ========== CONTENT TABLE ========== */
-        /* Gunakan <table> HTML asli — paling kompatibel di DomPDF & wkhtmltopdf */
-        .content-table {
-            position: absolute;
-            top: 0; left: 0;
-            width: 297mm;
-            height: 210mm;
-            z-index: 5;
-            border-collapse: collapse;
-        }
+    /* Container for dynamic height content to prevent overlap */
+    .text-container {
+        position: absolute;
+        top: 250px;
+        width: 100%;
+        text-align: center;
+    }
 
-        .content-td {
-            width: 297mm;
-            height: 210mm;
-            vertical-align: middle;
-            text-align: center;
-            padding-top: 2mm;
-            padding-bottom: 8mm;
-            padding-left: 25mm;
-            padding-right: 72mm;
-        }
+    @php
+        $fontPath = 'file:///' . str_replace('\\', '/', public_path('fonts/TAN MERINGUE Regular.ttf'));
+    @endphp
 
-        /* ========== JUDUL ========== */
-        .header-title {
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: bold;
-            font-size: 22pt;
-            letter-spacing: 6pt;
-            color: #111111;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 3mm;
-            line-height: 1.2;
-        }
+    @font-face {
+        font-family: 'TAN Meringue';
+        font-style: normal;
+        font-weight: normal;
+        src: url("{{ $fontPath }}") format('truetype');
+    }
 
-        /* ========== SUBTITLE ========== */
-        .subtitle {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 7.5pt;
-            letter-spacing: 2pt;
-            color: #555555;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 3mm;
-        }
+    .nama {
+        font-family: 'TAN Meringue', 'Brush Script MT', cursive;
+        font-size: 70px;
+        color: #0f766e;
+        line-height: 1.1;
+        margin-bottom: 10px;
+    }
 
-        /* ========== NAMA ========== */
-        .nama {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-weight: bold;
-            font-size: 30pt;
-            color: #7a2020;
-            line-height: 1.15;
-            text-align: center;
-            margin-bottom: 4mm;
-            word-wrap: break-word;
-        }
+    .line {
+        margin: 0 auto;
+        width: 450px;
+        height: 2px;
+        background: #999;
+    }
 
-        /* ========== BODY TEXT ========== */
-        .body-text {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 9pt;
-            color: #333333;
-            line-height: 1.8;
-            text-align: center;
-            margin-bottom: 5mm;
-        }
+    .body-text {
+        margin: 20px auto 0;
+        width: 70%;
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.8;
+        color: #444;
+    }
 
-        .predikat {
-            display: block;
-            font-size: 12pt;
-            font-weight: bold;
-            color: #7a2020;
-            margin-top: 2mm;
-        }
+    .predikat {
+        display: block;
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #0f766e;
+    }
 
-        /* ========== TANDA TANGAN ========== */
-        .signature-area {
-            text-align: center;
-        }
+    .signature {
+        position: absolute;
+        bottom: 80px;
+        width: 100%;
+        text-align: center;
+    }
 
-        .ttd-img {
-            width: 22mm;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
+    .ttd-img {
+        width: 130px;
+    }
 
-        .ttd-line {
-            width: 50mm;
-            border: none;
-            border-top: 1px solid #333333;
-            margin: 2mm auto 2mm auto;
-            display: block;
-        }
+    .ttd-line {
+        width: 200px;
+        height: 1px;
+        background: #333;
+        margin: 5px auto;
+    }
 
-        .kepsek-name {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 9pt;
-            color: #111111;
-        }
-
-        /* ========== LOGO SEKOLAH ========== */
-        .logo-sekolah {
-            position: absolute;
-            bottom: 8mm;
-            right: 10mm;
-            width: 23mm;
-            height: auto;
-            z-index: 10;
-        }
-
-    </style>
+    .kepsek-name {
+        font-size: 15px;
+        font-weight: bold;
+    }
+</style>
 </head>
+
 <body>
-<div class="page">
 
-    {{-- Background watermark --}}
-    <img src="{{ public_path('images/smk1.JPG') }}" class="bg-image" alt="">
+    <!-- BACKGROUND -->
+    <img src="{{ public_path('images/templat-sertifikat.png') }}" class="bg">
 
-    {{-- TOP LEFT: 3 segitiga --}}
-    <div class="corner-tl-navy"></div>
-    <div class="corner-tl-yellow"></div>
-    <div class="corner-tl-red"></div>
+    <!-- CONTENT -->
+    <div class="content">
 
-    {{-- TOP RIGHT: 3 blok persegi --}}
-    <div class="corner-tr-navy-rect"></div>
-    <div class="corner-tr-yellow-rect"></div>
-    <div class="corner-tr-red-rect"></div>
+        <!-- LOGO IDUKA -->
+        @if(!empty($foto_iduka))
+            <div class="logo-container">
+                <img src="{{ public_path('storage/' . $foto_iduka) }}" class="logo-img">
+            </div>
+        @endif
 
-    {{-- BOTTOM RIGHT: 2 segitiga --}}
-    <div class="corner-br-yellow"></div>
-    <div class="corner-br-navy"></div>
+        <div class="title">SERTIFIKAT PENGAKUAN</div>
+        <div class="subtitle">DIBERIKAN KEPADA</div>
 
-    {{--
-        CONTENT: Menggunakan HTML <table> native agar vertical-align:middle
-        bekerja di SEMUA renderer PDF (DomPDF, wkhtmltopdf, Snappy, dll.)
-    --}}
-    <table class="content-table">
-        <tr>
-            <td class="content-td">
+        <div class="text-container">
+            @php
+                $namaVal = $nama ?? 'NAMA SISWA';
+                $namaWrapped = wordwrap($namaVal, 18, "<br>");
+            @endphp
+            <div class="nama">{!! $namaWrapped !!}</div>
+            <div class="line"></div>
 
-                <div class="header-title">Sertifikat Pengakuan</div>
+            <div class="body-text">
+                Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
+                <b>{{ $konsentrasi ?? 'Konsentrasi' }}</b> selama {{ $lama ?? 'waktu' }} dari tanggal
+                <b>{{ $tanggal_mulai ?? 'tanggal mulai' }}</b> sampai dengan <b>{{ $tanggal_selesai ?? 'tanggal selesai' }}</b>
+                dengan nilai yang tercantum di Rapor dengan Predikat :
+                @if(!empty($predikat))
+                    <span class="predikat">{{ $predikat }}</span>
+                @endif
+            </div>
+        </div>
 
-                <div class="subtitle">Diberikan Kepada :</div>
+        <div class="signature">
+            <div style="height: 100px;"></div>
+            <div class="ttd-line"></div>
+            <div class="kepsek-name">{{ $nama_iduka ?? 'NAMA IDUKA' }}</div>
+        </div>
 
-                <div class="nama">{{ $nama }}</div>
+    </div>
 
-                <div class="body-text">
-                    Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
-                    <strong>{{ $konsentrasi }}</strong> selama {{ $lama }} dari tanggal
-                    <strong>{{ $tanggal_mulai }}</strong> sampai dengan <strong>{{ $tanggal_selesai }}</strong>
-                    dengan nilai yang tercantum di Rapor dengan Predikat :
-                    @if(!empty($predikat))
-                        <span class="predikat">{{ $predikat }}</span>
-                    @endif
-                </div>
-
-                <div class="signature-area">
-                    <img src="{{ public_path('images/ttd-fajriadi.png') }}" class="ttd-img" alt="ttd">
-                    <hr class="ttd-line">
-                    <div class="kepsek-name">{{ $kepala_sekolah }}</div>
-                </div>
-
-            </td>
-        </tr>
-    </table>
-
-    {{-- LOGO --}}
-    <img src="{{ public_path('images/smk.png') }}" class="logo-sekolah" alt="logo">
-
-</div>
 </body>
 </html>

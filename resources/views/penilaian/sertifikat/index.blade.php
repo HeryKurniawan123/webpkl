@@ -1,252 +1,194 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Sertifikat PKL</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<title>Sertifikat PKL</title>
 
-        body {
-            background: #ffffff;
-        }
+<style>
+    @page {
+        margin: 0cm;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Times New Roman', Times, serif;
+    }
 
-        .page {
-            width: 1122px;
-            height: 794px;
-            position: relative;
-            background: #ffffff;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
+    /* ===== BACKGROUND IMAGE ===== */
+    .bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
 
-        /* ===== BACKGROUND WATERMARK ===== */
-        .bg-image {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0.07;
-            z-index: 0;
-        }
+    /* ===== CONTENT ===== */
+    .content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
 
-        /* ===== CORNER TOP LEFT ===== */
-        .corner-tl-navy {
-            position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 230px 230px 0 0;
-            border-color: #0d2b5b transparent transparent transparent;
-            z-index: 2;
-        }
-        .corner-tl-yellow {
-            position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 155px 155px 0 0;
-            border-color: #f7c32e transparent transparent transparent;
-            z-index: 2;
-        }
-        .corner-tl-red {
-            position: absolute;
-            top: 0; left: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 80px 80px 0 0;
-            border-color: #c1272d transparent transparent transparent;
-            z-index: 2;
-        }
+    /* ===== TEXT POSITIONS ===== */
+    .logo-container {
+        position: absolute;
+        top: 50px;
+        width: 100%;
+        text-align: center;
+    }
 
-        /* ===== CORNER TOP RIGHT ===== */
-        .corner-tr-navy {
-            position: absolute;
-            top: 0; right: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 0 230px 230px 0;
-            border-color: transparent #0d2b5b transparent transparent;
-            z-index: 2;
-        }
-        .corner-tr-yellow {
-            position: absolute;
-            top: 0; right: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 0 155px 155px 0;
-            border-color: transparent #f7c32e transparent transparent;
-            z-index: 2;
-        }
-        .corner-tr-red {
-            position: absolute;
-            top: 0; right: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 0 80px 80px 0;
-            border-color: transparent #c1272d transparent transparent;
-            z-index: 2;
-        }
+    .logo-img {
+        max-height: 80px;
+        max-width: 150px;
+        object-fit: contain;
+    }
 
-        /* ===== CORNER BOTTOM RIGHT ===== */
-        .corner-br-yellow {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 0 0 160px 160px;
-            border-color: transparent transparent #f7c32e transparent;
-            z-index: 2;
-        }
-        .corner-br-navy {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 0; height: 0;
-            border-style: solid;
-            border-width: 0 0 100px 100px;
-            border-color: transparent transparent #0d2b5b transparent;
-            z-index: 2;
-        }
+    .title {
+        position: absolute;
+        top: 150px;
+        width: 100%;
+        text-align: center;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 48px;
+        font-weight: bold;
+        letter-spacing: 5px;
+        color: #0f766e;
+    }
 
-        /* ===== CONTENT ===== */
-        .content {
-            position: absolute;
-            z-index: 5;
-            width: 100%;
-            top: 0; left: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 55px;
-        }
+    .subtitle {
+        position: absolute;
+        top: 215px;
+        width: 100%;
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+        font-size: 14px;
+        letter-spacing: 3px;
+        color: #555;
+    }
 
-        .header-title {
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-            font-size: 46px;
-            letter-spacing: 10px;
-            color: #111111;
-            text-transform: uppercase;
-            text-align: center;
-        }
+    /* Container for dynamic height content to prevent overlap */
+    .text-container {
+        position: absolute;
+        top: 250px;
+        width: 100%;
+        text-align: center;
+    }
 
-        .subtitle {
-            margin-top: 18px;
-            font-family: Arial, sans-serif;
-            font-weight: normal;
-            font-size: 13px;
-            letter-spacing: 3px;
-            color: #555555;
-            text-transform: uppercase;
-            text-align: center;
-        }
+    @php
+        // Ubah backslash menjadi forward slash agar CSS tidak menganggapnya karakter escape (\f, \t, dll) di Windows
+        $fontPath = str_replace('\\', '/', public_path('fonts/TAN MERINGUE Regular.otf'));
+    @endphp
 
-        /* Nama pakai font serif bawaan (mirip Garamond) */
-        .nama {
-            margin-top: 18px;
-            font-family: Georgia, 'Times New Roman', serif;
-            font-weight: bold;
-            font-size: 78px;
-            color: #7a2020;
-            line-height: 1;
-            letter-spacing: 1px;
-            text-align: center;
-        }
+    @font-face {
+        font-family: 'TAN Meringue';
+        src: url("{{ $fontPath }}") format('opentype');
+    }
 
-        .body-text {
-            margin-top: 16px;
-            max-width: 720px;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            color: #333333;
-            line-height: 1.75;
-        }
+    .nama {
+        font-family: 'TAN Meringue', 'Brush Script MT', cursive;
+        font-size: 70px;
+        color: #0f766e;
+        line-height: 1.1;
+        margin-bottom: 10px;
+    }
 
-        .predikat {
-            display: block;
-            margin-top: 6px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #7a2020;
-        }
+    .line {
+        margin: 0 auto;
+        width: 450px;
+        height: 2px;
+        background: #999;
+    }
 
-        /* ===== SIGNATURE ===== */
-        .signature-area {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .ttd-img {
-            width: 140px;
-        }
-        .ttd-line {
-            width: 220px;
-            height: 1.5px;
-            background: #333333;
-            margin: 4px 0 6px 0;
-        }
-        .kepsek-name {
-            font-family: Arial, sans-serif;
-            font-weight: 500;
-            font-size: 14px;
-            color: #111111;
-            letter-spacing: 0.5px;
-            text-align: center;
-        }
+    .body-text {
+        margin: 20px auto 0;
+        width: 70%;
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.8;
+        color: #444;
+    }
 
-        /* ===== LOGO ===== */
-        .logo-sekolah {
-            position: absolute;
-            bottom: 32px;
-            right: 55px;
-            width: 110px;
-            z-index: 10;
-        }
-    </style>
+    .predikat {
+        display: block;
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #0f766e;
+    }
+
+    .signature {
+        position: absolute;
+        bottom: 80px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .ttd-img {
+        width: 130px;
+    }
+
+    .ttd-line {
+        width: 200px;
+        height: 1px;
+        background: #333;
+        margin: 5px auto;
+    }
+
+    .kepsek-name {
+        font-size: 15px;
+        font-weight: bold;
+    }
+</style>
 </head>
+
 <body>
-<div class="page">
 
-    <img src="{{ public_path('images/bg-sekolah.png') }}" class="bg-image" alt="">
+    <!-- BACKGROUND -->
+    <img src="{{ public_path('images/templat-sertifikat.png') }}" class="bg">
 
-    <!-- TOP LEFT -->
-    <div class="corner-tl-navy"></div>
-    <div class="corner-tl-yellow"></div>
-    <div class="corner-tl-red"></div>
-
-    <!-- TOP RIGHT -->
-    <div class="corner-tr-navy"></div>
-    <div class="corner-tr-yellow"></div>
-    <div class="corner-tr-red"></div>
-
-    <!-- BOTTOM RIGHT -->
-    <div class="corner-br-yellow"></div>
-    <div class="corner-br-navy"></div>
-
-    <!-- MAIN CONTENT -->
+    <!-- CONTENT -->
     <div class="content">
-        <div class="header-title">Sertifikat Pengakuan</div>
-        <div class="subtitle">Diberikan Kepada :</div>
-        <div class="nama">{{ $nama }}</div>
-        <div class="body-text">
-            Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
-            <b>{{ $konsentrasi }}</b> selama {{ $lama }} dari tanggal
-            <b>{{ $tanggal_mulai }}</b> sampai dengan <b>{{ $tanggal_selesai }}</b>
-            dengan nilai yang tercantum di Rapor dengan Predikat :
-            @if(!empty($predikat))
-                <span class="predikat">{{ $predikat }}</span>
-            @endif
+
+        <!-- LOGO IDUKA -->
+        @if(!empty($foto_iduka))
+            <div class="logo-container">
+                <img src="{{ asset('storage/' . $foto_iduka) }}" class="logo-img">
+            </div>
+        @endif
+
+        <div class="title">SERTIFIKAT PENGAKUAN</div>
+        <div class="subtitle">DIBERIKAN KEPADA</div>
+
+        <div class="text-container">
+            @php
+                $namaVal = $nama ?? 'NAMA SISWA';
+                $namaWrapped = wordwrap($namaVal, 18, "<br>");
+            @endphp
+            <div class="nama">{!! $namaWrapped !!}</div>
+            <div class="line"></div>
+
+            <div class="body-text">
+                Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
+                <b>{{ $konsentrasi ?? 'Konsentrasi' }}</b> selama {{ $lama ?? 'waktu' }} dari tanggal
+                <b>{{ $tanggal_mulai ?? 'tanggal mulai' }}</b> sampai dengan <b>{{ $tanggal_selesai ?? 'tanggal selesai' }}</b>
+                dengan nilai yang tercantum di Rapor dengan Predikat :
+                @if(!empty($predikat))
+                    <span class="predikat">{{ $predikat }}</span>
+                @endif
+            </div>
         </div>
-        <div class="signature-area">
-            <img src="{{ public_path('images/ttd-fajriadi.png') }}" class="ttd-img" alt="ttd">
+
+        <div class="signature">
+            <div style="height: 100px;"></div> <!-- Area kosong untuk tanda tangan manual -->
             <div class="ttd-line"></div>
-            <div class="kepsek-name">{{ $kepala_sekolah }}</div>
+            <div class="kepsek-name">{{ $nama_iduka ?? 'NAMA IDUKA' }}</div>
         </div>
+
     </div>
 
-    <img src="{{ public_path('images/logo-smkn1kawali.png') }}" class="logo-sekolah" alt="logo">
-
-</div>
 </body>
 </html>
