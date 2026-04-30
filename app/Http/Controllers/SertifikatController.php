@@ -25,8 +25,32 @@ class SertifikatController extends Controller
             default           => 'Kurang',
         };
 
+        // Extract kota from alamat if possible, or fallback to 'Kawali'
+        $alamat = $user->iduka->alamat ?? '';
+        $kotaIduka = 'Kawali'; 
+        
+        if (preg_match('/(?:Kab\.|Kabupaten|Kota)\s*([^,]+)/i', $alamat, $matches)) {
+            $kotaIduka = trim($matches[1]);
+        } elseif (stripos($alamat, 'Ciamis') !== false) {
+            $kotaIduka = 'Ciamis';
+        } elseif (stripos($alamat, 'Bandung') !== false) {
+            $kotaIduka = 'Bandung';
+        }
+
+        $tglLahir = $user->dataPribadi->tgl_lahir ?? null;
+        if ($tglLahir) {
+            $tglLahir = \Carbon\Carbon::parse($tglLahir)->translatedFormat('d F Y');
+        } else {
+            $tglLahir = '-';
+        }
+
         $data = [
             'nama'            => $user->name,
+            'nis'             => $user->nip ?? ($user->dataPribadi->nip ?? '-'),
+            'tempat_lahir'    => $user->dataPribadi->tempat_lhr ?? '-',
+            'tgl_lahir'       => $tglLahir,
+            'tahun_ajaran'    => $user->tahun_ajaran ?? '-',
+            'asal_sekolah'    => 'SMKN 1 Kawali',
             'konsentrasi'     => $user->konke->name_konke ?? 'Konsentrasi Belum Diatur',
             'lama'            => '4 bulan',
             'tanggal_mulai'   => '13 Oktober 2025',
@@ -35,6 +59,9 @@ class SertifikatController extends Controller
             'kepala_sekolah'  => 'DEDE FAJRIADI, S.Pd., M.Pd',
             'nama_iduka'      => $user->iduka->nama ?? 'NAMA IDUKA',
             'foto_iduka'      => $user->iduka->foto ?? null,
+            'alamat_iduka'    => $user->iduka->alamat ?? 'ALAMAT IDUKA',
+            'kota_iduka'      => $kotaIduka,
+            'nama_pimpinan'   => $user->iduka->nama_pimpinan ?? 'Nama Pimpinan',
         ];
 
         $pdf      = Pdf::loadView('penilaian.sertifikat.index_pdf', $data)->setPaper('a4', 'landscape');

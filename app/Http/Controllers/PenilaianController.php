@@ -140,9 +140,12 @@ class PenilaianController extends Controller
             return redirect()->route('penilaian.index')->with('success', 'Penilaian berhasil disimpan!');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Penilaian Store Error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error('Penilaian Store Error: ' . $e->getMessage());
+            Log::error('File: ' . $e->getFile() . ' Line: ' . $e->getLine());
+            Log::error('Trace: ' . $e->getTraceAsString());
+            
             return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat menyimpan penilaian. Silakan coba lagi.')
+                ->with('error', 'Gagal! Terjadi kesalahan saat menyimpan penilaian: ' . $e->getMessage())
                 ->withInput();
         }
     }

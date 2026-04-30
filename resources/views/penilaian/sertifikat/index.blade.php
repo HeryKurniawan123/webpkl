@@ -25,122 +25,156 @@
         z-index: -1;
     }
 
-    /* ===== CONTENT ===== */
+    /* ===== CONTENT CONTAINER ===== */
     .content {
         position: relative;
-        width: 100%;
-        height: 100%;
         z-index: 1;
+        padding: 30px 80px 20px 80px; /* Dikurangi agar muat 1 halaman */
     }
 
-    /* ===== TEXT POSITIONS ===== */
-    .logo-container {
-        position: absolute;
-        top: 50px;
+    /* ===== KOP SERTIFIKAT ===== */
+    .kop-table {
         width: 100%;
-        text-align: center;
+        border-bottom: 3px solid #000;
+        margin-bottom: 2px;
     }
-
-    .logo-img {
-        max-height: 80px;
-        max-width: 150px;
-        object-fit: contain;
+    .kop-table-border {
+        border-top: 1px solid #000;
+        margin-bottom: 15px;
     }
-
-    .title {
-        position: absolute;
-        top: 150px;
-        width: 100%;
+    .kop-table td {
+        vertical-align: middle;
+    }
+    .kop-logo {
+        width: 15%;
+        text-align: left;
+    }
+    .kop-logo img {
+        max-width: 90px;
+        max-height: 90px;
+    }
+    .kop-text {
+        width: 85%;
         text-align: center;
-        font-family: 'Times New Roman', Times, serif;
-        font-size: 48px;
+        padding-right: 15%; /* Untuk mengimbangi logo di kiri agar teks tetap di tengah (kalo perlu) */
+    }
+    .kop-iduka {
+        font-size: 26px;
         font-weight: bold;
-        letter-spacing: 5px;
-        color: #0f766e;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        color: #000;
     }
-
-    .subtitle {
-        position: absolute;
-        top: 215px;
-        width: 100%;
-        text-align: center;
-        font-family: 'Arial', sans-serif;
+    .kop-alamat {
         font-size: 14px;
-        letter-spacing: 3px;
-        color: #555;
+        color: #333;
     }
 
-    /* Container for dynamic height content to prevent overlap */
-    .text-container {
-        position: absolute;
-        top: 250px;
-        width: 100%;
+    /* ===== JUDUL SERTIFIKAT ===== */
+    .cert-title {
         text-align: center;
-    }
-
-    @php
-        // Ubah backslash menjadi forward slash agar CSS tidak menganggapnya karakter escape (\f, \t, dll) di Windows
-        $fontPath = str_replace('\\', '/', public_path('fonts/TAN MERINGUE Regular.otf'));
-    @endphp
-
-    @font-face {
-        font-family: 'TAN Meringue';
-        src: url("{{ $fontPath }}") format('opentype');
-    }
-
-    .nama {
-        font-family: 'TAN Meringue', 'Brush Script MT', cursive;
-        font-size: 70px;
+        font-size: 36px;
+        font-weight: bold;
+        letter-spacing: 4px;
+        margin-top: 10px;
+        margin-bottom: 20px; /* Tambahan jarak agar tidak mepet */
         color: #0f766e;
-        line-height: 1.1;
-        margin-bottom: 10px;
     }
-
-    .line {
-        margin: 0 auto;
-        width: 450px;
-        height: 2px;
-        background: #999;
-    }
-
-    .body-text {
-        margin: 20px auto 0;
-        width: 70%;
+    .cert-subtitle {
         text-align: center;
         font-size: 16px;
-        line-height: 1.8;
-        color: #444;
+        margin-bottom: 15px;
+        font-style: italic;
     }
 
-    .predikat {
-        display: block;
-        margin-top: 10px;
-        font-size: 18px;
-        font-weight: bold;
-        color: #0f766e;
+    /* ===== BIODATA ===== */
+    .biodata {
+        margin: 0 auto 15px auto;
+        width: 75%;
     }
-
-    .signature {
-        position: absolute;
-        bottom: 80px;
+    .biodata table {
         width: 100%;
+        font-size: 17px;
+        line-height: 1.4;
+    }
+    .biodata td {
+        vertical-align: top;
+    }
+    .biodata-label {
+        width: 35%;
+        font-weight: bold;
+    }
+    .biodata-colon {
+        width: 3%;
         text-align: center;
     }
-
-    .ttd-img {
-        width: 130px;
+    .biodata-value {
+        width: 62%;
     }
 
-    .ttd-line {
-        width: 200px;
-        height: 1px;
-        background: #333;
-        margin: 5px auto;
+    /* ===== BODY TEXT ===== */
+    .body-text {
+        width: 90%;
+        margin: 0 auto 40px auto; /* Ditambahkan agar tidak terlalu mepet dengan Footer */
+        text-align: justify;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #222;
     }
-
-    .kepsek-name {
-        font-size: 15px;
+    .predikat {
         font-weight: bold;
+        color: #0f766e;
+        font-size: 18px;
+    }
+
+    /* ===== FOOTER (FOTO & TTD) ===== */
+    .footer-section {
+        width: 90%;
+        margin: 0 auto;
+        position: relative;
+        height: 160px;
+    }
+
+    /* 3x4 Photo placeholder (3cm x 4cm ~ 113px x 151px) */
+    .foto-box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 113px;
+        height: 151px;
+        border: 2px dashed #333; /* Mengubah garis menjadi putus-putus */
+        text-align: center;
+    }
+    .foto-box span {
+        display: block;
+        margin-top: 60px;
+        color: #666;
+        font-size: 12px;
+    }
+
+    /* Signature Box */
+    .signature-box {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 250px;
+        text-align: center;
+    }
+    .signature-date {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+    .signature-title {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .signature-space {
+        height: 60px; /* Dikurangi agar muat */
+    }
+    .pimpinan-name {
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: underline;
     }
 </style>
 </head>
@@ -148,44 +182,85 @@
 <body>
 
     <!-- BACKGROUND -->
-    <img src="{{ public_path('images/templat-sertifikat.png') }}" class="bg">
+    <img src="{{ asset('images/templat-sertifikat.png') }}" class="bg">
 
     <!-- CONTENT -->
     <div class="content">
 
-        <!-- LOGO IDUKA -->
-        @if(!empty($foto_iduka))
-            <div class="logo-container">
-                <img src="{{ asset('storage/' . $foto_iduka) }}" class="logo-img">
-            </div>
-        @endif
+        <!-- KOP SERTIFIKAT -->
+        <table class="kop-table">
+            <tr>
+                <td class="kop-logo">
+                    @if(!empty($foto_iduka))
+                        <img src="{{ asset('storage/' . $foto_iduka) }}">
+                    @endif
+                </td>
+                <td class="kop-text">
+                    <div class="kop-iduka">{{ $nama_iduka ?? 'NAMA IDUKA' }}</div>
+                    <div class="kop-alamat">{{ $alamat_iduka ?? 'Alamat Iduka Belum Diatur' }}</div>
+                </td>
+            </tr>
+        </table>
+        <div class="kop-table-border"></div>
 
-        <div class="title">SERTIFIKAT PENGAKUAN</div>
-        <div class="subtitle">DIBERIKAN KEPADA</div>
+        <!-- JUDUL -->
+        <div class="cert-title">SERTIFIKAT</div>
+        <div class="cert-subtitle">Diberikan kepada:</div>
 
-        <div class="text-container">
-            @php
-                $namaVal = $nama ?? 'NAMA SISWA';
-                $namaWrapped = wordwrap($namaVal, 18, "<br>");
-            @endphp
-            <div class="nama">{!! $namaWrapped !!}</div>
-            <div class="line"></div>
-
-            <div class="body-text">
-                Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
-                <b>{{ $konsentrasi ?? 'Konsentrasi' }}</b> selama {{ $lama ?? 'waktu' }} dari tanggal
-                <b>{{ $tanggal_mulai ?? 'tanggal mulai' }}</b> sampai dengan <b>{{ $tanggal_selesai ?? 'tanggal selesai' }}</b>
-                dengan nilai yang tercantum di Rapor dengan Predikat :
-                @if(!empty($predikat))
-                    <span class="predikat">{{ $predikat }}</span>
-                @endif
-            </div>
+        <!-- BIODATA -->
+        <div class="biodata">
+            <table>
+                <tr>
+                    <td class="biodata-label">Nama Siswa</td>
+                    <td class="biodata-colon">:</td>
+                    <td class="biodata-value"><b>{{ $nama ?? 'Nama Siswa' }}</b></td>
+                </tr>
+                <tr>
+                    <td class="biodata-label">Nomor Induk Siswa</td>
+                    <td class="biodata-colon">:</td>
+                    <td class="biodata-value">{{ $nis ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="biodata-label">Tempat, Tanggal Lahir</td>
+                    <td class="biodata-colon">:</td>
+                    <td class="biodata-value">{{ $tempat_lahir ?? '-' }}, {{ $tgl_lahir ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="biodata-label">Asal Sekolah</td>
+                    <td class="biodata-colon">:</td>
+                    <td class="biodata-value">{{ $asal_sekolah ?? 'SMKN 1 Kawali' }}</td>
+                </tr>
+                <tr>
+                    <td class="biodata-label">Tahun Pelajaran</td>
+                    <td class="biodata-colon">:</td>
+                    <td class="biodata-value">{{ $tahun_ajaran ?? '-' }}</td>
+                </tr>
+            </table>
         </div>
 
-        <div class="signature">
-            <div style="height: 100px;"></div> <!-- Area kosong untuk tanda tangan manual -->
-            <div class="ttd-line"></div>
-            <div class="kepsek-name">{{ $nama_iduka ?? 'NAMA IDUKA' }}</div>
+        <!-- PARAGRAF ISI -->
+        <div class="body-text">
+            Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
+            <b>{{ $konsentrasi ?? 'Konsentrasi' }}</b> selama {{ $lama ?? 'waktu' }} dari tanggal
+            <b>{{ $tanggal_mulai ?? 'tanggal mulai' }}</b> sampai dengan <b>{{ $tanggal_selesai ?? 'tanggal selesai' }}</b>
+            dengan nilai yang tercantum di Rapor dengan Predikat :
+            @if(!empty($predikat))
+                <span class="predikat">{{ $predikat }}</span>
+            @endif
+        </div>
+
+        <!-- FOOTER: FOTO & TTD -->
+        <div class="footer-section">
+            <div class="foto-box">
+                <span>Foto 3x4</span>
+            </div>
+
+            <div class="signature-box">
+                <div class="signature-date">{{ $kota_iduka ?? 'Kawali' }}, 14 Februari 2026</div>
+                <div class="signature-title">Pimpinan IDUKA,</div>
+                <div class="signature-space"></div>
+                <div class="pimpinan-name">{{ $nama_pimpinan ?? 'Nama Pimpinan' }}</div>
+            </div>
         </div>
 
     </div>
