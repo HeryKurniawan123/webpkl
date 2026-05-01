@@ -1,4 +1,4 @@
-﻿@extends('layout.main')
+@extends('layout.main')
 
 @section('content')
 <div class="container-fluid px-4 py-4">
@@ -152,17 +152,26 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
-                                    Export .docx
+                                    Export
                                 </a>
-                                <a href="{{ route('sertifikat.cetak.pdf', ['id' => $d['id']]) }}" target="_blank"
-                                   class="btn-export" style="margin-top:6px;background:linear-gradient(135deg,#f7c32e,#c1272d);color:#222;"
-                                   title="Cetak Sertifikat {{ $d['nama'] }}">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z" />
-                                        <polyline points="17 21 17 13 7 13 7 21" />
-                                    </svg>
-                                    Cetak Sertifikat
-                                </a>
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn-export dropdown-toggle" type="button" data-bs-toggle="dropdown" 
+                                            style="margin-top:6px;background:linear-gradient(135deg,#f7c32e,#c1272d);color:#222; width: 100%; justify-content: center;">
+                                        <i class="fas fa-print me-1"></i> Cetak
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="border-radius:12px; font-size:13px;">
+                                        <li>
+                                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.preview', ['id' => $d['id']]) }}" target="_blank">
+                                                <i class="fas fa-edit text-warning" style="width:16px;"></i> Preview & Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ route('sertifikat.cetak.pdf', ['id' => $d['id']]) }}" target="_blank">
+                                                <i class="fas fa-file-pdf text-danger" style="width:16px;"></i> Cetak PDF Langsung
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                         @endforeach

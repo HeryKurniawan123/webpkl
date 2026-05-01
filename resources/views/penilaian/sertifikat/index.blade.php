@@ -29,7 +29,7 @@
     .content {
         position: relative;
         z-index: 1;
-        padding: 30px 80px 20px 80px; /* Dikurangi agar muat 1 halaman */
+        padding: 50px 80px 20px 80px; /* Ditambah agar tidak mepet atas bingkai */
     }
 
     /* ===== KOP SERTIFIKAT ===== */
@@ -37,6 +37,7 @@
         width: 100%;
         border-bottom: 3px solid #000;
         margin-bottom: 2px;
+        padding-bottom: 15px; /* Menambah jarak antara alamat dan garis */
     }
     .kop-table-border {
         border-top: 1px solid #000;

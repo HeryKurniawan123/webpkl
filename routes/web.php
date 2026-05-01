@@ -751,6 +751,9 @@ Route::middleware(['auth', 'hakakses:guru,hubin,kaprog,iduka'])->group(function 
     Route::get('/penilaian/export/{id}', [PenilaianController::class, 'export'])->name('penilaian.export');
     Route::get('/sertifikat/cetak', [SertifikatController::class, 'cetak'])->name('sertifikat.cetak');
     Route::get('/sertifikat/cetak/pdf/{id}', [SertifikatController::class, 'cetakPdf'])->name('sertifikat.cetak.pdf');
+    Route::get('/sertifikat/cetak/word/{id}', [SertifikatController::class, 'cetakWord'])->name('sertifikat.cetak.word');
+    Route::get('/sertifikat/preview/{id}', [SertifikatController::class, 'previewEditable'])->name('sertifikat.preview');
+    Route::post('/sertifikat/cetak-custom/{id}', [SertifikatController::class, 'cetakCustom'])->name('sertifikat.cetak.custom');
 });
 
 Route::middleware(['auth', 'hakakses:hubin,kepsek,kaprog,guru'])->group(function () {

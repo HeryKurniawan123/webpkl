@@ -29,7 +29,7 @@
     .content {
         position: relative;
         z-index: 1;
-        padding: 30px 80px 20px 80px;
+        padding: 35px 80px 20px 80px;
     }
 
     /* ===== KOP SERTIFIKAT ===== */
@@ -37,10 +37,11 @@
         width: 100%;
         border-bottom: 3px solid #000;
         margin-bottom: 2px;
+        padding-bottom: 18px;
     }
     .kop-table-border {
         border-top: 1px solid #000;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
     .kop-table td {
         vertical-align: middle;
@@ -115,9 +116,9 @@
     /* ===== BODY TEXT ===== */
     .body-text {
         width: 90%;
-        margin: 0 auto 150px auto;
+        margin: 0 auto 120px auto;
         text-align: justify;
-        font-size: 16px;
+        font-size: 18px;
         line-height: 1.6;
         color: #222;
     }
@@ -239,12 +240,16 @@
 
         <!-- PARAGRAF ISI -->
         <div class="body-text">
-            Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
-            <b>{{ $konsentrasi ?? 'Konsentrasi' }}</b> selama {{ $lama ?? 'waktu' }} dari tanggal
-            <b>{{ $tanggal_mulai ?? 'tanggal mulai' }}</b> sampai dengan <b>{{ $tanggal_selesai ?? 'tanggal selesai' }}</b>
-            dengan nilai yang tercantum di Rapor dengan Predikat :
-            @if(!empty($predikat))
-                <span class="predikat">{{ $predikat }}</span>
+            @if(!empty($full_body))
+                {!! $full_body !!}
+            @else
+                Telah melaksanakan Praktik Kerja Lapangan (PKL) untuk Konsentrasi Keahlian
+                <b>{{ $konsentrasi ?? 'Konsentrasi' }}</b> selama {{ $lama ?? 'waktu' }} dari tanggal
+                <b>{{ $tanggal_mulai ?? 'tanggal mulai' }}</b> sampai dengan <b>{{ $tanggal_selesai ?? 'tanggal selesai' }}</b>
+                dengan nilai yang tercantum di Rapor dengan Predikat :
+                @if(!empty($predikat))
+                    <span class="predikat">{{ $predikat }}</span>
+                @endif
             @endif
         </div>
 
@@ -255,8 +260,20 @@
             </div>
 
             <div class="signature-box">
-                <div class="signature-date">{{ $kota_iduka ?? 'Kawali' }}, 14 Februari 2026</div>
-                <div class="signature-title">Pimpinan IDUKA,</div>
+                <div class="signature-date">
+                    @if(!empty($full_date))
+                        {!! $full_date !!}
+                    @else
+                        {{ $kota_iduka ?? 'Kawali' }}, 14 Februari 2026
+                    @endif
+                </div>
+                <div class="signature-title">
+                    @if(!empty($signature_role))
+                        {{ $signature_role }}
+                    @else
+                        Pimpinan IDUKA,
+                    @endif
+                </div>
                 <div class="signature-space"></div>
                 <div class="pimpinan-name">{{ $nama_pimpinan ?? 'Nama Pimpinan' }}</div>
             </div>
