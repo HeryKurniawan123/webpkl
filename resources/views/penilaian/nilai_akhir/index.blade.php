@@ -275,7 +275,7 @@
     border-bottom:1px solid #ddd6fe;
     font-weight:600; font-size:14px; color:#4c1d95;
 }
-.card-modern-body  { padding:20px; }
+.card-modern-body  { padding:20px; min-height: 350px; }
 .card-modern-footer{
     padding:14px 20px;
     background:#fafafa;
@@ -307,6 +307,7 @@
 /* ===========================
    TABLE MODERN
 =========================== */
+.table-responsive { overflow: visible !important; }
 .table-modern { width:100%; border-collapse:collapse; font-size:13px; }
 .table-modern thead tr { background:linear-gradient(135deg, #6c63ff, #7c3aed); }
 .table-modern thead th {
