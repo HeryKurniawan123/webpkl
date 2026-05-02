@@ -29,7 +29,7 @@
     .content {
         position: relative;
         z-index: 1;
-        padding: 35px 80px 20px 80px;
+        padding: {{ $top_margin ?? 35 }}px 80px 20px 80px;
     }
 
     /* ===== KOP SERTIFIKAT ===== */
@@ -192,7 +192,8 @@
             <tr>
                 <td class="kop-logo">
                     @if(!empty($foto_iduka))
-                        <img src="{{ storage_path('app/public/' . $foto_iduka) }}">
+                        <img src="{{ storage_path('app/public/' . $foto_iduka) }}" 
+                             style="width: {{ $logo_width ?? 90 }}px; position: relative; top: {{ $logo_top ?? 0 }}px; left: {{ $logo_left ?? 0 }}px;">
                     @endif
                 </td>
                 <td class="kop-text">

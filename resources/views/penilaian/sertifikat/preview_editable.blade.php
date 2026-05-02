@@ -86,7 +86,8 @@
 
         .logo-img {
             width: 85px;
-            height: 85px;
+            height: auto; /* Ubah dari 85px ke auto agar bisa membesar/mengecil */
+            max-height: 250px; /* Batasan maksimal agar tidak merusak layout */
             object-fit: contain;
         }
 
@@ -299,9 +300,10 @@
             <!-- Kop -->
             <table class="header-table" style="border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 2px;">
                 <tr>
-                    <td class="logo-cell" style="width: 15%;">
+                    <td class="logo-cell" style="width: 15%; position: relative;">
                         @if($foto_iduka)
-                            <img src="{{ asset('storage/' . $foto_iduka) }}" class="logo-img">
+                            <img src="{{ asset('storage/' . $foto_iduka) }}" id="cert-logo" class="logo-img" 
+                                 style="width: 85px; transition: none;">
                         @else
                             <div style="width: 80px; height: 80px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999;">LOGO</div>
                         @endif
@@ -394,6 +396,10 @@
         <input type="hidden" name="full_body" id="input-full_body">
         <input type="hidden" name="full_date" id="input-full_date">
         <input type="hidden" name="signature_role" id="input-signature_role">
+        <input type="hidden" name="logo_width" id="input-logo_width" value="85">
+        <input type="hidden" name="logo_top" id="input-logo_top" value="0">
+        <input type="hidden" name="logo_left" id="input-logo_left" value="0">
+        <input type="hidden" name="top_margin" id="input-top_margin" value="50">
         
         <input type="hidden" name="nama_iduka" id="input-nama_iduka">
         <input type="hidden" name="alamat_iduka" id="input-alamat_iduka">
@@ -401,6 +407,26 @@
     </form>
 
     <div class="toolbar">
+        <div class="logo-resizer" style="background: rgba(0,0,0,0.1); padding: 5px 20px; border-radius: 50px; display: flex; align-items: center; gap: 10px; border: 1px solid #ddd;">
+            <label style="font-size: 10px; font-weight: bold; color: #333;">Logo Ukuran:</label>
+            <input type="range" id="slider-logo-width" min="50" max="300" value="85" style="width: 70px; cursor: pointer;">
+            
+            <label style="font-size: 10px; font-weight: bold; color: #333;">Logo Atas:</label>
+            <input type="range" id="slider-logo-top" min="-50" max="50" value="0" style="width: 60px; cursor: pointer;">
+            
+            <label style="font-size: 10px; font-weight: bold; color: #333;">Logo Kanan:</label>
+            <input type="range" id="slider-logo-left" min="-50" max="50" value="0" style="width: 60px; cursor: pointer;">
+
+            <div style="width: 1px; height: 20px; background: #ccc; margin: 0 5px;"></div>
+
+            <label style="font-size: 10px; font-weight: bold; color: #b45309;">Turunkan Isi:</label>
+            <input type="range" id="slider-content-top" min="0" max="150" value="50" style="width: 80px; cursor: pointer;">
+            
+            <span style="font-size: 10px; font-weight: bold; background: #0f766e; color: white; padding: 2px 8px; border-radius: 10px; min-width: 30px; text-align: center;"><span id="val-width">85</span></span>
+        </div>
+        
+        <div style="width: 2px; height: 30px; background: #ddd; margin: 0 10px;"></div>
+
         <button class="btn-action btn-cancel" onclick="window.close()">
             <i class="fas fa-times"></i> Tutup
         </button>
@@ -410,6 +436,93 @@
     </div>
 
     <script>
+        // Logo & Content Logic
+        const sliderWidth   = document.getElementById('slider-logo-width');
+        const sliderLogoTop = document.getElementById('slider-logo-top');
+        const sliderLeft    = document.getElementById('slider-logo-left');
+        const sliderContTop = document.getElementById('slider-content-top');
+        
+        const logo          = document.getElementById('cert-logo');
+        const content       = document.querySelector('.content');
+        const valWidth      = document.getElementById('val-width');
+
+        const inputLogoWidth = document.getElementById('input-logo_width');
+        const inputLogoTop   = document.getElementById('input-logo_top');
+        const inputLogoLeft  = document.getElementById('input-logo_left');
+        const inputTopMargin = document.getElementById('input-top_margin');
+
+        // DRAG LOGO LOGIC
+        let isDragging = false;
+        let startX, startY;
+        let startMarginTop, startMarginLeft;
+
+        if (logo) {
+            logo.style.position = 'relative';
+            logo.style.cursor = 'move';
+            
+            logo.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startTop  = parseInt(sliderLogoTop.value) || 0;
+                startLeft = parseInt(sliderLeft.value) || 0;
+                logo.style.opacity = '0.7';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                
+                const newTop  = startTop + dy;
+                const newLeft = startLeft + dx;
+                
+                // Update Logo with relative positioning (doesn't push other elements)
+                logo.style.top  = newTop + 'px';
+                logo.style.left = newLeft + 'px';
+                
+                // Sync to Sliders
+                sliderLogoTop.value = newTop;
+                sliderLeft.value = newLeft;
+                
+                // Sync to Hidden Inputs
+                inputLogoTop.value = newTop;
+                inputLogoLeft.value = newLeft;
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    logo.style.opacity = '1';
+                }
+            });
+
+            // Resize
+            sliderWidth.addEventListener('input', function() {
+                logo.style.width = this.value + 'px';
+                valWidth.innerText = this.value;
+                inputLogoWidth.value = this.value;
+            });
+            // Manual Sliders
+            sliderLogoTop.addEventListener('input', function() {
+                logo.style.top = this.value + 'px';
+                inputLogoTop.value = this.value;
+            });
+            sliderLeft.addEventListener('input', function() {
+                logo.style.left = this.value + 'px';
+                inputLogoLeft.value = this.value;
+            });
+        }
+
+        if (content) {
+            sliderContTop.addEventListener('input', function() {
+                content.style.paddingTop = this.value + 'px';
+                inputTopMargin.value = this.value;
+            });
+        }
+
         function submitForm() {
             // Collect data from editable fields
             document.getElementById('input-nama').value = document.getElementById('field-nama').innerText;

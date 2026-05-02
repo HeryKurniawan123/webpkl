@@ -26,7 +26,8 @@ class SertifikatController extends Controller
             $nilaiAkhir >= 86 => 'Sangat Baik',
             $nilaiAkhir >= 71 => 'Baik',
             $nilaiAkhir >= 56 => 'Cukup',
-            default           => 'Kurang',
+            $nilaiAkhir > 0   => 'Kurang',
+            default           => 'Sangat Baik', // Default untuk siswa yang belum ada nilainya
         };
 
         // Extract kota from alamat if possible, or fallback to 'Kawali'
@@ -221,6 +222,10 @@ class SertifikatController extends Controller
             'full_body'       => $request->input('full_body'),
             'full_date'       => $request->input('full_date'),
             'signature_role'  => $request->input('signature_role'),
+            'logo_width'      => $request->input('logo_width', 85),
+            'logo_top'        => $request->input('logo_top', 0),
+            'logo_left'       => $request->input('logo_left', 0),
+            'top_margin'      => $request->input('top_margin', 50),
             
             'nama_iduka'      => $request->input('nama_iduka'),
             'foto_iduka'      => $user->iduka->foto ?? null,

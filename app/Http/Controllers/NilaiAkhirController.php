@@ -32,21 +32,22 @@ class NilaiAkhirController extends Controller
                         ->where('jenis_penilaian', 'instruktur_iduka')
                         ->avg('nilai');
 
-        // Keduanya harus sudah ada nilainya
-        if ($nilaiGuru === null || $nilaiIduka === null
-            || $nilaiGuru <= 0  || $nilaiIduka <= 0) {
-            return null;
-        }
+        // Jika nilai belum ada (null) atau nol, kita set 0 tapi tetap tampilkan
+        $nilaiGuruClean  = $nilaiGuru  ?? 0;
+        $nilaiIdukaClean = $nilaiIduka ?? 0;
+        $nilaiAkhir      = ($nilaiGuruClean + $nilaiIdukaClean) / 2;
 
-        $nilaiAkhir = ($nilaiGuru + $nilaiIduka) / 2;
+        // Jika nilai belum ada sama sekali, default Predikat adalah "Sangat Baik"
+        // sesuai instruksi user karena waktu mepet.
+        $predikat = ($nilaiAkhir > 0) ? $this->getPredikat($nilaiAkhir) : 'Sangat Baik';
 
         return [
             'id'          => $siswa->id,
             'nama'        => $siswa->name,
-            'nilai_guru'  => round($nilaiGuru,  2),
-            'nilai_iduka' => round($nilaiIduka, 2),
+            'nilai_guru'  => round($nilaiGuruClean,  2),
+            'nilai_iduka' => round($nilaiIdukaClean, 2),
             'nilai_akhir' => round($nilaiAkhir, 2),
-            'predikat'    => $this->getPredikat($nilaiAkhir),
+            'predikat'    => $predikat,
         ];
     }
 
