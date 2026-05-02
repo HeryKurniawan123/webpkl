@@ -86,8 +86,9 @@
 
         .logo-img {
             width: 85px;
-            height: auto; /* Ubah dari 85px ke auto agar bisa membesar/mengecil */
-            max-height: 250px; /* Batasan maksimal agar tidak merusak layout */
+            height: auto;
+            max-width: 250px;
+            max-height: 120px;
             object-fit: contain;
         }
 
@@ -417,11 +418,6 @@
             <label style="font-size: 10px; font-weight: bold; color: #333;">Logo Kanan:</label>
             <input type="range" id="slider-logo-left" min="-50" max="50" value="0" style="width: 60px; cursor: pointer;">
 
-            <div style="width: 1px; height: 20px; background: #ccc; margin: 0 5px;"></div>
-
-            <label style="font-size: 10px; font-weight: bold; color: #b45309;">Turunkan Isi:</label>
-            <input type="range" id="slider-content-top" min="0" max="150" value="50" style="width: 80px; cursor: pointer;">
-            
             <span style="font-size: 10px; font-weight: bold; background: #0f766e; color: white; padding: 2px 8px; border-radius: 10px; min-width: 30px; text-align: center;"><span id="val-width">85</span></span>
         </div>
         
@@ -440,21 +436,17 @@
         const sliderWidth   = document.getElementById('slider-logo-width');
         const sliderLogoTop = document.getElementById('slider-logo-top');
         const sliderLeft    = document.getElementById('slider-logo-left');
-        const sliderContTop = document.getElementById('slider-content-top');
         
         const logo          = document.getElementById('cert-logo');
-        const content       = document.querySelector('.content');
         const valWidth      = document.getElementById('val-width');
 
         const inputLogoWidth = document.getElementById('input-logo_width');
         const inputLogoTop   = document.getElementById('input-logo_top');
         const inputLogoLeft  = document.getElementById('input-logo_left');
-        const inputTopMargin = document.getElementById('input-top_margin');
 
         // DRAG LOGO LOGIC
         let isDragging = false;
         let startX, startY;
-        let startMarginTop, startMarginLeft;
 
         if (logo) {
             logo.style.position = 'relative';

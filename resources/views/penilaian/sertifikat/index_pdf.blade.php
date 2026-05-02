@@ -29,7 +29,7 @@
     .content {
         position: relative;
         z-index: 1;
-        padding: {{ $top_margin ?? 35 }}px 80px 20px 80px;
+        padding: 65px 80px 20px 80px;
     }
 
     /* ===== KOP SERTIFIKAT ===== */
@@ -72,13 +72,17 @@
     }
 
     /* ===== JUDUL SERTIFIKAT ===== */
+    .judul-section {
+        text-align: center;
+        margin-bottom: 20px;
+    }
     .cert-title {
         text-align: center;
         font-size: 36px;
         font-weight: bold;
         letter-spacing: 4px;
         margin-top: 10px;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         color: #0f766e;
     }
     .cert-subtitle {
@@ -116,7 +120,7 @@
     /* ===== BODY TEXT ===== */
     .body-text {
         width: 90%;
-        margin: 0 auto 120px auto;
+        margin: 0 auto 60px auto;
         text-align: justify;
         font-size: 18px;
         line-height: 1.6;
@@ -169,7 +173,7 @@
         font-weight: bold;
     }
     .signature-space {
-        height: 90px;
+        height: 60px;
     }
     .pimpinan-name {
         font-size: 16px;
@@ -193,7 +197,7 @@
                 <td class="kop-logo">
                     @if(!empty($foto_iduka))
                         <img src="{{ storage_path('app/public/' . $foto_iduka) }}" 
-                             style="width: {{ $logo_width ?? 90 }}px; position: relative; top: {{ $logo_top ?? 0 }}px; left: {{ $logo_left ?? 0 }}px;">
+                             style="width: {{ $logo_width ?? 90 }}px; max-width: 250px; max-height: 120px; position: relative; top: {{ $logo_top ?? 0 }}px; left: {{ $logo_left ?? 0 }}px;">
                     @endif
                 </td>
                 <td class="kop-text">
